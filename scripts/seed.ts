@@ -33,6 +33,8 @@ if (fs.existsSync(envLocalPath)) {
   }
 }
 
+process.env.WRITE_TIMEOUT = '30000';
+
 interface SeedConfig {
   useEmulator: boolean;
 }

@@ -7,7 +7,7 @@ import { AppError } from './errors';
  */
 export async function withWriteGuard<T>(
   op: () => Promise<T>,
-  timeoutMs = 8000
+  timeoutMs = typeof process !== 'undefined' && process.env.WRITE_TIMEOUT ? parseInt(process.env.WRITE_TIMEOUT, 10) : 8000
 ): Promise<T> {
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
     throw new AppError(
