@@ -49,8 +49,8 @@ TaskFlow is a collaborative project and task management system designed for smal
   └── displayName: string
 
 /projects/{projectId}
-  ├── name: string (3..60 chars)
-  ├── description: string (<= 500 chars)
+  ├── name: string (3..80 chars)
+  ├── description: string (<= 1000 chars)
   ├── ownerId: string
   ├── memberIds: string[]
   ├── memberNames: map<uid, string>
