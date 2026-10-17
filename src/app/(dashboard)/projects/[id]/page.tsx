@@ -3,12 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Project } from '@/types';
+import { Project, Task, TaskStatus } from '@/types';
 import { getProject } from '@/services/projects';
+import {
+  listTasks,
+  createTask,
+  updateTask,
+  changeTaskStatus,
+  deleteTask,
+} from '@/services/tasks';
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { TaskList } from '@/components/tasks/TaskList';
+import { TaskForm } from '@/components/tasks/TaskForm';
 import { AppError } from '@/lib/errors';
 
 export default function ProjectPage() {
@@ -17,8 +27,14 @@ export default function ProjectPage() {
   const { user } = useAuth();
 
   const [project, setProject] = useState<Project | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<AppError | null>(null);
+
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [deletingTask, setDeletingTask] = useState<Task | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -29,6 +45,10 @@ export default function ProjectPage() {
         const proj = await getProject(db, id);
         if (!ignore) {
           setProject(proj);
+        }
+        const taskList = await listTasks(db, id);
+        if (!ignore) {
+          setTasks(taskList);
         }
       } catch (err) {
         if (!ignore) {
@@ -50,13 +70,29 @@ export default function ProjectPage() {
     };
   }, [id]);
 
+  const reloadTasks = async () => {
+    if (!id) return;
+    try {
+      const db = getDb();
+      const list = await listTasks(db, id);
+      setTasks(list);
+    } catch (err) {
+      if (err instanceof AppError) {
+        setActionError(err.message);
+      }
+    }
+  };
+
   const handleRetry = () => {
     setLoading(true);
     setError(null);
     if (!id) return;
     const db = getDb();
-    getProject(db, id)
-      .then((proj) => setProject(proj))
+    Promise.all([getProject(db, id), listTasks(db, id)])
+      .then(([proj, taskList]) => {
+        setProject(proj);
+        setTasks(taskList);
+      })
       .catch((err) => {
         if (err instanceof AppError) {
           setError(err);
@@ -65,6 +101,68 @@ export default function ProjectPage() {
         }
       })
       .finally(() => setLoading(false));
+  };
+
+  const handleCreateTask = async (data: {
+    title: string;
+    description: string;
+    priority: Task['priority'];
+    assigneeId: string | null;
+    dueDate: string | null;
+  }) => {
+    if (!project || !user) return;
+    const db = getDb();
+    await createTask(db, project.id, user.uid, data);
+    setShowCreateForm(false);
+    await reloadTasks();
+  };
+
+  const handleUpdateTask = async (data: {
+    title: string;
+    description: string;
+    priority: Task['priority'];
+    assigneeId: string | null;
+    dueDate: string | null;
+    status?: TaskStatus;
+  }) => {
+    if (!project || !editingTask) return;
+    const db = getDb();
+    await updateTask(db, project.id, editingTask.id, data);
+    setEditingTask(null);
+    await reloadTasks();
+  };
+
+  const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
+    if (!project) return;
+    setActionError(null);
+    try {
+      const db = getDb();
+      await changeTaskStatus(db, project.id, task.id, newStatus);
+      await reloadTasks();
+    } catch (err) {
+      if (err instanceof AppError) {
+        setActionError(err.message);
+      } else {
+        setActionError('Failed to change task status');
+      }
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!project || !deletingTask) return;
+    setActionError(null);
+    try {
+      const db = getDb();
+      await deleteTask(db, project.id, deletingTask.id);
+      setDeletingTask(null);
+      await reloadTasks();
+    } catch (err) {
+      if (err instanceof AppError) {
+        setActionError(err.message);
+      } else {
+        setActionError('Failed to delete task');
+      }
+    }
   };
 
   if (loading) {
@@ -138,10 +236,11 @@ export default function ProjectPage() {
   if (!project) return null;
 
   const isOwner = user?.uid === project.ownerId;
+  const currentUid = user?.uid || '';
 
   return (
     <div>
-      <div style={{ marginBottom: '24px' }}>
+      <div style={{ marginBottom: '28px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <Link
@@ -166,9 +265,9 @@ export default function ProjectPage() {
                 href={`/projects/${project.id}/settings`}
                 style={{
                   padding: '8px 14px',
-                  backgroundColor: 'var(--bg-card)',
+                  backgroundColor: 'var(--surface)',
                   color: 'var(--text-primary)',
-                  border: '1px solid var(--border-color)',
+                  border: '1px solid var(--border)',
                   borderRadius: 'var(--radius-sm)',
                   fontSize: '14px',
                   fontWeight: 600,
@@ -178,16 +277,130 @@ export default function ProjectPage() {
                 Project Settings
               </Link>
             )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setEditingTask(null);
+                setShowCreateForm(true);
+              }}
+              style={{
+                padding: '8px 18px',
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-fg)',
+                border: 'none',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              + New Task
+            </button>
           </div>
         </div>
       </div>
 
-      <div style={{ padding: '24px', backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 700 }}>Tasks</h2>
+      {actionError && (
+        <div
+          role="alert"
+          style={{
+            padding: '12px 16px',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid var(--danger)',
+            borderRadius: 'var(--radius-sm)',
+            color: 'var(--danger)',
+            fontSize: '14px',
+            marginBottom: '20px',
+          }}
+        >
+          {actionError}
         </div>
-        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Task management will be active here.</p>
+      )}
+
+      {/* Task Creation Modal / Panel */}
+      {showCreateForm && (
+        <div
+          style={{
+            marginBottom: '28px',
+            padding: '24px',
+            backgroundColor: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-md)',
+          }}
+        >
+          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>New Task</h2>
+          <TaskForm
+            project={project}
+            currentUserId={currentUid}
+            isOwner={isOwner}
+            onSave={handleCreateTask}
+            onCancel={() => setShowCreateForm(false)}
+          />
+        </div>
+      )}
+
+      {/* Task Edit Modal / Panel */}
+      {editingTask && (
+        <div
+          style={{
+            marginBottom: '28px',
+            padding: '24px',
+            backgroundColor: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-md)',
+          }}
+        >
+          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>Edit Task</h2>
+          <TaskForm
+            project={project}
+            initialTask={editingTask}
+            currentUserId={currentUid}
+            isOwner={isOwner}
+            onSave={handleUpdateTask}
+            onCancel={() => setEditingTask(null)}
+          />
+        </div>
+      )}
+
+      {/* Tasks List */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 700 }}>
+            Tasks <span style={{ fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500 }}>({tasks.length})</span>
+          </h2>
+        </div>
+
+        <TaskList
+          tasks={tasks}
+          project={project}
+          currentUserId={currentUid}
+          isOwner={isOwner}
+          onEdit={(task) => {
+            setShowCreateForm(false);
+            setEditingTask(task);
+          }}
+          onDelete={(task) => setDeletingTask(task)}
+          onStatusChange={handleStatusChange}
+          onNewTask={() => {
+            setEditingTask(null);
+            setShowCreateForm(true);
+          }}
+        />
       </div>
+
+      {/* Confirm Task Deletion Dialog */}
+      {deletingTask && (
+        <ConfirmDialog
+          isOpen={true}
+          title="Delete Task"
+          message={`Are you sure you want to delete "${deletingTask.title}"? This action cannot be undone.`}
+          confirmLabel="Delete Task"
+          isDangerous={true}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setDeletingTask(null)}
+        />
+      )}
     </div>
   );
 }
