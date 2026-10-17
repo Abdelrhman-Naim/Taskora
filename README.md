@@ -5,6 +5,7 @@ TaskFlow is a collaborative project and task management system designed for smal
 ---
 
 ## Deployment & Repository
+- **Live Production URL**: [https://taskora-eta-flame.vercel.app](https://taskora-eta-flame.vercel.app)
 - **GitHub Repository**: [https://github.com/Abdelrhman-Naim/Taskora](https://github.com/Abdelrhman-Naim/Taskora)
 - **Firebase Project ID**: `taskora-bf729` (Cloud Firestore & Auth enabled)
 - **Deployment Platform**: Vercel
