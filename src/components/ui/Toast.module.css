@@ -1,0 +1,64 @@
+.container {
+  position: fixed;
+  inset-block-end: 24px;
+  inset-inline-end: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2000;
+  pointer-events: none;
+  max-inline-size: 380px;
+  inline-size: 100%;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-inline: 16px;
+  padding-block: 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: var(--fg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  pointer-events: auto;
+  animation: slideIn var(--dur-normal) ease;
+}
+
+.success {
+  border-inline-start: 4px solid var(--st-done);
+}
+
+.error {
+  border-inline-start: 4px solid var(--st-overdue);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.success .icon {
+  color: var(--st-done);
+}
+
+.error .icon {
+  color: var(--st-overdue);
+}
+
+.message {
+  flex: 1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

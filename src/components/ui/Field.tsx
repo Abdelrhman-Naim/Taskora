@@ -1,44 +1,61 @@
 import React from 'react';
+import styles from './Field.module.css';
 
-interface FieldProps {
+export interface FieldProps {
   id: string;
   label: string;
   error?: string;
+  hint?: string;
   required?: boolean;
-  children: React.ReactNode;
+  className?: string;
+  children:
+    | React.ReactNode
+    | ((args: {
+        id: string;
+        'aria-invalid': boolean;
+        'aria-describedby'?: string;
+      }) => React.ReactNode);
 }
 
-export function Field({ id, label, error, required, children }: FieldProps) {
-  const errorId = `${id}-error`;
+export function Field({
+  id,
+  label,
+  error,
+  hint,
+  required,
+  className = '',
+  children,
+}: FieldProps): React.ReactElement {
+  const errorId = error ? `${id}-error` : undefined;
+  const hintId = hint ? `${id}-hint` : undefined;
+  const describedBy = errorId || hintId || undefined;
+
+  const content =
+    typeof children === 'function'
+      ? children({
+          id,
+          'aria-invalid': Boolean(error),
+          'aria-describedby': describedBy,
+        })
+      : children;
 
   return (
-    <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column' }}>
-      <label
-        htmlFor={id}
-        style={{
-          marginBottom: '6px',
-          fontWeight: 600,
-          fontSize: '14px',
-          color: 'var(--text-primary)',
-        }}
-      >
+    <div className={`${styles.field} ${className}`.trim()}>
+      <label htmlFor={id} className={styles.label}>
         {label}
-        {required && <span style={{ color: 'var(--danger)', marginLeft: '4px' }}>*</span>}
+        {required && <span aria-hidden="true" style={{ color: 'var(--st-overdue-fg)', marginInlineStart: 4 }}>*</span>}
       </label>
 
-      {children}
+      {content}
+
+      {hint && !error && (
+        <span id={hintId} className={styles.hint}>
+          {hint}
+        </span>
+      )}
 
       {error && (
-        <span
-          id={errorId}
-          role="alert"
-          style={{
-            color: 'var(--danger)',
-            fontSize: '13px',
-            marginTop: '4px',
-            display: 'block',
-          }}
-        >
+        <span id={errorId} role="alert" className={styles.error}>
           {error}
         </span>
       )}

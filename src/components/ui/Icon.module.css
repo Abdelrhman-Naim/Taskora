@@ -1,0 +1,10 @@
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+:global([dir="rtl"]) .dirIcon {
+  transform: scaleX(-1);
+}

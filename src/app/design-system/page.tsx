@@ -1,0 +1,237 @@
+'use client';
+
+import React, { useState, useRef } from 'react';
+import { useI18n } from '@/i18n/I18nProvider';
+import { ThemeToggle } from '@/theme/ThemeToggle';
+import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
+import { Button } from '@/components/ui/Button';
+import { IconButton } from '@/components/ui/IconButton';
+import { Field } from '@/components/ui/Field';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Select } from '@/components/ui/Select';
+import { Badge } from '@/components/ui/Badge';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { Card } from '@/components/ui/Card';
+import { Segmented } from '@/components/ui/Segmented';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { Dialog } from '@/components/ui/Dialog';
+import { ToastProvider, useToast } from '@/components/ui/Toast';
+import styles from './page.module.css';
+
+function ToastShowcase() {
+  const toast = useToast();
+  return (
+    <div className={styles.componentRow}>
+      <Button
+        variant="secondary"
+        onClick={() => toast.show('success', 'Changes saved successfully!')}
+      >
+        Trigger Success Toast
+      </Button>
+      <Button
+        variant="danger"
+        onClick={() => toast.show('error', 'Network error occurred. Please retry.')}
+      >
+        Trigger Error Toast
+      </Button>
+    </div>
+  );
+}
+
+export default function DesignSystemPage() {
+  const { t } = useI18n();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const dialogTriggerRef = useRef<HTMLButtonElement>(null);
+  const [segmentedVal, setSegmentedVal] = useState('list');
+
+  const colors = [
+    { name: 'Pearl / Petrol', role: 'Background (--bg)', hex: 'Light #F4F5F2 / Dark #0A1514', varName: 'var(--bg)', contrast: '≥ 4.5:1 (AA)' },
+    { name: 'Porcelain / Deep', role: 'Surfaces (--surface)', hex: 'Light #FFFFFF / Dark #101F1D', varName: 'var(--surface)', contrast: '≥ 4.5:1 (AA)' },
+    { name: 'Jade', role: 'Primary Action (--accent)', hex: 'Light #0E6B5C / Dark #5CCBAE', varName: 'var(--accent)', contrast: '4.6:1 (AA)' },
+    { name: 'Ink / Mist', role: 'Text (--fg)', hex: 'Light #0F1E1C / Dark #EAF0EC', varName: 'var(--fg)', contrast: '13.8:1 (AAA)' },
+    { name: 'Brass', role: 'Hairline Accent (--brass)', hex: 'Light #B08D45 / Dark #C9A55A', varName: 'var(--brass)', contrast: '3.1:1 UI (AA)' },
+  ];
+
+  return (
+    <ToastProvider>
+      <main className={styles.page}>
+        <header className={styles.header}>
+          <div>
+            <h1 className={styles.title}>{t('app.name')} Design System</h1>
+            <p className={styles.subtitle}>
+              Bespoke tokens, primitives, typography and RTL layout verification
+            </p>
+          </div>
+          <div className={styles.controls}>
+            <LocaleSwitcher />
+            <ThemeToggle />
+          </div>
+        </header>
+
+        {/* Colors */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Colors & Contrast</h2>
+          <div className={styles.grid}>
+            {colors.map((c) => (
+              <div key={c.name} className={styles.colorSwatch}>
+                <div className={styles.swatchPreview} style={{ backgroundColor: c.varName }} />
+                <span className={styles.swatchName}>{c.name}</span>
+                <span className={styles.swatchRole}>{c.role}</span>
+                <span className={styles.swatchContrast}>{c.contrast}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Typography */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Typography</h2>
+          <Card>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700 }}>
+                Display Title: Newsreader & Amiri (سيريف عرض)
+              </div>
+              <div style={{ fontSize: '1rem', color: 'var(--fg)', lineHeight: 1.75 }}>
+                Body Text: Hanken Grotesk & IBM Plex Sans Arabic (خط القراءة sans-serif المريح)
+              </div>
+              <div className="num" style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', color: 'var(--accent)' }}>
+                12,500 · 34 · 98% (Lining & Tabular Numerals)
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        {/* Buttons */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Buttons & Actions</h2>
+          <div className={styles.componentRow}>
+            <Button variant="primary" icon="plus">Primary Button</Button>
+            <Button variant="secondary">Secondary Button</Button>
+            <Button variant="ghost">Ghost Button</Button>
+            <Button variant="danger" icon="trash">Danger Button</Button>
+          </div>
+          <div className={styles.componentRow}>
+            <Button variant="primary" size="sm">Small Primary</Button>
+            <Button variant="secondary" size="sm">Small Secondary</Button>
+            <Button variant="primary" loading>Loading State</Button>
+            <Button variant="primary" disabled>Disabled State</Button>
+          </div>
+          <div className={styles.componentRow}>
+            <IconButton icon="plus" label="Add task" variant="secondary" />
+            <IconButton icon="edit" label="Edit item" variant="ghost" />
+            <IconButton icon="trash" label="Delete item" variant="danger" />
+            <IconButton icon="settings" label="Settings" variant="ghost" />
+          </div>
+        </section>
+
+        {/* Badges */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Badges & Statuses</h2>
+          <div className={styles.componentRow}>
+            <Badge kind="todo" />
+            <Badge kind="in_progress" />
+            <Badge kind="done" />
+            <Badge kind="overdue" />
+            <Badge kind="low" />
+            <Badge kind="medium" />
+            <Badge kind="high" />
+          </div>
+        </section>
+
+        {/* Progress Bar */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Progress Bar</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <ProgressBar value={25} max={100} label="25% complete" />
+            <ProgressBar value={60} max={100} label="60% complete" />
+            <ProgressBar value={100} max={100} label="100% complete" />
+          </div>
+        </section>
+
+        {/* Segmented */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Segmented Control</h2>
+          <div className={styles.componentRow}>
+            <Segmented
+              label="View selection"
+              value={segmentedVal}
+              onChange={setSegmentedVal}
+              options={[
+                { value: 'list', label: 'List view', icon: 'bars' },
+                { value: 'grid', label: 'Grid view', icon: 'folder' },
+                { value: 'analytics', label: 'Analytics', icon: 'filter' },
+              ]}
+            />
+          </div>
+        </section>
+
+        {/* Form Controls */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Form Controls</h2>
+          <div className={styles.formGrid}>
+            <Field id="ds-input-normal" label="Project name" hint="3 to 80 characters">
+              {(fieldProps) => <Input {...fieldProps} placeholder="e.g. Website Redesign" />}
+            </Field>
+
+            <Field id="ds-input-error" label="Email" error="Please enter a valid email address">
+              {(fieldProps) => <Input {...fieldProps} type="email" value="invalid-email@" onChange={() => {}} />}
+            </Field>
+
+            <Field id="ds-select" label="Task Priority">
+              {(fieldProps) => (
+                <Select {...fieldProps}>
+                  <option value="low">Low priority</option>
+                  <option value="medium">Medium priority</option>
+                  <option value="high">High priority</option>
+                </Select>
+              )}
+            </Field>
+
+            <Field id="ds-textarea" label="Task Description">
+              {(fieldProps) => <Textarea {...fieldProps} placeholder="Enter task notes..." rows={3} />}
+            </Field>
+          </div>
+        </section>
+
+        {/* Modal Dialog & Toasts */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Dialog & Toasts</h2>
+          <div className={styles.componentRow}>
+            <Button
+              ref={dialogTriggerRef}
+              variant="secondary"
+              onClick={() => setDialogOpen(true)}
+            >
+              Open Confirm Dialog
+            </Button>
+          </div>
+          <ToastShowcase />
+
+          <Dialog
+            isOpen={dialogOpen}
+            title="Delete Project"
+            description="Are you sure you want to delete this project? All associated tasks will be removed."
+            isDangerous
+            confirmLabel="Delete"
+            cancelLabel="Cancel"
+            onClose={() => setDialogOpen(false)}
+            onCancel={() => setDialogOpen(false)}
+            onConfirm={() => setDialogOpen(false)}
+            triggerRef={dialogTriggerRef}
+          />
+        </section>
+
+        {/* Skeleton */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Skeleton Loaders</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <Skeleton width="40%" height="24px" />
+            <Skeleton width="100%" height="16px" />
+            <Skeleton width="80%" height="16px" />
+          </div>
+        </section>
+      </main>
+    </ToastProvider>
+  );
+}

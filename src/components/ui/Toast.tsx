@@ -1,88 +1,87 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { Icon } from './Icon';
+import styles from './Toast.module.css';
 
-export interface ToastProps {
+export interface ToastItem {
+  id: string;
+  kind: 'success' | 'error';
   message: string;
-  type?: 'success' | 'error' | 'info';
-  onClose?: () => void;
-  durationMs?: number;
+}
+
+export interface ToastContextValue {
+  show(kind: 'success' | 'error', message: string): void;
+}
+
+const ToastContext = createContext<ToastContextValue | undefined>(undefined);
+
+export function ToastProvider({ children }: { children: React.ReactNode }): React.ReactElement {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  const show = useCallback((kind: 'success' | 'error', message: string) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev, { id, kind, message }]);
+
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 5000);
+  }, []);
+
+  return (
+    <ToastContext.Provider value={{ show }}>
+      {children}
+      <div className={styles.container} aria-live="polite">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            role="status"
+            className={`${styles.toast} ${styles[toast.kind]}`}
+          >
+            <span className={styles.icon}>
+              {toast.kind === 'success' ? (
+                <Icon name="check" size={16} />
+              ) : (
+                <Icon name="alert" size={16} />
+              )}
+            </span>
+            <span className={styles.message}>{toast.message}</span>
+          </div>
+        ))}
+      </div>
+    </ToastContext.Provider>
+  );
+}
+
+export function useToast(): ToastContextValue {
+  const ctx = useContext(ToastContext);
+  if (!ctx) {
+    // Graceful fallback if used outside provider
+    return {
+      show: (kind: 'success' | 'error', message: string) => {
+        // Fallback or console log
+        if (typeof console !== 'undefined') {
+          console.info(`[Toast ${kind}] ${message}`);
+        }
+      },
+    };
+  }
+  return ctx;
 }
 
 export function Toast({
+  kind,
   message,
-  type = 'info',
-  onClose,
-  durationMs = 4000,
-}: ToastProps) {
-  useEffect(() => {
-    if (!durationMs || !onClose) return;
-    const timer = setTimeout(() => {
-      onClose();
-    }, durationMs);
-    return () => clearTimeout(timer);
-  }, [durationMs, onClose]);
-
-  const bgMap = {
-    success: 'var(--success-bg, #f0fdf4)',
-    error: 'var(--danger-bg, #fef2f2)',
-    info: 'var(--surface, #ffffff)',
-  };
-
-  const borderMap = {
-    success: 'var(--success, #16a34a)',
-    error: 'var(--danger, #dc2626)',
-    info: 'var(--border, #cbd5e1)',
-  };
-
-  const textMap = {
-    success: 'var(--success, #16a34a)',
-    error: 'var(--danger, #dc2626)',
-    info: 'var(--text-primary, #0f172a)',
-  };
-
+}: {
+  kind: 'success' | 'error';
+  message: string;
+}): React.ReactElement {
   return (
-    <div
-      role={type === 'error' ? 'alert' : 'status'}
-      aria-live={type === 'error' ? 'assertive' : 'polite'}
-      style={{
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-        zIndex: 9999,
-        padding: '12px 18px',
-        backgroundColor: bgMap[type],
-        border: `1px solid ${borderMap[type]}`,
-        borderRadius: 'var(--radius-sm, 4px)',
-        color: textMap[type],
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        fontSize: '14px',
-        fontWeight: 500,
-        maxWidth: '400px',
-      }}
-    >
-      <span>{message}</span>
-      {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close notification"
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'inherit',
-            cursor: 'pointer',
-            fontSize: '16px',
-            lineHeight: 1,
-            padding: '2px',
-          }}
-        >
-          &times;
-        </button>
-      )}
+    <div role="status" className={`${styles.toast} ${styles[kind]}`}>
+      <span className={styles.icon}>
+        {kind === 'success' ? <Icon name="check" size={16} /> : <Icon name="alert" size={16} />}
+      </span>
+      <span className={styles.message}>{message}</span>
     </div>
   );
 }

@@ -1,0 +1,99 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  transition: background-color var(--dur-fast) ease, border-color var(--dur-fast) ease, color var(--dur-fast) ease, opacity var(--dur-fast) ease;
+}
+
+.md {
+  min-block-size: 44px;
+  padding-inline: 16px;
+  font-size: 0.9375rem;
+}
+
+.sm {
+  min-block-size: 36px;
+  padding-inline: 12px;
+  font-size: 0.8125rem;
+}
+
+.primary {
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid transparent;
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.secondary {
+  background-color: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--control-border);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--fg-muted);
+  border: 1px solid transparent;
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+  color: var(--fg);
+}
+
+.danger {
+  background-color: var(--st-overdue-bg);
+  color: var(--st-overdue-fg);
+  border: 1px solid var(--st-overdue);
+}
+
+.danger:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.spinner {
+  display: inline-block;
+  inline-size: 16px;
+  block-size: 16px;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
