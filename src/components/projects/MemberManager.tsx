@@ -168,10 +168,10 @@ export function MemberManager({
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: '240px' }}>
-            <Field id="member-email" label="Email" error={emailError || undefined}>
+            <Field id="member-email" label="Member Email" error={emailError || undefined}>
               <input
                 id="member-email"
-                aria-label="Email"
+                aria-label="Member Email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
