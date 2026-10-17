@@ -14,6 +14,24 @@ import { ensureUserProfile } from '../src/services/auth';
 import { createProject } from '../src/services/projects';
 import { addMember } from '../src/services/members';
 import { createTask, updateTask } from '../src/services/tasks';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Load .env.local if present
+const envLocalPath = path.resolve(process.cwd(), '.env.local');
+if (fs.existsSync(envLocalPath)) {
+  const content = fs.readFileSync(envLocalPath, 'utf8');
+  for (const line of content.split('\n')) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+      const [key, ...rest] = trimmed.split('=');
+      const val = rest.join('=').trim().replace(/^['"]|['"]$/g, '');
+      if (!process.env[key.trim()]) {
+        process.env[key.trim()] = val;
+      }
+    }
+  }
+}
 
 interface SeedConfig {
   useEmulator: boolean;
