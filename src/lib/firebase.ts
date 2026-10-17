@@ -2,41 +2,49 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, Firestore, connectFirestoreEmulator } from 'firebase/firestore';
 
-const requiredEnvVars = [
-  'NEXT_PUBLIC_FIREBASE_API_KEY',
-  'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
-  'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-] as const;
-
 let appInstance: FirebaseApp | undefined;
 let authInstance: Auth | undefined;
 let dbInstance: Firestore | undefined;
 let emulatorsConnected = false;
 
 export function isUsingEmulators(): boolean {
+  // If running in browser and NOT on localhost/127.0.0.1, never use emulators
+  if (
+    typeof window !== 'undefined' &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1'
+  ) {
+    return false;
+  }
+
   if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') return true;
-  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'demo-taskflow';
+  if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'false') return false;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '';
   return projectId.startsWith('demo-');
 }
 
 export function getFirebaseConfig() {
   const useEmulators = isUsingEmulators();
 
-  if (!useEmulators) {
-    for (const key of requiredEnvVars) {
-      if (!process.env[key]) {
-        throw new Error(`Missing required environment variable: ${key}`);
-      }
-    }
+  if (useEmulators) {
+    return {
+      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'demo-api-key',
+      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'demo-taskflow.firebaseapp.com',
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'demo-taskflow',
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'demo-taskflow.appspot.com',
+      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '1234567890',
+      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:1234567890:web:abcdef',
+    };
   }
 
+  // Production configuration for project taskora-bf729
   return {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'demo-api-key',
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'demo-taskflow.firebaseapp.com',
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'demo-taskflow',
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'demo-taskflow.appspot.com',
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '1234567890',
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:1234567890:web:abcdef',
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyAOMjes8PtCUNfnFssDZWRy0ei7aH_juts',
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'taskora-bf729.firebaseapp.com',
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'taskora-bf729',
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'taskora-bf729.firebasestorage.app',
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '997225509918',
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:997225509918:web:2a26d16f9a1b566444ea0f',
   };
 }
 
@@ -69,19 +77,26 @@ export function getDb(): Firestore {
 
 function initEmulatorsIfNeeded(auth: Auth, db: Firestore) {
   if (emulatorsConnected) return;
-  const useEmulators = isUsingEmulators();
-  if (useEmulators) {
-    const host = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '127.0.0.1';
-    try {
-      connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
-    } catch {
-      // already connected in some environments
+  if (!isUsingEmulators()) return;
+
+  // Extra guard: NEVER attempt to connect to emulators over HTTPS or on remote hostnames
+  if (typeof window !== 'undefined') {
+    if (window.location.protocol === 'https:') return;
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return;
     }
-    try {
-      connectFirestoreEmulator(db, host, 8085);
-    } catch {
-      // already connected
-    }
-    emulatorsConnected = true;
   }
+
+  const host = '127.0.0.1';
+  try {
+    connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
+  } catch {
+    // already connected in some environments
+  }
+  try {
+    connectFirestoreEmulator(db, host, 8085);
+  } catch {
+    // already connected
+  }
+  emulatorsConnected = true;
 }
