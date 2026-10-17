@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+import './globals.css';
+import { AuthProviderClient } from '@/components/auth/AuthProviderClient';
 
 export const metadata: Metadata = {
-  title: "TaskFlow",
-  description: "Task and project management for small teams",
+  title: 'TaskFlow',
+  description: 'Task and project management for small teams',
 };
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" dir="ltr">
-      <body>{children}</body>
+      <body>
+        <AuthProviderClient>{children}</AuthProviderClient>
+      </body>
     </html>
   );
 }

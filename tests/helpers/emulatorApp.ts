@@ -44,7 +44,7 @@ export async function clearEmulators(): Promise<void> {
       'http://127.0.0.1:8085/emulator/v1/projects/demo-taskflow/databases/(default)/documents',
       { method: 'DELETE' }
     );
-  } catch (err) {
+  } catch {
     // ignore if emulator not reachable
   }
 
@@ -53,7 +53,7 @@ export async function clearEmulators(): Promise<void> {
       'http://127.0.0.1:9099/emulator/v1/projects/demo-taskflow/accounts',
       { method: 'DELETE' }
     );
-  } catch (err) {
+  } catch {
     // ignore if emulator not reachable
   }
 }
