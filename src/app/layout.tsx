@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { Newsreader, Amiri, Hanken_Grotesk, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import './globals.css';
 import { AuthProviderClient } from '@/components/auth/AuthProviderClient';
-import { parseTheme, ThemeProvider } from '@/theme/ThemeProvider';
+import { parseTheme, ThemeProvider, THEME_COOKIE } from '@/theme/ThemeProvider';
+import { resolveLocale, dirOf, LOCALE_COOKIE } from '@/i18n/config';
+import { I18nProvider } from '@/i18n/I18nProvider';
+import { en } from '@/i18n/en';
+import { ar } from '@/i18n/ar';
 
 const newsreader = Newsreader({
   subsets: ['latin'],
@@ -33,10 +37,20 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 
 const fontClasses = `${newsreader.variable} ${amiri.variable} ${hanken.variable} ${plexArabic.variable}`;
 
-export const metadata: Metadata = {
-  title: 'Taskora',
-  description: 'Task and project management for small teams',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const cookieStore = await cookies();
+  const headersList = await headers();
+  const locale = resolveLocale(
+    cookieStore.get(LOCALE_COOKIE)?.value,
+    headersList.get('accept-language') ?? undefined
+  );
+  const dict = locale === 'ar' ? ar : en;
+
+  return {
+    title: dict['app.name'],
+    description: dict['app.description'],
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -44,18 +58,25 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  const theme = parseTheme(cookieStore.get('tf-theme')?.value);
+  const headersList = await headers();
+  const locale = resolveLocale(
+    cookieStore.get(LOCALE_COOKIE)?.value,
+    headersList.get('accept-language') ?? undefined
+  );
+  const theme = parseTheme(cookieStore.get(THEME_COOKIE)?.value);
 
   return (
     <html
-      lang="en"
-      dir="ltr"
+      lang={locale}
+      dir={dirOf(locale)}
       data-theme={theme === 'system' ? undefined : theme}
       className={fontClasses}
     >
       <body>
         <ThemeProvider initialTheme={theme}>
-          <AuthProviderClient>{children}</AuthProviderClient>
+          <I18nProvider initialLocale={locale}>
+            <AuthProviderClient>{children}</AuthProviderClient>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>
