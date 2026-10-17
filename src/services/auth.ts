@@ -79,11 +79,17 @@ export async function registerUser(
       displayName: name,
     });
 
-    return {
+    const session: SessionUser = {
       uid: cred.user.uid,
       displayName: name,
       email,
     };
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('taskflow:user-updated', { detail: session }));
+    }
+
+    return session;
   } catch (err) {
     throw toAppError(err);
   }
@@ -111,11 +117,17 @@ export async function loginUser(
       displayName,
     });
 
-    return {
+    const session: SessionUser = {
       uid: user.uid,
       displayName,
       email: user.email || trimmedEmail,
     };
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('taskflow:user-updated', { detail: session }));
+    }
+
+    return session;
   } catch (err) {
     throw toAppError(err);
   }

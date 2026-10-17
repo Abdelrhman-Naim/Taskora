@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AuthForm } from '@/components/auth/AuthForm';
@@ -12,22 +12,28 @@ import { Spinner } from '@/components/ui/Spinner';
 export default function RegisterPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [registering, setRegistering] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !registering) {
       router.replace('/dashboard');
     }
-  }, [user, loading, router]);
+  }, [user, loading, registering, router]);
 
   const handleRegister = async (data: { name?: string; email: string; password: string }) => {
-    const auth = getAuthInstance();
-    const db = getDb();
-    await registerUser(auth, db, {
-      name: data.name || '',
-      email: data.email,
-      password: data.password,
-    });
-    router.replace('/dashboard');
+    setRegistering(true);
+    try {
+      const auth = getAuthInstance();
+      const db = getDb();
+      await registerUser(auth, db, {
+        name: data.name || '',
+        email: data.email,
+        password: data.password,
+      });
+      router.replace('/dashboard');
+    } finally {
+      setRegistering(false);
+    }
   };
 
   if (loading) {

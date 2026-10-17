@@ -13,8 +13,14 @@ let authInstance: Auth | undefined;
 let dbInstance: Firestore | undefined;
 let emulatorsConnected = false;
 
+export function isUsingEmulators(): boolean {
+  if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') return true;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'demo-taskflow';
+  return projectId.startsWith('demo-');
+}
+
 export function getFirebaseConfig() {
-  const useEmulators = process.env.NEXT_PUBLIC_USE_EMULATORS === 'true';
+  const useEmulators = isUsingEmulators();
 
   if (!useEmulators) {
     for (const key of requiredEnvVars) {
@@ -63,15 +69,16 @@ export function getDb(): Firestore {
 
 function initEmulatorsIfNeeded(auth: Auth, db: Firestore) {
   if (emulatorsConnected) return;
-  const useEmulators = process.env.NEXT_PUBLIC_USE_EMULATORS === 'true';
+  const useEmulators = isUsingEmulators();
   if (useEmulators) {
+    const host = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '127.0.0.1';
     try {
-      connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+      connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
     } catch {
       // already connected in some environments
     }
     try {
-      connectFirestoreEmulator(db, '127.0.0.1', 8085);
+      connectFirestoreEmulator(db, host, 8085);
     } catch {
       // already connected
     }

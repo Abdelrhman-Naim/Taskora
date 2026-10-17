@@ -12,7 +12,8 @@
     "test:rules": "firebase emulators:exec --only firestore --project demo-taskflow \"vitest run tests/rules\"",
     "test:services": "firebase emulators:exec --only auth,firestore --project demo-taskflow \"vitest run tests/services\"",
     "test:e2e": "firebase emulators:exec --only auth,firestore --project demo-taskflow \"playwright test\"",
-    "test": "npm run test:unit && npm run test:rules && npm run test:services"
+    "test": "npm run test:unit && npm run test:rules && npm run test:services",
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "firebase": "^13.0.0",
@@ -35,6 +36,7 @@
     "eslint-config-next": "16.4.2",
     "firebase-tools": "^15.34.0",
     "jsdom": "^30.1.3",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.5"
   }
