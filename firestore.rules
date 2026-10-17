@@ -52,7 +52,33 @@ service cloud.firestore {
 
     match /projects/{pid}/tasks/{tid} {
       function proj() { return projectData(pid); }
+      function taskShape(t) {
+        return t.keys().hasOnly(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt'])
+          && t.keys().hasAll(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt'])
+          && t.title is string && t.title.size() >= 3 && t.title.size() <= 120
+          && t.description is string && t.description.size() <= 1000
+          && t.status in ['todo','in_progress','done'] && t.priority in ['low','medium','high']
+          && (t.assigneeId == null || t.assigneeId in proj().memberIds)
+          && (t.dueDate == null || (t.dueDate is string && t.dueDate.matches('^\\d{4}-\\d{2}-\\d{2}$')))
+          && t.updatedAt == request.time;
+      }
+      function memberMayUpdate() {
+        let r = resource.data;
+        let uid = request.auth.uid;
+        let changed = request.resource.data.diff(r).affectedKeys();
+        return (r.createdBy == uid || r.assigneeId == uid)
+          && (!changed.hasAny(['status']) || r.assigneeId == uid)
+          && (!changed.hasAny(['assigneeId']) || r.createdBy == uid);
+      }
       allow read: if isMember(proj());
+      allow create: if isMember(proj()) && taskShape(request.resource.data)
+        && request.resource.data.status == 'todo'
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update: if isMember(proj()) && taskShape(request.resource.data)
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (isOwner(proj()) || memberMayUpdate());
       allow delete: if isMember(proj()) && (isOwner(proj()) || resource.data.createdBy == request.auth.uid);
     }
 
