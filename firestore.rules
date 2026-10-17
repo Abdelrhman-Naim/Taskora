@@ -2,6 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
+    function isOwner(p)  { return signedIn() && p.ownerId == request.auth.uid; }
+    function isMember(p) { return signedIn() && request.auth.uid in p.memberIds; }
+    function projectData(pid) { return get(/databases/$(database)/documents/projects/$(pid)).data; }
+    function validName(v) { return v is string && v.size() >= 3 && v.size() <= 80; }
+    function validDesc(v) { return v is string && v.size() <= 1000; }
+    function projectShape(d) {
+      return d.keys().hasOnly(['name', 'description', 'ownerId', 'memberIds', 'memberNames', 'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['name', 'description', 'ownerId', 'memberIds', 'memberNames', 'createdAt', 'updatedAt'])
+        && validName(d.name) && validDesc(d.description)
+        && d.memberIds is list && d.memberIds.size() <= 50 && d.memberIds.hasAll([d.ownerId])
+        && d.memberNames is map && d.memberNames.keys().toSet() == d.memberIds.toSet()
+        && d.updatedAt == request.time;
+    }
 
     match /users/{uid} {
       allow read: if signedIn() && request.auth.uid == uid;
@@ -23,6 +36,18 @@ service cloud.firestore {
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 1 && request.resource.data.displayName.size() <= 60;
       allow update, delete: if false;
+    }
+
+    match /projects/{pid} {
+      allow read: if signedIn() && (resource == null || isMember(resource.data));
+      allow create: if signedIn() && projectShape(request.resource.data)
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.memberIds == [request.auth.uid]
+        && request.resource.data.createdAt == request.time;
+      allow update: if isOwner(resource.data) && projectShape(request.resource.data)
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isOwner(resource.data);
     }
 
     match /{document=**} {
