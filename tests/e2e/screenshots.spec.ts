@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -8,7 +8,7 @@ test.describe('Documentation Screenshots Capture', () => {
     fs.mkdirSync(screenshotsDir, { recursive: true });
   }
 
-  const saveShot = async (targetPage: any, filename: string) => {
+  const saveShot = async (targetPage: Page, filename: string) => {
     const buffer = await targetPage.screenshot({ fullPage: false });
     const targetPath = path.join(screenshotsDir, filename);
     for (let attempt = 0; attempt < 3; attempt++) {
