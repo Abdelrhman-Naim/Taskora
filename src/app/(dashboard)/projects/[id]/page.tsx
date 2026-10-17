@@ -16,9 +16,13 @@ import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskForm } from '@/components/tasks/TaskForm';
+import { FilterBar } from '@/components/tasks/FilterBar';
+import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
+import { todayString } from '@/lib/dates';
 import { AppError } from '@/lib/errors';
 
 export default function ProjectPage() {
@@ -35,6 +39,7 @@ export default function ProjectPage() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
 
   useEffect(() => {
     let ignore = false;
@@ -237,6 +242,7 @@ export default function ProjectPage() {
 
   const isOwner = user?.uid === project.ownerId;
   const currentUid = user?.uid || '';
+  const filteredTasks = filterTasks(tasks, filters, todayString());
 
   return (
     <div>
@@ -371,22 +377,42 @@ export default function ProjectPage() {
           </h2>
         </div>
 
-        <TaskList
-          tasks={tasks}
-          project={project}
-          currentUserId={currentUid}
-          isOwner={isOwner}
-          onEdit={(task) => {
-            setShowCreateForm(false);
-            setEditingTask(task);
-          }}
-          onDelete={(task) => setDeletingTask(task)}
-          onStatusChange={handleStatusChange}
-          onNewTask={() => {
-            setEditingTask(null);
-            setShowCreateForm(true);
-          }}
-        />
+        {tasks.length > 0 && (
+          <FilterBar
+            filters={filters}
+            onChange={setFilters}
+            members={project.memberNames || {}}
+            onReset={() => setFilters(DEFAULT_FILTERS)}
+          />
+        )}
+
+        {tasks.length > 0 && filteredTasks.length === 0 ? (
+          <EmptyState
+            title="No tasks match your filters"
+            message="Try adjusting or clearing your filters to see tasks."
+            action={{
+              label: 'Reset Filters',
+              onClick: () => setFilters(DEFAULT_FILTERS),
+            }}
+          />
+        ) : (
+          <TaskList
+            tasks={filteredTasks}
+            project={project}
+            currentUserId={currentUid}
+            isOwner={isOwner}
+            onEdit={(task) => {
+              setShowCreateForm(false);
+              setEditingTask(task);
+            }}
+            onDelete={(task) => setDeletingTask(task)}
+            onStatusChange={handleStatusChange}
+            onNewTask={() => {
+              setEditingTask(null);
+              setShowCreateForm(true);
+            }}
+          />
+        )}
       </div>
 
       {/* Confirm Task Deletion Dialog */}
