@@ -143,7 +143,7 @@ export const ar: Record<MessageKey, string> = {
   'member.emailPlaceholder': 'البريد الإلكتروني للعضو',
   'member.remove': 'إزالة',
   'member.removeConfirmTitle': 'إزالة العضو',
-  'member.removeConfirmMessage': 'هل أنت متأكد من إزالة {name}؟ ستصبح أي مهام مكلّفة إليه بدون مكلَّف.',
+  'member.removeConfirmMessage': 'هل أنت متأكد من إزالة {name}؟ سيتم إلغاء تعيين {count} من المهام المكلّفة إليه.',
   'member.role.owner': 'المالك',
   'member.role.member': 'عضو',
   'member.error.alreadyMember': 'هذا المستخدم عضو في المشروع بالفعل.',
@@ -160,6 +160,7 @@ export const ar: Record<MessageKey, string> = {
 
   // Filters
   'filter.search': 'البحث في المهام...',
+  'filter.searchLabel': 'البحث',
   'filter.allStatuses': 'جميع الحالات',
   'filter.allPriorities': 'جميع الأولويات',
   'filter.allAssignees': 'جميع المكلّفين',
@@ -174,13 +175,23 @@ export const ar: Record<MessageKey, string> = {
   'error.conflict': 'يتعارض هذا الإجراء مع البيانات الحالية.',
   'error.validation': 'يرجى مراجعة المدخلات والمحاولة مجددًا.',
   'error.unexpected': 'حدث خطأ غير متوقع. يرجى المحاولة مجددًا.',
+  'error.email-in-use': 'يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.',
+  'error.invalid-credentials': 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى التحقق والمحاولة مجددًا.',
+  'error.weak-password': 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.',
+  'error.unknown-user': 'لم يتم العثور على مستخدم مسجل بهذا البريد الإلكتروني.',
+  'error.duplicate-member': 'هذا المستخدم عضو في المشروع بالفعل.',
+  'error.too-many-tasks': 'وصل المشروع إلى الحد الأقصى المسموح به من المهام.',
+  'error.unknown': 'حدث خطأ غير متوقع. يرجى المحاولة مجددًا.',
 
   // Validation
+  'validation.name.required': 'الاسم مطلوب',
   'validation.name.length': 'يجب أن يكون الاسم بين 3 و80 حرفًا',
   'validation.description.length': 'يجب ألا يتجاوز الوصف 1000 حرف',
-  'validation.title.length': 'يجب أن يكون العنوان بين 3 و120 حرفًا',
+  'validation.title.length': 'يجب أن يكون عنوان المهمة بين 3 و120 حرفًا',
   'validation.email.invalid': 'يرجى إدخال عنوان بريد إلكتروني صالح',
   'validation.password.length': 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل',
+  'validation.priority.invalid': 'يجب تحديد أولوية صالحة',
+  'validation.dueDate.invalid': 'تاريخ الاستحقاق غير صالح',
 
   // Theme
   'theme.system': 'مظهر النظام',

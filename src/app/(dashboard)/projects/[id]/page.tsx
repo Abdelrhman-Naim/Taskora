@@ -14,21 +14,27 @@ import {
 } from '@/services/tasks';
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nProvider';
+import { MessageKey } from '@/i18n/en';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Dialog } from '@/components/ui/Dialog';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { FilterBar } from '@/components/tasks/FilterBar';
 import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
 import { todayString } from '@/lib/dates';
 import { AppError } from '@/lib/errors';
+import styles from './page.module.css';
 
-export default function ProjectPage() {
+export default function ProjectPage(): React.ReactElement | null {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const { user } = useAuth();
+  const { t } = useI18n();
 
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -83,7 +89,9 @@ export default function ProjectPage() {
       setTasks(list);
     } catch (err) {
       if (err instanceof AppError) {
-        setActionError(err.message);
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        setActionError(translated !== key ? translated : err.message);
       }
     }
   };
@@ -146,9 +154,11 @@ export default function ProjectPage() {
       await reloadTasks();
     } catch (err) {
       if (err instanceof AppError) {
-        setActionError(err.message);
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        setActionError(translated !== key ? translated : err.message);
       } else {
-        setActionError('Failed to change task status');
+        setActionError(t('error.unexpected'));
       }
     }
   };
@@ -163,17 +173,19 @@ export default function ProjectPage() {
       await reloadTasks();
     } catch (err) {
       if (err instanceof AppError) {
-        setActionError(err.message);
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        setActionError(translated !== key ? translated : err.message);
       } else {
-        setActionError('Failed to delete task');
+        setActionError(t('error.unexpected'));
       }
     }
   };
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-        <Spinner size={36} label="Loading project..." />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minBlockSize: '50vh' }}>
+        <Spinner size={36} label={t('common.loading')} />
       </div>
     );
   }
@@ -181,23 +193,15 @@ export default function ProjectPage() {
   if (error) {
     if (error.code === 'not-found') {
       return (
-        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '12px' }}>Project not found</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-            The project you are looking for does not exist or has been deleted.
+        <div style={{ textAlign: 'center', paddingBlock: '60px', paddingInline: '20px' }}>
+          <h2 style={{ fontSize: '1.375rem', fontWeight: 700, marginBlockEnd: '12px' }}>
+            {t('project.error.notFound')}
+          </h2>
+          <p style={{ color: 'var(--text-muted)', marginBlockEnd: '24px' }}>
+            {t('project.error.notFoundDesc')}
           </p>
-          <Link
-            href="/dashboard"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'var(--primary)',
-              color: 'var(--primary-fg)',
-              borderRadius: 'var(--radius-sm)',
-              fontWeight: 600,
-              textDecoration: 'none',
-            }}
-          >
-            Back to Dashboard
+          <Link href="/dashboard">
+            <Button variant="primary">{t('common.backToDashboard')}</Button>
           </Link>
         </div>
       );
@@ -205,34 +209,27 @@ export default function ProjectPage() {
 
     if (error.code === 'permission-denied') {
       return (
-        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '12px', color: 'var(--danger)' }}>
-            Access Denied
+        <div style={{ textAlign: 'center', paddingBlock: '60px', paddingInline: '20px' }}>
+          <h2 style={{ fontSize: '1.375rem', fontWeight: 700, marginBlockEnd: '12px', color: 'var(--st-overdue-fg)' }}>
+            {t('project.error.accessDenied')}
           </h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-            You don&apos;t have access to this project.
+          <p style={{ color: 'var(--text-muted)', marginBlockEnd: '24px' }}>
+            {t('project.error.accessDeniedDesc')}
           </p>
-          <Link
-            href="/dashboard"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'var(--primary)',
-              color: 'var(--primary-fg)',
-              borderRadius: 'var(--radius-sm)',
-              fontWeight: 600,
-              textDecoration: 'none',
-            }}
-          >
-            Back to Dashboard
+          <Link href="/dashboard">
+            <Button variant="primary">{t('common.backToDashboard')}</Button>
           </Link>
         </div>
       );
     }
 
+    const errKey = `error.${error.code}` as MessageKey;
+    const translatedMsg = t(errKey);
+
     return (
       <ErrorState
-        title="Failed to load project"
-        message={error.message}
+        title={t('error.unexpected')}
+        message={translatedMsg !== errKey ? translatedMsg : error.message}
         onRetry={handleRetry}
       />
     );
@@ -246,78 +243,59 @@ export default function ProjectPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: '28px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <Link
-              href="/dashboard"
-              style={{ fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none', display: 'inline-block', marginBottom: '8px' }}
-            >
-              &larr; Back to Dashboard
-            </Link>
-            <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>
+      <div className={styles.header}>
+        <Link href="/dashboard" className={styles.backLink}>
+          <Icon name="arrow" size={16} />
+          <span>{t('common.backToDashboard')}</span>
+        </Link>
+        <div className={styles.topRow}>
+          <div className={styles.titleContainer}>
+            <h1 dir="auto" className={styles.projectTitle}>
               {project.name}
             </h1>
             {project.description && (
-              <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginTop: '6px', maxWidth: '700px' }}>
+              <p dir="auto" className={styles.projectDesc}>
                 {project.description}
               </p>
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div className={styles.actions}>
             {isOwner && (
-              <Link
-                href={`/projects/${project.id}/settings`}
-                style={{
-                  padding: '8px 14px',
-                  backgroundColor: 'var(--surface)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                }}
-              >
-                Project Settings
+              <Link href={`/projects/${project.id}/settings`}>
+                <Button variant="secondary" icon="settings">
+                  {t('project.edit.title')}
+                </Button>
               </Link>
             )}
 
-            <button
-              type="button"
+            <Button
+              variant="primary"
+              icon="plus"
               onClick={() => {
                 setEditingTask(null);
                 setShowCreateForm(true);
               }}
-              style={{
-                padding: '8px 18px',
-                backgroundColor: 'var(--primary)',
-                color: 'var(--primary-fg)',
-                border: 'none',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '14px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
             >
-              + New Task
-            </button>
+              {t('task.new.button')}
+            </Button>
           </div>
         </div>
+        <div className={styles.brassRule} aria-hidden="true" />
       </div>
 
       {actionError && (
         <div
           role="alert"
           style={{
-            padding: '12px 16px',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid var(--danger)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--danger)',
-            fontSize: '14px',
-            marginBottom: '20px',
+            paddingBlock: '12px',
+            paddingInline: '16px',
+            backgroundColor: 'var(--st-overdue-bg)',
+            border: '1px solid var(--st-overdue)',
+            borderRadius: 'var(--radius-md)',
+            color: 'var(--st-overdue-fg)',
+            fontSize: '0.875rem',
+            marginBlockEnd: '20px',
           }}
         >
           {actionError}
@@ -326,16 +304,8 @@ export default function ProjectPage() {
 
       {/* Task Creation Modal / Panel */}
       {showCreateForm && (
-        <div
-          style={{
-            marginBottom: '28px',
-            padding: '24px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)',
-          }}
-        >
-          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>New Task</h2>
+        <div className={styles.panel}>
+          <h2 className={styles.panelTitle}>{t('task.new.title')}</h2>
           <TaskForm
             project={project}
             currentUserId={currentUid}
@@ -348,16 +318,8 @@ export default function ProjectPage() {
 
       {/* Task Edit Modal / Panel */}
       {editingTask && (
-        <div
-          style={{
-            marginBottom: '28px',
-            padding: '24px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)',
-          }}
-        >
-          <h2 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '16px' }}>Edit Task</h2>
+        <div className={styles.panel}>
+          <h2 className={styles.panelTitle}>{t('task.edit.title')}</h2>
           <TaskForm
             project={project}
             initialTask={editingTask}
@@ -371,27 +333,30 @@ export default function ProjectPage() {
 
       {/* Tasks List */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 700 }}>
-            Tasks <span style={{ fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500 }}>({tasks.length})</span>
+        <div className={styles.tasksHeader}>
+          <h2 className={styles.tasksTitle}>
+            {t('task.list.title')}
+            <span className={`${styles.tasksCount} num`}>({tasks.length})</span>
           </h2>
         </div>
 
         {tasks.length > 0 && (
-          <FilterBar
-            filters={filters}
-            onChange={setFilters}
-            members={project.memberNames || {}}
-            onReset={() => setFilters(DEFAULT_FILTERS)}
-          />
+          <div className={styles.filterWrapper}>
+            <FilterBar
+              filters={filters}
+              onChange={setFilters}
+              members={project.memberNames || {}}
+              onReset={() => setFilters(DEFAULT_FILTERS)}
+            />
+          </div>
         )}
 
         {tasks.length > 0 && filteredTasks.length === 0 ? (
           <EmptyState
-            title="No tasks match your filters"
-            message="Try adjusting or clearing your filters to see tasks."
+            title={t('task.empty.title')}
+            message={t('task.empty.description')}
             action={{
-              label: 'Reset Filters',
+              label: t('filter.clear'),
               onClick: () => setFilters(DEFAULT_FILTERS),
             }}
           />
@@ -417,11 +382,12 @@ export default function ProjectPage() {
 
       {/* Confirm Task Deletion Dialog */}
       {deletingTask && (
-        <ConfirmDialog
+        <Dialog
           isOpen={true}
-          title="Delete Task"
-          message={`Are you sure you want to delete "${deletingTask.title}"? This action cannot be undone.`}
-          confirmLabel="Delete Task"
+          title={t('task.delete.confirmTitle')}
+          message={t('task.delete.confirmMessage', { title: deletingTask.title })}
+          confirmLabel={t('common.delete')}
+          cancelLabel={t('common.cancel')}
           isDangerous={true}
           onConfirm={handleConfirmDelete}
           onCancel={() => setDeletingTask(null)}

@@ -15,30 +15,30 @@ function isValidDateString(val: string): boolean {
 export const emailSchema = z
   .string()
   .trim()
-  .email('Please enter a valid email address');
+  .email('validation.email.invalid');
 
 export const registerSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, 'Name is required')
-    .max(60, 'Name must be 60 characters or less'),
+    .min(1, 'validation.name.required')
+    .max(60, 'validation.name.length'),
   email: emailSchema,
   password: z
     .string()
-    .min(6, 'Password must be at least 6 characters'),
+    .min(6, 'validation.password.length'),
 });
 
 export const projectInputSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(3, 'Project name must be between 3 and 80 characters')
-    .max(80, 'Project name must be between 3 and 80 characters'),
+    .min(3, 'validation.name.length')
+    .max(80, 'validation.name.length'),
   description: z
     .string()
     .trim()
-    .max(1000, 'Description must be 1000 characters or less')
+    .max(1000, 'validation.description.length')
     .default('')
     .optional()
     .transform((val) => val ?? ''),
@@ -48,17 +48,17 @@ export const taskInputSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(3, 'Task title must be between 3 and 120 characters')
-    .max(120, 'Task title must be between 3 and 120 characters'),
+    .min(3, 'validation.title.length')
+    .max(120, 'validation.title.length'),
   description: z
     .string()
     .trim()
-    .max(1000, 'Description must be 1000 characters or less')
+    .max(1000, 'validation.description.length')
     .default('')
     .optional()
     .transform((val) => val ?? ''),
   priority: z.enum(TASK_PRIORITIES, {
-    message: 'Priority must be low, medium, or high',
+    message: 'validation.priority.invalid',
   }),
   assigneeId: z.string().nullable().optional().default(null),
   dueDate: z
@@ -66,7 +66,7 @@ export const taskInputSchema = z.object({
     .nullable()
     .optional()
     .refine((val) => val === null || val === undefined || isValidDateString(val), {
-      message: 'Due date must be a valid date in YYYY-MM-DD format',
+      message: 'validation.dueDate.invalid',
     })
     .default(null),
 });

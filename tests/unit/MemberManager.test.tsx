@@ -1,9 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemberManager } from '@/components/projects/MemberManager';
 import { Project } from '@/types';
 import { AppError } from '@/lib/errors';
+import { renderWithProviders } from '../helpers/render';
 
 describe('MemberManager Component', () => {
   const project: Project = {
@@ -22,7 +23,7 @@ describe('MemberManager Component', () => {
   };
 
   it('renders members list from memberNames and does NOT show Remove button for owner', () => {
-    render(
+    renderWithProviders(
       <MemberManager
         project={project}
         onAddMember={vi.fn()}
@@ -48,7 +49,7 @@ describe('MemberManager Component', () => {
     const handleRemove = vi.fn().mockResolvedValue({ unassigned: 3 });
     const getCount = vi.fn().mockResolvedValue(3);
 
-    render(
+    renderWithProviders(
       <MemberManager
         project={project}
         onAddMember={vi.fn()}
@@ -79,7 +80,7 @@ describe('MemberManager Component', () => {
       new AppError('unknown-user', 'No user found with this email address')
     );
 
-    render(
+    renderWithProviders(
       <MemberManager
         project={project}
         onAddMember={handleAdd}

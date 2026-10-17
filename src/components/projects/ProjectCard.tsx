@@ -1,64 +1,78 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { Project } from '@/types';
+import { useI18n } from '@/i18n/I18nProvider';
 
 interface ProjectCardProps {
   project: Project;
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project }: ProjectCardProps): React.ReactElement {
+  const { tp, formatDueDate } = useI18n();
   const memberCount = project.memberIds.length;
+
+  const updatedDateStr = project.updatedAt
+    ? formatDueDate(new Date(project.updatedAt).toISOString().split('T')[0])
+    : '';
 
   return (
     <Link
       href={`/projects/${project.id}`}
       style={{
         display: 'block',
-        backgroundColor: 'var(--bg-card)',
+        backgroundColor: 'var(--surface)',
         padding: '20px',
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--border-color)',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border)',
         textDecoration: 'none',
-        transition: 'transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease',
+        color: 'inherit',
+        transition: 'border-color var(--dur-short) var(--ease-standard), background-color var(--dur-short) var(--ease-standard)',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBlockEnd: '8px', gap: '12px' }}>
+        <h2 dir="auto" style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text)' }}>
           {project.name}
         </h2>
         <span
+          className="num"
           style={{
-            fontSize: '12px',
+            fontSize: '0.75rem',
             fontWeight: 500,
             padding: '2px 8px',
-            backgroundColor: 'var(--bg-primary)',
+            backgroundColor: 'var(--surface-2)',
             color: 'var(--text-muted)',
             borderRadius: 'var(--radius-sm)',
-            border: '1px solid var(--border-color)',
+            border: '1px solid var(--border)',
+            whiteSpace: 'nowrap',
           }}
         >
-          {memberCount} {memberCount === 1 ? 'member' : 'members'}
+          {tp('members.count', memberCount)}
         </span>
       </div>
 
       <p
+        dir="auto"
         style={{
-          fontSize: '14px',
-          color: 'var(--text-secondary)',
+          fontSize: '0.875rem',
+          color: 'var(--text-muted)',
           lineHeight: 1.5,
-          marginBottom: '16px',
+          marginBlockEnd: '16px',
           overflow: 'hidden',
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
         }}
       >
-        {project.description || 'No description provided.'}
+        {project.description}
       </p>
 
-      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-        Updated {project.updatedAt ? new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(project.updatedAt) : 'recently'}
-      </div>
+      {updatedDateStr && (
+        <div className="num" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+          {updatedDateStr}
+        </div>
+      )}
     </Link>
   );
 }

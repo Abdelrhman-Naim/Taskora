@@ -1,7 +1,13 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Project } from '@/types';
 import { Field } from '@/components/ui/Field';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { Dialog } from '@/components/ui/Dialog';
+import { useI18n } from '@/i18n/I18nProvider';
+import { MessageKey } from '@/i18n/en';
 import { AppError } from '@/lib/errors';
 
 interface MemberManagerProps {
@@ -16,7 +22,8 @@ export function MemberManager({
   onAddMember,
   onRemoveMember,
   getAssignedTaskCount,
-}: MemberManagerProps) {
+}: MemberManagerProps): React.ReactElement {
+  const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [adding, setAdding] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -31,7 +38,7 @@ export function MemberManager({
 
     const trimmed = email.trim();
     if (!trimmed) {
-      setEmailError('Please enter an email address');
+      setEmailError(t('validation.email.invalid'));
       return;
     }
 
@@ -41,11 +48,13 @@ export function MemberManager({
       setEmail('');
     } catch (err: unknown) {
       if (err instanceof AppError) {
-        setEmailError(err.message);
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        setEmailError(translated !== key ? translated : err.message);
       } else if (err && typeof err === 'object' && 'message' in err) {
         setEmailError((err as { message: string }).message);
       } else {
-        setEmailError('Failed to add member');
+        setEmailError(t('error.unexpected'));
       }
     } finally {
       setAdding(false);
@@ -73,7 +82,9 @@ export function MemberManager({
       setMemberToRemove(null);
     } catch (err) {
       if (err instanceof AppError) {
-        setEmailError(err.message);
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        setEmailError(translated !== key ? translated : err.message);
       }
       setMemberToRemove(null);
     }
@@ -82,8 +93,8 @@ export function MemberManager({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div>
-        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '14px', color: 'var(--text-primary)' }}>
-          Project Members ({project.memberIds.length})
+        <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBlockEnd: '14px', color: 'var(--text)' }}>
+          {t('member.title')} ({project.memberIds.length})
         </h3>
 
         <div
@@ -91,9 +102,9 @@ export function MemberManager({
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
-            backgroundColor: 'var(--surface)',
+            backgroundColor: 'var(--surface-2)',
             border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: 'var(--radius-lg)',
             padding: '12px',
           }}
         >
@@ -108,29 +119,31 @@ export function MemberManager({
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  padding: '10px 14px',
-                  backgroundColor: 'var(--bg)',
-                  borderRadius: 'var(--radius-sm)',
+                  paddingBlock: '10px',
+                  paddingInline: '14px',
+                  backgroundColor: 'var(--surface)',
+                  borderRadius: 'var(--radius-md)',
                   border: '1px solid var(--border)',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-primary)' }}>
+                  <span dir="auto" style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text)' }}>
                     {name}
                   </span>
                   {isOwner && (
                     <span
                       style={{
-                        fontSize: '11px',
+                        fontSize: '0.6875rem',
                         fontWeight: 700,
                         textTransform: 'uppercase',
-                        padding: '2px 8px',
+                        paddingBlock: '2px',
+                        paddingInline: '8px',
                         borderRadius: '999px',
-                        backgroundColor: 'rgba(56, 189, 248, 0.15)',
-                        color: 'var(--primary)',
+                        backgroundColor: 'var(--accent-dim)',
+                        color: 'var(--accent-text)',
                       }}
                     >
-                      Owner
+                      {t('member.role.owner')}
                     </span>
                   )}
                 </div>
@@ -142,17 +155,18 @@ export function MemberManager({
                     disabled={loadingCount}
                     onClick={() => handleInitiateRemove(uid, name)}
                     style={{
-                      padding: '4px 12px',
-                      fontSize: '12px',
+                      paddingBlock: '4px',
+                      paddingInline: '12px',
+                      fontSize: '0.75rem',
                       fontWeight: 600,
                       backgroundColor: 'transparent',
-                      color: 'var(--danger)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: 'var(--st-overdue-fg)',
+                      border: '1px solid var(--st-overdue)',
                       borderRadius: 'var(--radius-sm)',
                       cursor: loadingCount ? 'not-allowed' : 'pointer',
                     }}
                   >
-                    Remove
+                    {t('member.remove')}
                   </button>
                 )}
               </div>
@@ -162,60 +176,51 @@ export function MemberManager({
       </div>
 
       <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <h4 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
-          Add New Member
+        <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text)' }}>
+          {t('member.add')}
         </h4>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: '240px' }}>
-            <Field id="member-email" label="Member Email" error={emailError || undefined}>
-              <input
-                id="member-email"
-                aria-label="Member Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="colleague@example.com"
-                style={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  backgroundColor: 'var(--surface)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 'var(--radius-sm)',
-                  color: 'var(--text-primary)',
-                  fontSize: '14px',
-                }}
-              />
+            <Field id="member-email" label={t('member.emailLabel')} error={emailError || undefined}>
+              {(fieldProps) => (
+                <Input
+                  {...fieldProps}
+                  type="email"
+                  dir="ltr"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('member.emailPlaceholder')}
+                  disabled={adding}
+                  autoComplete="email"
+                />
+              )}
             </Field>
           </div>
 
-          <button
-            type="submit"
-            disabled={adding}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: 'var(--primary)',
-              color: 'var(--primary-fg)',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              fontWeight: 600,
-              fontSize: '14px',
-              cursor: adding ? 'not-allowed' : 'pointer',
-              marginTop: '28px',
-              opacity: adding ? 0.7 : 1,
-            }}
-          >
-            {adding ? 'Adding...' : 'Add Member'}
-          </button>
+          <div style={{ marginBlockStart: '24px' }}>
+            <Button
+              type="submit"
+              variant="primary"
+              loading={adding}
+              disabled={adding}
+            >
+              {t('member.add')}
+            </Button>
+          </div>
         </div>
       </form>
 
       {memberToRemove && (
-        <ConfirmDialog
+        <Dialog
           isOpen={true}
-          title="Remove Member"
-          message={`Are you sure you want to remove ${memberToRemove.name}? ${assignedCount} assigned tasks will be unassigned.`}
-          confirmLabel="Remove Member"
+          title={t('member.removeConfirmTitle')}
+          message={t('member.removeConfirmMessage', {
+            name: memberToRemove.name,
+            count: assignedCount,
+          })}
+          confirmLabel={t('member.removeConfirmTitle')}
+          cancelLabel={t('common.cancel')}
           isDangerous={true}
           onConfirm={handleConfirmRemove}
           onCancel={() => setMemberToRemove(null)}

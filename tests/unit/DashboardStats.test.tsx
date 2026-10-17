@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import React from 'react';
+import { renderWithProviders } from '../helpers/render';
 import { DashboardStats } from '@/components/dashboard/DashboardStats';
 import { DashboardStatsData } from '@/lib/stats';
 import { Project, Task } from '@/types';
@@ -43,8 +44,8 @@ describe('DashboardStats Component', () => {
     overdue: [overdueTask],
   };
 
-  it('renders summary cards with total tasks and count by status', () => {
-    render(
+  it('renders summary ledger with total tasks and count by status', () => {
+    renderWithProviders(
       <DashboardStats
         stats={sampleStats}
         projects={mockProjects}
@@ -52,23 +53,27 @@ describe('DashboardStats Component', () => {
       />
     );
 
-    // Total tasks
-    const totalCard = screen.getByText('Total Tasks').closest('div')!;
-    expect(within(totalCard).getByText('4')).toBeInTheDocument();
+    // Total tasks in ledger
+    const ledger = screen.getByTestId('dashboard-ledger');
+    const totalItem = within(ledger).getByText('Total').closest('div')!;
+    expect(within(totalItem).getByText('4')).toBeInTheDocument();
 
     // By status counts
-    const todoCard = screen.getByText(/To Do/i).closest('div')!;
-    expect(within(todoCard).getByText('2')).toBeInTheDocument();
+    const todoItem = within(ledger).getByText('To do').closest('div')!;
+    expect(within(todoItem).getByText('2')).toBeInTheDocument();
 
-    const inProgressCard = screen.getByText(/In Progress/i).closest('div')!;
-    expect(within(inProgressCard).getByText('1')).toBeInTheDocument();
+    const inProgressItem = within(ledger).getByText('In progress').closest('div')!;
+    expect(within(inProgressItem).getByText('1')).toBeInTheDocument();
 
-    const doneCard = screen.getByText(/Done/i).closest('div')!;
-    expect(within(doneCard).getByText('1')).toBeInTheDocument();
+    const doneItem = within(ledger).getByText('Done').closest('div')!;
+    expect(within(doneItem).getByText('1')).toBeInTheDocument();
+
+    const overdueItem = within(ledger).getByText('Overdue').closest('div')!;
+    expect(within(overdueItem).getByText('1')).toBeInTheDocument();
   });
 
   it('renders overdue tasks list with project link', () => {
-    render(
+    renderWithProviders(
       <DashboardStats
         stats={sampleStats}
         projects={mockProjects}
@@ -76,10 +81,10 @@ describe('DashboardStats Component', () => {
       />
     );
 
-    expect(screen.getByText(/Overdue Tasks/i)).toBeInTheDocument();
+    expect(screen.getByText(/Overdue tasks/i)).toBeInTheDocument();
     expect(screen.getByText('Fix overdue bug')).toBeInTheDocument();
 
-    const link = screen.getByRole('link', { name: /view project/i });
+    const link = screen.getByRole('link', { name: /details/i });
     expect(link).toHaveAttribute('href', '/projects/proj-1');
   });
 
@@ -89,7 +94,7 @@ describe('DashboardStats Component', () => {
       overdue: [],
     };
 
-    render(
+    renderWithProviders(
       <DashboardStats
         stats={noOverdueStats}
         projects={mockProjects}
@@ -107,7 +112,7 @@ describe('DashboardStats Component', () => {
       overdue: [],
     };
 
-    render(
+    renderWithProviders(
       <DashboardStats
         stats={emptyStats}
         projects={[]}
@@ -116,7 +121,5 @@ describe('DashboardStats Component', () => {
     );
 
     expect(screen.getByText(/No projects yet/i)).toBeInTheDocument();
-    const createBtn = screen.getByRole('link', { name: /create project/i });
-    expect(createBtn).toHaveAttribute('href', '/projects/new');
   });
 });

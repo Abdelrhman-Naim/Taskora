@@ -1,12 +1,13 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { renderWithProviders } from '../helpers/render';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { AppError } from '@/lib/errors';
 
 describe('AuthForm Component', () => {
   it('renders all required form fields with associated labels', () => {
-    render(<AuthForm mode="register" onSubmit={vi.fn()} />);
+    renderWithProviders(<AuthForm mode="register" onSubmit={vi.fn()} />);
 
     const nameInput = screen.getByLabelText(/name/i);
     const emailInput = screen.getByLabelText(/email/i);
@@ -19,7 +20,7 @@ describe('AuthForm Component', () => {
 
   it('shows inline validation error for invalid email without calling onSubmit (TC-02)', async () => {
     const onSubmit = vi.fn();
-    render(<AuthForm mode="register" onSubmit={onSubmit} />);
+    renderWithProviders(<AuthForm mode="register" onSubmit={onSubmit} />);
 
     fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Valid Name' } });
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'abc' } });
@@ -36,7 +37,7 @@ describe('AuthForm Component', () => {
 
   it('shows inline validation error for short password', async () => {
     const onSubmit = vi.fn();
-    render(<AuthForm mode="register" onSubmit={onSubmit} />);
+    renderWithProviders(<AuthForm mode="register" onSubmit={onSubmit} />);
 
     fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Valid Name' } });
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
@@ -60,7 +61,7 @@ describe('AuthForm Component', () => {
         })
     );
 
-    render(<AuthForm mode="login" onSubmit={pendingSubmit} />);
+    renderWithProviders(<AuthForm mode="login" onSubmit={pendingSubmit} />);
 
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText(/password/i), { target: { value: '123456' } });
@@ -84,7 +85,7 @@ describe('AuthForm Component', () => {
       new AppError('email-in-use', 'An account with this email already exists.')
     );
 
-    render(<AuthForm mode="register" onSubmit={failingSubmit} />);
+    renderWithProviders(<AuthForm mode="register" onSubmit={failingSubmit} />);
 
     fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Valid Name' } });
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });

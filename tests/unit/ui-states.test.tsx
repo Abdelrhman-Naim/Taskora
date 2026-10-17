@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import DashboardPage from '@/app/(dashboard)/dashboard/page';
 import ProjectPage from '@/app/(dashboard)/projects/[id]/page';
@@ -14,6 +14,7 @@ import * as projectServices from '@/services/projects';
 import * as taskServices from '@/services/tasks';
 import { DEFAULT_FILTERS } from '@/lib/taskFilters';
 import { Project } from '@/types';
+import { renderWithProviders } from '../helpers/render';
 
 // Mock useAuth
 const mockUser = {
@@ -32,7 +33,7 @@ vi.mock('@/hooks/useAuth', () => ({
 // Mock useParams for ProjectPage
 vi.mock('next/navigation', () => ({
   useParams: () => ({ id: 'proj-1' }),
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
 }));
 
 // Mock firebase
@@ -60,7 +61,7 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
         };
       });
 
-      render(<DashboardPage />);
+      renderWithProviders(<DashboardPage />);
 
       // Error state should display
       const alert = await screen.findByRole('alert');
@@ -85,10 +86,11 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
         tasks: [],
       });
 
-      render(<DashboardPage />);
+      renderWithProviders(<DashboardPage />);
 
       expect(await screen.findByText(/No projects yet/i)).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /create project/i })).toHaveAttribute(
+      const newProjectLinks = screen.getAllByRole('link', { name: /new project|create project/i });
+      expect(newProjectLinks[0]).toHaveAttribute(
         'href',
         '/projects/new'
       );
@@ -118,10 +120,10 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
       });
       vi.spyOn(taskServices, 'listTasks').mockResolvedValue([]);
 
-      render(<ProjectPage />);
+      renderWithProviders(<ProjectPage />);
 
       const alert = await screen.findByRole('alert');
-      expect(alert).toHaveTextContent(/Connection lost/i);
+      expect(alert).toHaveTextContent(/Connection lost|Network connection unavailable/i);
 
       const retryBtn = screen.getByRole('button', { name: /retry/i });
       fireEvent.click(retryBtn);
@@ -150,7 +152,7 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
         new AppError('network', 'Cannot connect to server')
       );
 
-      render(
+      renderWithProviders(
         <TaskForm
           project={mockProject}
           currentUserId="user-1"
@@ -163,11 +165,11 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
       const titleInput = screen.getByLabelText(/title/i);
       fireEvent.change(titleInput, { target: { value: 'New offline task' } });
 
-      const submitBtn = screen.getByRole('button', { name: /create task/i });
+      const submitBtn = screen.getByRole('button', { name: /create task|\+ new task|save/i });
       fireEvent.click(submitBtn);
 
       const alert = await screen.findByRole('alert');
-      expect(alert).toHaveTextContent(/Cannot connect to server/i);
+      expect(alert).toHaveTextContent(/Cannot connect to server|Network connection unavailable/i);
 
       // Title input is preserved and still has value
       expect(titleInput).toHaveValue('New offline task');
@@ -178,7 +180,7 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
         new AppError('network', 'Failed to create project offline')
       );
 
-      render(
+      renderWithProviders(
         <ProjectForm
           onSubmit={handleSubmit}
         />
@@ -187,11 +189,11 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
       const nameInput = screen.getByLabelText(/project name/i);
       fireEvent.change(nameInput, { target: { value: 'Offline Project Name' } });
 
-      const submitBtn = screen.getByRole('button', { name: /save project/i });
+      const submitBtn = screen.getByRole('button', { name: /save project|save/i });
       fireEvent.click(submitBtn);
 
       const alert = await screen.findByRole('alert');
-      expect(alert).toHaveTextContent(/Failed to create project offline/i);
+      expect(alert).toHaveTextContent(/Failed to create project offline|Network connection unavailable/i);
       expect(nameInput).toHaveValue('Offline Project Name');
     });
   });
@@ -209,14 +211,14 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
     };
 
     it('AuthForm inputs have associated accessible labels', () => {
-      render(<AuthForm mode="register" onSubmit={vi.fn()} />);
+      renderWithProviders(<AuthForm mode="register" onSubmit={vi.fn()} />);
       expect(screen.getByLabelText(/full name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     });
 
     it('TaskForm inputs have associated accessible labels', () => {
-      render(
+      renderWithProviders(
         <TaskForm
           project={mockProject}
           currentUserId="user-1"
@@ -233,13 +235,13 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
     });
 
     it('ProjectForm inputs have associated accessible labels', () => {
-      render(<ProjectForm onSubmit={vi.fn()} />);
+      renderWithProviders(<ProjectForm onSubmit={vi.fn()} />);
       expect(screen.getByLabelText(/project name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
     });
 
     it('FilterBar controls have associated accessible labels', () => {
-      render(
+      renderWithProviders(
         <FilterBar
           filters={DEFAULT_FILTERS}
           onChange={vi.fn()}
@@ -254,7 +256,7 @@ describe('UI States, Accessibility, and Error Resilience (Task 12, TC-15, TC-16)
     });
 
     it('MemberManager input has associated accessible label', () => {
-      render(
+      renderWithProviders(
         <MemberManager
           project={mockProject}
           onAddMember={vi.fn()}

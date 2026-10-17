@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { renderWithProviders } from '../helpers/render';
 import { FilterBar } from '@/components/tasks/FilterBar';
 import { TaskFilters, DEFAULT_FILTERS } from '@/lib/taskFilters';
 
@@ -19,7 +20,7 @@ describe('FilterBar Component', () => {
   };
 
   it('renders all filter controls with associated accessible labels', () => {
-    render(
+    renderWithProviders(
       <FilterBar
         filters={initialFilters}
         onChange={vi.fn()}
@@ -35,11 +36,11 @@ describe('FilterBar Component', () => {
     expect(screen.getByLabelText(/overdue only/i)).toBeInTheDocument();
 
     // Reset button
-    expect(screen.getByRole('button', { name: /reset/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /reset|clear/i })).toBeInTheDocument();
   });
 
   it('populates assignee dropdown with All, Unassigned, and member names', () => {
-    render(
+    renderWithProviders(
       <FilterBar
         filters={initialFilters}
         onChange={vi.fn()}
@@ -58,9 +59,9 @@ describe('FilterBar Component', () => {
     expect(screen.getByRole('option', { name: /Bob Jones/i })).toBeInTheDocument();
   });
 
-  it('calls onChange with updated search query when input changes', () => {
+  it('calls onChange with updated search query when typing in search input', () => {
     const handleChange = vi.fn();
-    render(
+    renderWithProviders(
       <FilterBar
         filters={initialFilters}
         onChange={handleChange}
@@ -69,17 +70,17 @@ describe('FilterBar Component', () => {
     );
 
     const searchInput = screen.getByLabelText(/search/i);
-    fireEvent.change(searchInput, { target: { value: 'navbar' } });
+    fireEvent.change(searchInput, { target: { value: 'deploy' } });
 
     expect(handleChange).toHaveBeenCalledWith({
       ...initialFilters,
-      search: 'navbar',
+      search: 'deploy',
     });
   });
 
-  it('calls onChange with updated status when status dropdown changes', () => {
+  it('calls onChange with updated status when selecting a new status', () => {
     const handleChange = vi.fn();
-    render(
+    renderWithProviders(
       <FilterBar
         filters={initialFilters}
         onChange={handleChange}
@@ -96,9 +97,9 @@ describe('FilterBar Component', () => {
     });
   });
 
-  it('calls onChange with updated priority when priority dropdown changes', () => {
+  it('calls onChange with updated priority when selecting a new priority', () => {
     const handleChange = vi.fn();
-    render(
+    renderWithProviders(
       <FilterBar
         filters={initialFilters}
         onChange={handleChange}
@@ -115,9 +116,9 @@ describe('FilterBar Component', () => {
     });
   });
 
-  it('calls onChange with updated assigneeId when assignee dropdown changes', () => {
+  it('calls onChange with updated assigneeId when selecting an assignee', () => {
     const handleChange = vi.fn();
-    render(
+    renderWithProviders(
       <FilterBar
         filters={initialFilters}
         onChange={handleChange}
@@ -126,17 +127,17 @@ describe('FilterBar Component', () => {
     );
 
     const assigneeSelect = screen.getByLabelText(/assignee/i);
-    fireEvent.change(assigneeSelect, { target: { value: 'unassigned' } });
+    fireEvent.change(assigneeSelect, { target: { value: 'user-alice' } });
 
     expect(handleChange).toHaveBeenCalledWith({
       ...initialFilters,
-      assigneeId: 'unassigned',
+      assigneeId: 'user-alice',
     });
   });
 
-  it('calls onChange with updated overdueOnly when overdue checkbox toggles', () => {
+  it('calls onChange with overdueOnly=true when checking overdue checkbox', () => {
     const handleChange = vi.fn();
-    render(
+    renderWithProviders(
       <FilterBar
         filters={initialFilters}
         onChange={handleChange}
@@ -165,7 +166,7 @@ describe('FilterBar Component', () => {
       overdueOnly: true,
     };
 
-    render(
+    renderWithProviders(
       <FilterBar
         filters={modifiedFilters}
         onChange={handleChange}
@@ -174,7 +175,7 @@ describe('FilterBar Component', () => {
       />
     );
 
-    const resetBtn = screen.getByRole('button', { name: /reset/i });
+    const resetBtn = screen.getByRole('button', { name: /reset|clear/i });
     fireEvent.click(resetBtn);
 
     expect(handleChange).toHaveBeenCalledWith(DEFAULT_FILTERS);

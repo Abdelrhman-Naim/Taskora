@@ -7,9 +7,16 @@ import { RequireAuth } from '@/components/auth/RequireAuth';
 import { useAuth } from '@/hooks/useAuth';
 import { logoutUser } from '@/services/auth';
 import { getAuthInstance } from '@/lib/firebase';
+import { useI18n } from '@/i18n/I18nProvider';
+import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
+import { ThemeToggle } from '@/theme/ThemeToggle';
+import { Button } from '@/components/ui/Button';
+import { ToastProvider } from '@/components/ui/Toast';
+import styles from './layout.module.css';
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default function DashboardLayout({ children }: { children: ReactNode }): React.ReactElement {
   const { user } = useAuth();
+  const { t } = useI18n();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -20,72 +27,42 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <RequireAuth>
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header
-          style={{
-            backgroundColor: 'var(--bg-card)',
-            borderBottom: '1px solid var(--border-color)',
-            padding: '12px 24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <Link
-              href="/dashboard"
-              style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: 'var(--text-primary)',
-                textDecoration: 'none',
-              }}
-            >
-              TaskFlow
-            </Link>
-            <nav style={{ display: 'flex', gap: '16px' }}>
-              <Link
-                href="/dashboard"
-                style={{
-                  color: 'var(--text-secondary)',
-                  fontWeight: 500,
-                  fontSize: '14px',
-                  textDecoration: 'none',
-                }}
-              >
-                Dashboard
+      <ToastProvider>
+        <div className={styles.wrapper}>
+          <header className={styles.header}>
+            <div className={styles.startNav}>
+              <Link href="/dashboard" className={styles.logo}>
+                {t('app.name')}
               </Link>
-            </nav>
-          </div>
+              <nav className={styles.navLinks}>
+                <Link href="/dashboard" className={styles.navLink}>
+                  {t('nav.dashboard')}
+                </Link>
+              </nav>
+            </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {user && (
-              <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-                {user.displayName || user.email}
-              </span>
-            )}
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: '6px 14px',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: 'var(--danger)',
-                backgroundColor: 'transparent',
-                border: '1px solid var(--danger-border)',
-                borderRadius: 'var(--radius-sm)',
-                cursor: 'pointer',
-              }}
-            >
-              Log out
-            </button>
-          </div>
-        </header>
+            <div className={styles.endNav}>
+              <LocaleSwitcher />
+              <ThemeToggle />
+              {user && (
+                <span className={styles.userName} dir="auto">
+                  {user.displayName || user.email}
+                </span>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                style={{ color: 'var(--st-overdue-fg)' }}
+              >
+                {t('nav.logout')}
+              </Button>
+            </div>
+          </header>
 
-        <main style={{ flex: 1, padding: '24px', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
-          {children}
-        </main>
-      </div>
+          <main className={styles.main}>{children}</main>
+        </div>
+      </ToastProvider>
     </RequireAuth>
   );
 }

@@ -1,8 +1,17 @@
+'use client';
+
 import React, { useState } from 'react';
 import { Project, Task, TaskPriority, TaskStatus } from '@/types';
 import { taskInputSchema, fieldErrors } from '@/lib/validation';
 import { canChangeStatus, canReassign } from '@/components/tasks/TaskCard';
 import { Field } from '@/components/ui/Field';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Select } from '@/components/ui/Select';
+import { Button } from '@/components/ui/Button';
+import { useI18n } from '@/i18n/I18nProvider';
+import { MessageKey } from '@/i18n/en';
+import { AppError } from '@/lib/errors';
 
 interface TaskFormProps {
   project: Project;
@@ -27,7 +36,8 @@ export function TaskForm({
   isOwner,
   onSave,
   onCancel,
-}: TaskFormProps) {
+}: TaskFormProps): React.ReactElement {
+  const { t } = useI18n();
   const isEditing = Boolean(initialTask);
 
   const [title, setTitle] = useState(initialTask?.title || '');
@@ -43,6 +53,12 @@ export function TaskForm({
 
   const reassignAllowed = !isEditing || canReassign(initialTask!, currentUserId, isOwner);
   const statusAllowed = !isEditing || canChangeStatus(initialTask!, currentUserId, isOwner);
+
+  const translateError = (errKeyOrMsg: string | undefined): string | undefined => {
+    if (!errKeyOrMsg) return undefined;
+    const translated = t(errKeyOrMsg as MessageKey);
+    return translated !== errKeyOrMsg ? translated : errKeyOrMsg;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,10 +86,14 @@ export function TaskForm({
         ...(isEditing ? { status } : {}),
       });
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'message' in err) {
+      if (err instanceof AppError) {
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        setSaveError(translated !== key ? translated : err.message);
+      } else if (err && typeof err === 'object' && 'message' in err) {
         setSaveError((err as { message: string }).message);
       } else {
-        setSaveError('Failed to save task. Please try again.');
+        setSaveError(t('error.unexpected'));
       }
     } finally {
       setSubmitting(false);
@@ -83,12 +103,13 @@ export function TaskForm({
   return (
     <form
       onSubmit={handleSubmit}
+      noValidate
       style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '16px',
-        maxWidth: '560px',
-        width: '100%',
+        maxInlineSize: '560px',
+        inlineSize: '100%',
       }}
     >
       {saveError && (
@@ -96,213 +117,137 @@ export function TaskForm({
           role="alert"
           style={{
             padding: '12px 16px',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid var(--danger)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--danger)',
-            fontSize: '14px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            backgroundColor: 'var(--st-overdue-bg)',
+            border: '1px solid var(--st-overdue)',
+            color: 'var(--st-overdue-fg)',
+            borderRadius: 'var(--radius-md)',
+            fontSize: '0.875rem',
+            fontWeight: 500,
           }}
         >
-          <span>{saveError}</span>
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              padding: '4px 10px',
-              backgroundColor: 'var(--danger)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: '12px',
-              fontWeight: 600,
-              cursor: submitting ? 'not-allowed' : 'pointer',
-            }}
-          >
-            Retry
-          </button>
+          {saveError}
         </div>
       )}
 
-      <Field id="task-title" label="Title" error={errors.title} required>
-        <input
-          id="task-title"
-          aria-label="Title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g. Implement authentication"
-          style={{
-            width: '100%',
-            padding: '10px 14px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--text-primary)',
-            fontSize: '14px',
-          }}
-        />
+      <Field
+        id="task-title"
+        label={t('task.field.title')}
+        error={translateError(errors.title)}
+        required
+      >
+        {(fieldProps) => (
+          <Input
+            {...fieldProps}
+            type="text"
+            dir="auto"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            disabled={submitting}
+            placeholder={t('task.field.titlePlaceholder')}
+          />
+        )}
       </Field>
 
-      <Field id="task-description" label="Description" error={errors.description}>
-        <textarea
-          id="task-description"
-          aria-label="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Add more details, acceptance criteria, or links..."
-          rows={3}
-          style={{
-            width: '100%',
-            padding: '10px 14px',
-            backgroundColor: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--text-primary)',
-            fontSize: '14px',
-            resize: 'vertical',
-          }}
-        />
+      <Field
+        id="task-description"
+        label={t('task.field.description')}
+        error={translateError(errors.description)}
+      >
+        {(fieldProps) => (
+          <Textarea
+            {...fieldProps}
+            dir="auto"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            disabled={submitting}
+            placeholder={t('task.field.descriptionPlaceholder')}
+            rows={3}
+          />
+        )}
       </Field>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-        <Field id="task-priority" label="Priority" error={errors.priority}>
-          <select
-            id="task-priority"
-            aria-label="Priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value as TaskPriority)}
-            style={{
-              width: '100%',
-              padding: '10px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--text-primary)',
-              fontSize: '14px',
-            }}
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+        <Field id="task-priority" label={t('task.field.priority')} error={translateError(errors.priority)}>
+          {(fieldProps) => (
+            <Select
+              {...fieldProps}
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as TaskPriority)}
+              disabled={submitting}
+            >
+              <option value="low">{t('task.priority.low')}</option>
+              <option value="medium">{t('task.priority.medium')}</option>
+              <option value="high">{t('task.priority.high')}</option>
+            </Select>
+          )}
         </Field>
 
-        <Field id="task-due-date" label="Due Date" error={errors.dueDate}>
-          <input
-            id="task-due-date"
-            aria-label="Due Date"
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--text-primary)',
-              fontSize: '14px',
-            }}
-          />
+        <Field id="task-due-date" label={t('task.field.dueDate')} error={translateError(errors.dueDate)}>
+          {(fieldProps) => (
+            <Input
+              {...fieldProps}
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              disabled={submitting}
+            />
+          )}
         </Field>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: isEditing ? '1fr 1fr' : '1fr', gap: '16px' }}>
-        <Field id="task-assignee" label="Assignee" error={errors.assigneeId}>
-          <select
-            id="task-assignee"
-            aria-label="Assignee"
-            value={assigneeId || ''}
-            onChange={(e) => setAssigneeId(e.target.value || null)}
-            disabled={!reassignAllowed}
-            style={{
-              width: '100%',
-              padding: '10px 14px',
-              backgroundColor: 'var(--surface)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-sm)',
-              color: 'var(--text-primary)',
-              fontSize: '14px',
-              opacity: reassignAllowed ? 1 : 0.6,
-              cursor: reassignAllowed ? 'pointer' : 'not-allowed',
-            }}
-          >
-            <option value="">Unassigned</option>
-            {project.memberIds.map((uid) => (
-              <option key={uid} value={uid}>
-                {project.memberNames[uid] || uid}
-              </option>
-            ))}
-          </select>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+        <Field id="task-assignee" label={t('task.field.assignee')} error={translateError(errors.assigneeId)}>
+          {(fieldProps) => (
+            <Select
+              {...fieldProps}
+              value={assigneeId || ''}
+              onChange={(e) => setAssigneeId(e.target.value || null)}
+              disabled={submitting || !reassignAllowed}
+            >
+              <option value="">{t('task.assignee.unassigned')}</option>
+              {Object.entries(project.memberNames).map(([uid, name]) => (
+                <option key={uid} value={uid}>
+                  {name}
+                </option>
+              ))}
+            </Select>
+          )}
         </Field>
 
         {isEditing && (
-          <Field id="task-status" label="Status" error={errors.status}>
-            <select
-              id="task-status"
-              aria-label="Status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value as TaskStatus)}
-              disabled={!statusAllowed}
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                backgroundColor: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-sm)',
-                color: 'var(--text-primary)',
-                fontSize: '14px',
-                opacity: statusAllowed ? 1 : 0.6,
-                cursor: statusAllowed ? 'pointer' : 'not-allowed',
-              }}
-            >
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="done">Done</option>
-            </select>
+          <Field id="task-status" label={t('task.field.status')} error={translateError(errors.status)}>
+            {(fieldProps) => (
+              <Select
+                {...fieldProps}
+                value={status}
+                onChange={(e) => setStatus(e.target.value as TaskStatus)}
+                disabled={submitting || !statusAllowed}
+              >
+                <option value="todo">{t('task.status.todo')}</option>
+                <option value="in_progress">{t('task.status.in_progress')}</option>
+                <option value="done">{t('task.status.done')}</option>
+              </Select>
+            )}
           </Field>
         )}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
-        <button
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBlockStart: '8px' }}>
+        <Button
           type="button"
+          variant="secondary"
           onClick={onCancel}
           disabled={submitting}
-          style={{
-            padding: '10px 18px',
-            backgroundColor: 'transparent',
-            color: 'var(--text-secondary)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-sm)',
-            fontWeight: 600,
-            fontSize: '14px',
-            cursor: submitting ? 'not-allowed' : 'pointer',
-          }}
         >
-          Cancel
-        </button>
-
-        <button
+          {t('common.cancel')}
+        </Button>
+        <Button
           type="submit"
-          disabled={submitting}
-          style={{
-            padding: '10px 22px',
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-fg)',
-            border: 'none',
-            borderRadius: 'var(--radius-sm)',
-            fontWeight: 600,
-            fontSize: '14px',
-            cursor: submitting ? 'not-allowed' : 'pointer',
-            opacity: submitting ? 0.7 : 1,
-          }}
+          variant="primary"
+          loading={submitting}
         >
-          {submitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Task'}
-        </button>
+          {isEditing ? t('common.save') : t('task.new.button')}
+        </Button>
       </div>
     </form>
   );

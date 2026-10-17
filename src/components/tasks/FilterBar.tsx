@@ -3,6 +3,8 @@
 import React from 'react';
 import { TaskFilters, DEFAULT_FILTERS } from '@/lib/taskFilters';
 import { TaskPriority, TaskStatus } from '@/types';
+import { Button } from '@/components/ui/Button';
+import { useI18n } from '@/i18n/I18nProvider';
 import styles from './FilterBar.module.css';
 
 export interface FilterBarProps {
@@ -17,7 +19,9 @@ export function FilterBar({
   onChange,
   members,
   onReset,
-}: FilterBarProps) {
+}: FilterBarProps): React.ReactElement {
+  const { t } = useI18n();
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange({ ...filters, search: e.target.value });
   };
@@ -50,13 +54,14 @@ export function FilterBar({
       {/* Search Input */}
       <div className={styles.fieldGrow}>
         <label htmlFor="filter-search" className={styles.label}>
-          Search
+          {t('filter.searchLabel')}
         </label>
         <input
           id="filter-search"
           type="text"
+          dir="auto"
           className={styles.input}
-          placeholder="Search tasks by title..."
+          placeholder={t('filter.search')}
           value={filters.search}
           onChange={handleSearchChange}
         />
@@ -65,7 +70,7 @@ export function FilterBar({
       {/* Status Filter */}
       <div className={styles.field}>
         <label htmlFor="filter-status" className={styles.label}>
-          Status
+          {t('task.field.status')}
         </label>
         <select
           id="filter-status"
@@ -73,17 +78,17 @@ export function FilterBar({
           value={filters.status}
           onChange={handleStatusChange}
         >
-          <option value="all">All</option>
-          <option value="todo">To Do</option>
-          <option value="in_progress">In Progress</option>
-          <option value="done">Done</option>
+          <option value="all">{t('common.all')}</option>
+          <option value="todo">{t('task.status.todo')}</option>
+          <option value="in_progress">{t('task.status.in_progress')}</option>
+          <option value="done">{t('task.status.done')}</option>
         </select>
       </div>
 
       {/* Priority Filter */}
       <div className={styles.field}>
         <label htmlFor="filter-priority" className={styles.label}>
-          Priority
+          {t('task.field.priority')}
         </label>
         <select
           id="filter-priority"
@@ -91,17 +96,17 @@ export function FilterBar({
           value={filters.priority}
           onChange={handlePriorityChange}
         >
-          <option value="all">All</option>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option value="all">{t('common.all')}</option>
+          <option value="low">{t('task.priority.low')}</option>
+          <option value="medium">{t('task.priority.medium')}</option>
+          <option value="high">{t('task.priority.high')}</option>
         </select>
       </div>
 
       {/* Assignee Filter */}
       <div className={styles.field}>
         <label htmlFor="filter-assignee" className={styles.label}>
-          Assignee
+          {t('task.field.assignee')}
         </label>
         <select
           id="filter-assignee"
@@ -109,8 +114,8 @@ export function FilterBar({
           value={filters.assigneeId}
           onChange={handleAssigneeChange}
         >
-          <option value="all">All</option>
-          <option value="unassigned">Unassigned</option>
+          <option value="all">{t('common.all')}</option>
+          <option value="unassigned">{t('task.assignee.unassigned')}</option>
           {Object.entries(members).map(([uid, name]) => (
             <option key={uid} value={uid}>
               {name}
@@ -129,19 +134,20 @@ export function FilterBar({
             checked={filters.overdueOnly}
             onChange={handleOverdueChange}
           />
-          Overdue only
+          {t('filter.overdueOnly')}
         </label>
       </div>
 
       {/* Reset Button */}
       <div className={styles.actions}>
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="sm"
           onClick={handleReset}
-          className={styles.resetBtn}
         >
-          Reset
-        </button>
+          {t('filter.clear')}
+        </Button>
       </div>
     </div>
   );

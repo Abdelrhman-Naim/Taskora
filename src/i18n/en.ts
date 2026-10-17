@@ -141,7 +141,7 @@ export const en = {
   'member.emailPlaceholder': 'colleague@example.test',
   'member.remove': 'Remove',
   'member.removeConfirmTitle': 'Remove member',
-  'member.removeConfirmMessage': 'Are you sure you want to remove {name}? Any tasks assigned to them will become unassigned.',
+  'member.removeConfirmMessage': 'Are you sure you want to remove {name}? {count} assigned tasks will be unassigned.',
   'member.role.owner': 'Owner',
   'member.role.member': 'Member',
   'member.error.alreadyMember': 'This user is already a member of the project.',
@@ -158,6 +158,7 @@ export const en = {
 
   // Filters
   'filter.search': 'Search tasks...',
+  'filter.searchLabel': 'Search',
   'filter.allStatuses': 'All statuses',
   'filter.allPriorities': 'All priorities',
   'filter.allAssignees': 'All assignees',
@@ -172,13 +173,23 @@ export const en = {
   'error.conflict': 'This action conflicts with existing data.',
   'error.validation': 'Please check your inputs and try again.',
   'error.unexpected': 'An unexpected error occurred. Please try again.',
+  'error.email-in-use': 'An account with this email already exists.',
+  'error.invalid-credentials': 'Invalid email or password. Please check your details and try again.',
+  'error.weak-password': 'Password must be at least 6 characters.',
+  'error.unknown-user': 'No user found with this email address.',
+  'error.duplicate-member': 'This user is already a member of the project.',
+  'error.too-many-tasks': 'Project has reached the maximum allowed tasks.',
+  'error.unknown': 'An unexpected error occurred. Please try again.',
 
   // Validation
+  'validation.name.required': 'Name is required',
   'validation.name.length': 'Name must be between 3 and 80 characters',
   'validation.description.length': 'Description must be 1000 characters or less',
-  'validation.title.length': 'Title must be between 3 and 120 characters',
+  'validation.title.length': 'Task title must be between 3 and 120 characters',
   'validation.email.invalid': 'Please enter a valid email address',
   'validation.password.length': 'Password must be at least 6 characters',
+  'validation.priority.invalid': 'Priority must be low, medium, or high',
+  'validation.dueDate.invalid': 'Due date must be a valid date in YYYY-MM-DD format',
 
   // Theme
   'theme.system': 'System theme',

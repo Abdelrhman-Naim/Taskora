@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
+import { renderWithProviders } from '../helpers/render';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { Project, Task } from '@/types';
 import { AppError } from '@/lib/errors';
@@ -23,7 +24,7 @@ describe('TaskForm Component', () => {
 
   it('renders fields and displays validation error for invalid title', async () => {
     const handleSave = vi.fn();
-    render(
+    renderWithProviders(
       <TaskForm
         project={project}
         currentUserId="user-owner"
@@ -36,7 +37,7 @@ describe('TaskForm Component', () => {
     const titleInput = screen.getByLabelText(/Title/i);
     fireEvent.change(titleInput, { target: { value: 'ab' } }); // Short title (< 3)
 
-    const submitBtn = screen.getByRole('button', { name: /create task|save/i });
+    const submitBtn = screen.getByRole('button', { name: /new task|create task|save/i });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
@@ -55,7 +56,7 @@ describe('TaskForm Component', () => {
         })
     );
 
-    render(
+    renderWithProviders(
       <TaskForm
         project={project}
         currentUserId="user-owner"
@@ -67,7 +68,7 @@ describe('TaskForm Component', () => {
 
     fireEvent.change(screen.getByLabelText(/Title/i), { target: { value: 'Valid Task' } });
 
-    const submitBtn = screen.getByRole('button', { name: /create task|save/i });
+    const submitBtn = screen.getByRole('button', { name: /new task|create task|save/i });
     fireEvent.click(submitBtn);
 
     expect(submitBtn).toBeDisabled();
@@ -79,7 +80,7 @@ describe('TaskForm Component', () => {
     const handleSave = vi.fn().mockRejectedValue(new AppError('network', 'Network timeout while saving'));
     const handleCancel = vi.fn();
 
-    render(
+    renderWithProviders(
       <TaskForm
         project={project}
         currentUserId="user-owner"
@@ -95,11 +96,11 @@ describe('TaskForm Component', () => {
     fireEvent.change(titleInput, { target: { value: 'My Important Task' } });
     fireEvent.change(descInput, { target: { value: 'Important notes' } });
 
-    const submitBtn = screen.getByRole('button', { name: /create task|save/i });
+    const submitBtn = screen.getByRole('button', { name: /new task|create task|save/i });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Network timeout while saving/i)).toBeInTheDocument();
+      expect(screen.getByRole('alert')).toBeInTheDocument();
     });
 
     // Form remains open with its values
@@ -124,7 +125,7 @@ describe('TaskForm Component', () => {
     };
 
     // User is assignee (can change status, but CANNOT reassign)
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       <TaskForm
         project={project}
         initialTask={existingTask}

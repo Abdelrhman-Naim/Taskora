@@ -8,18 +8,23 @@ import { getProject, updateProject, deleteProjectCascade } from '@/services/proj
 import { addMember, removeMember, countAssignedTasks } from '@/services/members';
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nProvider';
+import { MessageKey } from '@/i18n/en';
 import { ProjectForm } from '@/components/projects/ProjectForm';
 import { MemberManager } from '@/components/projects/MemberManager';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Dialog } from '@/components/ui/Dialog';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { AppError } from '@/lib/errors';
 
-export default function ProjectSettingsPage() {
+export default function ProjectSettingsPage(): React.ReactElement | null {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const router = useRouter();
   const { user } = useAuth();
+  const { t } = useI18n();
 
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -108,9 +113,11 @@ export default function ProjectSettingsPage() {
       setDeleting(false);
       setShowDeleteConfirm(false);
       if (err instanceof AppError) {
-        setDeleteError(err.message);
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        setDeleteError(translated !== key ? translated : err.message);
       } else {
-        setDeleteError('Failed to delete project. Please try again.');
+        setDeleteError(t('error.unexpected'));
       }
     }
   };
@@ -150,17 +157,20 @@ export default function ProjectSettingsPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-        <Spinner size={36} label="Loading settings..." />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minBlockSize: '50vh' }}>
+        <Spinner size={36} label={t('common.loading')} />
       </div>
     );
   }
 
   if (error || !project) {
+    const errKey = error ? (`error.${error.code}` as MessageKey) : 'error.unexpected';
+    const translatedMsg = t(errKey);
+
     return (
       <ErrorState
-        title="Project unavailable"
-        message={error?.message || 'Could not load project settings.'}
+        title={t('project.error.notFound')}
+        message={translatedMsg !== errKey ? translatedMsg : (error?.message || t('project.error.notFoundDesc'))}
         onRetry={handleRetry}
       />
     );
@@ -168,57 +178,82 @@ export default function ProjectSettingsPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: '24px' }}>
+      <div style={{ marginBlockEnd: '28px' }}>
         <Link
           href={`/projects/${project.id}`}
-          style={{ fontSize: '13px', color: 'var(--text-muted)', textDecoration: 'none', display: 'inline-block', marginBottom: '8px' }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '0.8125rem',
+            color: 'var(--text-muted)',
+            textDecoration: 'none',
+            marginBlockEnd: '12px',
+          }}
         >
-          &larr; Back to {project.name}
+          <Icon name="arrow" size={16} />
+          <span>{t('common.back')}</span>: <span dir="auto">{project.name}</span>
         </Link>
-        <h1 style={{ fontSize: '26px', fontWeight: 800 }}>Project Settings</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700, margin: 0, color: 'var(--text)' }}>
+          {t('project.edit.title')}
+        </h1>
+        <div
+          style={{
+            blockSize: '1px',
+            backgroundColor: 'var(--brass)',
+            inlineSize: '100%',
+            marginBlockStart: '16px',
+          }}
+          aria-hidden="true"
+        />
       </div>
 
       {deleteError && (
         <div
           role="alert"
           style={{
-            padding: '12px 16px',
-            marginBottom: '20px',
-            backgroundColor: 'var(--danger-bg)',
-            border: '1px solid var(--danger-border)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--danger)',
-            fontSize: '14px',
+            paddingBlock: '12px',
+            paddingInline: '16px',
+            marginBlockEnd: '20px',
+            backgroundColor: 'var(--st-overdue-bg)',
+            border: '1px solid var(--st-overdue)',
+            borderRadius: 'var(--radius-md)',
+            color: 'var(--st-overdue-fg)',
+            fontSize: '0.875rem',
           }}
         >
           {deleteError}
         </div>
       )}
 
-      <div
-        style={{
-          backgroundColor: 'var(--bg-card)',
-          padding: '24px',
-          borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--border-color)',
-          marginBottom: '32px',
-        }}
-      >
-        <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>General Information</h2>
-        <ProjectForm
-          initialValues={{ name: project.name, description: project.description }}
-          onSubmit={handleUpdate}
-          submitLabel="Save Changes"
-        />
-      </div>
-
+      {/* General Settings */}
       <div
         style={{
           backgroundColor: 'var(--surface)',
           padding: '24px',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
-          marginBottom: '32px',
+          marginBlockEnd: '32px',
+        }}
+      >
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, marginBlockStart: 0, marginBlockEnd: '16px', color: 'var(--text)' }}>
+          {t('project.edit.title')}
+        </h2>
+        <ProjectForm
+          initialValues={{ name: project.name, description: project.description }}
+          onSubmit={handleUpdate}
+          submitLabel={t('common.save')}
+        />
+      </div>
+
+      {/* Members Management */}
+      <div
+        style={{
+          backgroundColor: 'var(--surface)',
+          padding: '24px',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border)',
+          marginBlockEnd: '32px',
         }}
       >
         <MemberManager
@@ -229,45 +264,37 @@ export default function ProjectSettingsPage() {
         />
       </div>
 
+      {/* Danger Zone */}
       <div
         style={{
-          backgroundColor: 'var(--bg-card)',
+          backgroundColor: 'var(--surface)',
           padding: '24px',
-          borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--danger-border)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--st-overdue)',
         }}
       >
-        <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--danger)', marginBottom: '8px' }}>
-          Danger Zone
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--st-overdue-fg)', marginBlockStart: 0, marginBlockEnd: '8px' }}>
+          {t('project.settings.dangerZone')}
         </h2>
-        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-          Deleting this project is permanent and will delete all associated tasks.
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBlockEnd: '16px', lineHeight: 1.5 }}>
+          {t('project.settings.deleteWarning')}
         </p>
-        <button
-          type="button"
+        <Button
+          variant="danger"
           onClick={() => setShowDeleteConfirm(true)}
           disabled={deleting}
-          style={{
-            padding: '10px 18px',
-            fontSize: '14px',
-            fontWeight: 600,
-            color: 'var(--primary-fg)',
-            backgroundColor: 'var(--danger)',
-            border: 'none',
-            borderRadius: 'var(--radius-sm)',
-            cursor: deleting ? 'not-allowed' : 'pointer',
-          }}
+          loading={deleting}
         >
-          {deleting ? 'Deleting...' : 'Delete Project'}
-        </button>
+          {t('project.settings.deleteButton')}
+        </Button>
       </div>
 
-      <ConfirmDialog
+      <Dialog
         isOpen={showDeleteConfirm}
-        title="Delete Project?"
-        message={`Are you sure you want to permanently delete "${project.name}" and all its tasks? This action cannot be undone.`}
-        confirmLabel="Yes, Delete Project"
-        cancelLabel="Cancel"
+        title={t('project.delete.confirmTitle')}
+        message={t('project.delete.confirmMessage', { name: project.name })}
+        confirmLabel={t('project.settings.deleteButton')}
+        cancelLabel={t('common.cancel')}
         isDangerous={true}
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { renderWithProviders } from '../helpers/render';
 import {
   TaskCard,
   canEditTask,
@@ -73,7 +74,7 @@ describe('TaskCard Component', () => {
   };
 
   it('renders status text, priority badge text, and textual Overdue badge', () => {
-    render(
+    renderWithProviders(
       <TaskCard
         task={overdueTask}
         project={project}
@@ -99,7 +100,7 @@ describe('TaskCard Component', () => {
     const handleDelete = vi.fn();
     const handleStatusChange = vi.fn();
 
-    render(
+    renderWithProviders(
       <TaskCard
         task={overdueTask}
         project={project}
@@ -118,5 +119,58 @@ describe('TaskCard Component', () => {
     const deleteBtn = screen.getByRole('button', { name: /delete/i });
     fireEvent.click(deleteBtn);
     expect(handleDelete).toHaveBeenCalledWith(overdueTask);
+
+    const statusSelect = screen.getByRole('combobox');
+    fireEvent.change(statusSelect, { target: { value: 'done' } });
+    expect(handleStatusChange).toHaveBeenCalledWith(overdueTask, 'done');
+  });
+
+  // Review Focus #1
+  it('applies dir="auto" to English title in Arabic locale and Arabic title in English locale', () => {
+    const enTask: Task = {
+      ...overdueTask,
+      id: 'task-en',
+      title: 'Fix login bug',
+    };
+
+    const { unmount } = renderWithProviders(
+      <TaskCard
+        task={enTask}
+        project={project}
+        currentUserId="user-owner"
+        isOwner={true}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onStatusChange={() => {}}
+      />,
+      { locale: 'ar' }
+    );
+
+    const enTitleEl = screen.getByText('Fix login bug');
+    expect(enTitleEl.getAttribute('dir')).toBe('auto');
+
+    unmount();
+
+    const arTask: Task = {
+      ...overdueTask,
+      id: 'task-ar',
+      title: 'مراجعة الصفحة الرئيسية',
+    };
+
+    renderWithProviders(
+      <TaskCard
+        task={arTask}
+        project={project}
+        currentUserId="user-owner"
+        isOwner={true}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onStatusChange={() => {}}
+      />,
+      { locale: 'en' }
+    );
+
+    const arTitleEl = screen.getByText('مراجعة الصفحة الرئيسية');
+    expect(arTitleEl.getAttribute('dir')).toBe('auto');
   });
 });

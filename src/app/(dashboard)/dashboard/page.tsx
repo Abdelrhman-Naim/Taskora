@@ -5,16 +5,22 @@ import Link from 'next/link';
 import { Project, Task } from '@/types';
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
-import { ProjectCard } from '@/components/projects/ProjectCard';
 import { DashboardStats } from '@/components/dashboard/DashboardStats';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { Button } from '@/components/ui/Button';
+import { IconButton } from '@/components/ui/IconButton';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 import { AppError } from '@/lib/errors';
 import { computeStats, loadDashboardData, DashboardStatsData } from '@/lib/stats';
 import { todayString } from '@/lib/dates';
+import { useI18n } from '@/i18n/I18nProvider';
+import { MessageKey } from '@/i18n/en';
+import styles from './page.module.css';
 
-export default function DashboardPage() {
+export default function DashboardPage(): React.ReactElement {
   const { user } = useAuth();
+  const { t, tp, formatDueDate } = useI18n();
   const [projects, setProjects] = useState<Project[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,51 +79,40 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
-        <Spinner size={36} label="Loading your dashboard..." />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minBlockSize: '40vh' }}>
+        <Spinner size={36} label={t('common.loading')} />
       </div>
     );
   }
 
   if (error) {
-    return <ErrorState message={error.message} onRetry={handleRetry} />;
+    const errKey = `error.${error.code}` as MessageKey;
+    const translatedMsg = t(errKey);
+    return <ErrorState message={translatedMsg !== errKey ? translatedMsg : error.message} onRetry={handleRetry} />;
   }
 
   const stats: DashboardStatsData = computeStats(tasks, todayString());
 
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '28px',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>Dashboard</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '4px' }}>
-            Overview of your team&apos;s activity, overdue tasks, and projects
-          </p>
+      {/* Header with Brass Hairline Rule */}
+      <div className={styles.header}>
+        <div className={styles.topRow}>
+          <div>
+            <h1 className={styles.greeting} dir="auto">
+              {t('dashboard.welcome', { name: user?.displayName || user?.email || '' })}
+            </h1>
+          </div>
+
+          <Link href="/projects/new">
+            <Button variant="primary" icon="plus">
+              {t('dashboard.projects.createButton')}
+            </Button>
+          </Link>
         </div>
 
-        <Link
-          href="/projects/new"
-          style={{
-            padding: '10px 18px',
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-fg)',
-            borderRadius: 'var(--radius-sm)',
-            fontWeight: 600,
-            fontSize: '14px',
-            textDecoration: 'none',
-          }}
-        >
-          + New Project
-        </Link>
+        {/* The Bold Brass Rule */}
+        <div className={styles.brassRule} />
       </div>
 
       {/* Dashboard Statistics & Overdue List */}
@@ -127,27 +122,70 @@ export default function DashboardPage() {
         hasProjects={projects.length > 0}
       />
 
-      {/* Projects List Grid */}
+      {/* Projects List as Rows */}
       {projects.length > 0 && (
-        <div style={{ marginTop: '36px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: 700 }}>
-              Projects <span style={{ fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500 }}>({projects.length})</span>
+        <section className={styles.projectsSection}>
+          <div className={styles.projectsHeader}>
+            <h2 className={styles.projectsTitle}>
+              {t('dashboard.projects.title')}{' '}
+              <span className="num" style={{ fontSize: '1rem', color: 'var(--fg-muted)', fontWeight: 500 }}>
+                ({projects.length})
+              </span>
             </h2>
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: '20px',
-            }}
-          >
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+          <div className={styles.projectsList}>
+            {projects.map((project) => {
+              const projTasks = tasks.filter((task) => task.projectId === project.id);
+              const doneTasks = projTasks.filter((task) => task.status === 'done').length;
+              const totalTasks = projTasks.length;
+              const isoDate = project.updatedAt instanceof Date
+                ? project.updatedAt.toISOString().slice(0, 10)
+                : null;
+
+              return (
+                <div key={project.id} className={styles.projectRow}>
+                  <div className={styles.projectInfo}>
+                    <Link href={`/projects/${project.id}`} className={styles.projectName} dir="auto">
+                      {project.name}
+                    </Link>
+                    <div className={styles.projectMeta}>
+                      <span>{tp('members.count', project.memberIds.length)}</span>
+                      {isoDate && (
+                        <>
+                          <span>&bull;</span>
+                          <span>{t('project.card.updated', { date: formatDueDate(isoDate) })}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={styles.progressContainer}>
+                    <ProgressBar
+                      value={doneTasks}
+                      max={totalTasks}
+                      label={`${doneTasks} / ${totalTasks}`}
+                    />
+                    <span className={styles.progressLabel}>
+                      {doneTasks}/{totalTasks} {t('dashboard.stats.done')}
+                    </span>
+                  </div>
+
+                  <div className={styles.rowActions}>
+                    <Link href={`/projects/${project.id}/settings`}>
+                      <IconButton
+                        icon="settings"
+                        label={t('project.card.settings')}
+                        variant="ghost"
+                        size="sm"
+                      />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );

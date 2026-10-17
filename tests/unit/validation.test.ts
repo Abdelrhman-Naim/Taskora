@@ -138,15 +138,14 @@ describe('registerSchema & emailSchema', () => {
 });
 
 describe('fieldErrors', () => {
-  it('returns a record of field error messages', () => {
+  it('returns a record of field error message keys', () => {
     const res = registerSchema.safeParse({ name: '', email: 'notanemail', password: '12' });
     expect(res.success).toBe(false);
     if (!res.success) {
       const errors = fieldErrors(res.error);
-      expect(errors.name).toBeDefined();
-      expect(errors.email).toBeDefined();
-      expect(errors.password).toBeDefined();
-      expect(typeof errors.name).toBe('string');
+      expect(errors.name).toBe('validation.name.required');
+      expect(errors.email).toBe('validation.email.invalid');
+      expect(errors.password).toBe('validation.password.length');
     }
   });
 });
