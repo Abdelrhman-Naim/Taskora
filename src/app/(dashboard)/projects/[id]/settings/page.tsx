@@ -5,9 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Project } from '@/types';
 import { getProject, updateProject, deleteProjectCascade } from '@/services/projects';
+import { addMember, removeMember, countAssignedTasks } from '@/services/members';
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { ProjectForm } from '@/components/projects/ProjectForm';
+import { MemberManager } from '@/components/projects/MemberManager';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -113,6 +115,39 @@ export default function ProjectSettingsPage() {
     }
   };
 
+  const reloadProject = async () => {
+    if (!id) return;
+    try {
+      const db = getDb();
+      const proj = await getProject(db, id);
+      setProject(proj);
+    } catch (err) {
+      if (err instanceof AppError) {
+        setError(err);
+      }
+    }
+  };
+
+  const handleAddMember = async (memberEmail: string) => {
+    if (!id) return;
+    const db = getDb();
+    await addMember(db, id, memberEmail);
+    await reloadProject();
+  };
+
+  const handleRemoveMember = async (uid: string) => {
+    if (!id) return;
+    const db = getDb();
+    await removeMember(db, id, uid);
+    await reloadProject();
+  };
+
+  const handleGetAssignedCount = async (uid: string): Promise<number> => {
+    if (!id) return 0;
+    const db = getDb();
+    return countAssignedTasks(db, id, uid);
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
@@ -174,6 +209,23 @@ export default function ProjectSettingsPage() {
           initialValues={{ name: project.name, description: project.description }}
           onSubmit={handleUpdate}
           submitLabel="Save Changes"
+        />
+      </div>
+
+      <div
+        style={{
+          backgroundColor: 'var(--surface)',
+          padding: '24px',
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border)',
+          marginBottom: '32px',
+        }}
+      >
+        <MemberManager
+          project={project}
+          onAddMember={handleAddMember}
+          onRemoveMember={handleRemoveMember}
+          getAssignedTaskCount={handleGetAssignedCount}
         />
       </div>
 

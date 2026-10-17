@@ -31,6 +31,20 @@ export async function createTestUser(
   const cred = await createUserWithEmailAndPassword(auth, email, 'Password123!');
   await updateProfile(cred.user, { displayName: name });
 
+  const emailLower = email.trim().toLowerCase();
+  const { doc, writeBatch, serverTimestamp } = await import('firebase/firestore');
+  const batch = writeBatch(db);
+  batch.set(doc(db, 'users', cred.user.uid), {
+    displayName: name,
+    email: emailLower,
+    createdAt: serverTimestamp(),
+  });
+  batch.set(doc(db, 'usersByEmail', emailLower), {
+    uid: cred.user.uid,
+    displayName: name,
+  });
+  await batch.commit();
+
   return {
     uid: cred.user.uid,
     db,
