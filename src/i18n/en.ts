@@ -28,7 +28,7 @@ export const en = {
   'nav.language': 'Language',
 
   // Auth
-  'auth.login.title': 'Sign in to Taskora',
+  'auth.login.title': 'Log in to Taskora',
   'auth.login.subtitle': 'Enter your email and password to access your workspace',
   'auth.login.button': 'Log in',
   'auth.login.loading': 'Signing in...',
@@ -86,7 +86,7 @@ export const en = {
   'project.delete.confirmMessage': 'Are you sure you want to delete "{name}"? All associated tasks will be permanently removed.',
   'project.error.notFound': 'Project not found',
   'project.error.notFoundDesc': 'The requested project could not be found or may have been deleted.',
-  'project.error.accessDenied': "You don't have access to this project",
+  'project.error.accessDenied': 'Access denied',
   'project.error.accessDeniedDesc': 'Ask the project owner to invite you as a team member.',
 
   // Tasks
@@ -112,8 +112,8 @@ export const en = {
   'task.assignee.unassigned': 'Unassigned',
   'task.delete.confirmTitle': 'Delete task',
   'task.delete.confirmMessage': 'Are you sure you want to delete "{title}"?',
-  'task.empty.title': 'No tasks found',
-  'task.empty.description': 'No tasks match your current filter criteria.',
+  'task.empty.title': 'No tasks match your filters',
+  'task.empty.description': 'Try adjusting or clearing your filters to see tasks.',
   'task.empty.createFirst': 'No tasks yet. Create the first task for this project.',
   'task.dueOn': 'Due {date}',
 
@@ -163,10 +163,10 @@ export const en = {
   'filter.allPriorities': 'All priorities',
   'filter.allAssignees': 'All assignees',
   'filter.overdueOnly': 'Overdue only',
-  'filter.clear': 'Clear filters',
+  'filter.clear': 'Reset filters',
 
   // Errors
-  'error.network': 'Network connection unavailable. Please check your connection and try again.',
+  'error.network': 'You are currently offline. Network connection unavailable. Please check your connection and try again.',
   'error.not-found': 'The requested resource was not found.',
   'error.permission-denied': 'You do not have permission to perform this action.',
   'error.unauthenticated': 'Please log in to continue.',

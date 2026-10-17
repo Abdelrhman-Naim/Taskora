@@ -104,11 +104,9 @@ export default function DashboardPage(): React.ReactElement {
             </h1>
           </div>
 
-          <Link href="/projects/new">
-            <Button variant="primary" icon="plus">
-              {t('dashboard.projects.createButton')}
-            </Button>
-          </Link>
+          <Button href="/projects/new" variant="primary" icon="plus">
+            {t('dashboard.projects.createButton')}
+          </Button>
         </div>
 
         {/* The Bold Brass Rule */}

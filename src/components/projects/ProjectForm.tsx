@@ -97,7 +97,7 @@ export function ProjectForm({
       )}
 
       <Field
-        id="projectName"
+        id="project-name"
         label={t('project.field.name')}
         error={translateError(errors.name)}
         required
@@ -116,7 +116,7 @@ export function ProjectForm({
       </Field>
 
       <Field
-        id="projectDescription"
+        id="project-description"
         label={t('project.field.description')}
         error={translateError(errors.description)}
       >

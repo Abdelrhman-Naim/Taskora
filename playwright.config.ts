@@ -9,7 +9,7 @@ export default defineConfig({
   timeout: 60000,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3456',
     trace: 'on-first-retry',
   },
   projects: [
@@ -18,13 +18,16 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         channel: 'chrome',
+        launchOptions: {
+          args: ['--disable-extensions'],
+        },
       },
     },
   ],
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    command: 'npx next dev -p 3456',
+    url: 'http://localhost:3456',
+    reuseExistingServer: false,
     timeout: 120 * 1000,
     env: {
       NEXT_PUBLIC_USE_EMULATORS: 'true',

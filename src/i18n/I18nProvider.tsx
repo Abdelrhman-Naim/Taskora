@@ -71,10 +71,19 @@ export function I18nProvider({
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
+const defaultI18nContext: I18nContextValue = {
+  locale: 'en',
+  dir: 'ltr',
+  t: (key: MessageKey, params?: Record<string, string | number>) =>
+    translate(en, key, params),
+  tp: (key: PluralKey, count: number, params?: Record<string, string | number>) =>
+    translatePlural(en, 'en', key, count, params),
+  setLocale: () => {},
+  formatDueDate: (iso: string | null) => fmtDueDate(iso, 'en'),
+  formatNumber: (n: number) => fmtNumber(n, 'en'),
+};
+
 export function useI18n(): I18nContextValue {
   const ctx = useContext(I18nContext);
-  if (!ctx) {
-    throw new Error('useI18n must be used within an I18nProvider');
-  }
-  return ctx;
+  return ctx || defaultI18nContext;
 }

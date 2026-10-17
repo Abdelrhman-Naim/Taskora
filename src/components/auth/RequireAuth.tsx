@@ -3,10 +3,12 @@
 import React, { useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nProvider';
 import { Spinner } from '@/components/ui/Spinner';
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
+  const { t } = useI18n();
   const router = useRouter();
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
           minHeight: '60vh',
         }}
       >
-        <Spinner size={36} label="Checking authentication..." />
+        <Spinner size={36} label={t('common.loading')} />
       </div>
     );
   }

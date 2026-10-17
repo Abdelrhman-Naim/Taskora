@@ -2,18 +2,20 @@
 
 import React, { useRef } from 'react';
 import { useTheme, Theme } from './ThemeProvider';
+import { useI18n } from '@/i18n/I18nProvider';
+import { MessageKey } from '@/i18n/en';
 import styles from './ThemeToggle.module.css';
 
 interface ThemeOption {
   value: Theme;
-  label: string;
+  key: MessageKey;
   icon: React.ReactNode;
 }
 
 const options: ThemeOption[] = [
   {
     value: 'system',
-    label: 'System theme',
+    key: 'theme.system',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
@@ -24,7 +26,7 @@ const options: ThemeOption[] = [
   },
   {
     value: 'light',
-    label: 'Light theme',
+    key: 'theme.light',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <circle cx="12" cy="12" r="5" />
@@ -41,7 +43,7 @@ const options: ThemeOption[] = [
   },
   {
     value: 'dark',
-    label: 'Dark theme',
+    key: 'theme.dark',
     icon: (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
@@ -52,6 +54,7 @@ const options: ThemeOption[] = [
 
 export function ThemeToggle(): React.ReactElement {
   const { theme, setTheme } = useTheme();
+  const { t } = useI18n();
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -72,7 +75,7 @@ export function ThemeToggle(): React.ReactElement {
   };
 
   return (
-    <div className={styles.toggle} role="radiogroup" aria-label="Theme selection">
+    <div className={styles.toggle} role="radiogroup" aria-label={t('nav.theme')}>
       {options.map((opt, i) => {
         const isSelected = theme === opt.value;
         return (
@@ -81,8 +84,9 @@ export function ThemeToggle(): React.ReactElement {
             ref={(el) => { buttonsRef.current[i] = el; }}
             type="button"
             role="radio"
+            data-theme-value={opt.value}
             aria-checked={isSelected}
-            aria-label={opt.label}
+            aria-label={t(opt.key)}
             tabIndex={isSelected ? 0 : -1}
             className={`${styles.option} ${isSelected ? styles.selected : ''}`}
             onClick={() => setTheme(opt.value)}

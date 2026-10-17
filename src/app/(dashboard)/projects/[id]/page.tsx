@@ -200,9 +200,7 @@ export default function ProjectPage(): React.ReactElement | null {
           <p style={{ color: 'var(--text-muted)', marginBlockEnd: '24px' }}>
             {t('project.error.notFoundDesc')}
           </p>
-          <Link href="/dashboard">
-            <Button variant="primary">{t('common.backToDashboard')}</Button>
-          </Link>
+          <Button href="/dashboard" variant="primary">{t('common.backToDashboard')}</Button>
         </div>
       );
     }
@@ -216,9 +214,7 @@ export default function ProjectPage(): React.ReactElement | null {
           <p style={{ color: 'var(--text-muted)', marginBlockEnd: '24px' }}>
             {t('project.error.accessDeniedDesc')}
           </p>
-          <Link href="/dashboard">
-            <Button variant="primary">{t('common.backToDashboard')}</Button>
-          </Link>
+          <Button href="/dashboard" variant="primary">{t('common.backToDashboard')}</Button>
         </div>
       );
     }

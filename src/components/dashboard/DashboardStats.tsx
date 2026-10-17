@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { DashboardStatsData } from '@/lib/stats';
 import { Project } from '@/types';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -103,11 +102,9 @@ export function DashboardStats({
                     </div>
                   </div>
 
-                  <Link href={`/projects/${task.projectId}`}>
-                    <Button variant="secondary" size="sm">
-                      {t('common.details')}
-                    </Button>
-                  </Link>
+                  <Button href={`/projects/${task.projectId}`} variant="secondary" size="sm">
+                    {t('common.details')}
+                  </Button>
                 </div>
               );
             })}

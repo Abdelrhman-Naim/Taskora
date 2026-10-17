@@ -1,4 +1,5 @@
 import React from 'react';
+import { useI18n } from '@/i18n/I18nProvider';
 import styles from './Button.module.css';
 
 interface SpinnerProps {
@@ -6,7 +7,9 @@ interface SpinnerProps {
   label?: string;
 }
 
-export function Spinner({ size = 28, label = 'Loading...' }: SpinnerProps): React.ReactElement {
+export function Spinner({ size = 28, label }: SpinnerProps): React.ReactElement {
+  const { t } = useI18n();
+  const textLabel = label || t('common.loading');
   return (
     <div
       role="status"
@@ -29,7 +32,7 @@ export function Spinner({ size = 28, label = 'Loading...' }: SpinnerProps): Reac
         }}
       />
       <span className="sr-only" style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-        {label}
+        {textLabel}
       </span>
     </div>
   );

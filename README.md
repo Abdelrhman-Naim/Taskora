@@ -1,6 +1,6 @@
-# TaskFlow MVP
+# TaskFlow — Collaborative Project & Task Management
 
-TaskFlow is a collaborative project and task management system designed for small teams, built with Next.js App Router, Firebase Modular SDK (Auth & Firestore), and vanilla CSS Modules (zero Tailwind CSS).
+TaskFlow is a collaborative project and task management system designed for small teams, built with Next.js App Router, Firebase Modular SDK (Auth & Firestore), CSS Modules with CSS Logical Properties (strictly zero Tailwind CSS), full Arabic/English internationalization, and an editorial dark/light theme system.
 
 ---
 
@@ -13,6 +13,21 @@ TaskFlow is a collaborative project and task management system designed for smal
 ---
 
 ## Features
+
+### Internationalization & RTL (Phase 2)
+- **Full Bilingual Support**: First-class Arabic (`ar`, RTL) and English (`en`, LTR) localization with Arabic as default.
+- **Content Negotiation & Zero Flash**: Server-side language negotiation via `tf-locale` cookie and `Accept-Language` header; inline blocking script prevents any flash of wrong direction or language.
+- **RTL-Native Layout**: Strict adherence to CSS Logical Properties (`margin-inline`, `padding-block`, `inset-inline-start`, etc.) with mirrored direction-sensitive SVG icons (`scaleX(-1)` for back arrow) and progress bars filling from right in Arabic.
+- **Bidi Text Preservation**: All user-generated content (project names, task descriptions, titles) uses `dir="auto"` to preserve native text flow; email addresses and dates are strictly isolated with `dir="ltr"`.
+- **Latin Numerals Consistency**: Both locales render Latin numerals (0-9) consistently for numbers, dates, and times (`APP_LOCALE_NUMBER_FORMAT = 'en-US'`).
+
+### Theming & Design System (Phase 2)
+- **Editorial Design System**: Bespoke aesthetic featuring warm parchment/cream surfaces in light mode, deep bronze/charcoal surfaces in dark mode, and warm brass accents (`#c29b38` light / `#e5c158` dark).
+- **Zero-Flash Theme Switching**: Instant switching between Light, Dark, and System modes with cookie persistence (`tf-theme`) and zero flash of unstyled theme (FOUT).
+- **Primitive UI Library**: 10 hand-crafted, accessible primitives in `src/components/ui/` (Button, Input, Textarea, Select, Badge, Dialog, Spinner, EmptyState, ErrorState, Icon) with full keyboard accessibility (visible focus ring, ESC to dismiss modals).
+- **Interactive Design Showcase**: Live interactive design system catalog accessible at `/design-system` and documented in `docs/design-system.md`.
+
+### Core Application (Phase 1)
 - **Authentication**: Email & password signup, login, persistent session across reloads, and automatic route protection (`/dashboard` redirects unauthenticated users to `/login`).
 - **Projects**: Create projects, view projects, update settings, cascade delete with atomic cleanup.
 - **Membership**: Add team members via email lookup (`usersByEmail`), atomic task unassignment upon member removal, and access revocation.
@@ -24,14 +39,54 @@ TaskFlow is a collaborative project and task management system designed for smal
 
 ---
 
+## Languages & Themes
+
+### Cookie Persistence & Negotiation
+The application manages language and theme preferences without requiring authentication:
+
+| Cookie Name | Values | Default | Behavior |
+|:---|:---|:---|:---|
+| `tf-locale` | `ar`, `en` | `ar` (or `Accept-Language`) | Persists locale choice for 1 year (`SameSite=Lax`). When absent, server negotiates via `Accept-Language` header, falling back to Arabic (`ar`). |
+| `tf-theme` | `light`, `dark`, `system` | `system` | Persists theme choice for 1 year (`SameSite=Lax`). An inline `<script>` in `<head>` resolves `system` to `prefers-color-scheme: dark` before DOM render to eliminate flash. |
+
+### Adding a New Language
+To add a new language (e.g. French `fr` or Spanish `es`):
+1. **Create the Dictionary**: Create `src/i18n/<locale>.ts` satisfying the TypeScript `Dictionary` type and all keys in `src/i18n/en.ts`.
+2. **Register the Locale**: Add `<locale>` to `SUPPORTED_LOCALES` in `src/i18n/config.ts` and specify its reading direction (`rtl` or `ltr`).
+3. **Register in Provider**: Add the dictionary to the loader map in `src/i18n/I18nProvider.tsx`.
+4. **Verify Parity**: Run `npm run test:unit` to execute `tests/unit/i18n-parity.test.ts`, which automatically verifies 100% key parity and absence of empty strings across all registered languages.
+
+---
+
+## Design System
+
+The application is styled with custom CSS Modules and CSS Custom Properties conforming to WCAG 2.1 AA contrast requirements (body text contrast >= 4.5:1, headers and badges >= 7:1).
+
+- **Design System Documentation**: [docs/design-system.md](docs/design-system.md)
+- **Live Interactive Showcase**: Browse all components at `/design-system`
+
+### Primitives Overview:
+1. **Button**: Primary, secondary, outline, danger, and ghost variants; small, medium, and large sizes; optional leading icon; accessible disabled and loading states. Supports both `<button>` and `<Link>` behaviors.
+2. **Input**: Text, email, and password inputs with label, helper text, error messages, and logical RTL text alignment.
+3. **Textarea**: Auto-resizing multiline text input with character counters and accessible error states.
+4. **Select**: Dropdown select with custom styled brass chevron, full keyboard navigation, and placeholder support.
+5. **Badge**: Status indicators with semantic color coding (`todo`, `in_progress`, `done`, `overdue`, `low`, `medium`, `high`, `owner`, `member`).
+6. **Dialog**: Accessible modal dialog with focus trapping, `Escape` key dismissal, backdrop click dismissal, and `aria-modal="true"`.
+7. **Spinner**: Pure CSS animated brass loading spinner with customizable size and screen reader text.
+8. **Icon**: 14 pure hand-crafted inline SVG icons (no external icon dependencies).
+9. **EmptyState & ErrorState**: Standardized empty collection and failure recovery states with primary action triggers.
+
+---
+
 ## Tech Stack
-- **Framework**: Next.js 16 (App Router, Client Components for interactive UI)
+- **Framework**: Next.js 16 (App Router, Server Components & Client Components)
 - **Language & Validation**: TypeScript, Zod runtime validation
 - **Backend**: Firebase JS SDK (modular v13) — Authentication & Cloud Firestore
-- **Styling**: CSS Modules + `src/app/globals.css` (Strictly no Tailwind CSS)
-- **Unit Testing**: Vitest, React Testing Library, jsdom
-- **Security Testing**: `@firebase/rules-unit-testing`, Firebase Local Emulator Suite
-- **Acceptance Testing**: Playwright (driving Google Chrome against local Emulators)
+- **Styling**: CSS Modules + CSS Custom Properties + Logical Properties (Strictly zero Tailwind CSS)
+- **Unit Testing**: Vitest, React Testing Library, jsdom (20 test files, 135 tests)
+- **Security Testing**: `@firebase/rules-unit-testing`, Firebase Local Emulator Suite (5 test files, 46 tests)
+- **Services Integration Testing**: Firebase Emulators (4 test files, 22 tests)
+- **Acceptance & E2E Testing**: Playwright with Chromium (3 test suites, 18 tests)
 
 ---
 
@@ -70,36 +125,35 @@ TaskFlow is a collaborative project and task management system designed for smal
 
 ---
 
-## Test Evidence & Acceptance Criteria (TC-01…TC-16)
+## Test Evidence & Automated Test Matrix
 
-All 16 acceptance test cases are fully verified with passing automated suites:
+The test suite contains **221 automated tests** covering security rules, service integration, unit components, i18n parity, responsive layouts, and end-to-end user journeys:
 
-| Test Case | Description | Primary Verification File | Status |
-|:---|:---|:---|:---:|
-| **TC-01** | User registration, displayName, and profile mapping | `tests/services/auth.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-02** | Validation errors on invalid email and short password | `tests/unit/AuthForm.test.tsx` | **PASS** |
-| **TC-03** | User login and persistent session across page reloads | `tests/services/auth.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-04** | Unauthenticated user redirected to `/login` | `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-05** | Project creation and persistence across browser reload | `tests/services/projects.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-06** | Project access control (owner/member read, outsider denied) | `tests/rules/projects.rules.test.ts` | **PASS** |
-| **TC-07** | Owner adds member by email (case/whitespace normalized) | `tests/services/members.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-08** | Unregistered email rejected with clear error | `tests/services/members.test.ts` | **PASS** |
-| **TC-09** | Task creation with default status=todo and timestamps | `tests/services/tasks.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-10** | Assignee can update status; non-assignee denied | `tests/services/tasks.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-11** | Filter tasks by priority, status, assignee, and overdue | `tests/unit/taskFilters.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-12** | Search tasks by title (case-insensitive, trimmed) | `tests/unit/taskFilters.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-13** | Access control on outsider project and not-found project | `tests/services/projects.test.ts`, `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-14** | Member removal unassigns tasks atomically and revokes access | `tests/services/members.test.ts` | **PASS** |
-| **TC-15** | Responsive layout without horizontal overflow at 375, 768, 1280px | `tests/e2e/taskflow.spec.ts` | **PASS** |
-| **TC-16** | Offline resilience: graceful error display within <= 10s | `tests/unit/ui-states.test.tsx`, `tests/e2e/taskflow.spec.ts` | **PASS** |
+| Test Suite | Files | Tests Passing | Environment |
+|:---|:---:|:---:|:---|
+| **Unit Tests** | 20 | **135** | Vitest + React Testing Library + jsdom |
+| **Firestore Security Rules** | 5 | **46** | Vitest + `@firebase/rules-unit-testing` + Local Emulators |
+| **Service Integration Tests** | 4 | **22** | Vitest + Local Auth & Firestore Emulators |
+| **Acceptance & E2E Tests** | 3 | **18** | Playwright (Phase 1 Acceptance TC-01..16 + Phase 2 i18n/theme/RTL + Screenshots) |
+| **Total** | **32 files** | **221 tests** | **100% PASS** |
 
-### Test Suite Summary
-- **Unit Tests**: 14 test files, **96 tests passing**
-- **Security Rules Tests**: 5 test files, **46 tests passing**
-- **Service Integration Tests**: 4 test files, **22 tests passing**
-- **E2E Acceptance Tests**: 1 test file, **8 test scenarios passing**
-- **Screenshots E2E Capture**: 1 test file, **1 test scenario passing (6 screenshots captured)**
-- **Total Passing Automated Tests**: **173 passing tests**
+### Acceptance Test Cases (TC-01…TC-16)
+- **TC-01**: User registration, displayName, and profile mapping (**PASS**)
+- **TC-02**: Validation errors on invalid email and short password (**PASS**)
+- **TC-03**: User login and persistent session across page reloads (**PASS**)
+- **TC-04**: Unauthenticated user redirected to `/login` (**PASS**)
+- **TC-05**: Project creation and persistence across browser reload (**PASS**)
+- **TC-06**: Project access control (owner/member read, outsider denied) (**PASS**)
+- **TC-07**: Owner adds member by email (case/whitespace normalized) (**PASS**)
+- **TC-08**: Unregistered email rejected with clear error (**PASS**)
+- **TC-09**: Task creation with default status=todo and timestamps (**PASS**)
+- **TC-10**: Assignee can update status; non-assignee denied (**PASS**)
+- **TC-11**: Filter tasks by priority, status, assignee, and overdue (**PASS**)
+- **TC-12**: Search tasks by title (case-insensitive, trimmed) (**PASS**)
+- **TC-13**: Access control on outsider project and not-found project (**PASS**)
+- **TC-14**: Member removal unassigns tasks atomically and revokes access (**PASS**)
+- **TC-15**: Responsive layout without horizontal overflow at 375, 768, 1280px (**PASS**)
+- **TC-16**: Offline resilience: graceful error display within <= 10s (**PASS**)
 
 ---
 
@@ -119,71 +173,28 @@ Enforced strictly in `firestore.rules` and reflected in UI conditional rendering
 
 ---
 
-## Architectural Decisions (D1–D8)
-- **D1**: Member email lookup uses `/usersByEmail/{emailLower}` (`get` allowed for authenticated users, `list` denied) without Cloud Functions.
-- **D2**: `/users/{uid}` is readable only by the owner. Project member names are stored denormalized in `projects.memberNames: Record<uid, string>` to avoid N+1 queries. Firestore security rules intentionally verify project membership by membership in `memberIds` array without validating member UID existence in external auth tables.
-- **D3**: Member removal uses atomic `writeBatch` to unassign tasks and update `memberIds`/`memberNames`.
-- **D4**: Cascade project deletion uses atomic `writeBatch` for up to 400 tasks and the project document.
-- **D4b**: `projects/{id}` allows read when `resource == null` so the client cleanly differentiates Not Found from Access Denied.
-- **D5**: `dueDate` is stored as `YYYY-MM-DD` string in fixed timezone `Asia/Riyadh` (`APP_TIME_ZONE`) to prevent date shifting.
-- **D6**: All Firestore writes are guarded by `withWriteGuard` (checking `navigator.onLine` and 8s default timeout).
-- **D7**: Client uses `getDocs` read + explicit reload on mutation for predictable lifecycle.
-- **D8**: Comprehensive task permissions matrix enforced in `firestore.rules`.
+## Product Screenshots
 
----
+### Arabic (RTL) — Dark & Light Themes
+| Arabic Dark Dashboard | Arabic Light Dashboard |
+|:---:|:---:|
+| ![Arabic Dark Dashboard](docs/screenshots/phase2/ar-dark-desktop-dashboard.png) | ![Arabic Light Dashboard](docs/screenshots/phase2/ar-light-desktop-dashboard.png) |
 
-## MVP Limits & Boundaries
-1. **Cascade Delete Scale**: Batch deletion supports projects with up to 400 tasks in a single atomic batch.
-2. **Display Name**: Display name is set on registration and synced to user profile; editing display name after creation is out of MVP scope.
-3. **Ownership**: Project ownership transfer is out of MVP scope.
-4. **Scope Control**: No Kanban boards, dark mode toggle, activity feeds, or external UI component libraries (pure CSS Modules).
+| Arabic Project View (RTL Tasks & Progress Bar) | Arabic Mobile View (375px) |
+|:---:|:---:|
+| ![Arabic Project Tasks](docs/screenshots/phase2/ar-dark-desktop-project.png) | ![Arabic Mobile Dashboard](docs/screenshots/phase2/ar-dark-mobile-dashboard.png) |
 
----
-
-## Demo Accounts & Seed Script
-
-Run the seed script to populate sample accounts, a demo project, and the Appendix A sample tasks:
-
-### For Local Emulators:
-```bash
-npm run seed -- --emulator
-```
-
-### For Production Cloud:
-```bash
-npm run seed
-```
-
-### Seeded Credentials:
-- **Owner**: `owner@example.test` / `Password123!` (Name: "Owner User")
-- **Member**: `member@example.test` / `Password123!` (Name: "Member User")
-- **Project**: «Website Redesign»
-- **Tasks**:
-  1. `Build navbar` (To Do, High, Assigned to Member, Due: 2026-10-25)
-  2. `Fix overdue bug` (To Do, High, Assigned to Member, Due: 2026-10-16 [Overdue])
-  3. `Setup Database` (In Progress, Medium, Assigned to Member, Due: 2026-10-30)
-  4. `Write Documentation` (Done, Low, Unassigned, Due: 2026-10-10)
-
----
-
-## Environment Variables
-
-| Variable | Description | Example (Local Emulator) | Example (Production) |
-|:---|:---|:---|:---|
-| `NEXT_PUBLIC_USE_EMULATORS` | Connect to local Firebase Emulators | `true` | `false` |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase Web API Key | `fake-api-key` | `AIzaSyAOMjes...` |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain | `demo-taskflow.firebaseapp.com` | `taskora-bf729.firebaseapp.com` |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase Project ID | `demo-taskflow` | `taskora-bf729` |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`| Firebase Storage Bucket | `demo-taskflow.appspot.com` | `taskora-bf729.firebasestorage.app` |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Messaging Sender ID | `123456789` | `997225509918` |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase Web App ID | `1:123456789:web:abcdef` | `1:997225509918:web:2a26d16f...` |
+### English (LTR) — Dark & Light Themes
+| English Dark Dashboard | English Light Dashboard |
+|:---:|:---:|
+| ![English Dark Dashboard](docs/screenshots/phase2/en-dark-desktop-dashboard.png) | ![English Light Dashboard](docs/screenshots/phase2/en-light-desktop-dashboard.png) |
 
 ---
 
 ## Local Development & Testing
 
 ### Prerequisites:
-- **Node.js**: v20.x or v22.x+ (tested on Node v24.16.0)
+- **Node.js**: v20.x, v22.x or v24.x
 - **Java**: Java 21+ (required for Firebase Local Emulator Suite)
 
 ```bash
@@ -194,29 +205,14 @@ npm install
 npm run typecheck
 npm run lint
 
-# 3. Unit, Security Rules & Service Tests (164 tests)
-npm run test
+# 3. Unit, Security Rules & Service Tests (203 tests)
+npm run test:unit
+npm run test:rules
+npm run test:services
 
-# 4. E2E Acceptance Tests (Playwright against emulators)
+# 4. Full E2E & Visual Matrix (Playwright against emulators)
 npm run test:e2e
 
 # 5. Production Build
 npm run build
 ```
-
----
-
-## Product Screenshots
-
-The captured product verification screenshots are stored in `docs/screenshots/`:
-1. `01-login.png` - Login and authentication gate
-2. `02-dashboard.png` - Dashboard overview with real-time statistics
-3. `03-project-tasks.png` - Project board and task list
-4. `04-task-filters.png` - Real-time task filtering and search
-5. `05-project-settings.png` - Project settings and member management
-6. `06-mobile-375px.png` - Mobile responsive layout verification (375px)
-
----
-
-## Live Exercise Note
-Task filtering is implemented in `src/lib/taskFilters.ts`. The `overdueOnly` filter is integrated into the UI filter bar and evaluates overdue status strictly using `isOverdue(task, todayString())`.

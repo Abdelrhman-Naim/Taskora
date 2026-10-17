@@ -32,6 +32,10 @@ test.describe('Documentation Screenshots Capture', () => {
     const context = await browser.newContext({
       viewport: { width: 1280, height: 800 },
     });
+    await context.addCookies([
+      { name: 'tf-locale', value: 'en', url: 'http://localhost:3456' },
+      { name: 'tf-theme', value: 'light', url: 'http://localhost:3456' },
+    ]);
     const page = await context.newPage();
 
     // Screen 1: Login Page
@@ -57,7 +61,7 @@ test.describe('Documentation Screenshots Capture', () => {
     await page.waitForURL('**/dashboard');
 
     // Create Demo Project
-    await page.getByRole('link', { name: /\+ new project/i }).click();
+    await page.getByRole('link', { name: /\+ new project/i }).first().click();
     await page.waitForURL('**/projects/new');
     await page.getByLabel(/project name/i).fill('Website Redesign');
     await page.getByLabel(/description/i).fill('Company website overhaul with responsive design and modern UX');
@@ -125,7 +129,7 @@ test.describe('Documentation Screenshots Capture', () => {
 
     // Screen 5: Dashboard with statistics and overdue tasks
     await page.goto('/dashboard');
-    await page.getByRole('heading', { name: 'Website Redesign' }).waitFor({ state: 'visible' });
+    await page.getByText('Website Redesign').first().waitFor({ state: 'visible' });
     await saveShot(page, '02-dashboard.png');
 
     // Screen 6: Mobile Responsive view (375px)
@@ -133,6 +137,10 @@ test.describe('Documentation Screenshots Capture', () => {
       viewport: { width: 375, height: 667 },
       isMobile: true,
     });
+    await mobileContext.addCookies([
+      { name: 'tf-locale', value: 'en', url: 'http://localhost:3456' },
+      { name: 'tf-theme', value: 'light', url: 'http://localhost:3456' },
+    ]);
     const mobilePage = await mobileContext.newPage();
     await mobilePage.goto('/login');
     await mobilePage.getByLabel(/email/i).fill(ownerEmail);

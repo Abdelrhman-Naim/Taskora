@@ -1,14 +1,10 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { Theme, THEME_COOKIE, parseTheme } from './config';
 
-export type Theme = 'system' | 'light' | 'dark';
-export const THEME_COOKIE = 'tf-theme';
-
-export function parseTheme(val?: string | null): Theme {
-  if (val === 'light' || val === 'dark' || val === 'system') return val;
-  return 'system';
-}
+export type { Theme };
+export { THEME_COOKIE, parseTheme };
 
 interface ThemeContextType {
   theme: Theme;

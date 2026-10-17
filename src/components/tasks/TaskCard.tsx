@@ -139,6 +139,7 @@ export function TaskCard({
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           {statusChangeable && (
             <select
+              id={`status-select-${task.id}`}
               aria-label={t('task.field.status')}
               value={task.status}
               onChange={(e) => onStatusChange(task, e.target.value as TaskStatus)}

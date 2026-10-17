@@ -11,7 +11,11 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
 
   let sharedProjectId = '';
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.addCookies([
+      { name: 'tf-locale', value: 'en', url: 'http://localhost:3456' },
+      { name: 'tf-theme', value: 'light', url: 'http://localhost:3456' },
+    ]);
     page.on('console', (msg) => console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`));
     page.on('pageerror', (err) => console.log(`[BROWSER ERROR]: ${err.message}`));
   });
@@ -36,7 +40,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     }
 
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
-    await expect(page.getByText('Test Member')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('Test Member').first()).toBeVisible({ timeout: 15000 });
 
     // 2. Logout Member
     await page.getByRole('button', { name: /log out/i }).click();
@@ -50,7 +54,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await page.getByRole('button', { name: /sign up|create account/i }).click();
 
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
-    await expect(page.getByText('Test Owner')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('Test Owner').first()).toBeVisible({ timeout: 15000 });
 
     // 4. Logout Owner and Login back
     await page.getByRole('button', { name: /log out/i }).click();
@@ -61,7 +65,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await page.getByRole('button', { name: /log in|sign in/i }).click();
 
     await expect(page).toHaveURL(/\/dashboard/);
-    await expect(page.getByText('Test Owner')).toBeVisible();
+    await expect(page.getByText('Test Owner').first()).toBeVisible();
   });
 
   test('TC-05 & TC-09: Project and Task Creation with persistence across reload', async ({ page }) => {
@@ -73,7 +77,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await expect(page).toHaveURL(/\/dashboard/);
 
     // Create Project
-    await page.getByRole('link', { name: /\+ new project/i }).click();
+    await page.getByRole('link', { name: /\+ new project/i }).first().click();
     await expect(page).toHaveURL(/\/projects\/new/);
 
     const projectName = `Website Redesign ${timestamp}`;
@@ -114,6 +118,10 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
 
   test('TC-07 & TC-10: Owner adds member, member sees project and updates task status', async ({ browser }) => {
     const ownerContext = await browser.newContext();
+    await ownerContext.addCookies([
+      { name: 'tf-locale', value: 'en', url: 'http://localhost:3456' },
+      { name: 'tf-theme', value: 'light', url: 'http://localhost:3456' },
+    ]);
     const ownerPage = await ownerContext.newPage();
 
     // Login as Owner
@@ -125,7 +133,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
 
     // Go to project settings
     await ownerPage.goto(`/projects/${sharedProjectId}/settings`);
-    await expect(ownerPage.getByRole('heading', { name: /project settings/i })).toBeVisible();
+    await expect(ownerPage.getByRole('heading', { name: /project settings/i }).first()).toBeVisible();
 
     // Add Member by email (TC-07)
     await ownerPage.getByLabel(/member email/i).fill(memberEmail);
@@ -142,6 +150,10 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
 
     // Now member checks dashboard in a separate context
     const memberContext = await browser.newContext();
+    await memberContext.addCookies([
+      { name: 'tf-locale', value: 'en', url: 'http://localhost:3456' },
+      { name: 'tf-theme', value: 'light', url: 'http://localhost:3456' },
+    ]);
     const memberPage = await memberContext.newPage();
 
     await memberPage.goto('/login');
@@ -201,6 +213,10 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
 
   test('TC-13: Access control on non-member project and not-found project', async ({ browser }) => {
     const strangerContext = await browser.newContext();
+    await strangerContext.addCookies([
+      { name: 'tf-locale', value: 'en', url: 'http://localhost:3456' },
+      { name: 'tf-theme', value: 'light', url: 'http://localhost:3456' },
+    ]);
     const strangerPage = await strangerContext.newPage();
 
     // Register a stranger who is not a member of the project

@@ -246,7 +246,7 @@ export function TaskForm({
           variant="primary"
           loading={submitting}
         >
-          {isEditing ? t('common.save') : t('task.new.button')}
+          {isEditing ? t('common.save') : t('task.new.title')}
         </Button>
       </div>
     </form>

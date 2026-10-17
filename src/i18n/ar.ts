@@ -114,8 +114,8 @@ export const ar: Record<MessageKey, string> = {
   'task.assignee.unassigned': 'بدون مكلَّف',
   'task.delete.confirmTitle': 'حذف المهمة',
   'task.delete.confirmMessage': 'هل أنت متأكد من حذف "{title}"؟',
-  'task.empty.title': 'لا توجد مهام مطابقة',
-  'task.empty.description': 'لا توجد مهام تطابق معايير التصفية الحالية.',
+  'task.empty.title': 'لا توجد مهام تطابق الفلاتر',
+  'task.empty.description': 'جرب تعديل الفلاتر أو إعادة ضبطها لعرض المهام.',
   'task.empty.createFirst': 'لا توجد مهام حتى الآن. أنشئ المهمة الأولى لهذا المشروع.',
   'task.dueOn': 'تاريخ الاستحقاق {date}',
 
@@ -165,7 +165,7 @@ export const ar: Record<MessageKey, string> = {
   'filter.allPriorities': 'جميع الأولويات',
   'filter.allAssignees': 'جميع المكلّفين',
   'filter.overdueOnly': 'المتأخرة فقط',
-  'filter.clear': 'مسح الفلاتر',
+  'filter.clear': 'إعادة ضبط الفلاتر',
 
   // Errors
   'error.network': 'الاتصال بالشبكة غير متوفر. يرجى التحقق من اتصالك والمحاولة مجددًا.',

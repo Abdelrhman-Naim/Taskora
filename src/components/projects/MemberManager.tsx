@@ -151,7 +151,7 @@ export function MemberManager({
                 {!isOwner && (
                   <button
                     type="button"
-                    aria-label={`Remove ${name}`}
+                    aria-label={`${t('member.remove')} ${name}`}
                     disabled={loadingCount}
                     onClick={() => handleInitiateRemove(uid, name)}
                     style={{
