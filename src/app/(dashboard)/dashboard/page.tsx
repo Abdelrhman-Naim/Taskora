@@ -2,37 +2,41 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Project } from '@/types';
-import { listUserProjects } from '@/services/projects';
+import { Project, Task } from '@/types';
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { ProjectCard } from '@/components/projects/ProjectCard';
+import { DashboardStats } from '@/components/dashboard/DashboardStats';
 import { Spinner } from '@/components/ui/Spinner';
-import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { AppError } from '@/lib/errors';
+import { computeStats, loadDashboardData, DashboardStatsData } from '@/lib/stats';
+import { todayString } from '@/lib/dates';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<AppError | null>(null);
+
   useEffect(() => {
     let ignore = false;
     async function load() {
       if (!user) return;
       try {
         const db = getDb();
-        const list = await listUserProjects(db, user.uid);
+        const data = await loadDashboardData(db, user.uid);
         if (!ignore) {
-          setProjects(list);
+          setProjects(data.projects);
+          setTasks(data.tasks);
         }
       } catch (err) {
         if (!ignore) {
           if (err instanceof AppError) {
             setError(err);
           } else {
-            setError(new AppError('unknown', 'Failed to load projects.'));
+            setError(new AppError('unknown', 'Failed to load dashboard data.'));
           }
         }
       } finally {
@@ -52,17 +56,34 @@ export default function DashboardPage() {
     setError(null);
     if (!user) return;
     const db = getDb();
-    listUserProjects(db, user.uid)
-      .then((list) => setProjects(list))
+    loadDashboardData(db, user.uid)
+      .then((data) => {
+        setProjects(data.projects);
+        setTasks(data.tasks);
+      })
       .catch((err) => {
         if (err instanceof AppError) {
           setError(err);
         } else {
-          setError(new AppError('unknown', 'Failed to load projects.'));
+          setError(new AppError('unknown', 'Failed to load dashboard data.'));
         }
       })
       .finally(() => setLoading(false));
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <Spinner size={36} label="Loading your dashboard..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <ErrorState message={error.message} onRetry={handleRetry} />;
+  }
+
+  const stats: DashboardStatsData = computeStats(tasks, todayString());
 
   return (
     <div>
@@ -77,9 +98,9 @@ export default function DashboardPage() {
         }}
       >
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>Projects</h1>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)' }}>Dashboard</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '4px' }}>
-            Manage and organize your team projects
+            Overview of your team&apos;s activity, overdue tasks, and projects
           </p>
         </div>
 
@@ -99,32 +120,33 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
-          <Spinner size={36} label="Loading your projects..." />
-        </div>
-      ) : error ? (
-        <ErrorState message={error.message} onRetry={handleRetry} />
-      ) : projects.length === 0 ? (
-        <EmptyState
-          title="No projects yet"
-          message="Create your first project to start collaborating and tracking tasks."
-          action={{
-            label: "Create Project",
-            href: "/projects/new",
-          }}
-        />
-      ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '20px',
-          }}
-        >
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+      {/* Dashboard Statistics & Overdue List */}
+      <DashboardStats
+        stats={stats}
+        projects={projects}
+        hasProjects={projects.length > 0}
+      />
+
+      {/* Projects List Grid */}
+      {projects.length > 0 && (
+        <div style={{ marginTop: '36px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 700 }}>
+              Projects <span style={{ fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500 }}>({projects.length})</span>
+            </h2>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '20px',
+            }}
+          >
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
         </div>
       )}
     </div>
