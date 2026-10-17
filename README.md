@@ -1,6 +1,13 @@
 # TaskFlow MVP
 
-TaskFlow is a collaborative project and task management system designed for small teams, built with Next.js App Router, Firebase Modular SDK (Auth & Firestore), and vanilla CSS Modules (zero Tailwind).
+TaskFlow is a collaborative project and task management system designed for small teams, built with Next.js App Router, Firebase Modular SDK (Auth & Firestore), and vanilla CSS Modules (zero Tailwind CSS).
+
+---
+
+## Deployment & Repository
+- **GitHub Repository**: [https://github.com/Abdelrhman-Naim/Taskora](https://github.com/Abdelrhman-Naim/Taskora)
+- **Firebase Project ID**: `taskora-bf729` (Cloud Firestore & Auth enabled)
+- **Deployment Platform**: Vercel
 
 ---
 
@@ -24,6 +31,41 @@ TaskFlow is a collaborative project and task management system designed for smal
 - **Unit Testing**: Vitest, React Testing Library, jsdom
 - **Security Testing**: `@firebase/rules-unit-testing`, Firebase Local Emulator Suite
 - **Acceptance Testing**: Playwright (driving Google Chrome against local Emulators)
+
+---
+
+## Firestore Schema & Architecture
+
+```
+/users/{uid}
+  ├── email: string
+  ├── displayName: string
+  └── createdAt: Timestamp
+
+/usersByEmail/{emailLower}
+  ├── uid: string
+  ├── email: string
+  └── displayName: string
+
+/projects/{projectId}
+  ├── name: string (3..60 chars)
+  ├── description: string (<= 500 chars)
+  ├── ownerId: string
+  ├── memberIds: string[]
+  ├── memberNames: map<uid, string>
+  ├── createdAt: Timestamp
+  └── updatedAt: Timestamp
+  └── /tasks/{taskId}
+        ├── title: string (3..120 chars)
+        ├── description: string (<= 1000 chars)
+        ├── status: 'todo' | 'in_progress' | 'done'
+        ├── priority: 'low' | 'medium' | 'high'
+        ├── assigneeId: string | null (must be in project.memberIds)
+        ├── createdBy: string
+        ├── dueDate: string (YYYY-MM-DD) | null
+        ├── createdAt: Timestamp
+        └── updatedAt: Timestamp
+```
 
 ---
 
@@ -55,7 +97,8 @@ All 16 acceptance test cases are fully verified with passing automated suites:
 - **Security Rules Tests**: 5 test files, **46 tests passing**
 - **Service Integration Tests**: 4 test files, **22 tests passing**
 - **E2E Acceptance Tests**: 1 test file, **8 test scenarios passing**
-- **Total Passing Automated Tests**: **172 passing tests**
+- **Screenshots E2E Capture**: 1 test file, **1 test scenario passing (6 screenshots captured)**
+- **Total Passing Automated Tests**: **173 passing tests**
 
 ---
 
@@ -77,12 +120,12 @@ Enforced strictly in `firestore.rules` and reflected in UI conditional rendering
 
 ## Architectural Decisions (D1–D8)
 - **D1**: Member email lookup uses `/usersByEmail/{emailLower}` (`get` allowed for authenticated users, `list` denied) without Cloud Functions.
-- **D2**: `/users/{uid}` is readable only by the owner. Project member names are stored denormalized in `projects.memberNames: Record<uid, string>` to avoid N+1 queries.
+- **D2**: `/users/{uid}` is readable only by the owner. Project member names are stored denormalized in `projects.memberNames: Record<uid, string>` to avoid N+1 queries. Firestore security rules intentionally verify project membership by membership in `memberIds` array without validating member UID existence in external auth tables.
 - **D3**: Member removal uses atomic `writeBatch` to unassign tasks and update `memberIds`/`memberNames`.
 - **D4**: Cascade project deletion uses atomic `writeBatch` for up to 400 tasks and the project document.
 - **D4b**: `projects/{id}` allows read when `resource == null` so the client cleanly differentiates Not Found from Access Denied.
 - **D5**: `dueDate` is stored as `YYYY-MM-DD` string in fixed timezone `Asia/Riyadh` (`APP_TIME_ZONE`) to prevent date shifting.
-- **D6**: All Firestore writes are guarded by `withWriteGuard` (checking `navigator.onLine` and 8s timeout).
+- **D6**: All Firestore writes are guarded by `withWriteGuard` (checking `navigator.onLine` and 8s default timeout).
 - **D7**: Client uses `getDocs` read + explicit reload on mutation for predictable lifecycle.
 - **D8**: Comprehensive task permissions matrix enforced in `firestore.rules`.
 
@@ -99,8 +142,15 @@ Enforced strictly in `firestore.rules` and reflected in UI conditional rendering
 ## Demo Accounts & Seed Script
 
 Run the seed script to populate sample accounts, a demo project, and the Appendix A sample tasks:
+
+### For Local Emulators:
 ```bash
 npm run seed -- --emulator
+```
+
+### For Production Cloud:
+```bash
+npm run seed
 ```
 
 ### Seeded Credentials:
@@ -117,19 +167,23 @@ npm run seed -- --emulator
 
 ## Environment Variables
 
-| Variable | Description | Example (Local Emulator) |
-|:---|:---|:---|
-| `NEXT_PUBLIC_USE_EMULATORS` | Connect to local Firebase Emulators | `true` |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase Web API Key | `fake-api-key` |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain | `demo-taskflow.firebaseapp.com` |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase Project ID | `demo-taskflow` |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`| Firebase Storage Bucket | `demo-taskflow.appspot.com` |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Messaging Sender ID | `123456789` |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase Web App ID | `1:123456789:web:abcdef` |
+| Variable | Description | Example (Local Emulator) | Example (Production) |
+|:---|:---|:---|:---|
+| `NEXT_PUBLIC_USE_EMULATORS` | Connect to local Firebase Emulators | `true` | `false` |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase Web API Key | `fake-api-key` | `AIzaSyAOMjes...` |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase Auth Domain | `demo-taskflow.firebaseapp.com` | `taskora-bf729.firebaseapp.com` |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase Project ID | `demo-taskflow` | `taskora-bf729` |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`| Firebase Storage Bucket | `demo-taskflow.appspot.com` | `taskora-bf729.firebasestorage.app` |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Messaging Sender ID | `123456789` | `997225509918` |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase Web App ID | `1:123456789:web:abcdef` | `1:997225509918:web:2a26d16f...` |
 
 ---
 
 ## Local Development & Testing
+
+### Prerequisites:
+- **Node.js**: v20.x or v22.x+ (tested on Node v24.16.0)
+- **Java**: Java 21+ (required for Firebase Local Emulator Suite)
 
 ```bash
 # 1. Install dependencies
@@ -139,15 +193,27 @@ npm install
 npm run typecheck
 npm run lint
 
-# 3. Unit, Security Rules & Service Tests
+# 3. Unit, Security Rules & Service Tests (164 tests)
 npm run test
 
-# 4. E2E Acceptance Tests
+# 4. E2E Acceptance Tests (Playwright against emulators)
 npm run test:e2e
 
 # 5. Production Build
 npm run build
 ```
+
+---
+
+## Product Screenshots
+
+The captured product verification screenshots are stored in `docs/screenshots/`:
+1. `01-login.png` - Login and authentication gate
+2. `02-dashboard.png` - Dashboard overview with real-time statistics
+3. `03-project-tasks.png` - Project board and task list
+4. `04-task-filters.png` - Real-time task filtering and search
+5. `05-project-settings.png` - Project settings and member management
+6. `06-mobile-375px.png` - Mobile responsive layout verification (375px)
 
 ---
 
