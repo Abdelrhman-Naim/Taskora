@@ -50,6 +50,12 @@ service cloud.firestore {
       allow delete: if isOwner(resource.data);
     }
 
+    match /projects/{pid}/tasks/{tid} {
+      function proj() { return projectData(pid); }
+      allow read: if isMember(proj());
+      allow delete: if isMember(proj()) && (isOwner(proj()) || resource.data.createdBy == request.auth.uid);
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
