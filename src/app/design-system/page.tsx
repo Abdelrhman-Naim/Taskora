@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { Badge } from '@/components/ui/Badge';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Card } from '@/components/ui/Card';
 import { Segmented } from '@/components/ui/Segmented';
@@ -196,6 +197,10 @@ export default function DesignSystemPage() {
             <Field id="ds-textarea" label="Task Description">
               {(fieldProps) => <Textarea {...fieldProps} placeholder="Enter task notes..." rows={3} />}
             </Field>
+
+            <div style={{ display: 'flex', alignItems: 'center', minBlockSize: 40, marginBlockStart: 8 }}>
+              <Checkbox id="ds-checkbox" label="Show overdue tasks only" checked={true} onChange={() => {}} />
+            </div>
           </div>
         </section>
 
@@ -334,6 +339,23 @@ export default function DesignSystemPage() {
               />
             </ChartPanel>
           </div>
+        </section>
+
+        {/* Application Shell */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Application Shell (Sidebar & TopBar)</h2>
+          <Card>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6 }}>
+                The application shell provides responsive navigation: a persistent desktop sidebar (264px–280px) on wide viewports, a focus-trapped sliding drawer on mobile (≤1024px), a top bar featuring Section Title, Language Switcher, Theme Toggle, and a keyboard-navigable User Profile Menu.
+              </p>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span className={styles.swatchRole} style={{ margin: 0 }}>Sidebar Width: 264px – 280px</span>
+                <span className={styles.swatchRole} style={{ margin: 0 }}>Breakpoint: 1024px</span>
+                <span className={styles.swatchRole} style={{ margin: 0 }}>Max Content Width: 80rem</span>
+              </div>
+            </div>
+          </Card>
         </section>
       </main>
     </ToastProvider>

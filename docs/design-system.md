@@ -20,26 +20,37 @@ The Taskora Design System provides an intentional, bespoke aesthetic combining c
 |---|---|---|---|---|
 | `--bg` | `#F4F5F2` (Pearl) | `#0A1514` (Petrol) | Application background | Base canvas |
 | `--surface` | `#FFFFFF` (Porcelain) | `#101F1D` (Deep) | Cards, panels, inputs | Base surface |
-| `--surface-hover` | `#F8F9F7` | `#152724` | Hover states | Interactive feedback |
-| `--fg` | `#0F1E1C` (Ink) | `#EAF0EC` (Mist) | Primary body & heading text | ≥ 13.8:1 (AAA) |
-| `--fg-muted` | `#52605D` | `#8CA09B` | Subtitles, hints, labels | ≥ 4.5:1 (AA) |
+| `--surface-2` | `#EAECE7` | `#152826` | Elevated cards, avatars | Secondary surface |
+| `--surface-hover` | `#F8F9F7` | `#1B312E` | Hover states | Interactive feedback |
+| `--text` | `#0F1E1C` (Ink) | `#EAF0EC` (Mist) | Primary body & heading text | ≥ 13.8:1 (AAA) |
+| `--text-muted` | `#52605D` | `#9DB0AA` | Subtitles, hints, labels | ≥ 4.5:1 (AA) |
 | `--accent` | `#0E6B5C` (Jade) | `#5CCBAE` (Mint) | Primary calls-to-action | ≥ 4.6:1 (AA) |
-| `--on-accent` | `#FFFFFF` | `#0A1514` | Text on primary buttons | ≥ 4.5:1 (AA) |
+| `--on-accent` | `#FFFFFF` | `#06231D` | Text on primary buttons | ≥ 4.5:1 (AA) |
 | `--brass` | `#B08D45` | `#C9A55A` | Signature hairline rule only | ≥ 3.0:1 UI (AA) |
-| `--border` | `#D8DFDC` | `#1B312E` | Card borders, dividers | Structural containment |
-| `--control-border`| `#B8C4C0` | `#274440` | Input & button boundaries | ≥ 3.0:1 UI (AA) |
+| `--border` | `#D8DFDC` | `#25403C` | Card borders, dividers | Structural containment |
+| `--control-border`| `#B8C4C0` | `#5F7A73` | Input & button boundaries | ≥ 3.0:1 UI (AA) |
 
 ### Status & Priority Tokens
 
-| Kind | Token | Semantic Purpose | Distinguishing Indicator |
+| Kind | Text/Border Token | Background Token | Distinguishing Indicator |
 |---|---|---|---|
-| `todo` | `--st-todo` / `--st-todo-bg` | Backlog / Not started | Solid circular dot |
-| `in_progress` | `--st-in-progress` / `--st-in-progress-bg` | Currently in work | Ring indicator |
-| `done` | `--st-done` / `--st-done-bg` | Completed task | Checkmark icon |
-| `overdue` | `--st-overdue` / `--st-overdue-bg` | Exceeded due date | Clock icon + textual badge |
-| `low` | `--st-priority-low` | Low priority | 1-bar icon |
-| `medium` | `--st-priority-medium` | Medium priority | 2-bar icon |
-| `high` | `--st-priority-high` | High priority | 3-bar icon |
+| `todo` | `--st-todo-fg` | `--st-todo-bg` | Solid circular dot |
+| `in_progress` | `--st-progress-fg` | `--st-progress-bg` | Ring indicator |
+| `done` | `--st-done-fg` | `--st-done-bg` | Checkmark icon |
+| `overdue` | `--st-overdue-fg` | `--st-overdue-bg` | Clock icon + textual badge |
+| `low` | `--pr-low-fg` | Transparent / soft | 1-bar icon |
+| `medium` | `--pr-medium-fg` | Transparent / soft | 2-bar icon |
+| `high` | `--pr-high-fg` | Transparent / soft | 3-bar icon |
+
+### Chart Tokens
+
+| Token | Light | Dark | Semantic Purpose |
+|---|---|---|---|
+| `--chart-todo` | `#B8841F` | `#B8841F` | To-do segments in stacked bars |
+| `--chart-progress` | `#3B6FB6` | `#4A7FD6` | In-progress segments |
+| `--chart-done` | `#13966F` | `#22A67F` | Completed segments |
+| `--chart-neutral` | `#5F6E69` | `#8FA39C` | Timeline neutral buckets |
+| `--chart-grid` | `#E3E6E0` | `#1E3431` | Baseline & divider grid lines |
 
 ### Radii Hierarchy
 
@@ -50,7 +61,35 @@ The Taskora Design System provides an intentional, bespoke aesthetic combining c
 
 ---
 
-## 3. Typography & Arabic Text Guidelines
+## 3. Primitives & Components
+
+### `Avatar`
+- Generates up to two initials from bilingual names (supports Arabic names such as "أحمد محمد" → "أم" and English names like "Sara Ali" → "SA").
+- Sizes: `sm` (24px) for compact lists and tables, `md` (32px) for user menu and cards.
+- Background `--surface-2`, border `--border`, centered bold text with `<bdi>` wrapping.
+
+### `Checkbox`
+- Custom accessible checkbox element with hidden native input (`aria-checked`, focus ring).
+- Minimum touch target 40px block-size, high-contrast checkmark SVG in `--accent`.
+
+### `Badge`
+- Semantic status and priority indicators with distinct icons for color-blind accessibility (never relies on color alone).
+- Roles: `owner` (brass accent), `member` (muted).
+
+### Application Shell (`AppShell`)
+- **Desktop Sidebar:** Fixed inline-start sidebar (264px–280px) on wide viewports (≥1025px), displaying the brand logo, navigation links, and quick project switcher.
+- **Mobile Drawer:** Accessible slide-in dialog (`role="dialog"`, `aria-modal="true"`) for viewports ≤1024px with focus trapping, backdrop click dismissal, and `Escape` key support.
+- **TopBar:** Sticky top bar housing section title, language switcher (`LocaleSwitcher`), theme switcher (`ThemeToggle`), and `UserMenu`.
+- **UserMenu:** Accessible dropdown menu with keyboard arrow navigation, avatar, user email, and logout action.
+
+### Accessible Charts (`src/components/charts/`)
+- Pure HTML/CSS relative layouts with zero canvas/SVG coordinate hardcoding, automatically adapting to LTR and RTL.
+- Every chart panel includes a Segmented toggle to switch between visual bars and an accessible `<table>` with identical data.
+- Hover/focus tooltip with bounds checking and keyboard `Escape` dismissal.
+
+---
+
+## 4. Typography & Arabic Text Guidelines
 
 1. **Display & Numbers (`--font-display`):**
    - Fallback chain: `Newsreader`, `Amiri`, `Georgia`, `serif`.
@@ -64,7 +103,7 @@ The Taskora Design System provides an intentional, bespoke aesthetic combining c
 
 ---
 
-## 4. Logical CSS & RTL Guidelines
+## 5. Logical CSS & RTL Guidelines
 
 - **Zero Physical Layout Properties:** Never use `left`, `right`, `margin-left`, `padding-right`, `border-left`, or `float`.
 - **Use Logical Properties Exclusively:**
@@ -78,13 +117,15 @@ The Taskora Design System provides an intentional, bespoke aesthetic combining c
     ```css
     :global([dir="rtl"]) .dirIcon { transform: scaleX(-1); }
     ```
-- **Mixed Content (`dir="auto"`):**
-  - All user-supplied text (task title, project name, user descriptions) must render with `dir="auto"` so Arabic sentences start on the right and English sentences start on the left.
-  - Email addresses and email inputs must always be `dir="ltr"`.
+
+### Bidi Isolation Rules (`<bdi>`):
+1. **Dynamic User Text:** Always wrap user-entered strings (project names, task titles, descriptions, usernames) inside `<bdi dir="auto">` to prevent bidirectional spillover when mixed languages appear.
+2. **Technical Strings:** Email addresses, dates, and code snippets must always be isolated with `dir="ltr"`.
+3. **Numerals:** Numbers and percentages must use the `.num` class and Latin numbering (`NUMBERING='latn'`).
 
 ---
 
-## 5. UX Copy Principles
+## 6. UX Copy Principles
 
 - **Action-Oriented Verbs:** Buttons must state exactly what happens: "Create project", "Save changes", "Delete task" (avoid vague labels like "Submit" or "OK").
 - **Clear Error Guidance:** State what happened and how to resolve it directly without apologies (e.g., "Network connection unavailable. Please check your connection and try again.").
@@ -92,7 +133,7 @@ The Taskora Design System provides an intentional, bespoke aesthetic combining c
 
 ---
 
-## 6. Component Checklist for New Additions
+## 7. Component Checklist for New Additions
 
 When creating any new component in `src/components/ui/`:
 1. [ ] Exclusively uses CSS Modules with CSS Logical Properties (`inline-size`, `padding-inline`, etc.).
