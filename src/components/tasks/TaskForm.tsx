@@ -11,6 +11,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
+import { MessageKey } from '@/i18n/en';
 
 interface TaskFormProps {
   project: Project;
