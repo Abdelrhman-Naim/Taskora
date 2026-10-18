@@ -1,6 +1,6 @@
 .shell {
   display: flex;
-  min-block-size: 100vh;
+  min-block-size: 100dvh;
   background-color: var(--bg);
 }
 

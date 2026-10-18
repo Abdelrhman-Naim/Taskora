@@ -26,8 +26,13 @@ const cairo = Cairo({
 
 const fontClasses = `${inter.variable} ${cairo.variable}`;
 
+import { PwaRegister } from '@/components/pwa/PwaRegister';
+
 export async function generateViewport(): Promise<Viewport> {
   return {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
     colorScheme: 'light dark',
     themeColor: [
       { media: '(prefers-color-scheme: light)', color: '#F8FAFC' },
@@ -48,6 +53,16 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: dict['app.name'],
     description: dict['app.description'],
+    manifest: '/manifest.webmanifest',
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: 'Taskora',
+    },
+    icons: {
+      apple: '/icons/apple-touch-icon.png',
+      icon: '/favicon.ico',
+    },
   };
 }
 
@@ -74,7 +89,10 @@ export default async function RootLayout({
       <body>
         <ThemeProvider initialTheme={theme}>
           <I18nProvider initialLocale={locale}>
-            <AuthProviderClient>{children}</AuthProviderClient>
+            <AuthProviderClient>
+              {children}
+              <PwaRegister />
+            </AuthProviderClient>
           </I18nProvider>
         </ThemeProvider>
       </body>

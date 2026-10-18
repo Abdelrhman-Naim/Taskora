@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-block-size: 100vh;
+  min-block-size: 100dvh;
   background-color: var(--bg);
   color: var(--text);
   box-sizing: border-box;

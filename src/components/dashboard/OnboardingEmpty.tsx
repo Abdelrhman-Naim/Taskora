@@ -48,12 +48,13 @@ export function OnboardingEmpty({ onCreateProject }: OnboardingEmptyProps): Reac
           type="button"
           className={styles.ctaButton}
           onClick={onCreateProject}
+          aria-label={t('dashboard.onboarding.cta')}
         >
           <Icon name="plus" size={16} />
           <span>{t('dashboard.onboarding.cta')}</span>
         </button>
       ) : (
-        <Link href="/projects/new" className={styles.ctaButton}>
+        <Link href="/projects/new" className={styles.ctaButton} aria-label={t('dashboard.onboarding.cta')}>
           <Icon name="plus" size={16} />
           <span>{t('dashboard.onboarding.cta')}</span>
         </Link>

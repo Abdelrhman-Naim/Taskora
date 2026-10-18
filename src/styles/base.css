@@ -45,3 +45,21 @@ html[lang="ar"] h6 {
 .num {
   font-variant-numeric: lining-nums tabular-nums;
 }
+
+/* PWA Touch & Mobile Hardening (P-101, P-108, P-110) */
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* P-101: prevents iOS Safari auto-zoom on input focus */
+  }
+}

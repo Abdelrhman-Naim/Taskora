@@ -1,0 +1,16 @@
+.offlineBanner {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  z-index: 1000;
+  background-color: var(--st-overdue-bg);
+  color: var(--st-overdue-fg);
+  border-block-start: 1px solid var(--border);
+  padding-block: 8px;
+  padding-inline: 16px;
+  text-align: center;
+  font-size: var(--fs-0);
+  font-weight: 500;
+  box-shadow: 0 -2px 8px var(--shadow-1);
+}

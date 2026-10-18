@@ -59,7 +59,8 @@ export function FilterBar({
         </label>
         <input
           id="filter-search"
-          type="text"
+          type="search"
+          inputMode="search"
           dir="auto"
           className={styles.input}
           placeholder={t('filter.search')}

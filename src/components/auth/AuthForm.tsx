@@ -123,6 +123,9 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
             disabled={submitting}
             placeholder={t('auth.field.emailPlaceholder')}
             autoComplete="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             data-testid="auth-email-input"
           />
         )}
@@ -143,6 +146,9 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
             disabled={submitting}
             placeholder={t('auth.field.passwordPlaceholder')}
             autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             data-testid="auth-password-input"
           />
         )}

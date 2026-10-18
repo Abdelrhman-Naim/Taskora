@@ -25,7 +25,7 @@ export default function RootPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '100vh',
+        minHeight: '100dvh',
       }}
     >
       <Spinner size={36} label="Redirecting..." />
