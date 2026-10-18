@@ -21,10 +21,12 @@ export const ar: Record<MessageKey, string> = {
   'common.deleting': 'جارٍ الحذف...',
   'common.confirm': 'تأكيد',
   'common.all': 'الكل',
+  'common.today': 'اليوم',
+  'common.tomorrow': 'غدًا',
 
   // Navigation
   'nav.dashboard': 'لوحة التحكم',
-  'nav.newProject': '+ مشروع جديد',
+  'nav.newProject': 'مشروع جديد',
   'nav.logout': 'تسجيل الخروج',
   'nav.theme': 'المظهر',
   'nav.language': 'اللغة',
@@ -47,7 +49,7 @@ export const ar: Record<MessageKey, string> = {
   'auth.field.email': 'البريد الإلكتروني',
   'auth.field.emailPlaceholder': 'البريد الإلكتروني',
   'auth.field.password': 'كلمة المرور',
-  'auth.field.passwordPlaceholder': '••••••••',
+  'auth.field.passwordPlaceholder': '********',
   'auth.error.invalidCredentials': 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى التحقق والمحاولة مجددًا.',
   'auth.error.emailInUse': 'يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.',
   'auth.error.unauthenticated': 'يرجى تسجيل الدخول للمتابعة.',
@@ -64,7 +66,7 @@ export const ar: Record<MessageKey, string> = {
   'dashboard.projects.title': 'المشاريع',
   'dashboard.projects.emptyTitle': 'لا توجد مشاريع حتى الآن',
   'dashboard.projects.emptyDescription': 'أنشئ مشروعك الأول لبدء تنظيم المهام والتعاون مع فريقك.',
-  'dashboard.projects.createButton': '+ مشروع جديد',
+  'dashboard.projects.createButton': 'مشروع جديد',
   'dashboard.overdue.title': 'المهام المتأخرة',
   'dashboard.overdue.empty': 'لا توجد مهام متأخرة. جميع المواعيد النهائية منتظمة!',
   'dashboard.overdue.dueOn': 'تاريخ الاستحقاق {date}',
@@ -74,10 +76,11 @@ export const ar: Record<MessageKey, string> = {
   'project.new.subtitle': 'إعداد مساحة تعاونية لمهام فريقك',
   'project.new.button': 'إنشاء مشروع',
   'project.edit.title': 'إعدادات المشروع',
+  'project.fallbackName': 'مشروع بلا عنوان',
   'project.field.name': 'اسم المشروع',
   'project.field.namePlaceholder': 'مثال: إعادة تصميم الموقع',
   'project.field.description': 'الوصف',
-  'project.field.descriptionPlaceholder': 'نظرة عامة موجزة حول أهداف المشروع ونطاقه...',
+  'project.field.descriptionPlaceholder': 'نظرة عامة موجزة عن أهداف المشروع ونطاقه...',
   'project.card.updated': 'تم التحديث {date}',
   'project.card.owner': 'المالك',
   'project.card.settings': 'الإعدادات',
@@ -93,7 +96,9 @@ export const ar: Record<MessageKey, string> = {
 
   // Tasks
   'task.list.title': 'المهام',
-  'task.new.button': '+ مهمة جديدة',
+  'task.list.emptyTitle': 'لا توجد مهام بعد',
+  'task.list.emptyDescription': 'أنشئ مهمة للبدء في تنظيم العمل.',
+  'task.new.button': 'مهمة جديدة',
   'task.new.title': 'إنشاء مهمة',
   'task.edit.title': 'تعديل المهمة',
   'task.field.title': 'العنوان',
@@ -159,6 +164,7 @@ export const ar: Record<MessageKey, string> = {
   'members.count.other': '{count} عضو',
 
   // Filters
+  'filter.label': 'تصفية المهام',
   'filter.search': 'البحث في المهام...',
   'filter.searchLabel': 'البحث',
   'filter.allStatuses': 'جميع الحالات',
@@ -166,6 +172,20 @@ export const ar: Record<MessageKey, string> = {
   'filter.allAssignees': 'جميع المكلّفين',
   'filter.overdueOnly': 'المتأخرة فقط',
   'filter.clear': 'إعادة ضبط الفلاتر',
+
+  // Relative Days
+  'relative.inDays.zero': 'اليوم',
+  'relative.inDays.one': 'غدًا',
+  'relative.inDays.two': 'خلال يومين',
+  'relative.inDays.few': 'خلال {count} أيام',
+  'relative.inDays.many': 'خلال {count} يومًا',
+  'relative.inDays.other': 'خلال {count} يوم',
+  'relative.overdueDays.zero': 'اليوم',
+  'relative.overdueDays.one': 'متأخرة يوم واحد',
+  'relative.overdueDays.two': 'متأخرة يومان',
+  'relative.overdueDays.few': 'متأخرة {count} أيام',
+  'relative.overdueDays.many': 'متأخرة {count} يومًا',
+  'relative.overdueDays.other': 'متأخرة {count} يوم',
 
   // Errors
   'error.network': 'الاتصال بالشبكة غير متوفر. يرجى التحقق من اتصالك والمحاولة مجددًا.',

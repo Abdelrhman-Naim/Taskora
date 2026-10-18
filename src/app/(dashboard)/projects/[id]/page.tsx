@@ -15,7 +15,7 @@ import {
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
-import { MessageKey } from '@/i18n/en';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -35,6 +35,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const id = params?.id;
   const { user } = useAuth();
   const { t } = useI18n();
+  const getErrorMessage = useErrorMessage();
 
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -88,11 +89,7 @@ export default function ProjectPage(): React.ReactElement | null {
       const list = await listTasks(db, id);
       setTasks(list);
     } catch (err) {
-      if (err instanceof AppError) {
-        const key = `error.${err.code}` as MessageKey;
-        const translated = t(key);
-        setActionError(translated !== key ? translated : err.message);
-      }
+      setActionError(getErrorMessage(err));
     }
   };
 
@@ -153,13 +150,7 @@ export default function ProjectPage(): React.ReactElement | null {
       await changeTaskStatus(db, project.id, task.id, newStatus);
       await reloadTasks();
     } catch (err) {
-      if (err instanceof AppError) {
-        const key = `error.${err.code}` as MessageKey;
-        const translated = t(key);
-        setActionError(translated !== key ? translated : err.message);
-      } else {
-        setActionError(t('error.unexpected'));
-      }
+      setActionError(getErrorMessage(err));
     }
   };
 
@@ -172,13 +163,7 @@ export default function ProjectPage(): React.ReactElement | null {
       setDeletingTask(null);
       await reloadTasks();
     } catch (err) {
-      if (err instanceof AppError) {
-        const key = `error.${err.code}` as MessageKey;
-        const translated = t(key);
-        setActionError(translated !== key ? translated : err.message);
-      } else {
-        setActionError(t('error.unexpected'));
-      }
+      setActionError(getErrorMessage(err));
     }
   };
 
@@ -219,13 +204,10 @@ export default function ProjectPage(): React.ReactElement | null {
       );
     }
 
-    const errKey = `error.${error.code}` as MessageKey;
-    const translatedMsg = t(errKey);
-
     return (
       <ErrorState
         title={t('error.unexpected')}
-        message={translatedMsg !== errKey ? translatedMsg : error.message}
+        message={getErrorMessage(error)}
         onRetry={handleRetry}
       />
     );
@@ -246,8 +228,8 @@ export default function ProjectPage(): React.ReactElement | null {
         </Link>
         <div className={styles.topRow}>
           <div className={styles.titleContainer}>
-            <h1 dir="auto" className={styles.projectTitle}>
-              {project.name}
+            <h1 className={styles.projectTitle}>
+              <bdi>{project.name}</bdi>
             </h1>
             {project.description && (
               <p dir="auto" className={styles.projectDesc}>

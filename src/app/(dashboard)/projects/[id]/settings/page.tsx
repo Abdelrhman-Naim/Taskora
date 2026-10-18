@@ -9,7 +9,7 @@ import { addMember, removeMember, countAssignedTasks } from '@/services/members'
 import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
-import { MessageKey } from '@/i18n/en';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { ProjectForm } from '@/components/projects/ProjectForm';
 import { MemberManager } from '@/components/projects/MemberManager';
 import { Dialog } from '@/components/ui/Dialog';
@@ -25,6 +25,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
   const router = useRouter();
   const { user } = useAuth();
   const { t } = useI18n();
+  const getErrorMessage = useErrorMessage();
 
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -112,13 +113,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
     } catch (err) {
       setDeleting(false);
       setShowDeleteConfirm(false);
-      if (err instanceof AppError) {
-        const key = `error.${err.code}` as MessageKey;
-        const translated = t(key);
-        setDeleteError(translated !== key ? translated : err.message);
-      } else {
-        setDeleteError(t('error.unexpected'));
-      }
+      setDeleteError(getErrorMessage(err));
     }
   };
 
@@ -164,13 +159,10 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
   }
 
   if (error || !project) {
-    const errKey = error ? (`error.${error.code}` as MessageKey) : 'error.unexpected';
-    const translatedMsg = t(errKey);
-
     return (
       <ErrorState
         title={t('project.error.notFound')}
-        message={translatedMsg !== errKey ? translatedMsg : (error?.message || t('project.error.notFoundDesc'))}
+        message={error ? getErrorMessage(error) : t('project.error.notFoundDesc')}
         onRetry={handleRetry}
       />
     );
@@ -192,7 +184,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
           }}
         >
           <Icon name="arrow" size={16} />
-          <span>{t('common.back')}</span>: <span dir="auto">{project.name}</span>
+          <span>{t('common.back')}</span>: <span><bdi>{project.name}</bdi></span>
         </Link>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700, margin: 0, color: 'var(--text)' }}>
           {t('project.edit.title')}

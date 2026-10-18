@@ -15,12 +15,13 @@ import { AppError } from '@/lib/errors';
 import { computeStats, loadDashboardData, DashboardStatsData } from '@/lib/stats';
 import { todayString } from '@/lib/dates';
 import { useI18n } from '@/i18n/I18nProvider';
-import { MessageKey } from '@/i18n/en';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 import styles from './page.module.css';
 
 export default function DashboardPage(): React.ReactElement {
   const { user } = useAuth();
   const { t, tp, formatDueDate } = useI18n();
+  const getErrorMessage = useErrorMessage();
   const [projects, setProjects] = useState<Project[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,9 +87,7 @@ export default function DashboardPage(): React.ReactElement {
   }
 
   if (error) {
-    const errKey = `error.${error.code}` as MessageKey;
-    const translatedMsg = t(errKey);
-    return <ErrorState message={translatedMsg !== errKey ? translatedMsg : error.message} onRetry={handleRetry} />;
+    return <ErrorState message={getErrorMessage(error)} onRetry={handleRetry} />;
   }
 
   const stats: DashboardStatsData = computeStats(tasks, todayString());
@@ -99,8 +98,18 @@ export default function DashboardPage(): React.ReactElement {
       <div className={styles.header}>
         <div className={styles.topRow}>
           <div>
-            <h1 className={styles.greeting} dir="auto">
-              {t('dashboard.welcome', { name: user?.displayName || user?.email || '' })}
+            <h1 className={styles.greeting}>
+              {(() => {
+                const template = t('dashboard.welcome', { name: '___NAME___' });
+                const [pre, post] = template.split('___NAME___');
+                return (
+                  <>
+                    {pre}
+                    <bdi>{user?.displayName || user?.email || ''}</bdi>
+                    {post}
+                  </>
+                );
+              })()}
             </h1>
           </div>
 

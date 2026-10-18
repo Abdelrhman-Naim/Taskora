@@ -80,7 +80,7 @@ export function TaskCard({
             wordBreak: 'break-word',
           }}
         >
-          {task.title}
+          <bdi dir="auto">{task.title}</bdi>
         </h3>
 
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
@@ -121,8 +121,8 @@ export function TaskCard({
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <span>
             {t('task.field.assignee')}:{' '}
-            <strong dir="auto" style={{ color: 'var(--text)', fontWeight: 500 }}>
-              {assigneeName}
+            <strong style={{ color: 'var(--text)', fontWeight: 500 }}>
+              <bdi>{assigneeName}</bdi>
             </strong>
           </span>
 

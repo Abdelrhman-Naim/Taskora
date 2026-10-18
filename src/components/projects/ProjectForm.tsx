@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { projectInputSchema, fieldErrors } from '@/lib/validation';
 import { AppError } from '@/lib/errors';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { MessageKey } from '@/i18n/en';
 
 interface ProjectFormProps {
@@ -22,6 +23,7 @@ export function ProjectForm({
   submitLabel,
 }: ProjectFormProps): React.ReactElement {
   const { t } = useI18n();
+  const getErrorMessage = useErrorMessage();
   const [name, setName] = useState(initialValues.name);
   const [description, setDescription] = useState(initialValues.description);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -49,18 +51,10 @@ export function ProjectForm({
     try {
       await onSubmit(parsed.data);
     } catch (err) {
-      if (err instanceof AppError) {
-        if (err.fields) {
-          setErrors(err.fields);
-        } else {
-          const key = `error.${err.code}` as MessageKey;
-          const translated = t(key);
-          setGeneralError(translated !== key ? translated : err.message);
-        }
-      } else if (err instanceof Error) {
-        setGeneralError(err.message);
+      if (err instanceof AppError && err.fields) {
+        setErrors(err.fields);
       } else {
-        setGeneralError(t('error.unexpected'));
+        setGeneralError(getErrorMessage(err));
       }
     } finally {
       setSubmitting(false);

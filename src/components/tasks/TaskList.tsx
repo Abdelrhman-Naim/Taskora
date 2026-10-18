@@ -2,6 +2,7 @@ import React from 'react';
 import { Task, Project, TaskStatus } from '@/types';
 import { TaskCard } from '@/components/tasks/TaskCard';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { useI18n } from '@/i18n/I18nProvider';
 
 interface TaskListProps {
   tasks: Task[];
@@ -24,15 +25,17 @@ export function TaskList({
   onStatusChange,
   onNewTask,
 }: TaskListProps) {
+  const { t } = useI18n();
+
   if (tasks.length === 0) {
     return (
       <EmptyState
-        title="No tasks yet"
-        message="Create your first task to start organizing work for this project."
+        title={t('task.list.emptyTitle')}
+        message={t('task.list.emptyDescription')}
         action={
           onNewTask
             ? {
-                label: 'Create Task',
+                label: t('task.new.button'),
                 onClick: onNewTask,
               }
             : undefined

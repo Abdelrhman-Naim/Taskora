@@ -19,10 +19,12 @@ export const en = {
   'common.deleting': 'Deleting...',
   'common.confirm': 'Confirm',
   'common.all': 'All',
+  'common.today': 'Today',
+  'common.tomorrow': 'Tomorrow',
 
   // Navigation
   'nav.dashboard': 'Dashboard',
-  'nav.newProject': '+ New project',
+  'nav.newProject': 'New project',
   'nav.logout': 'Log out',
   'nav.theme': 'Theme',
   'nav.language': 'Language',
@@ -45,7 +47,7 @@ export const en = {
   'auth.field.email': 'Email',
   'auth.field.emailPlaceholder': 'alex@example.test',
   'auth.field.password': 'Password',
-  'auth.field.passwordPlaceholder': '••••••••',
+  'auth.field.passwordPlaceholder': '********',
   'auth.error.invalidCredentials': 'Invalid email or password. Please check your details and try again.',
   'auth.error.emailInUse': 'An account with this email address already exists.',
   'auth.error.unauthenticated': 'Please log in to continue.',
@@ -62,7 +64,7 @@ export const en = {
   'dashboard.projects.title': 'Projects',
   'dashboard.projects.emptyTitle': 'No projects yet',
   'dashboard.projects.emptyDescription': 'Create your first project to start organizing tasks and collaborating.',
-  'dashboard.projects.createButton': '+ New project',
+  'dashboard.projects.createButton': 'New project',
   'dashboard.overdue.title': 'Overdue tasks',
   'dashboard.overdue.empty': 'No overdue tasks. All deadlines are on track!',
   'dashboard.overdue.dueOn': 'Due {date}',
@@ -72,6 +74,7 @@ export const en = {
   'project.new.subtitle': 'Set up a collaborative space for your team tasks',
   'project.new.button': 'Create project',
   'project.edit.title': 'Project settings',
+  'project.fallbackName': 'Untitled Project',
   'project.field.name': 'Project name',
   'project.field.namePlaceholder': 'e.g. Website Redesign',
   'project.field.description': 'Description',
@@ -91,7 +94,9 @@ export const en = {
 
   // Tasks
   'task.list.title': 'Tasks',
-  'task.new.button': '+ New task',
+  'task.list.emptyTitle': 'No tasks yet',
+  'task.list.emptyDescription': 'Create a task to get started.',
+  'task.new.button': 'New task',
   'task.new.title': 'Create task',
   'task.edit.title': 'Edit task',
   'task.field.title': 'Title',
@@ -157,6 +162,7 @@ export const en = {
   'members.count.other': '{count} members',
 
   // Filters
+  'filter.label': 'Task filters',
   'filter.search': 'Search tasks...',
   'filter.searchLabel': 'Search',
   'filter.allStatuses': 'All statuses',
@@ -164,6 +170,20 @@ export const en = {
   'filter.allAssignees': 'All assignees',
   'filter.overdueOnly': 'Overdue only',
   'filter.clear': 'Reset filters',
+
+  // Relative Days
+  'relative.inDays.zero': 'Today',
+  'relative.inDays.one': 'Tomorrow',
+  'relative.inDays.two': 'In 2 days',
+  'relative.inDays.few': 'In {count} days',
+  'relative.inDays.many': 'In {count} days',
+  'relative.inDays.other': 'In {count} days',
+  'relative.overdueDays.zero': 'Due today',
+  'relative.overdueDays.one': '1 day overdue',
+  'relative.overdueDays.two': '2 days overdue',
+  'relative.overdueDays.few': '{count} days overdue',
+  'relative.overdueDays.many': '{count} days overdue',
+  'relative.overdueDays.other': '{count} days overdue',
 
   // Errors
   'error.network': 'You are currently offline. Network connection unavailable. Please check your connection and try again.',

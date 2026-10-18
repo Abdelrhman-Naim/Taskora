@@ -51,7 +51,7 @@ export function FilterBar({
   };
 
   return (
-    <div className={styles.container} role="search" aria-label="Task filters">
+    <div className={styles.container} role="search" aria-label={t('filter.label')}>
       {/* Search Input */}
       <div className={styles.fieldGrow}>
         <label htmlFor="filter-search" className={styles.label}>

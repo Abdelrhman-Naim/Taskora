@@ -10,8 +10,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { useI18n } from '@/i18n/I18nProvider';
-import { MessageKey } from '@/i18n/en';
-import { AppError } from '@/lib/errors';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 
 interface TaskFormProps {
   project: Project;
@@ -38,6 +37,7 @@ export function TaskForm({
   onCancel,
 }: TaskFormProps): React.ReactElement {
   const { t } = useI18n();
+  const getErrorMessage = useErrorMessage();
   const isEditing = Boolean(initialTask);
 
   const [title, setTitle] = useState(initialTask?.title || '');
@@ -86,15 +86,7 @@ export function TaskForm({
         ...(isEditing ? { status } : {}),
       });
     } catch (err: unknown) {
-      if (err instanceof AppError) {
-        const key = `error.${err.code}` as MessageKey;
-        const translated = t(key);
-        setSaveError(translated !== key ? translated : err.message);
-      } else if (err && typeof err === 'object' && 'message' in err) {
-        setSaveError((err as { message: string }).message);
-      } else {
-        setSaveError(t('error.unexpected'));
-      }
+      setSaveError(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }

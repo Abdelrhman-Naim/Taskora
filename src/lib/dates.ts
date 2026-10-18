@@ -16,6 +16,38 @@ export function todayString(now: Date = new Date()): string {
 }
 
 /**
+ * Converts a Date to 'YYYY-MM-DD' in the application timezone (Asia/Riyadh).
+ */
+export function toDateString(d: Date): string {
+  return todayString(d);
+}
+
+/**
+ * Textually adds/subtracts days to a 'YYYY-MM-DD' date string crossing month/year boundaries.
+ */
+export function addDays(dateStr: string, n: number): string {
+  const parts = dateStr.split('-').map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return dateStr;
+  const [y, m, d] = parts;
+  const utcDate = new Date(Date.UTC(y, m - 1, d + n));
+  const nextY = utcDate.getUTCFullYear();
+  const nextM = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
+  const nextD = String(utcDate.getUTCDate()).padStart(2, '0');
+  return `${nextY}-${nextM}-${nextD}`;
+}
+
+/**
+ * Returns day difference (to - from) as an integer. Negative if to is before from.
+ */
+export function daysBetween(from: string, to: string): number {
+  const fromParts = from.split('-').map(Number);
+  const toParts = to.split('-').map(Number);
+  const fromUtc = Date.UTC(fromParts[0], fromParts[1] - 1, fromParts[2]);
+  const toUtc = Date.UTC(toParts[0], toParts[1] - 1, toParts[2]);
+  return Math.round((toUtc - fromUtc) / (24 * 60 * 60 * 1000));
+}
+
+/**
  * A task is overdue if dueDate is set, earlier than today in the application timezone,
  * and status is NOT done.
  */

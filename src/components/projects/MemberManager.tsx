@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { useI18n } from '@/i18n/I18nProvider';
-import { MessageKey } from '@/i18n/en';
-import { AppError } from '@/lib/errors';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 
 interface MemberManagerProps {
   project: Project;
@@ -24,6 +23,7 @@ export function MemberManager({
   getAssignedTaskCount,
 }: MemberManagerProps): React.ReactElement {
   const { t } = useI18n();
+  const getErrorMessage = useErrorMessage();
   const [email, setEmail] = useState('');
   const [adding, setAdding] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -47,15 +47,7 @@ export function MemberManager({
       await onAddMember(trimmed);
       setEmail('');
     } catch (err: unknown) {
-      if (err instanceof AppError) {
-        const key = `error.${err.code}` as MessageKey;
-        const translated = t(key);
-        setEmailError(translated !== key ? translated : err.message);
-      } else if (err && typeof err === 'object' && 'message' in err) {
-        setEmailError((err as { message: string }).message);
-      } else {
-        setEmailError(t('error.unexpected'));
-      }
+      setEmailError(getErrorMessage(err));
     } finally {
       setAdding(false);
     }
@@ -81,11 +73,7 @@ export function MemberManager({
       await onRemoveMember(memberToRemove.uid);
       setMemberToRemove(null);
     } catch (err) {
-      if (err instanceof AppError) {
-        const key = `error.${err.code}` as MessageKey;
-        const translated = t(key);
-        setEmailError(translated !== key ? translated : err.message);
-      }
+      setEmailError(getErrorMessage(err));
       setMemberToRemove(null);
     }
   };
@@ -127,8 +115,8 @@ export function MemberManager({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span dir="auto" style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text)' }}>
-                    {name}
+                  <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text)' }}>
+                    <bdi>{name}</bdi>
                   </span>
                   {isOwner && (
                     <span

@@ -43,6 +43,8 @@ export function I18nProvider({
       document.cookie = `${LOCALE_COOKIE}=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
       document.documentElement.lang = nextLocale;
       document.documentElement.dir = dirOf(nextLocale);
+      const dict = dictionaries[nextLocale] || dictionaries.en;
+      document.title = dict['app.name'];
     }
   };
 

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { MessageKey } from '@/i18n/en';
 import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
@@ -16,6 +17,7 @@ interface AuthFormProps {
 
 export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement {
   const { t } = useI18n();
+  const getErrorMessage = useErrorMessage();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,18 +65,10 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
         password,
       });
     } catch (err) {
-      if (err instanceof AppError) {
-        if (err.fields) {
-          setErrors(err.fields);
-        } else {
-          const key = `error.${err.code}` as MessageKey;
-          const translated = t(key);
-          setGeneralError(translated !== key ? translated : err.message);
-        }
-      } else if (err instanceof Error) {
-        setGeneralError(err.message);
+      if (err instanceof AppError && err.fields) {
+        setErrors(err.fields);
       } else {
-        setGeneralError(t('error.unexpected'));
+        setGeneralError(getErrorMessage(err));
       }
     } finally {
       setSubmitting(false);
