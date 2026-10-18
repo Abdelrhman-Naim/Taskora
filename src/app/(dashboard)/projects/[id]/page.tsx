@@ -22,6 +22,8 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Dialog } from '@/components/ui/Dialog';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { Avatar } from '@/components/ui/Avatar';
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { FilterBar } from '@/components/tasks/FilterBar';
@@ -169,7 +171,7 @@ export default function ProjectPage(): React.ReactElement | null {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minBlockSize: '50vh' }}>
+      <div className={styles.loadingWrapper}>
         <Spinner size={36} label={t('common.loading')} />
       </div>
     );
@@ -178,11 +180,11 @@ export default function ProjectPage(): React.ReactElement | null {
   if (error) {
     if (error.code === 'not-found') {
       return (
-        <div style={{ textAlign: 'center', paddingBlock: '60px', paddingInline: '20px' }}>
-          <h2 style={{ fontSize: '1.375rem', fontWeight: 700, marginBlockEnd: '12px' }}>
+        <div className={styles.errorStateWrapper}>
+          <h2 className={styles.errorStateTitle}>
             {t('project.error.notFound')}
           </h2>
-          <p style={{ color: 'var(--text-muted)', marginBlockEnd: '24px' }}>
+          <p className={styles.errorStateDesc}>
             {t('project.error.notFoundDesc')}
           </p>
           <Button href="/dashboard" variant="primary">{t('common.backToDashboard')}</Button>
@@ -192,11 +194,11 @@ export default function ProjectPage(): React.ReactElement | null {
 
     if (error.code === 'permission-denied') {
       return (
-        <div style={{ textAlign: 'center', paddingBlock: '60px', paddingInline: '20px' }}>
-          <h2 style={{ fontSize: '1.375rem', fontWeight: 700, marginBlockEnd: '12px', color: 'var(--st-overdue-fg)' }}>
+        <div className={styles.errorStateWrapper}>
+          <h2 className={styles.errorStateTitle} style={{ color: 'var(--st-overdue-fg)' }}>
             {t('project.error.accessDenied')}
           </h2>
-          <p style={{ color: 'var(--text-muted)', marginBlockEnd: '24px' }}>
+          <p className={styles.errorStateDesc}>
             {t('project.error.accessDeniedDesc')}
           </p>
           <Button href="/dashboard" variant="primary">{t('common.backToDashboard')}</Button>
@@ -218,6 +220,10 @@ export default function ProjectPage(): React.ReactElement | null {
   const isOwner = user?.uid === project.ownerId;
   const currentUid = user?.uid || '';
   const filteredTasks = filterTasks(tasks, filters, todayString());
+
+  const totalTasks = tasks.length;
+  const doneTasks = tasks.filter((t) => t.status === 'done').length;
+  const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   return (
     <div>
@@ -259,23 +265,46 @@ export default function ProjectPage(): React.ReactElement | null {
             </Button>
           </div>
         </div>
+
+        {/* Project Summary: Progress Bar & Team Members */}
+        <div className={styles.summaryRow}>
+          <div className={styles.progressSummary}>
+            <div className={styles.progressLabelRow}>
+              <span>{t('dashboard.table.progress')}</span>
+              <strong className="num">{progress}% ({doneTasks}/{totalTasks})</strong>
+            </div>
+            <ProgressBar
+              value={doneTasks}
+              max={totalTasks}
+              label={t('dashboard.table.progress')}
+            />
+          </div>
+
+          <div className={styles.membersRow}>
+            <span className={styles.membersLabel}>{t('dashboard.table.members')}:</span>
+            <div className={styles.avatarStack}>
+              {project.memberIds.slice(0, 5).map((uid) => (
+                <Avatar
+                  key={uid}
+                  name={project.memberNames[uid] || 'Member'}
+                  size="sm"
+                  className={styles.stackedAvatar}
+                />
+              ))}
+              {project.memberIds.length > 5 && (
+                <span className={styles.moreMembers} aria-label={`${project.memberIds.length - 5} more`}>
+                  +{project.memberIds.length - 5}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
         <div className={styles.brassRule} aria-hidden="true" />
       </div>
 
       {actionError && (
-        <div
-          role="alert"
-          style={{
-            paddingBlock: '12px',
-            paddingInline: '16px',
-            backgroundColor: 'var(--st-overdue-bg)',
-            border: '1px solid var(--st-overdue-fg)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--st-overdue-fg)',
-            fontSize: '0.875rem',
-            marginBlockEnd: '20px',
-          }}
-        >
+        <div role="alert" className={styles.actionError}>
           {actionError}
         </div>
       )}

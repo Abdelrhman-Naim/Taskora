@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { MessageKey } from '@/i18n/en';
+import styles from './TaskForm.module.css';
 
 interface TaskFormProps {
   project: Project;
@@ -97,27 +98,10 @@ export function TaskForm({
     <form
       onSubmit={handleSubmit}
       noValidate
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        maxInlineSize: '560px',
-        inlineSize: '100%',
-      }}
+      className={styles.form}
     >
       {saveError && (
-        <div
-          role="alert"
-          style={{
-            padding: '12px 16px',
-            backgroundColor: 'var(--st-overdue-bg)',
-            border: '1px solid var(--st-overdue-fg)',
-            color: 'var(--st-overdue-fg)',
-            borderRadius: 'var(--radius-md)',
-            fontSize: '0.875rem',
-            fontWeight: 500,
-          }}
-        >
+        <div role="alert" className={styles.errorAlert}>
           {saveError}
         </div>
       )}
@@ -159,7 +143,7 @@ export function TaskForm({
         )}
       </Field>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div className={styles.row}>
         <Field id="task-priority" label={t('task.field.priority')} error={translateError(errors.priority)}>
           {(fieldProps) => (
             <Select
@@ -188,7 +172,7 @@ export function TaskForm({
         </Field>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+      <div className={styles.row}>
         <Field id="task-assignee" label={t('task.field.assignee')} error={translateError(errors.assigneeId)}>
           {(fieldProps) => (
             <Select
@@ -225,7 +209,7 @@ export function TaskForm({
         )}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginBlockStart: '8px' }}>
+      <div className={styles.actions}>
         <Button
           type="button"
           variant="secondary"

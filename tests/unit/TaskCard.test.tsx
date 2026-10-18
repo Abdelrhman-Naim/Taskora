@@ -125,6 +125,80 @@ describe('TaskCard Component', () => {
     expect(handleStatusChange).toHaveBeenCalledWith(overdueTask, 'done');
   });
 
+  it('renders avatar with initials for the assignee', () => {
+    renderWithProviders(
+      <TaskCard
+        task={overdueTask}
+        project={project}
+        currentUserId="user-owner"
+        isOwner={true}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onStatusChange={() => {}}
+      />
+    );
+
+    // Charlie Assignee -> initials CA
+    expect(screen.getByTitle('Charlie Assignee')).toBeInTheDocument();
+    expect(screen.getByText('CA')).toBeInTheDocument();
+  });
+
+  it('renders action controls at inline-end in fixed order: status change -> edit -> delete', () => {
+    const { container } = renderWithProviders(
+      <TaskCard
+        task={overdueTask}
+        project={project}
+        currentUserId="user-owner"
+        isOwner={true}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onStatusChange={() => {}}
+      />
+    );
+
+    const actions = container.querySelector('[data-testid="task-actions"]');
+    expect(actions).toBeInTheDocument();
+    const children = Array.from(actions!.children);
+    expect(children.length).toBe(3);
+    expect(children[0].tagName.toLowerCase()).toBe('select');
+    expect(children[1].tagName.toLowerCase()).toBe('button');
+    expect(children[2].tagName.toLowerCase()).toBe('button');
+  });
+
+  it('hides controls according to permissions for non-owner member', () => {
+    // Assignee (not creator, not owner): status and edit, no delete
+    const { rerender } = renderWithProviders(
+      <TaskCard
+        task={overdueTask}
+        project={project}
+        currentUserId="user-assignee"
+        isOwner={false}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onStatusChange={() => {}}
+      />
+    );
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Other member: no controls at all
+    rerender(
+      <TaskCard
+        task={overdueTask}
+        project={project}
+        currentUserId="user-other"
+        isOwner={false}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onStatusChange={() => {}}
+      />
+    );
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+  });
+
   // Review Focus #1
   it('applies dir="auto" to English title in Arabic locale and Arabic title in English locale', () => {
     const enTask: Task = {

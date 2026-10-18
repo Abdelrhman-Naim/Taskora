@@ -3,6 +3,7 @@ import { Task, Project, TaskStatus } from '@/types';
 import { TaskCard } from '@/components/tasks/TaskCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useI18n } from '@/i18n/I18nProvider';
+import styles from './TaskList.module.css';
 
 interface TaskListProps {
   tasks: Task[];
@@ -24,7 +25,7 @@ export function TaskList({
   onDelete,
   onStatusChange,
   onNewTask,
-}: TaskListProps) {
+}: TaskListProps): React.ReactElement {
   const { t } = useI18n();
 
   if (tasks.length === 0) {
@@ -45,13 +46,7 @@ export function TaskList({
   }
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-        gap: '16px',
-      }}
-    >
+    <div className={styles.list} role="list">
       {tasks.map((task) => (
         <TaskCard
           key={task.id}

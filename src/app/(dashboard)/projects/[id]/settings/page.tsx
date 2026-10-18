@@ -18,6 +18,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { AppError } from '@/lib/errors';
+import styles from './page.module.css';
 
 export default function ProjectSettingsPage(): React.ReactElement | null {
   const params = useParams<{ id: string }>();
@@ -152,7 +153,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minBlockSize: '50vh' }}>
+      <div className={styles.loadingWrapper}>
         <Spinner size={36} label={t('common.loading')} />
       </div>
     );
@@ -170,65 +171,29 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
 
   return (
     <div>
-      <div style={{ marginBlockEnd: '28px' }}>
+      <div className={styles.header}>
         <Link
           href={`/projects/${project.id}`}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '0.8125rem',
-            color: 'var(--text-muted)',
-            textDecoration: 'none',
-            marginBlockEnd: '12px',
-          }}
+          className={styles.backLink}
         >
           <Icon name="arrow" size={16} />
           <span>{t('common.back')}</span>: <span><bdi>{project.name}</bdi></span>
         </Link>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700, margin: 0, color: 'var(--text)' }}>
+        <h1 className={styles.title}>
           {t('project.edit.title')}
         </h1>
-        <div
-          style={{
-            blockSize: '1px',
-            backgroundColor: 'var(--brass)',
-            inlineSize: '100%',
-            marginBlockStart: '16px',
-          }}
-          aria-hidden="true"
-        />
+        <div className={styles.brassRule} aria-hidden="true" />
       </div>
 
       {deleteError && (
-        <div
-          role="alert"
-          style={{
-            paddingBlock: '12px',
-            paddingInline: '16px',
-            marginBlockEnd: '20px',
-            backgroundColor: 'var(--st-overdue-bg)',
-            border: '1px solid var(--st-overdue-fg)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--st-overdue-fg)',
-            fontSize: '0.875rem',
-          }}
-        >
+        <div role="alert" className={styles.deleteErrorAlert}>
           {deleteError}
         </div>
       )}
 
       {/* General Settings */}
-      <div
-        style={{
-          backgroundColor: 'var(--surface)',
-          padding: '24px',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--border)',
-          marginBlockEnd: '32px',
-        }}
-      >
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, marginBlockStart: 0, marginBlockEnd: '16px', color: 'var(--text)' }}>
+      <div className={styles.card}>
+        <h2 className={styles.cardTitle}>
           {t('project.edit.title')}
         </h2>
         <ProjectForm
@@ -239,15 +204,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
       </div>
 
       {/* Members Management */}
-      <div
-        style={{
-          backgroundColor: 'var(--surface)',
-          padding: '24px',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--border)',
-          marginBlockEnd: '32px',
-        }}
-      >
+      <div className={styles.card}>
         <MemberManager
           project={project}
           onAddMember={handleAddMember}
@@ -257,18 +214,11 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
       </div>
 
       {/* Danger Zone */}
-      <div
-        style={{
-          backgroundColor: 'var(--surface)',
-          padding: '24px',
-          borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--st-overdue-fg)',
-        }}
-      >
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--st-overdue-fg)', marginBlockStart: 0, marginBlockEnd: '8px' }}>
+      <div className={styles.dangerCard}>
+        <h2 className={styles.dangerTitle}>
           {t('project.settings.dangerZone')}
         </h2>
-        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBlockEnd: '16px', lineHeight: 1.5 }}>
+        <p className={styles.dangerDesc}>
           {t('project.settings.deleteWarning')}
         </p>
         <Button

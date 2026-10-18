@@ -1,0 +1,31 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-inline-size: 580px;
+  inline-size: 100%;
+}
+
+.errorAlert {
+  padding-block: 12px;
+  padding-inline: 16px;
+  background-color: var(--st-overdue-bg);
+  border: 1px solid var(--st-overdue-fg);
+  color: var(--st-overdue-fg);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-block-start: 8px;
+}

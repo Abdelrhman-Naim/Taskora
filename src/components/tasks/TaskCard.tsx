@@ -4,8 +4,10 @@ import React from 'react';
 import { Task, Project, TaskStatus } from '@/types';
 import { isOverdue, todayString } from '@/lib/dates';
 import { Badge } from '@/components/ui/Badge';
+import { Avatar } from '@/components/ui/Avatar';
 import { IconButton } from '@/components/ui/IconButton';
 import { useI18n } from '@/i18n/I18nProvider';
+import styles from './TaskCard.module.css';
 
 export function canEditTask(t: Task, uid: string, isOwner: boolean): boolean {
   if (isOwner) return true;
@@ -57,102 +59,58 @@ export function TaskCard({
   const deletable = canDeleteTask(task, currentUserId, isOwner);
 
   return (
-    <div
-      style={{
-        backgroundColor: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '18px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        transition: 'border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease)',
-      }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-        <h3
-          dir="auto"
-          style={{
-            fontSize: '1rem',
-            fontWeight: 600,
-            color: 'var(--text)',
-            margin: 0,
-            wordBreak: 'break-word',
-          }}
-        >
-          <bdi dir="auto">{task.title}</bdi>
-        </h3>
-
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
-          <Badge kind={task.status} />
-          <Badge kind={task.priority} />
-          {overdue && <Badge kind="overdue" />}
+    <div className={styles.card} role="listitem">
+      {/* Main info column: Title & Badges */}
+      <div className={styles.mainCol}>
+        <div className={styles.titleRow}>
+          <h3 dir="auto" className={styles.title}>
+            <bdi dir="auto">{task.title}</bdi>
+          </h3>
+          <div className={styles.badges}>
+            <Badge kind={task.status} />
+            <Badge kind={task.priority} />
+            {overdue && <Badge kind="overdue" />}
+          </div>
         </div>
+
+        {task.description && (
+          <p dir="auto" className={styles.desc}>
+            {task.description}
+          </p>
+        )}
       </div>
 
-      {task.description && (
-        <p
-          dir="auto"
-          style={{
-            fontSize: '0.875rem',
-            color: 'var(--text-muted)',
-            margin: 0,
-            lineHeight: 1.6,
-            wordBreak: 'break-word',
-          }}
-        >
-          {task.description}
-        </p>
-      )}
+      {/* Assignee column */}
+      <div className={styles.assigneeCol}>
+        <Avatar name={assigneeName} size="sm" />
+        <span className={styles.assigneeName}>
+          <bdi>{assigneeName}</bdi>
+        </span>
+      </div>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '8px',
-          borderBlockStart: '1px solid var(--border)',
-          paddingBlockStart: '10px',
-          fontSize: '0.8125rem',
-          color: 'var(--text-muted)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span>
-            {t('task.field.assignee')}:{' '}
-            <strong style={{ color: 'var(--text)', fontWeight: 500 }}>
-              <bdi>{assigneeName}</bdi>
-            </strong>
-          </span>
-
-          {task.dueDate && (
-            <span>
-              {t('task.field.dueDate')}:{' '}
-              <strong style={{ color: overdue ? 'var(--st-overdue-fg)' : 'var(--text)', fontWeight: 500 }}>
-                {formatDueDate(task.dueDate)}
-              </strong>
+      {/* Due date column */}
+      <div className={styles.dueCol}>
+        {task.dueDate ? (
+          <>
+            <span className={overdue ? styles.dueOverdue : styles.dueDate}>
+              {formatDueDate(task.dueDate)}
             </span>
-          )}
-        </div>
+          </>
+        ) : (
+          <span style={{ color: 'var(--text-muted)' }}>—</span>
+        )}
+      </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+      {/* Action controls column in fixed order: status change -> edit -> delete */}
+      {(statusChangeable || editable || deletable) && (
+        <div className={styles.actions} data-testid="task-actions">
           {statusChangeable && (
             <select
               id={`status-select-${task.id}`}
               aria-label={t('task.field.status')}
               value={task.status}
               onChange={(e) => onStatusChange(task, e.target.value as TaskStatus)}
-              style={{
-                fontSize: '0.8125rem',
-                paddingInline: '8px',
-                paddingBlock: '4px',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--control-border)',
-                backgroundColor: 'var(--surface)',
-                color: 'var(--text)',
-                cursor: 'pointer',
-              }}
+              className={styles.statusSelect}
             >
               <option value="todo">{t('task.status.todo')}</option>
               <option value="in_progress">{t('task.status.in_progress')}</option>
@@ -180,7 +138,7 @@ export function TaskCard({
             />
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
