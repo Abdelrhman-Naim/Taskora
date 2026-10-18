@@ -171,7 +171,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
 
   return (
     <div>
-      <div className={styles.header}>
+      <div className={styles.header} data-testid="project-settings-header">
         <Link
           href={`/projects/${project.id}`}
           className={styles.backLink}
@@ -214,7 +214,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
       </div>
 
       {/* Danger Zone */}
-      <div className={styles.dangerCard}>
+      <div className={styles.dangerCard} data-testid="danger-zone">
         <h2 className={styles.dangerTitle}>
           {t('project.settings.dangerZone')}
         </h2>
@@ -223,6 +223,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
         </p>
         <Button
           variant="danger"
+          data-testid="delete-project-btn"
           onClick={() => setShowDeleteConfirm(true)}
           disabled={deleting}
           loading={deleting}

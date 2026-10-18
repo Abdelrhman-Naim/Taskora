@@ -16,6 +16,9 @@ describe('ConfirmDialog Component', () => {
     );
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByTestId('confirm-dialog')).toBeInTheDocument();
+    expect(screen.getByTestId('confirm-dialog-confirm-btn')).toBeInTheDocument();
+    expect(screen.getByTestId('confirm-dialog-cancel-btn')).toBeInTheDocument();
     expect(screen.getByText('Delete Project')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to delete this project?')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /confirm|delete/i })).toBeInTheDocument();

@@ -33,6 +33,13 @@ describe('MemberManager Component', () => {
     );
 
     // Shows all members
+    expect(screen.getByTestId('member-manager')).toBeInTheDocument();
+    expect(screen.getByTestId('member-list')).toBeInTheDocument();
+    expect(screen.getAllByTestId('member-row').length).toBe(3);
+    expect(screen.getByTestId('add-member-form')).toBeInTheDocument();
+    expect(screen.getByTestId('add-member-input')).toBeInTheDocument();
+    expect(screen.getByTestId('add-member-btn')).toBeInTheDocument();
+
     expect(screen.getByText('Alice Owner')).toBeInTheDocument();
     expect(screen.getByText('Bob Member')).toBeInTheDocument();
     expect(screen.getByText('Charlie Member')).toBeInTheDocument();

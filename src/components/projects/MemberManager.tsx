@@ -79,13 +79,14 @@ export function MemberManager({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }} data-testid="member-manager">
       <div>
         <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBlockEnd: '14px', color: 'var(--text)' }}>
           {t('member.title')} ({project.memberIds.length})
         </h3>
 
         <div
+          data-testid="member-list"
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -103,6 +104,7 @@ export function MemberManager({
             return (
               <div
                 key={uid}
+                data-testid="member-row"
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -163,7 +165,7 @@ export function MemberManager({
         </div>
       </div>
 
-      <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <form onSubmit={handleAdd} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }} data-testid="add-member-form">
         <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text)' }}>
           {t('member.add')}
         </h4>
@@ -181,6 +183,7 @@ export function MemberManager({
                   placeholder={t('member.emailPlaceholder')}
                   disabled={adding}
                   autoComplete="email"
+                  data-testid="add-member-input"
                 />
               )}
             </Field>
@@ -192,6 +195,7 @@ export function MemberManager({
               variant="primary"
               loading={adding}
               disabled={adding}
+              data-testid="add-member-btn"
             >
               {t('member.add')}
             </Button>

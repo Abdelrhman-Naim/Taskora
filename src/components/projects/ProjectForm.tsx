@@ -65,6 +65,7 @@ export function ProjectForm({
     <form
       onSubmit={handleSubmit}
       noValidate
+      data-testid="edit-project-form"
       style={{
         inlineSize: '100%',
         maxInlineSize: '560px',
@@ -105,6 +106,7 @@ export function ProjectForm({
             onChange={(e) => setName(e.target.value)}
             disabled={submitting}
             placeholder={t('project.field.namePlaceholder')}
+            data-testid="project-name-input"
           />
         )}
       </Field>
@@ -123,6 +125,7 @@ export function ProjectForm({
             disabled={submitting}
             rows={4}
             placeholder={t('project.field.descriptionPlaceholder')}
+            data-testid="project-description-input"
           />
         )}
       </Field>
@@ -132,6 +135,7 @@ export function ProjectForm({
           type="submit"
           variant="primary"
           loading={submitting}
+          data-testid="save-project-btn"
         >
           {submitting
             ? t('common.saving')

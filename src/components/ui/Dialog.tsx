@@ -130,6 +130,7 @@ export function Dialog({
         aria-describedby={descText ? 'dialog-desc' : undefined}
         tabIndex={-1}
         className={styles.dialog}
+        data-testid="confirm-dialog"
       >
         <h2 id="dialog-title" className={styles.title}>
           {title}
@@ -147,6 +148,7 @@ export function Dialog({
             <button
               type="button"
               onClick={handleClose}
+              data-testid="confirm-dialog-cancel-btn"
               style={{
                 padding: '8px 16px',
                 fontSize: '14px',
@@ -163,6 +165,7 @@ export function Dialog({
             <button
               type="button"
               onClick={onConfirm}
+              data-testid="confirm-dialog-confirm-btn"
               style={{
                 padding: '8px 16px',
                 fontSize: '14px',
