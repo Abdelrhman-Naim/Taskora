@@ -1,7 +1,8 @@
 {
   "stitchProjectId": "9219100436315328520",
   "projectName": "Taskora",
-  "generationsUsed": 1,
+  "designSystemId": "1a5a2e35161d4ae380dd76682a769e88",
+  "generationsUsed": 5,
   "generationsBudget": 80,
   "pages": {
     "smoke": {
@@ -9,6 +10,15 @@
       "deviceType": "DESKTOP",
       "rounds": 1,
       "generationsUsed": 1
+    },
+    "dashboard": {
+      "desktopScreenId": "b553077ced31457cb452f170d508dcc4",
+      "mobileScreenId": "6a3b3188c14b4a90aaab01b3a99f5700",
+      "darkDesktopScreenId": "a2edb3bba9ac41f5822988124868f68c",
+      "rounds": 1,
+      "generationsUsed": 3,
+      "rubricScore": "11/11",
+      "status": "APPROVED"
     }
   }
 }
