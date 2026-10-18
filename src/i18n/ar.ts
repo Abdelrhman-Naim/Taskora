@@ -221,4 +221,12 @@ export const ar: Record<MessageKey, string> = {
   // Locales
   'locale.en': 'الإنجليزية',
   'locale.ar': 'العربية',
+
+  // Dashboard & Charts
+  'dashboard.viewAsTable': 'عرض كجدول',
+  'dashboard.viewAsChart': 'عرض كرسم',
+  'dashboard.timelineEmpty': 'لا توجد مهام قادمة في الأيام الـ 14 القادمة',
+  'dashboard.projectsDistribution': 'المهام حسب المشروع',
+  'dashboard.dueTimeline': 'تستحق خلال 14 يومًا',
+  'dashboard.chartLegend': 'دليل الرسم',
 };

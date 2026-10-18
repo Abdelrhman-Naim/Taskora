@@ -1,0 +1,31 @@
+.wrapper {
+  inline-size: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  text-align: start;
+}
+
+.th {
+  padding-block: 8px;
+  padding-inline: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-block-end: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.td {
+  padding-block: 8px;
+  padding-inline: 12px;
+  color: var(--text);
+  border-block-end: 1px solid var(--border);
+}
+
+.tr:hover .td {
+  background-color: var(--surface-hover);
+}

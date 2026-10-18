@@ -219,6 +219,14 @@ export const en = {
   // Locales
   'locale.en': 'English',
   'locale.ar': 'العربية',
+
+  // Dashboard & Charts
+  'dashboard.viewAsTable': 'View as table',
+  'dashboard.viewAsChart': 'View as chart',
+  'dashboard.timelineEmpty': 'No upcoming tasks in the next 14 days',
+  'dashboard.projectsDistribution': 'Tasks by project',
+  'dashboard.dueTimeline': 'Due in the next 14 days',
+  'dashboard.chartLegend': 'Chart legend',
 } as const;
 
 export type MessageKey = keyof typeof en;

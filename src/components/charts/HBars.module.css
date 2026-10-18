@@ -1,0 +1,67 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  inline-size: 100%;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 4px;
+  padding-inline: 4px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: default;
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.row:hover,
+.row:focus-visible {
+  background-color: var(--surface-hover);
+}
+
+.row:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.labelCol {
+  inline-size: 80px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trackContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.track {
+  block-size: 16px;
+  max-block-size: 24px;
+  border-radius: 4px;
+  background-color: var(--chart-neutral);
+  transition: inline-size 400ms var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    transition: none;
+  }
+}
+
+.total {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-inline-size: 24px;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}

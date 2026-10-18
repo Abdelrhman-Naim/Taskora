@@ -1,0 +1,27 @@
+.tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  background-color: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding-block: 6px;
+  padding-inline: 10px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  box-shadow: var(--shadow-pop);
+  animation: fadeIn var(--dur-1) var(--ease);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

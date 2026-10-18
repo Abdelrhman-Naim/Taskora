@@ -1,0 +1,25 @@
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  user-select: none;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.sm {
+  inline-size: 24px;
+  block-size: 24px;
+  font-size: 0.6875rem;
+}
+
+.md {
+  inline-size: 32px;
+  block-size: 32px;
+  font-size: 0.8125rem;
+}

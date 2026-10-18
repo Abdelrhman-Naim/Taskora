@@ -17,6 +17,11 @@ import { Segmented } from '@/components/ui/Segmented';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Dialog } from '@/components/ui/Dialog';
 import { ToastProvider, useToast } from '@/components/ui/Toast';
+import { Avatar } from '@/components/ui/Avatar';
+import { StackedBars } from '@/components/charts/StackedBars';
+import { ColumnChart } from '@/components/charts/ColumnChart';
+import { HBars } from '@/components/charts/HBars';
+import { ChartPanel } from '@/components/charts/ChartPanel';
 import styles from './page.module.css';
 
 function ToastShowcase() {
@@ -229,6 +234,105 @@ export default function DesignSystemPage() {
             <Skeleton width="40%" height="24px" />
             <Skeleton width="100%" height="16px" />
             <Skeleton width="80%" height="16px" />
+          </div>
+        </section>
+
+        {/* Avatars */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Avatars (Bilingual & Initials)</h2>
+          <div className={styles.componentRow}>
+            <Avatar name="Sara Ali" size="md" />
+            <Avatar name="Sara Ali" size="sm" />
+            <Avatar name="أحمد محمد" size="md" />
+            <Avatar name="أحمد محمد" size="sm" />
+            <Avatar name="Zeta Project" size="md" />
+          </div>
+        </section>
+
+        {/* Charts */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Accessible Charts (HTML/CSS)</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <ChartPanel
+              title="Tasks by Project"
+              subtitle="Distribution of status across top active projects"
+              legend={[
+                { key: 'todo', label: 'To do', color: 'var(--chart-todo)' },
+                { key: 'in_progress', label: 'In progress', color: 'var(--chart-progress)' },
+                { key: 'done', label: 'Done', color: 'var(--chart-done)' },
+              ]}
+              table={{
+                headers: ['Project', 'To do', 'In progress', 'Done', 'Total'],
+                rows: [
+                  ['Website Redesign', 2, 3, 5, 10],
+                  ['Mobile Application', 4, 1, 1, 6],
+                  ['Infrastructure', 1, 2, 4, 7],
+                ],
+              }}
+            >
+              <StackedBars
+                ariaLabel="Tasks by Project showcase"
+                series={[
+                  { key: 'todo', label: 'To do', color: 'var(--chart-todo)' },
+                  { key: 'in_progress', label: 'In progress', color: 'var(--chart-progress)' },
+                  { key: 'done', label: 'Done', color: 'var(--chart-done)' },
+                ]}
+                rows={[
+                  { id: '1', label: 'Website Redesign', values: { todo: 2, in_progress: 3, done: 5 } },
+                  { id: '2', label: 'Mobile Application', values: { todo: 4, in_progress: 1, done: 1 } },
+                  { id: '3', label: 'Infrastructure', values: { todo: 1, in_progress: 2, done: 4 } },
+                ]}
+              />
+            </ChartPanel>
+
+            <ChartPanel
+              title="Due in Next 14 Days"
+              subtitle="Timeline density with overdue callout"
+              table={{
+                headers: ['Day', 'Tasks'],
+                rows: [
+                  ['Overdue', 2],
+                  ['Today', 4],
+                  ['Tomorrow', 1],
+                  ['In 3 days', 3],
+                ],
+              }}
+            >
+              <ColumnChart
+                ariaLabel="Timeline showcase"
+                valueLabel="tasks"
+                buckets={[
+                  { id: 'od', label: 'Overdue', value: 2, tone: 'overdue' },
+                  { id: 'today', label: 'Today', value: 4, highlight: true },
+                  { id: 'tom', label: 'Tomorrow', value: 1 },
+                  { id: 'd3', label: 'Day 3', value: 3 },
+                  { id: 'd4', label: 'Day 4', value: 0 },
+                  { id: 'd5', label: 'Day 5', value: 2 },
+                ]}
+              />
+            </ChartPanel>
+
+            <ChartPanel
+              title="Priority Breakdown"
+              subtitle="Open tasks by urgency tier"
+              table={{
+                headers: ['Priority', 'Tasks'],
+                rows: [
+                  ['High', 6],
+                  ['Medium', 11],
+                  ['Low', 4],
+                ],
+              }}
+            >
+              <HBars
+                ariaLabel="Priority breakdown showcase"
+                rows={[
+                  { id: 'high', label: 'High', value: 6 },
+                  { id: 'med', label: 'Medium', value: 11 },
+                  { id: 'low', label: 'Low', value: 4 },
+                ]}
+              />
+            </ChartPanel>
           </div>
         </section>
       </main>

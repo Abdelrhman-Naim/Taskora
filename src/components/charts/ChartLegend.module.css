@@ -1,0 +1,21 @@
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
