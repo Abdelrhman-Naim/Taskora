@@ -10,7 +10,7 @@
   color: var(--text);
   background-color: var(--surface);
   border: 1px solid var(--control-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
   resize: vertical;
   transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);

@@ -133,6 +133,12 @@ describe('Design Tokens Contrast and Consistency (WCAG AA)', () => {
 
     // Focus ring on surface >= 3:1
     expect(contrastRatio(vars['--focus'], vars['--surface'])).toBeGreaterThanOrEqual(3.0);
+
+    // Sidebar & Topbar tokens in light theme
+    if (vars['--sidebar-bg']) {
+      expect(contrastRatio(vars['--sidebar-text'], vars['--sidebar-bg'])).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(vars['--sidebar-active-text'], vars['--sidebar-active-bg'])).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it('meets WCAG AA contrast in dark theme', () => {
@@ -185,5 +191,11 @@ describe('Design Tokens Contrast and Consistency (WCAG AA)', () => {
     }
 
     expect(contrastRatio(vars['--focus'], vars['--surface'])).toBeGreaterThanOrEqual(3.0);
+
+    // Sidebar & Topbar tokens in dark theme
+    if (vars['--sidebar-bg']) {
+      expect(contrastRatio(vars['--sidebar-text'], vars['--sidebar-bg'])).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(vars['--sidebar-active-text'], vars['--sidebar-active-bg'])).toBeGreaterThanOrEqual(4.5);
+    }
   });
 });

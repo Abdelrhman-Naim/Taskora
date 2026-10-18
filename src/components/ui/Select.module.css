@@ -16,7 +16,7 @@
   color: var(--text);
   background-color: var(--surface);
   border: 1px solid var(--control-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
   appearance: none;
   cursor: pointer;

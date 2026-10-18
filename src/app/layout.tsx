@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { cookies, headers } from 'next/headers';
-import { Newsreader, Amiri, Hanken_Grotesk, IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { Inter, Cairo } from 'next/font/google';
 import './globals.css';
 import { AuthProviderClient } from '@/components/auth/AuthProviderClient';
 import { parseTheme, THEME_COOKIE } from '@/theme/config';
@@ -10,40 +10,28 @@ import { I18nProvider } from '@/i18n/I18nProvider';
 import { en } from '@/i18n/en';
 import { ar } from '@/i18n/ar';
 
-const newsreader = Newsreader({
+const inter = Inter({
   subsets: ['latin'],
-  display: 'swap',
-  variable: '--f-newsreader',
-});
-
-const amiri = Amiri({
-  subsets: ['arabic'],
-  display: 'swap',
-  weight: ['400', '700'],
-  variable: '--f-amiri',
-});
-
-const hanken = Hanken_Grotesk({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--f-hanken',
-});
-
-const plexArabic = IBM_Plex_Sans_Arabic({
-  subsets: ['arabic'],
   display: 'swap',
   weight: ['400', '500', '600', '700'],
-  variable: '--f-plex-arabic',
+  variable: '--f-inter',
 });
 
-const fontClasses = `${newsreader.variable} ${amiri.variable} ${hanken.variable} ${plexArabic.variable}`;
+const cairo = Cairo({
+  subsets: ['arabic', 'latin'],
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+  variable: '--f-cairo',
+});
+
+const fontClasses = `${inter.variable} ${cairo.variable}`;
 
 export async function generateViewport(): Promise<Viewport> {
   return {
     colorScheme: 'light dark',
     themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#F4F5F2' },
-      { media: '(prefers-color-scheme: dark)', color: '#0A1514' },
+      { media: '(prefers-color-scheme: light)', color: '#F8FAFC' },
+      { media: '(prefers-color-scheme: dark)', color: '#0B1118' },
     ],
   };
 }

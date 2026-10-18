@@ -1,14 +1,14 @@
 # Taskora Design System
 
-The Taskora Design System provides an intentional, bespoke aesthetic combining classical editorial typography (Newsreader serif & Amiri) with functional modern interface principles, bilingual parity (English & Arabic with full RTL), and WCAG AA accessible contrast in both Light and Dark themes.
+The Taskora Design System provides a calm, prestigious, and high-density interface aesthetic derived from Google Stitch design explorations. It combines modern typography (Inter for Latin & Cairo for Arabic), bilingual parity (English & Arabic with full RTL support), and WCAG AA accessible contrast in both Light and Dark themes.
 
 ---
 
 ## 1. Design Direction & Core Identity
 
-- **The Bespoke Anchor (The "One Bold Thing"):** The dashboard ledger bar featuring large serif numerals in Newsreader / Amiri with lining and tabular numerals (`.num`), paired with a solitary Brass hairline accent rule (`--brass`).
-- **Restraint:** No gratuitous shadows, glow effects, or decorative clutter. Surfaces are calm and tactile (`--surface`, `--border`).
-- **Cohesive Motion:** A single coordinated micro-moment (the Brass hairline drawing across the header in `--dur-rule` ≤ 600ms on load), paired with responsive, snappy interaction feedback (120–200ms) that respects `prefers-reduced-motion`.
+- **The Anchor:** A calm, purposeful dashboard structure with a clean left/right sidebar, comprehensive KPI strip, intuitive charts, and high-density data tables.
+- **Restraint:** No gratuitous shadows or decorative clutter. Clean surfaces (`--surface`, `--border`) with subtle borders and crisp typography.
+- **Bilingual & Bidi-Safe:** Zero physical CSS layout properties (uses logical properties exclusively), with `<bdi>` isolation for all user strings and proper Arabic typography.
 
 ---
 
@@ -18,46 +18,50 @@ The Taskora Design System provides an intentional, bespoke aesthetic combining c
 
 | Token | Light | Dark | Semantic Role | WCAG Contrast |
 |---|---|---|---|---|
-| `--bg` | `#F4F5F2` (Pearl) | `#0A1514` (Petrol) | Application background | Base canvas |
-| `--surface` | `#FFFFFF` (Porcelain) | `#101F1D` (Deep) | Cards, panels, inputs | Base surface |
-| `--surface-2` | `#EAECE7` | `#152826` | Elevated cards, avatars | Secondary surface |
-| `--surface-hover` | `#F8F9F7` | `#1B312E` | Hover states | Interactive feedback |
-| `--text` | `#0F1E1C` (Ink) | `#EAF0EC` (Mist) | Primary body & heading text | ≥ 13.8:1 (AAA) |
-| `--text-muted` | `#52605D` | `#9DB0AA` | Subtitles, hints, labels | ≥ 4.5:1 (AA) |
-| `--accent` | `#0E6B5C` (Jade) | `#5CCBAE` (Mint) | Primary calls-to-action | ≥ 4.6:1 (AA) |
-| `--on-accent` | `#FFFFFF` | `#06231D` | Text on primary buttons | ≥ 4.5:1 (AA) |
-| `--brass` | `#B08D45` | `#C9A55A` | Signature hairline rule only | ≥ 3.0:1 UI (AA) |
-| `--border` | `#D8DFDC` | `#25403C` | Card borders, dividers | Structural containment |
-| `--control-border`| `#B8C4C0` | `#5F7A73` | Input & button boundaries | ≥ 3.0:1 UI (AA) |
+| `--bg` | `#F8FAFC` (Slate-50) | `#0B1118` (Deep Slate) | Application background | Base canvas |
+| `--surface` | `#FFFFFF` (White) | `#131F2D` (Slate-900) | Cards, panels, inputs | Base surface |
+| `--surface-2` | `#F1F5F9` | `#162536` | Elevated cards, avatars | Secondary surface |
+| `--surface-hover` | `#E2E8F0` | `#1E3146` | Hover states | Interactive feedback |
+| `--border` | `#E2E8F0` | `#233549` | Card borders, dividers | Structural containment |
+| `--control-border`| `#64748B` | `#64748B` | Input & button boundaries | ≥ 3.0:1 UI (AA) |
+| `--text` | `#0F172A` (Slate-900) | `#F8FAFC` (Slate-50) | Primary body & heading text | ≥ 13.8:1 (AAA) |
+| `--text-muted` | `#475569` | `#94A3B8` | Subtitles, hints, labels | ≥ 4.5:1 (AA) |
+| `--accent` | `#0D5C5A` (Deep Teal) | `#14B8A6` (Luminous Teal) | Primary calls-to-action | ≥ 4.6:1 (AA) |
+| `--on-accent` | `#FFFFFF` | `#042321` | Text on primary buttons | ≥ 4.5:1 (AA) |
+| `--sidebar-bg` | `#FFFFFF` | `#0E1724` | Sidebar background | Neutral canvas |
+| `--sidebar-text` | `#334155` | `#CBD5E1` | Sidebar navigation text | ≥ 5.0:1 (AA) |
+| `--sidebar-active-bg` | `#E6F4F2` | `#112F2E` | Sidebar active item background | Soft teal tint |
+| `--sidebar-active-text` | `#0D5C5A` | `#2DD4BF` | Sidebar active item text | ≥ 5.0:1 (AA) |
 
 ### Status & Priority Tokens
 
 | Kind | Text/Border Token | Background Token | Distinguishing Indicator |
 |---|---|---|---|
-| `todo` | `--st-todo-fg` | `--st-todo-bg` | Solid circular dot |
-| `in_progress` | `--st-progress-fg` | `--st-progress-bg` | Ring indicator |
-| `done` | `--st-done-fg` | `--st-done-bg` | Checkmark icon |
-| `overdue` | `--st-overdue-fg` | `--st-overdue-bg` | Clock icon + textual badge |
-| `low` | `--pr-low-fg` | Transparent / soft | 1-bar icon |
-| `medium` | `--pr-medium-fg` | Transparent / soft | 2-bar icon |
-| `high` | `--pr-high-fg` | Transparent / soft | 3-bar icon |
+| `todo` | `--st-todo-fg` (`#475569` / `#94A3B8`) | `--st-todo-bg` (`#E2E8F0` / `#1E293B`) | Solid circular dot |
+| `in_progress` | `--st-progress-fg` (`#0369A1` / `#7DD3FC`) | `--st-progress-bg` (`#E0F2FE` / `#082F49`) | Ring indicator |
+| `done` | `--st-done-fg` (`#0D5C5A` / `#6EE7B7`) | `--st-done-bg` (`#E6F4F2` / `#064E3B`) | Checkmark icon |
+| `overdue` | `--st-overdue-fg` (`#991B1B` / `#FCA5A5`) | `--st-overdue-bg` (`#FEE2E2` / `#450A0A`) | Clock icon + textual badge |
+| `low` | `--pr-low-fg` | Soft surface background | 1-bar icon |
+| `medium` | `--pr-medium-fg` | Soft surface background | 2-bar icon |
+| `high` | `--pr-high-fg` | Soft surface background | 3-bar icon |
 
 ### Chart Tokens
 
 | Token | Light | Dark | Semantic Purpose |
 |---|---|---|---|
-| `--chart-todo` | `#B8841F` | `#B8841F` | To-do segments in stacked bars |
-| `--chart-progress` | `#3B6FB6` | `#4A7FD6` | In-progress segments |
-| `--chart-done` | `#13966F` | `#22A67F` | Completed segments |
-| `--chart-neutral` | `#5F6E69` | `#8FA39C` | Timeline neutral buckets |
-| `--chart-grid` | `#E3E6E0` | `#1E3431` | Baseline & divider grid lines |
+| `--chart-todo` | `#64748B` | `#94A3B8` | To-do segments in stacked bars |
+| `--chart-progress` | `#0284C7` | `#38BDF8` | In-progress segments |
+| `--chart-done` | `#0D5C5A` | `#2DD4BF` | Completed segments |
+| `--chart-neutral` | `#475569` | `#64748B` | Neutral / baseline items |
+| `--chart-grid` | `#E2E8F0` | `#1E293B` | Grid lines and separators |
 
 ### Radii Hierarchy
 
-- `--radius-sm` (2px): Badges, segmented option buttons.
-- `--radius-md` (6px): Form inputs, standard buttons, icon buttons.
-- `--radius-lg` (12px): Cards, dialog modals, sheet panels.
-- `--radius-pill` (9999px): Progress bar tracks.
+- `--radius-sm` (4px): Form inputs, checkboxes, textareas, selects, badges, segmented buttons.
+- `--radius-md` (6px): Primary/secondary/ghost/danger buttons, toast notifications.
+- `--radius-lg` (8px): Cards, dialog modals, sheet panels.
+- `--radius-xl` (12px): Large hero surfaces and featured panels.
+- `--radius-pill` (9999px): Progress bar tracks, avatars.
 
 ---
 

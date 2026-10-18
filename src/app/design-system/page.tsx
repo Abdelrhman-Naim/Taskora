@@ -52,11 +52,12 @@ export default function DesignSystemPage() {
   const [segmentedVal, setSegmentedVal] = useState('list');
 
   const colors = [
-    { name: 'Pearl / Petrol', role: 'Background (--bg)', hex: 'Light #F4F5F2 / Dark #0A1514', varName: 'var(--bg)', contrast: '≥ 4.5:1 (AA)' },
-    { name: 'Porcelain / Deep', role: 'Surfaces (--surface)', hex: 'Light #FFFFFF / Dark #101F1D', varName: 'var(--surface)', contrast: '≥ 4.5:1 (AA)' },
-    { name: 'Jade', role: 'Primary Action (--accent)', hex: 'Light #0E6B5C / Dark #5CCBAE', varName: 'var(--accent)', contrast: '4.6:1 (AA)' },
-    { name: 'Ink / Mist', role: 'Text (--text)', hex: 'Light #0F1E1C / Dark #EAF0EC', varName: 'var(--text)', contrast: '13.8:1 (AAA)' },
-    { name: 'Brass', role: 'Hairline Accent (--brass)', hex: 'Light #B08D45 / Dark #C9A55A', varName: 'var(--brass)', contrast: '3.1:1 UI (AA)' },
+    { name: 'Slate Canvas', role: 'Background (--bg)', hex: 'Light #F8FAFC / Dark #0B1118', varName: 'var(--bg)', contrast: '≥ 4.5:1 (AA)' },
+    { name: 'White / Deep Slate', role: 'Surfaces (--surface)', hex: 'Light #FFFFFF / Dark #131F2D', varName: 'var(--surface)', contrast: '≥ 4.5:1 (AA)' },
+    { name: 'Deep / Luminous Teal', role: 'Primary Action (--accent)', hex: 'Light #0D5C5A / Dark #14B8A6', varName: 'var(--accent)', contrast: '≥ 4.6:1 (AA)' },
+    { name: 'Slate Ink / Mist', role: 'Text (--text)', hex: 'Light #0F172A / Dark #F8FAFC', varName: 'var(--text)', contrast: '≥ 13.8:1 (AAA)' },
+    { name: 'Sidebar Canvas', role: 'Sidebar (--sidebar-bg)', hex: 'Light #FFFFFF / Dark #0E1724', varName: 'var(--sidebar-bg)', contrast: '≥ 5.0:1 (AA)' },
+    { name: 'Muted Text', role: 'Muted Labels (--text-muted)', hex: 'Light #475569 / Dark #94A3B8', varName: 'var(--text-muted)', contrast: '≥ 4.5:1 (AA)' },
   ];
 
   return (
@@ -96,10 +97,10 @@ export default function DesignSystemPage() {
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700 }}>
-                Display Title: Newsreader & Amiri (سيريف عرض)
+                Display Title: Inter & Cairo (العنوان والترويسة)
               </div>
               <div style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.75 }}>
-                Body Text: Hanken Grotesk & IBM Plex Sans Arabic (خط القراءة sans-serif المريح)
+                Body Text: Inter & Cairo (خط القراءة والواجهة النظيف والمريح)
               </div>
               <div className="num" style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', color: 'var(--accent)' }}>
                 12,500 · 34 · 98% (Lining & Tabular Numerals)
