@@ -15,12 +15,16 @@ interface ProjectFormProps {
   initialValues?: { name: string; description: string };
   onSubmit: (data: { name: string; description: string }) => Promise<void>;
   submitLabel?: string;
+  submitTestId?: string;
+  onCancel?: () => void;
 }
 
 export function ProjectForm({
   initialValues = { name: '', description: '' },
   onSubmit,
   submitLabel,
+  submitTestId,
+  onCancel,
 }: ProjectFormProps): React.ReactElement {
   const { t } = useI18n();
   const getErrorMessage = useErrorMessage();
@@ -130,12 +134,30 @@ export function ProjectForm({
         )}
       </Field>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBlockStart: '8px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: onCancel ? 'space-between' : 'flex-end',
+          alignItems: 'center',
+          marginBlockStart: '8px',
+        }}
+      >
+        {onCancel && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onCancel}
+            disabled={submitting}
+            data-testid="cancel-btn"
+          >
+            {t('common.cancel')}
+          </Button>
+        )}
         <Button
           type="submit"
           variant="primary"
           loading={submitting}
-          data-testid="save-project-btn"
+          data-testid={submitTestId || 'save-project-btn'}
         >
           {submitting
             ? t('common.saving')

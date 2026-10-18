@@ -43,8 +43,13 @@ export default function NewProjectPage(): React.ReactElement {
         <div className={styles.brassRule} aria-hidden="true" />
       </div>
 
-      <div className={styles.card}>
-        <ProjectForm onSubmit={handleCreate} submitLabel={t('project.new.button')} />
+      <div className={styles.card} data-testid="new-project-card">
+        <ProjectForm
+          onSubmit={handleCreate}
+          submitLabel={t('project.new.button')}
+          submitTestId="create-project-btn"
+          onCancel={() => router.push('/dashboard')}
+        />
       </div>
     </div>
   );
