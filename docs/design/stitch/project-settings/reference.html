@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Taskora — Project Settings</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter & JetBrains Mono Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#313e3d",
+            "primary": "#004341",
+            "tertiary-container": "#485554",
+            "secondary-fixed-dim": "#b9c7e0",
+            "on-secondary-fixed-variant": "#3a485c",
+            "secondary-fixed": "#d5e3fd",
+            "on-tertiary-container": "#bbc9c7",
+            "on-background": "#0b1c30",
+            "inverse-surface": "#213145",
+            "surface": "#f8f9ff",
+            "surface-tint": "#216866",
+            "outline-variant": "#bec9c7",
+            "surface-dim": "#cbdbf5",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed-dim": "#8fd2cf",
+            "on-primary": "#ffffff",
+            "background": "#f8f9ff",
+            "on-secondary-fixed": "#0d1c2f",
+            "on-tertiary-fixed": "#111e1d",
+            "error": "#ba1a1a",
+            "surface-container": "#e5eeff",
+            "on-secondary-container": "#57657b",
+            "tertiary-fixed-dim": "#bbc9c7",
+            "on-surface": "#0b1c30",
+            "on-primary-fixed-variant": "#00504e",
+            "surface-container-low": "#eff4ff",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "on-primary-fixed": "#00201f",
+            "primary-fixed": "#abefeb",
+            "inverse-primary": "#8fd2cf",
+            "surface-container-highest": "#d3e4fe",
+            "tertiary-fixed": "#d7e5e3",
+            "surface-bright": "#f8f9ff",
+            "secondary-container": "#d5e3fd",
+            "surface-container-high": "#dce9ff",
+            "on-error": "#ffffff",
+            "secondary": "#515f74",
+            "inverse-on-surface": "#eaf1ff",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#0d5c5a",
+            "on-tertiary-fixed-variant": "#3c4948",
+            "on-surface-variant": "#3f4948",
+            "on-secondary": "#ffffff",
+            "outline": "#6f7978",
+            "surface-variant": "#d3e4fe",
+            "on-primary-container": "#8fd2cf"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-base": "1rem",
+            "space-2xl": "3rem",
+            "gutter-desktop": "2rem",
+            "margin": "1rem",
+            "space-xl": "2rem",
+            "space-2xs": "0.125rem",
+            "margin-desktop": "2.5rem",
+            "space-md": "0.75rem",
+            "gutter": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "display-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "code-sm": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="h-full flex overflow-hidden font-body-md text-body-md text-on-surface bg-[#F8FAFC]">
+<!-- Standard Application Shell: Left Sidebar (260px wide) -->
+<aside class="w-[260px] flex-shrink-0 bg-surface-container-lowest border-r border-[#e2e8f0] flex flex-col justify-between h-full select-none z-20">
+<div class="flex flex-col h-full">
+<!-- Brand Header -->
+<div class="h-14 px-4 flex items-center justify-between border-b border-[#f1f5f9]">
+<div class="flex items-center gap-2.5">
+<img alt="Taskora Logo" class="w-7 h-7 rounded-sm object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida/AEtjO1VUjHsgbqa5TvkLxpVSddMXdtQPdc8cTPAaUrqK2RmbOcJ4YNuaQ7kGRzpzpSeonNCPUhNOMC9GLQpUi7TTNla7Ia3-eBGZcwhap48JXJUHhsmEODg6QS-qVLzSw1zd2AcfbfboWN-u9KDOCumzmbwwxIA_IUjl4Rfop4YjnCz8MP_RB8e8zOihyFk4_PYP2yIEfUpDaq-CbJpdcasXxOeQbOLcS1XQkKeli87NQdcdcC1uh9RYwXMnQA"/>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">Taskora</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded text-[10px] font-code-sm text-secondary font-medium tracking-normal">v2.4</span>
+</div>
+</div>
+<!-- Navigation Section -->
+<div class="p-3 flex-1 overflow-y-auto space-y-6">
+<div>
+<div class="px-2 pb-1.5 text-[11px] font-semibold text-secondary uppercase tracking-wider font-label-sm">Workspace</div>
+<nav class="space-y-0.5">
+<a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f8fafc] font-label-md text-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f8fafc] font-label-md text-label-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">monitoring</span>
+<span>Analytics</span>
+</a>
+</nav>
+</div>
+<!-- Projects List -->
+<div>
+<div class="px-2 pb-1.5 flex items-center justify-between">
+<span class="text-[11px] font-semibold text-secondary uppercase tracking-wider font-label-sm">Active Streams</span>
+<span class="text-[10px] text-secondary font-code-sm">4</span>
+</div>
+<nav class="space-y-0.5">
+<a class="flex items-center justify-between px-2.5 py-2 rounded-lg bg-[#E6F4F2] text-primary-container font-medium font-body-sm text-body-sm border border-[#0D5C5A]/15 shadow-sm" href="#">
+<div class="flex items-center gap-2 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container flex-shrink-0 animate-pulse"></span>
+<span class="truncate">Enterprise Cloud Migration</span>
+</div>
+<span class="text-[11px] font-code-sm bg-white/80 text-primary-container px-1.5 py-0.2 rounded border border-[#0D5C5A]/20">25</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f8fafc] font-body-sm text-body-sm transition-colors" href="#">
+<div class="flex items-center gap-2 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant flex-shrink-0"></span>
+<span class="truncate">Core Ledger Pipeline</span>
+</div>
+<span class="text-[11px] font-code-sm text-secondary">12</span>
+</a>
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-[#f8fafc] font-body-sm text-body-sm transition-colors" href="#">
+<div class="flex items-center gap-2 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant flex-shrink-0"></span>
+<span class="truncate">Identity Vault V2</span>
+</div>
+<span class="text-[11px] font-code-sm text-secondary">8</span>
+</a>
+</nav>
+<button class="mt-2.5 w-full flex items-center justify-center gap-1.5 px-3 py-1.5 border border-dashed border-[#CBD5E1] rounded-lg text-secondary hover:text-primary hover:border-primary-container hover:bg-[#F8FAFC] font-label-md text-label-md transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>+ New project</span>
+</button>
+</div>
+</div>
+<!-- Bottom Profile Footer -->
+<div class="p-3 border-t border-[#f1f5f9] bg-surface-container-lowest">
+<div class="flex items-center justify-between p-1.5 rounded-lg hover:bg-[#F8FAFC] cursor-pointer transition-colors">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-[#E2E8F0] text-secondary font-semibold text-xs flex items-center justify-center border border-white shadow-xs">
+              SE
+            </div>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-on-surface leading-tight">Sara Executive</span>
+<span class="text-[11px] text-secondary leading-tight">Owner</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[18px]">unfold_more</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Workbench & Content Canvas -->
+<div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+<!-- Top Navigation Bar (56px high) -->
+<header class="h-14 bg-surface-container-lowest border-b border-[#e2e8f0] px-6 flex items-center justify-between flex-shrink-0 z-10">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2 text-xs font-medium text-secondary">
+<a class="hover:text-primary transition-colors" href="#">Projects</a>
+<span class="text-outline-variant">/</span>
+<a class="hover:text-primary transition-colors truncate max-w-[200px]" href="#">Enterprise Cloud Migration</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">Settings</span>
+</div>
+<!-- Trailing Controls -->
+<div class="flex items-center gap-3.5">
+<!-- Language toggle segmented control (EN / العربية) -->
+<div class="flex items-center bg-[#F1F5F9] p-0.5 rounded-md border border-[#E2E8F0]">
+<button class="px-2 py-0.5 rounded text-[11px] font-semibold bg-white text-on-surface shadow-xs transition-all" type="button">EN</button>
+<button class="px-2 py-0.5 rounded text-[11px] font-medium text-secondary hover:text-on-surface transition-colors" dir="rtl" type="button">العربية</button>
+</div>
+<!-- Theme toggle icon -->
+<button aria-label="Toggle theme" class="w-8 h-8 flex items-center justify-center text-secondary hover:text-on-surface rounded-md hover:bg-[#F8FAFC] transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">light_mode</span>
+</button>
+<div class="h-4 w-[1px] bg-[#E2E8F0]"></div>
+<!-- User initials avatar badge 'SE' -->
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary-container text-white text-[11px] font-bold flex items-center justify-center ring-2 ring-white">
+            SE
+          </div>
+</div>
+</div>
+</header>
+<!-- Main Content Plane (Centered container max-w-4xl / 56rem) -->
+<main class="flex-1 overflow-y-auto bg-[#F8FAFC]">
+<div class="max-w-4xl mx-auto py-8 px-6 space-y-6">
+<!-- 1. Page Header -->
+<div>
+<!-- Inline back action -->
+<a class="inline-flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors group mb-3" href="#">
+<span class="material-symbols-outlined text-[16px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+<span>Back to Enterprise Cloud Migration</span>
+</a>
+<h1 class="font-headline-lg text-headline-lg text-[#0F172A] tracking-tight">Project Settings</h1>
+<p class="font-body-md text-body-md text-[#475569] mt-0.5">Manage workspace metadata, team collaborators, and project lifecycle.</p>
+</div>
+<!-- 2. General Settings Card -->
+<section class="bg-surface-container-lowest rounded-lg border border-[#e2e8f0] p-6 shadow-sm">
+<div class="pb-4 border-b border-[#f1f5f9] mb-5">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">General Information</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Update project naming and architectural description.</p>
+</div>
+<form class="space-y-4" onsubmit="event.preventDefault();">
+<!-- Project Name -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface font-medium mb-1.5" for="project-name">Project Name</label>
+<input class="w-full h-9 px-3 rounded border border-[#E2E8F0] bg-white text-on-surface font-body-md text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/15 outline-none transition-all" id="project-name" name="project-name" type="text" value="Enterprise Cloud Migration"/>
+<p class="mt-1 font-body-sm text-[12px] text-secondary">The official architectural stream designation across executive telemetry.</p>
+</div>
+<!-- Description -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface font-medium mb-1.5" for="project-description">Project Description</label>
+<textarea class="w-full p-3 rounded border border-[#E2E8F0] bg-white text-on-surface font-body-md text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/15 outline-none transition-all resize-none leading-relaxed" id="project-description" name="project-description" rows="3">Q4 infrastructure migration to modern Kubernetes architecture and legacy workload containerization across distributed clusters.</textarea>
+</div>
+<!-- Save Action -->
+<div class="pt-2 flex justify-end">
+<button class="bg-[#0D5C5A] hover:bg-[#063837] active:bg-[#0A4D4C] text-white font-medium px-4 py-2 rounded-md text-sm transition-colors duration-150 flex items-center gap-1.5 shadow-xs" type="submit">
+<span>Save changes</span>
+</button>
+</div>
+</form>
+</section>
+<!-- 3. Team Management Card -->
+<section class="bg-surface-container-lowest rounded-lg border border-[#e2e8f0] p-6 shadow-sm">
+<div class="flex items-center justify-between pb-4 border-b border-[#f1f5f9] mb-5">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Team Members</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Control access credentials and operational delegation.</p>
+</div>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#E6F4F2] text-[#0D5C5A]">
+              3 active members
+            </span>
+</div>
+<!-- Inline add member row -->
+<div class="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0] mb-5">
+<form class="flex flex-col sm:flex-row gap-2.5" onsubmit="event.preventDefault();">
+<div class="relative flex-1">
+<input class="w-full h-9 px-3 rounded border border-[#CBD5E1] bg-white text-on-surface font-body-md text-body-md placeholder-[#94A3B8] focus:border-primary-container focus:ring-2 focus:ring-primary-container/15 outline-none transition-all" placeholder="colleague@company.com" type="email"/>
+</div>
+<div class="w-full sm:w-36">
+<select class="w-full h-9 px-3 rounded border border-[#CBD5E1] bg-white text-on-surface font-body-md text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/15 outline-none transition-all cursor-pointer">
+<option value="member">Member</option>
+<option value="lead">Technical Lead</option>
+<option value="observer">Executive Observer</option>
+</select>
+</div>
+<button class="h-9 px-3.5 bg-white hover:bg-[#F8FAFC] border border-[#CBD5E1] text-[#334155] rounded font-label-md text-label-md font-medium whitespace-nowrap transition-colors flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">person_add</span>
+<span>Add member</span>
+</button>
+</form>
+</div>
+<!-- Member List Table / Rows -->
+<div class="divide-y divide-[#f1f5f9] border-t border-[#f1f5f9]">
+<!-- Row 1: Sara Jenkins (You) -->
+<div class="py-3.5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#E2E8F0] text-secondary font-semibold text-xs flex items-center justify-center border border-white">
+                  SA
+                </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-medium text-sm text-on-surface">Sara Jenkins</span>
+<span class="text-xs text-secondary font-code-sm">(You)</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">sara.jenkins@company.com</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#fef3c7] text-[#92400e] border border-[#fde68a]">
+                  Owner
+                </span>
+<span class="text-xs text-[#94a3b8] italic select-none w-14 text-right">Protected</span>
+</div>
+</div>
+<!-- Row 2: Alex Rivera -->
+<div class="py-3.5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#FFE4E6] text-[#9F1239] font-semibold text-xs flex items-center justify-center border border-white">
+                  AN
+                </div>
+<div>
+<div class="font-medium text-sm text-on-surface">Alex Rivera</div>
+<span class="font-body-sm text-body-sm text-secondary">alex.n@company.com</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0]">
+                  Member
+                </span>
+<button class="text-xs text-[#dc2626] hover:underline font-medium w-14 text-right transition-all" type="button">
+                  Remove
+                </button>
+</div>
+</div>
+<!-- Row 3: Marcus Vance -->
+<div class="py-3.5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-[#FEF3C7] text-[#92400E] font-semibold text-xs flex items-center justify-center border border-white">
+                  MJ
+                </div>
+<div>
+<div class="font-medium text-sm text-on-surface">Marcus Vance</div>
+<span class="font-body-sm text-body-sm text-secondary">marcus.c@company.com</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0]">
+                  Member
+                </span>
+<button class="text-xs text-[#dc2626] hover:underline font-medium w-14 text-right transition-all" type="button">
+                  Remove
+                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Danger Zone Card -->
+<section class="bg-gradient-to-r from-[#fff5f5] to-white rounded-lg border border-[#fca5a5] p-6 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="space-y-1">
+<h2 class="text-base font-semibold text-red-700 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-red-700">warning</span>
+<span>Danger Zone</span>
+</h2>
+<p class="font-body-sm text-body-sm text-[#7f1d1d] max-w-xl">
+                Permanently delete this project and all associated tasks, telemetry, and activity logs. This action is irreversible.
+              </p>
+</div>
+<div>
+<button class="border border-[#dc2626] text-[#dc2626] hover:bg-[#fee2e2] px-4 py-2 rounded-md font-medium text-sm flex items-center gap-2 transition-colors whitespace-nowrap shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">delete_forever</span>
+<span>Delete this project</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Footer Anchor -->
+<footer class="w-full py-space-sm px-gutter-desktop flex flex-col md:flex-row items-center justify-between border-t border-outline-variant bg-surface-container-lowest text-xs text-secondary">
+<div>© 2025 Taskora Inc. Architectural task orchestration. All rights reserved.</div>
+<div class="flex items-center gap-4 mt-2 md:mt-0 font-label-sm text-label-sm">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Security Architecture</a>
+<a class="hover:text-primary transition-colors" href="#">System Status</a>
+</div>
+</footer>
+</div>
+</body></html>

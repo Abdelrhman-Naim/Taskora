@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Taskora — Authentication</title>
+<!-- Inter & JetBrains Mono Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface-variant": "#3f4948",
+            "secondary-fixed-dim": "#b9c7e0",
+            "tertiary-fixed": "#d7e5e3",
+            "primary": "#004341",
+            "on-error-container": "#93000a",
+            "secondary-fixed": "#d5e3fd",
+            "on-secondary-fixed-variant": "#3a485c",
+            "inverse-surface": "#213145",
+            "tertiary": "#313e3d",
+            "error-container": "#ffdad6",
+            "primary-fixed-dim": "#8fd2cf",
+            "on-tertiary-container": "#bbc9c7",
+            "surface": "#f8f9ff",
+            "on-secondary-container": "#57657b",
+            "surface-container-high": "#dce9ff",
+            "outline": "#6f7978",
+            "on-primary-container": "#8fd2cf",
+            "on-error": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed": "#111e1d",
+            "inverse-on-surface": "#eaf1ff",
+            "error": "#ba1a1a",
+            "surface-bright": "#f8f9ff",
+            "surface-tint": "#216866",
+            "on-primary-fixed-variant": "#00504e",
+            "tertiary-fixed-dim": "#bbc9c7",
+            "on-surface": "#0b1c30",
+            "surface-variant": "#d3e4fe",
+            "outline-variant": "#bec9c7",
+            "on-tertiary": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "primary-container": "#0d5c5a",
+            "surface-container-highest": "#d3e4fe",
+            "surface-container-lowest": "#ffffff",
+            "background": "#f8f9ff",
+            "secondary-container": "#d5e3fd",
+            "secondary": "#515f74",
+            "primary-fixed": "#abefeb",
+            "tertiary-container": "#485554",
+            "surface-dim": "#cbdbf5",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#00201f",
+            "inverse-primary": "#8fd2cf",
+            "surface-container": "#e5eeff",
+            "on-background": "#0b1c30",
+            "on-tertiary-fixed-variant": "#3c4948",
+            "on-secondary-fixed": "#0d1c2f"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "margin-desktop": "2.5rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "space-sm": "0.5rem",
+            "margin": "1rem",
+            "gutter": "1.5rem",
+            "space-md": "0.75rem",
+            "space-lg": "1.5rem",
+            "space-base": "1rem",
+            "space-2xl": "3rem",
+            "gutter-desktop": "2rem",
+            "space-2xs": "0.125rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Inter"],
+            "code-sm": ["JetBrains Mono"],
+            "body-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "display-lg": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-md": ["Inter"],
+            "body-sm": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .drafting-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(111, 121, 120, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(111, 121, 120, 0.05) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="h-full bg-surface text-on-surface flex flex-col justify-between selection:bg-primary-container selection:text-on-primary">
+<!-- Architectural Background Layer -->
+<div class="fixed inset-0 drafting-grid pointer-events-none -z-10"></div>
+<!-- Header / Minimalist Architectural Top Bar -->
+<header class="w-full flex items-center justify-between px-gutter-desktop h-14 border-b border-outline-variant bg-surface-container-lowest">
+<!-- Brand Anchor & Version Token -->
+<div class="flex items-center space-x-space-md">
+<div class="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-primary-container shrink-0 border border-outline-variant">
+<svg aria-label="Taskora Monogram" class="w-5 h-5 text-surface-container-lowest fill-current" viewbox="0 0 100 100">
+<!-- Monogram T with teal dot check -->
+<rect height="11" rx="5.5" width="52" x="24" y="24"></rect>
+<rect height="52" rx="5.5" width="11" x="44.5" y="24"></rect>
+<circle class="fill-[#216866]" cx="70" cy="70" r="14"></circle>
+<path d="M64 70 L68 74 L76 66" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="flex items-center space-x-space-xs">
+<span class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Taskora</span>
+<span class="px-space-xs py-0.5 rounded-lg bg-surface-container-low border border-outline-variant font-code-sm text-code-sm text-secondary">v2.4</span>
+</div>
+</div>
+<!-- Trailing Actions: Language & Theme Switcher -->
+<div class="flex items-center space-x-space-sm">
+<!-- Language Switcher Toggle -->
+<button aria-label="Toggle language" class="h-8 px-space-sm rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors flex items-center space-x-space-xs font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+<span>EN</span>
+<span class="text-outline-variant text-[10px]">/</span>
+<span class="font-normal text-secondary opacity-70">العربية</span>
+</button>
+<!-- Theme Switcher Toggle (Light Mode Active) -->
+<button aria-label="Toggle theme appearance" class="w-8 h-8 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary hover:text-on-surface transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined" data-icon="light_mode">light_mode</span>
+</button>
+</div>
+</header>
+<!-- Central Workplane Canvas -->
+<main class="flex-1 flex items-center justify-center p-space-base sm:p-space-lg">
+<div class="w-full max-w-[28rem] bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm relative overflow-hidden transition-all duration-150">
+<!-- Top Architectural Accent Hairline (Deep Architectural Teal) -->
+<div class="h-1 w-full bg-primary-container"></div>
+<div class="p-space-xl sm:p-margin-desktop">
+<!-- Centered Brand Monogram & Heading Block -->
+<div class="flex flex-col items-center text-center mb-space-xl">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center mb-space-md shadow-sm border border-outline-variant">
+<svg aria-label="Taskora Monogram Large" class="w-8 h-8 text-surface-container-lowest fill-current" viewbox="0 0 100 100">
+<rect height="12" rx="6" width="56" x="22" y="24"></rect>
+<rect height="52" rx="6" width="12" x="44" y="24"></rect>
+<circle class="fill-[#216866]" cx="70" cy="70" r="15"></circle>
+<path d="M64 70 L68 74 L76 66" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+</div>
+<h1 class="font-headline-md text-headline-md font-semibold text-on-surface tracking-tight">
+            Sign in to Taskora
+          </h1>
+<p class="font-body-md text-body-md text-secondary mt-space-2xs">
+            Enter your email and password to access your workspace
+          </p>
+</div>
+<!-- Authentication Form -->
+<form class="space-y-space-lg" onsubmit="event.preventDefault();">
+<!-- Field: Work Email -->
+<div class="space-y-space-xs text-left">
+<label class="block font-label-md text-label-md font-medium text-on-surface" for="work-email">
+              Work Email
+            </label>
+<div class="relative flex items-center">
+<div class="absolute inset-y-0 left-0 pl-space-md flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</div>
+<input autocomplete="email" class="w-full h-[38px] pl-10 pr-space-md bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" id="work-email" name="email" placeholder="name@company.com" required="" type="email"/>
+</div>
+</div>
+<!-- Field: Password -->
+<div class="space-y-space-xs text-left">
+<label class="block font-label-md text-label-md font-medium text-on-surface" for="auth-password">
+              Password
+            </label>
+<div class="relative flex items-center">
+<div class="absolute inset-y-0 left-0 pl-space-md flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+</div>
+<input autocomplete="current-password" class="w-full h-[38px] pl-10 pr-10 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all font-mono tracking-widest" id="auth-password" name="password" placeholder="••••••••" required="" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 pr-space-md flex items-center text-secondary hover:text-on-surface transition-colors focus:outline-none" id="password-visibility-btn" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Primary Submit Action -->
+<button class="w-full h-10 px-space-base bg-primary-container hover:bg-[#063837] active:bg-[#0A4D4C] text-on-primary font-headline-sm text-headline-sm font-medium rounded-lg flex items-center justify-center space-x-space-xs transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-container shadow-sm" type="submit">
+<span>Sign In</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<!-- Card Footer -->
+<div class="mt-space-xl pt-space-lg border-t border-surface-container text-center">
+<p class="font-body-md text-body-md text-secondary">
+            Don't have an account? 
+            <a class="text-primary-container font-semibold hover:underline focus:outline-none focus:underline ml-1" href="#">
+              Sign up
+            </a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Architectural Footer -->
+<footer class="w-full py-space-lg px-gutter-desktop flex flex-col md:flex-row items-center justify-between border-t border-outline-variant bg-background gap-y-space-sm">
+<p class="font-body-sm text-body-sm text-secondary text-center md:text-left">
+      © 2025 Taskora Inc. Architectural task orchestration. All rights reserved.
+    </p>
+<div class="flex items-center space-x-space-lg">
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors duration-150" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors duration-150" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors duration-150" href="#">Security Architecture</a>
+</div>
+</footer>
+<!-- Micro-interaction for Password Visibility Toggle -->
+<script>
+    const passwordInput = document.getElementById('auth-password');
+    const visibilityBtn = document.getElementById('password-visibility-btn');
+    const visibilityIcon = visibilityBtn ? visibilityBtn.querySelector('.material-symbols-outlined') : null;
+
+    if (visibilityBtn && passwordInput && visibilityIcon) {
+      visibilityBtn.addEventListener('click', () => {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        visibilityIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+        visibilityIcon.setAttribute('data-icon', isPassword ? 'visibility_off' : 'visibility');
+        if (isPassword) {
+          passwordInput.classList.remove('tracking-widest');
+        } else {
+          passwordInput.classList.add('tracking-widest');
+        }
+      });
+    }
+  </script>
+</body></html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Project - Taskora</title>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration matching Design System & Tokens -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed-dim": "#b9c7e0",
+            "surface-dim": "#cbdbf5",
+            "outline": "#6f7978",
+            "on-error-container": "#93000a",
+            "primary-fixed": "#abefeb",
+            "on-tertiary": "#ffffff",
+            "error": "#ba1a1a",
+            "background": "#f8f9ff",
+            "on-tertiary-fixed": "#111e1d",
+            "inverse-primary": "#8fd2cf",
+            "primary-fixed-dim": "#8fd2cf",
+            "inverse-on-surface": "#eaf1ff",
+            "secondary-container": "#d5e3fd",
+            "surface-bright": "#f8f9ff",
+            "surface-container": "#e5eeff",
+            "secondary-fixed": "#d5e3fd",
+            "on-secondary-fixed": "#0d1c2f",
+            "surface-variant": "#d3e4fe",
+            "on-secondary-fixed-variant": "#3a485c",
+            "on-surface": "#0b1c30",
+            "secondary": "#515f74",
+            "on-tertiary-fixed-variant": "#3c4948",
+            "surface-container-low": "#eff4ff",
+            "on-primary-fixed": "#00201f",
+            "on-primary-container": "#8fd2cf",
+            "on-surface-variant": "#3f4948",
+            "primary": "#004341",
+            "surface": "#f8f9ff",
+            "tertiary-fixed": "#d7e5e3",
+            "on-primary-fixed-variant": "#00504e",
+            "on-primary": "#ffffff",
+            "surface-tint": "#216866",
+            "on-error": "#ffffff",
+            "tertiary-container": "#485554",
+            "on-tertiary-container": "#bbc9c7",
+            "tertiary": "#313e3d",
+            "error-container": "#ffdad6",
+            "outline-variant": "#bec9c7",
+            "on-secondary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#0b1c30",
+            "surface-container-high": "#dce9ff",
+            "primary-container": "#0d5c5a",
+            "tertiary-fixed-dim": "#bbc9c7",
+            "on-secondary-container": "#57657b",
+            "inverse-surface": "#213145",
+            "surface-container-highest": "#d3e4fe"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "margin": "1rem",
+            "space-xl": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "0.75rem",
+            "space-sm": "0.5rem",
+            "space-2xs": "0.125rem",
+            "space-2xl": "3rem",
+            "space-lg": "1.5rem",
+            "space-base": "1rem",
+            "margin-desktop": "2.5rem",
+            "gutter-desktop": "2rem",
+            "gutter": "1.5rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-md": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-md": ["Inter"],
+            "headline-sm": ["Inter"],
+            "label-md": ["Inter"],
+            "display-lg": ["Inter"],
+            "label-sm": ["Inter"],
+            "code-sm": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="h-full bg-background text-on-surface antialiased flex overflow-hidden font-body-md text-body-md selection:bg-primary-container selection:text-white">
+<!-- Left Sidebar Navigation Rail -->
+<aside class="w-[260px] flex-shrink-0 bg-surface-container-lowest border-r border-outline-variant flex flex-col justify-between h-full z-20">
+<div class="flex flex-col h-full">
+<!-- Monogram Logo & Version Badge -->
+<div class="h-14 px-space-base flex items-center justify-between border-b border-outline-variant">
+<div class="flex items-center gap-space-sm">
+<img alt="Taskora Logo" class="w-7 h-7 rounded-lg object-contain shadow-xs" src="https://lh3.googleusercontent.com/aida/AEtjO1VUjHsgbqa5TvkLxpVSddMXdtQPdc8cTPAaUrqK2RmbOcJ4YNuaQ7kGRzpzpSeonNCPUhNOMC9GLQpUi7TTNla7Ia3-eBGZcwhap48JXJUHhsmEODg6QS-qVLzSw1zd2AcfbfboWN-u9KDOCumzmbwwxIA_IUjl4Rfop4YjnCz8MP_RB8e8zOihyFk4_PYP2yIEfUpDaq-CbJpdcasXxOeQbOLcS1XQkKeli87NQdcdcC1uh9RYwXMnQA"/>
+<span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">Taskora</span>
+</div>
+<span class="font-code-sm text-code-sm px-1.5 py-0.5 rounded-lg bg-surface-container text-secondary font-medium border border-outline-variant">v2.4</span>
+</div>
+<!-- Navigation Content -->
+<div class="p-space-base flex-1 overflow-y-auto space-y-space-lg">
+<!-- Primary Navigation -->
+<div>
+<div class="px-2 pb-1.5 text-secondary font-label-sm text-label-sm tracking-wider uppercase">Workspace</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+<span>Dashboard</span>
+</a>
+</nav>
+</div>
+<!-- Projects Tree & Sub-list -->
+<div>
+<div class="flex items-center justify-between px-2 pb-1.5">
+<span class="text-secondary font-label-sm text-label-sm tracking-wider uppercase">Projects</span>
+<span class="font-code-sm text-code-sm text-secondary">3 active</span>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-body-sm text-body-sm group" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span class="truncate">Website Redesign</span>
+</a>
+<a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-body-sm text-body-sm group" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span class="truncate">Acme Portal</span>
+</a>
+<a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-body-sm text-body-sm group" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span class="truncate">Mobile App v2</span>
+</a>
+<!-- Active / Selected '+ New project' State -->
+<div class="pt-1.5">
+<a class="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-surface-container text-primary-container font-label-md text-label-md font-semibold border border-primary-container/20 shadow-xs" href="#">
+<span class="material-symbols-outlined text-[18px] text-primary-container">add_circle</span>
+<span>+ New project</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Telemetry Stats Mini-widget -->
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant space-y-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-secondary">
+<span>Cluster Capacity</span>
+<span class="text-primary-container font-code-sm font-semibold">92%</span>
+</div>
+<div class="w-full bg-outline-variant/40 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[92%] rounded-full"></div>
+</div>
+<p class="font-body-sm text-[11px] leading-tight text-secondary">Architectural node orchestration active.</p>
+</div>
+</div>
+<!-- Bottom User Profile Card -->
+<div class="p-space-base border-t border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center justify-between p-2 rounded-lg hover:bg-surface-container-low transition-colors duration-150 cursor-pointer border border-transparent hover:border-outline-variant">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary font-headline-sm text-[12px] font-semibold flex items-center justify-center tracking-tight shadow-xs">
+              SE
+            </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-snug">Sara Executive</span>
+<span class="font-label-sm text-[10px] text-secondary leading-none uppercase tracking-wide">Owner</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[18px]">unfold_more</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas Wrapper -->
+<div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background">
+<!-- Top Bar Component -->
+<header class="h-14 px-gutter-desktop border-b border-outline-variant bg-surface-container-lowest flex items-center justify-between flex-shrink-0 z-10">
+<!-- Breadcrumb Structure -->
+<div class="flex items-center gap-2 font-label-md text-label-md">
+<a class="text-secondary hover:text-primary transition-colors duration-150 flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">grid_view</span>
+<span>Dashboard</span>
+</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">New Project</span>
+</div>
+<!-- Utilities & Actions Cluster -->
+<div class="flex items-center gap-space-md">
+<!-- Language Switcher -->
+<div class="flex items-center rounded-lg border border-outline-variant p-0.5 bg-surface-container-low text-secondary font-code-sm text-code-sm">
+<button class="px-2 py-0.5 rounded-lg bg-surface-container-lowest text-on-surface font-medium shadow-xs" type="button">EN</button>
+<button class="px-2 py-0.5 text-secondary hover:text-on-surface transition-colors duration-150 font-medium" type="button">العربية</button>
+</div>
+<!-- Vertical Divider -->
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- Theme Toggle -->
+<button class="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors duration-150 font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary-container">light_mode</span>
+<span>Light</span>
+</button>
+<!-- Profile Quick Action -->
+<button class="w-8 h-8 rounded-lg bg-secondary-container text-on-secondary-fixed font-semibold font-label-md text-label-md flex items-center justify-center border border-outline-variant hover:ring-2 hover:ring-primary-container/20 transition-all" type="button">
+          SE
+        </button>
+</div>
+</header>
+<!-- Main Content Area: Centered Drafting Canvas -->
+<main class="flex-1 overflow-y-auto px-margin-desktop py-space-xl flex flex-col justify-between items-center">
+<div class="w-full max-w-[576px] my-auto">
+<!-- Elevated Project Creation Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-8 relative">
+<!-- Subtle Accent Architecture Bar -->
+<div class="absolute top-0 left-8 right-8 h-[2px] bg-primary-container rounded-t"></div>
+<!-- Card Header Section -->
+<div class="pb-6 border-b border-outline-variant/60">
+<div class="flex items-center gap-2 text-primary-container mb-2">
+<span class="material-symbols-outlined text-[20px]">architecture</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">Workspace Provisioning</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-semibold">
+              Create a new project
+            </h1>
+<p class="font-body-md text-body-md text-secondary mt-1">
+              Start a collaborative project workspace for your team
+            </p>
+</div>
+<!-- Main Form Elements -->
+<form class="mt-6 space-y-6" onsubmit="event.preventDefault();">
+<!-- Project Name Input -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-label-md font-semibold text-on-surface" for="project-name">
+                Project name <span class="text-error font-bold">*</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md focus:border-primary-container focus:ring-2 focus:ring-primary-container/15 transition-all outline-none" id="project-name" name="projectName" placeholder="e.g., Marketing Campaign Q4" required="" type="text"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-secondary leading-normal">
+                A concise title for your workspace telemetry and stream tracking.
+              </p>
+</div>
+<!-- Description Textarea Field -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md font-semibold text-on-surface" for="project-description">
+                  Description <span class="text-secondary font-normal font-label-sm">(optional)</span>
+</label>
+<span class="font-code-sm text-code-sm text-secondary">Markdown supported</span>
+</div>
+<textarea class="w-full p-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md resize-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/15 transition-all outline-none" id="project-description" name="projectDescription" placeholder="Brief overview of project scope and deliverables" rows="4"></textarea>
+<p class="font-body-sm text-body-sm text-secondary leading-normal">
+                Provide context for key milestones and team objectives.
+              </p>
+</div>
+<!-- Action Footer -->
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/60">
+<button class="text-secondary hover:text-on-surface font-label-md text-label-md font-medium transition-colors px-2 py-1 rounded-lg hover:bg-surface-container-low" type="button">
+                Cancel
+              </button>
+<button class="inline-flex items-center gap-2 bg-primary-container hover:bg-primary text-on-primary px-5 py-2.5 rounded-lg font-label-md text-label-md font-semibold shadow-xs hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container/30 transition-all duration-150" type="submit">
+<span>Create project</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Telemetry Notice -->
+<div class="mt-4 flex items-center justify-center gap-2 text-secondary font-body-sm text-[12px]">
+<span class="material-symbols-outlined text-[15px] text-primary-container">verified_user</span>
+<span>Encrypted with multi-region workspace isolation protocol</span>
+</div>
+</div>
+<!-- Executive Footer Shell Component -->
+<footer class="w-full pt-space-lg flex flex-col md:flex-row items-center justify-between border-t border-outline-variant/60 text-secondary font-body-sm text-body-sm mt-8 gap-3">
+<p class="text-secondary font-label-sm text-label-sm">
+          © 2025 Taskora Inc. Architectural task orchestration. All rights reserved.
+        </p>
+<div class="flex items-center gap-space-md">
+<a class="hover:text-primary transition-colors duration-150 font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<span class="text-outline-variant text-[10px]">•</span>
+<a class="hover:text-primary transition-colors duration-150 font-label-sm text-label-sm" href="#">Terms of Service</a>
+<span class="text-outline-variant text-[10px]">•</span>
+<a class="hover:text-primary transition-colors duration-150 font-label-sm text-label-sm" href="#">Security Architecture</a>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

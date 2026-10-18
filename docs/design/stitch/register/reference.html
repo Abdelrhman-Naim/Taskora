@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Account | Taskora</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed-variant": "#3c4948",
+            "error-container": "#ffdad6",
+            "surface-dim": "#cbdbf5",
+            "inverse-primary": "#8fd2cf",
+            "tertiary-container": "#485554",
+            "secondary": "#515f74",
+            "tertiary": "#313e3d",
+            "primary-container": "#0d5c5a",
+            "on-background": "#0b1c30",
+            "error": "#ba1a1a",
+            "surface-container-highest": "#d3e4fe",
+            "surface": "#f8f9ff",
+            "on-secondary-container": "#57657b",
+            "on-secondary-fixed": "#0d1c2f",
+            "on-secondary-fixed-variant": "#3a485c",
+            "surface-tint": "#216866",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#004341",
+            "tertiary-fixed-dim": "#bbc9c7",
+            "on-primary-container": "#8fd2cf",
+            "on-primary-fixed-variant": "#00504e",
+            "secondary-fixed-dim": "#b9c7e0",
+            "on-tertiary-container": "#bbc9c7",
+            "surface-variant": "#d3e4fe",
+            "on-error-container": "#93000a",
+            "outline": "#6f7978",
+            "on-tertiary-fixed": "#111e1d",
+            "primary-fixed-dim": "#8fd2cf",
+            "secondary-container": "#d5e3fd",
+            "primary-fixed": "#abefeb",
+            "secondary-fixed": "#d5e3fd",
+            "tertiary-fixed": "#d7e5e3",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#213145",
+            "surface-container": "#e5eeff",
+            "surface-container-low": "#eff4ff",
+            "surface-bright": "#f8f9ff",
+            "on-surface": "#0b1c30",
+            "outline-variant": "#bec9c7",
+            "inverse-on-surface": "#eaf1ff",
+            "on-surface-variant": "#3f4948",
+            "surface-container-high": "#dce9ff",
+            "background": "#f8f9ff",
+            "on-primary-fixed": "#00201f",
+            "on-primary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-error": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xl": "2rem",
+            "margin": "1rem",
+            "space-md": "0.75rem",
+            "space-2xs": "0.125rem",
+            "space-lg": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "margin-desktop": "2.5rem",
+            "space-base": "1rem",
+            "space-2xl": "3rem",
+            "gutter": "1.5rem",
+            "gutter-desktop": "2rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-md": ["Inter"],
+            "code-sm": ["JetBrains Mono"],
+            "headline-sm": ["Inter"],
+            "display-lg": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-md": ["Inter"],
+            "body-lg": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "600" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .architectural-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased font-body-md min-h-screen flex flex-col justify-between selection:bg-primary-container selection:text-on-primary">
+<!-- Top Minimalist Bar -->
+<header class="w-full h-14 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-space-base sm:px-gutter-desktop z-20">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-sm overflow-hidden flex items-center justify-center border border-outline-variant/60 shadow-sm bg-surface-container-lowest">
+<img alt="Taskora logo mark" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1VUjHsgbqa5TvkLxpVSddMXdtQPdc8cTPAaUrqK2RmbOcJ4YNuaQ7kGRzpzpSeonNCPUhNOMC9GLQpUi7TTNla7Ia3-eBGZcwhap48JXJUHhsmEODg6QS-qVLzSw1zd2AcfbfboWN-u9KDOCumzmbwwxIA_IUjl4Rfop4YjnCz8MP_RB8e8zOihyFk4_PYP2yIEfUpDaq-CbJpdcasXxOeQbOLcS1XQkKeli87NQdcdcC1uh9RYwXMnQA"/>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-semibold">Taskora</span>
+<span class="font-code-sm text-[10px] tracking-wider text-secondary px-1.5 py-0.5 bg-surface-container-high rounded border border-outline-variant/40 uppercase">v2.4</span>
+</div>
+</div>
+<!-- Right Controls: Language Pill + Theme Toggle -->
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors duration-150 font-label-sm text-label-sm text-secondary hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[15px] text-secondary">language</span>
+<span>EN / العربية</span>
+</button>
+<button aria-label="Toggle visual theme" class="w-8 h-8 rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low flex items-center justify-center text-secondary hover:text-on-surface transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[17px]">dark_mode</span>
+</button>
+</div>
+</header>
+<!-- Architectural Workbench Canvas -->
+<main class="flex-1 architectural-grid flex items-center justify-center p-space-base sm:p-space-lg relative">
+<!-- Decorative hairline crosshairs -->
+<div class="absolute top-8 left-8 w-3 h-3 border-t border-l border-outline/40 pointer-events-none hidden sm:block"></div>
+<div class="absolute top-8 right-8 w-3 h-3 border-t border-r border-outline/40 pointer-events-none hidden sm:block"></div>
+<div class="absolute bottom-8 left-8 w-3 h-3 border-b border-l border-outline/40 pointer-events-none hidden sm:block"></div>
+<div class="absolute bottom-8 right-8 w-3 h-3 border-b border-r border-outline/40 pointer-events-none hidden sm:block"></div>
+<!-- Registration Card -->
+<div class="w-full max-w-md bg-surface-container-lowest rounded border border-outline-variant shadow-[0_1px_3px_0_rgba(15,23,42,0.04),0_1px_2px_-1px_rgba(15,23,42,0.03)] p-6 sm:p-8 relative">
+<!-- Top Accent Hairline -->
+<div class="absolute top-0 left-0 right-0 h-[2px] bg-primary-container rounded-t"></div>
+<!-- Card Header -->
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 rounded-sm overflow-hidden border border-outline-variant/80 shadow-sm flex items-center justify-center mb-space-base bg-surface-container-lowest">
+<img alt="Taskora logo monogram" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1VUjHsgbqa5TvkLxpVSddMXdtQPdc8cTPAaUrqK2RmbOcJ4YNuaQ7kGRzpzpSeonNCPUhNOMC9GLQpUi7TTNla7Ia3-eBGZcwhap48JXJUHhsmEODg6QS-qVLzSw1zd2AcfbfboWN-u9KDOCumzmbwwxIA_IUjl4Rfop4YjnCz8MP_RB8e8zOihyFk4_PYP2yIEfUpDaq-CbJpdcasXxOeQbOLcS1XQkKeli87NQdcdcC1uh9RYwXMnQA"/>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">
+          Create your Taskora account
+        </h1>
+<p class="font-body-sm text-body-sm text-secondary mt-1 max-w-xs">
+          Enter your details to create an executive workspace
+        </p>
+</div>
+<!-- Registration Form -->
+<form class="mt- space-lg space-y-4" onsubmit="event.preventDefault();">
+<!-- Full Name -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1.5 font-semibold" for="fullName">
+            FULL NAME
+          </label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<input class="w-full pl-9 pr-3 py-2 text-sm bg-surface-container-lowest border border-outline-variant rounded text-on-surface placeholder:text-secondary focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" id="fullName" name="fullName" placeholder="e.g. Sara Jenkins" required="" type="text"/>
+</div>
+</div>
+<!-- Work Email -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1.5 font-semibold" for="workEmail">
+            WORK EMAIL
+          </label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+</div>
+<input class="w-full pl-9 pr-3 py-2 text-sm bg-surface-container-lowest border border-outline-variant rounded text-on-surface placeholder:text-secondary focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" id="workEmail" name="workEmail" placeholder="name@company.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1.5 font-semibold" for="accountPassword">
+            PASSWORD
+          </label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<input class="w-full pl-9 pr-10 py-2 text-sm bg-surface-container-lowest border border-outline-variant rounded text-on-surface placeholder:text-secondary focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" id="accountPassword" name="accountPassword" placeholder="Create a secure password" required="" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 pr-3 flex items-center text-secondary hover:text-on-surface transition-colors" id="togglePassword" onclick="
+                const pwd = document.getElementById('accountPassword');
+                const icon = document.getElementById('pwdIcon');
+                if (pwd.type === 'password') {
+                  pwd.type = 'text';
+                  icon.textContent = 'visibility_off';
+                } else {
+                  pwd.type = 'password';
+                  icon.textContent = 'visibility';
+                }
+              " type="button">
+<span class="material-symbols-outlined text-[18px]" id="pwdIcon">visibility</span>
+</button>
+</div>
+<p class="font-label-sm text-[11px] text-secondary mt-1.5 tracking-normal">
+            At least 8 characters with numbers and symbols
+          </p>
+</div>
+<!-- Primary Action CTA -->
+<div class="pt-2">
+<button class="w-full bg-primary-container hover:bg-[#063837] active:bg-[#0A4D4C] text-on-primary font-medium py-2.5 px-4 rounded text-sm flex items-center justify-center gap-2 transition-colors duration-150 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container focus:ring-offset-1" type="submit">
+<span>Create account</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Micro Divider & Sign In Option -->
+<div class="mt-6 pt-5 border-t border-outline-variant/50 text-center">
+<p class="font-body-sm text-body-sm text-secondary">
+          Already have an account? 
+          <a class="text-primary-container font-semibold hover:underline transition-colors ml-0.5" href="#">
+            Sign in
+          </a>
+</p>
+</div>
+</div>
+</main>
+<!-- Discreet Footer (Shared Component Spec) -->
+<footer class="w-full py-space-md sm:py-space-lg px-space-base sm:px-gutter-desktop flex flex-col md:flex-row items-center justify-between border-t border-outline-variant bg-surface-container-lowest text-secondary gap-3">
+<div class="font-body-sm text-body-sm text-secondary text-center md:text-left">
+      © 2025 Taskora Inc. Architectural task orchestration. All rights reserved.
+    </div>
+<div class="flex items-center gap-space-md sm:gap-space-lg flex-wrap justify-center">
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors duration-150" href="#">Privacy Policy</a>
+<span class="text-outline-variant/60 select-none">•</span>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors duration-150" href="#">Terms of Service</a>
+<span class="text-outline-variant/60 select-none">•</span>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors duration-150" href="#">Security Architecture</a>
+</div>
+</footer>
+</body></html>

@@ -2,7 +2,7 @@
   "stitchProjectId": "9219100436315328520",
   "projectName": "Taskora",
   "designSystemId": "1a5a2e35161d4ae380dd76682a769e88",
-  "generationsUsed": 5,
+  "generationsUsed": 11,
   "generationsBudget": 80,
   "pages": {
     "smoke": {
@@ -17,6 +17,49 @@
       "darkDesktopScreenId": "a2edb3bba9ac41f5822988124868f68c",
       "rounds": 1,
       "generationsUsed": 3,
+      "rubricScore": "11/11",
+      "status": "APPROVED"
+    },
+    "login": {
+      "desktopScreenId": "05215b979e034f0e9efc1928fa76f4fd",
+      "mobileScreenId": "503b39aa905949349929d34332860115",
+      "rounds": 1,
+      "generationsUsed": 2,
+      "rubricScore": "11/11",
+      "status": "APPROVED"
+    },
+    "register": {
+      "desktopScreenId": "1e228f8081b84f78874f88373ae4f2f8",
+      "rounds": 1,
+      "generationsUsed": 1,
+      "rubricScore": "11/11",
+      "status": "APPROVED"
+    },
+    "project": {
+      "desktopScreenId": "e4c3f9cf1d3a4ae1afb691e6173dc7b8",
+      "rounds": 1,
+      "generationsUsed": 1,
+      "rubricScore": "11/11",
+      "status": "APPROVED"
+    },
+    "project-settings": {
+      "desktopScreenId": "beb42ba49cd04835950ec6817ada0c98",
+      "rounds": 1,
+      "generationsUsed": 1,
+      "rubricScore": "11/11",
+      "status": "APPROVED"
+    },
+    "project-new": {
+      "desktopScreenId": "26bcd12ceb8048a6a9717a1b516a97d5",
+      "rounds": 1,
+      "generationsUsed": 1,
+      "rubricScore": "11/11",
+      "status": "APPROVED"
+    },
+    "components": {
+      "desktopScreenId": "d98710826556404d9ea67568156db48b",
+      "rounds": 1,
+      "generationsUsed": 1,
       "rubricScore": "11/11",
       "status": "APPROVED"
     }

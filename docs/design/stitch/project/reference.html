@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Taskora — Enterprise Cloud Migration</title>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Container Queries & Forms -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface-variant": "#3f4948",
+            "on-primary": "#ffffff",
+            "surface-bright": "#f8f9ff",
+            "on-primary-container": "#8fd2cf",
+            "on-error-container": "#93000a",
+            "secondary-container": "#d5e3fd",
+            "on-tertiary-fixed-variant": "#3c4948",
+            "error": "#ba1a1a",
+            "surface-container-low": "#eff4ff",
+            "background": "#f8f9ff",
+            "primary-container": "#0d5c5a",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#0d1c2f",
+            "on-primary-fixed-variant": "#00504e",
+            "surface-container-highest": "#d3e4fe",
+            "on-tertiary-fixed": "#111e1d",
+            "surface-variant": "#d3e4fe",
+            "outline-variant": "#bec9c7",
+            "surface-tint": "#216866",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#eaf1ff",
+            "primary": "#004341",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#bbc9c7",
+            "primary-fixed": "#abefeb",
+            "on-secondary-container": "#57657b",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed-variant": "#3a485c",
+            "surface-container-high": "#dce9ff",
+            "surface-dim": "#cbdbf5",
+            "outline": "#6f7978",
+            "on-tertiary-container": "#bbc9c7",
+            "tertiary": "#313e3d",
+            "on-background": "#0b1c30",
+            "inverse-primary": "#8fd2cf",
+            "primary-fixed-dim": "#8fd2cf",
+            "surface": "#f8f9ff",
+            "secondary": "#515f74",
+            "on-primary-fixed": "#00201f",
+            "tertiary-fixed": "#d7e5e3",
+            "secondary-fixed-dim": "#b9c7e0",
+            "secondary-fixed": "#d5e3fd",
+            "inverse-surface": "#213145",
+            "tertiary-container": "#485554",
+            "surface-container": "#e5eeff",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#0b1c30"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "margin": "1rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "3rem",
+            "gutter-desktop": "2rem",
+            "space-base": "1rem",
+            "space-xl": "2rem",
+            "gutter": "1.5rem",
+            "space-md": "0.75rem",
+            "margin-desktop": "2.5rem",
+            "space-xs": "0.25rem",
+            "space-2xs": "0.125rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "headline-md": ["Inter"],
+            "body-lg": ["Inter"],
+            "code-sm": ["JetBrains Mono"],
+            "body-md": ["Inter"],
+            "headline-sm": ["Inter"],
+            "display-lg": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-sm": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.025em", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 2px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="h-full flex overflow-hidden font-body-md text-on-surface antialiased bg-[#f8fafc]">
+<!-- Fixed Left Sidebar (260px) -->
+<aside class="w-[260px] h-full flex flex-col flex-shrink-0 bg-surface-container-lowest border-r border-[#e2e8f0] z-20 select-none">
+<!-- Top Brand & Monogram -->
+<div class="h-14 px-5 flex items-center justify-between border-b border-[#e2e8f0]">
+<div class="flex items-center gap-2.5">
+<img alt="Taskora" class="w-7 h-7 rounded-sm object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1VUjHsgbqa5TvkLxpVSddMXdtQPdc8cTPAaUrqK2RmbOcJ4YNuaQ7kGRzpzpSeonNCPUhNOMC9GLQpUi7TTNla7Ia3-eBGZcwhap48JXJUHhsmEODg6QS-qVLzSw1zd2AcfbfboWN-u9KDOCumzmbwwxIA_IUjl4Rfop4YjnCz8MP_RB8e8zOihyFk4_PYP2yIEfUpDaq-CbJpdcasXxOeQbOLcS1XQkKeli87NQdcdcC1uh9RYwXMnQA"/>
+<span class="font-headline-md text-headline-md font-bold tracking-tight text-on-surface">Taskora</span>
+</div>
+<span class="font-code-sm text-code-sm px-1.5 py-0.5 rounded bg-[#f1f5f9] text-secondary font-medium border border-[#e2e8f0]">v2.4</span>
+</div>
+<!-- Navigation Area -->
+<div class="flex-1 py-4 px-3 overflow-y-auto custom-scroll space-y-6">
+<!-- Primary Core Nav -->
+<nav class="space-y-1">
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-[#f8fafc] transition-colors" href="#">
+<span class="material-symbols-outlined text-[19px] text-secondary">grid_view</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-[#f8fafc] transition-colors" href="#">
+<span class="material-symbols-outlined text-[19px] text-secondary">insights</span>
+<span>Analytics</span>
+</a>
+</nav>
+<!-- Projects Section -->
+<div>
+<div class="flex items-center justify-between px-3 mb-2">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">PROJECTS</span>
+<span class="font-code-sm text-[11px] text-secondary bg-[#f1f5f9] px-1.5 py-0.5 rounded">3 active</span>
+</div>
+<div class="space-y-0.5">
+<!-- Project: Website Redesign -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-[#f8fafc] transition-colors group" href="#">
+<div class="flex items-center gap-2.5 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-[#cbd5e1] group-hover:bg-secondary"></span>
+<span class="truncate">Website Redesign</span>
+</div>
+<span class="font-code-sm text-[11px] text-secondary">3</span>
+</a>
+<!-- Project: Acme Portal -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-[#f8fafc] transition-colors group" href="#">
+<div class="flex items-center gap-2.5 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-[#cbd5e1] group-hover:bg-secondary"></span>
+<span class="truncate">Acme Portal</span>
+</div>
+<span class="font-code-sm text-[11px] text-secondary">2</span>
+</a>
+<!-- Active Project: Enterprise Cloud Migration -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg font-label-md text-label-md bg-[#e6f4f2] text-primary-container font-semibold relative" href="#">
+<div class="flex items-center gap-2.5 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="truncate">Enterprise Cloud Migration</span>
+</div>
+<span class="font-code-sm text-[11px] font-semibold text-primary-container bg-white/70 px-1.5 py-0.5 rounded">25</span>
+</a>
+<!-- Project: Mobile App v2 -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg font-label-md text-label-md text-secondary hover:text-on-surface hover:bg-[#f8fafc] transition-colors group" href="#">
+<div class="flex items-center gap-2.5 truncate">
+<span class="w-1.5 h-1.5 rounded-full bg-[#cbd5e1] group-hover:bg-secondary"></span>
+<span class="truncate">Mobile App v2</span>
+</div>
+<span class="font-code-sm text-[11px] text-secondary">4</span>
+</a>
+<!-- Add Project Button -->
+<button class="w-full mt-2.5 flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-[#cbd5e1] hover:border-primary-container font-label-md text-label-md text-secondary hover:text-primary-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">add</span>
+<span>+ New project</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pinned User Profile -->
+<div class="h-16 px-4 border-t border-[#e2e8f0] flex items-center justify-between bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-label-sm text-label-sm font-semibold tracking-wide">
+          SE
+        </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Sara Executive</span>
+<span class="font-code-sm text-[11px] text-secondary">Owner</span>
+</div>
+</div>
+<button aria-label="User menu" class="text-secondary hover:text-on-surface p-1 rounded transition-colors">
+<span class="material-symbols-outlined text-[18px]">unfold_more</span>
+</button>
+</div>
+</aside>
+<!-- Main Viewport Canvas -->
+<div class="flex-1 flex flex-col h-full overflow-hidden bg-[#f8fafc]">
+<!-- Fixed Top Bar (56px) -->
+<header class="h-14 px-6 bg-surface-container-lowest border-b border-[#e2e8f0] flex items-center justify-between flex-shrink-0 z-10">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 font-label-md text-label-md">
+<span class="text-secondary">Projects</span>
+<span class="text-[#cbd5e1]">/</span>
+<span class="text-on-surface font-semibold">Enterprise Cloud Migration</span>
+</div>
+<!-- Right Controls (Strictly no notification bells or upgrade banners) -->
+<div class="flex items-center gap-4">
+<!-- Language Switcher -->
+<div class="inline-flex rounded-lg border border-[#e2e8f0] p-0.5 bg-[#f8fafc] text-xs">
+<button class="px-2 py-1 rounded bg-white text-on-surface font-semibold shadow-xs" type="button">EN</button>
+<button class="px-2 py-1 rounded text-secondary hover:text-on-surface transition-colors" type="button">العربية</button>
+</div>
+<div class="h-4 w-px bg-[#e2e8f0]"></div>
+<!-- Theme Mode Trigger -->
+<button class="inline-flex items-center gap-1.5 text-secondary hover:text-on-surface font-label-md text-label-md px-2.5 py-1.5 rounded-lg border border-[#e2e8f0] bg-surface-container-lowest transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">light_mode</span>
+<span>Light</span>
+</button>
+<!-- User Initials Pill -->
+<div class="w-8 h-8 rounded-full border border-[#cbd5e1] bg-[#f1f5f9] text-on-surface flex items-center justify-center font-label-sm text-label-sm font-semibold">
+          SE
+        </div>
+</div>
+</header>
+<!-- Scrollable Workspace Body -->
+<main class="flex-1 overflow-y-auto custom-scroll p-6 space-y-5">
+<div class="max-w-[1400px] mx-auto space-y-5">
+<!-- 1. Project Header Card / Section -->
+<section class="p-6 bg-surface-container-lowest border border-[#e2e8f0] rounded-xl shadow-xs">
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+<!-- Left Info & Progress -->
+<div class="space-y-3.5 flex-1 max-w-3xl">
+<!-- Status Pill -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#e6f4f2] text-primary-container font-label-sm text-label-sm tracking-wide">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span>ACTIVE STREAM</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Enterprise Cloud Migration</h1>
+<p class="font-body-md text-body-md text-secondary mt-1">Q4 infrastructure migration to modern Kubernetes architecture</p>
+</div>
+<!-- Linear Progress Section -->
+<div class="pt-1.5 space-y-2 max-w-lg">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-on-surface font-medium">Migration Velocity</span>
+<span class="font-code-sm text-code-sm text-secondary">64% complete (16 of 25 tasks)</span>
+</div>
+<div class="w-full h-2 bg-[#f1f5f9] rounded-full overflow-hidden border border-[#e2e8f0]">
+<div class="h-full bg-primary-container rounded-full" style="width: 64%;"></div>
+</div>
+</div>
+</div>
+<!-- Right Actions Header & Team Stack -->
+<div class="flex flex-wrap items-center gap-3 self-start md:self-auto">
+<!-- Team Avatars Stack -->
+<div class="flex items-center -space-x-2 mr-2">
+<div class="w-8 h-8 rounded-full border-2 border-white bg-[#e0f2fe] text-[#0369a1] flex items-center justify-center font-label-sm text-label-sm font-semibold">SA</div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-[#fce7f3] text-[#be185d] flex items-center justify-center font-label-sm text-label-sm font-semibold">AN</div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-[#fef3c7] text-[#b45309] flex items-center justify-center font-label-sm text-label-sm font-semibold">MJ</div>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-[#f1f5f9] text-secondary flex items-center justify-center font-label-sm text-label-sm font-medium">+2</div>
+</div>
+<!-- Settings Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#e2e8f0] bg-surface-container-lowest text-secondary hover:text-on-surface hover:bg-[#f8fafc] font-label-md text-label-md transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-[16px]">settings</span>
+<span>Settings</span>
+</button>
+<!-- Primary CTA: Deep Architectural Teal -->
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-container hover:bg-[#063837] active:bg-[#0A4D4C] text-white font-label-md text-label-md font-semibold transition-colors shadow-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ New task</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 2. Unified Filter Toolbar -->
+<section class="border border-[#e2e8f0] rounded-xl p-2 bg-surface-container-lowest flex flex-wrap items-center justify-between gap-3 shadow-xs">
+<!-- Left Controls -->
+<div class="flex flex-wrap items-center gap-2.5 flex-1 min-w-[280px]">
+<!-- Search Input -->
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-secondary text-[17px]">search</span>
+<input class="w-full pl-8 pr-3 py-1.5 h-9 bg-white border border-[#e2e8f0] focus:border-primary-container focus:ring-1 focus:ring-primary-container rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-[#94a3b8] outline-none transition-all" placeholder="Filter tasks by title or keyword..." type="text"/>
+</div>
+<!-- Dropdown Filter: Status -->
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 h-9 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-secondary hover:text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span>Status: All</span>
+<span class="material-symbols-outlined text-[15px]">expand_more</span>
+</button>
+<!-- Dropdown Filter: Priority -->
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 h-9 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-secondary hover:text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span>Priority: All</span>
+<span class="material-symbols-outlined text-[15px]">expand_more</span>
+</button>
+<!-- Dropdown Filter: Assignee -->
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 h-9 rounded-lg border border-[#e2e8f0] bg-white hover:bg-[#f8fafc] text-secondary hover:text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span>Assignee: All</span>
+<span class="material-symbols-outlined text-[15px]">expand_more</span>
+</button>
+<!-- Overdue Checkbox Toggle -->
+<label class="inline-flex items-center gap-2 px-2.5 py-1.5 h-9 rounded-lg border border-[#e2e8f0] bg-white cursor-pointer select-none hover:bg-[#f8fafc] transition-colors">
+<input class="w-4 h-4 rounded text-error focus:ring-error border-[#cbd5e1]" type="checkbox"/>
+<span class="font-label-md text-label-md text-secondary">Overdue only</span>
+</label>
+</div>
+<!-- Right Controls -->
+<div class="flex items-center gap-3">
+<div class="inline-flex rounded-lg border border-[#e2e8f0] p-0.5 bg-[#f8fafc]">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-white text-on-surface font-label-md text-label-md font-semibold shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]">table_rows</span>
+<span>Table</span>
+</button>
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded text-secondary hover:text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[15px]">format_list_bulleted</span>
+<span>List</span>
+</button>
+</div>
+<div class="h-4 w-px bg-[#e2e8f0]"></div>
+<span class="font-code-sm text-code-sm text-secondary bg-[#f1f5f9] px-2 py-1 rounded border border-[#e2e8f0]">25 tasks total</span>
+</div>
+</section>
+<!-- 3. High-Density Task Table -->
+<section class="border border-[#e2e8f0] rounded-xl bg-surface-container-lowest overflow-hidden shadow-xs">
+<div class="overflow-x-auto custom-scroll">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] border-b border-[#e2e8f0] font-label-sm text-label-sm text-secondary uppercase tracking-wider">
+<th class="py-3 px-4 w-10 text-center">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</th>
+<th class="py-3 px-4 min-w-[280px]">Title &amp; ID</th>
+<th class="py-3 px-4 w-36">Status</th>
+<th class="py-3 px-4 w-32">Priority</th>
+<th class="py-3 px-4 w-40">Assignee</th>
+<th class="py-3 px-4 w-36">Due Date</th>
+<th class="py-3 px-4 w-14 text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#f1f5f9] font-body-sm text-body-sm">
+<!-- Row 1 -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group">
+<td class="py-3 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-101]</span>
+<span class="text-on-surface font-medium line-through text-secondary/80">Provision production EKS cluster nodes</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#dcfce7] text-[#15803d] font-semibold">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+<span>Done</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fee2e2] text-[#b91c1c] font-semibold">
+                      HIGH
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-on-surface font-code-sm text-[10px] flex items-center justify-center font-medium">MC</div>
+<span class="text-on-surface">Marcus C.</span>
+</div>
+</td>
+<td class="py-3 px-4 font-code-sm text-secondary">
+                    Oct 12, 2026
+                  </td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 (Overdue) -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group bg-[#fef2f2]/25">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-104]</span>
+<span class="text-on-surface font-medium">Migrate Redis cache cluster &amp; replication</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fee2e2] text-[#991b1b] font-semibold">
+<span class="material-symbols-outlined text-[13px]">warning</span>
+<span>Overdue</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fee2e2] text-[#991b1b] font-semibold">
+                      HIGH
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-white font-code-sm text-[10px] flex items-center justify-center font-medium">SE</div>
+<span class="text-on-surface">Sara E.</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-1.5 font-code-sm text-[#b91c1c] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#dc2626]"></span>
+<span>Oct 16, 2026</span>
+</div>
+</td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-108]</span>
+<span class="text-on-surface font-medium">Configure Ingress controller &amp; TLS certificates</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#e0f2fe] text-[#0369a1] font-semibold">
+<span class="material-symbols-outlined text-[13px]">progress_activity</span>
+<span>In Progress</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fee2e2] text-[#b91c1c] font-semibold">
+                      HIGH
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#fce7f3] text-[#be185d] font-code-sm text-[10px] flex items-center justify-center font-medium">AN</div>
+<span class="text-on-surface">Alex N.</span>
+</div>
+</td>
+<td class="py-3 px-4 font-code-sm text-secondary">
+                    Oct 22, 2026
+                  </td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-112]</span>
+<span class="text-on-surface font-medium">Containerize legacy billing workers</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#e0f2fe] text-[#0369a1] font-semibold">
+<span class="material-symbols-outlined text-[13px]">progress_activity</span>
+<span>In Progress</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fef3c7] text-[#92400e] font-semibold">
+                      MEDIUM
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-on-surface font-code-sm text-[10px] flex items-center justify-center font-medium">JT</div>
+<span class="text-on-surface">Jordan T.</span>
+</div>
+</td>
+<td class="py-3 px-4 font-code-sm text-secondary">
+                    Oct 24, 2026
+                  </td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-115]</span>
+<span class="text-on-surface font-medium">Establish Prometheus &amp; Grafana alerting metrics</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#f1f5f9] text-secondary font-semibold">
+<span class="material-symbols-outlined text-[13px]">radio_button_unchecked</span>
+<span>Todo</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fef3c7] text-[#92400e] font-semibold">
+                      MEDIUM
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container text-white font-code-sm text-[10px] flex items-center justify-center font-medium">SE</div>
+<span class="text-on-surface">Sara E.</span>
+</div>
+</td>
+<td class="py-3 px-4 font-code-sm text-secondary">
+                    Oct 28, 2026
+                  </td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-119]</span>
+<span class="text-on-surface font-medium">Database read-replica cutover testing</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#f1f5f9] text-secondary font-semibold">
+<span class="material-symbols-outlined text-[13px]">radio_button_unchecked</span>
+<span>Todo</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fee2e2] text-[#b91c1c] font-semibold">
+                      HIGH
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-on-surface font-code-sm text-[10px] flex items-center justify-center font-medium">DL</div>
+<span class="text-on-surface">David L.</span>
+</div>
+</td>
+<td class="py-3 px-4 font-code-sm text-secondary">
+                    Oct 29, 2026
+                  </td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 7 -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group">
+<td class="py-3 px-4 text-center">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-121]</span>
+<span class="text-on-surface font-medium">Terraform state lock recovery validation</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#f1f5f9] text-secondary font-semibold">
+<span class="material-symbols-outlined text-[13px]">radio_button_unchecked</span>
+<span>Todo</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#f1f5f9] text-secondary font-semibold">
+                      LOW
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#f1f5f9] border border-[#e2e8f0] text-on-surface font-code-sm text-[10px] flex items-center justify-center font-medium">MC</div>
+<span class="text-on-surface">Marcus C.</span>
+</div>
+</td>
+<td class="py-3 px-4 font-code-sm text-secondary">
+                    Nov 02, 2026
+                  </td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 8 -->
+<tr class="hover:bg-[#f8fafc]/80 transition-colors group">
+<td class="py-3 px-4 text-center">
+<input checked="" class="w-4 h-4 rounded text-primary-container focus:ring-primary-container border-[#cbd5e1]" type="checkbox"/>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-[12px] text-secondary font-medium">[ECM-125]</span>
+<span class="text-on-surface font-medium line-through text-secondary/80">Audit IAM service accounts and RBAC permissions</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#dcfce7] text-[#15803d] font-semibold">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+<span>Done</span>
+</span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-sm text-[11px] bg-[#fef3c7] text-[#92400e] font-semibold">
+                      MEDIUM
+                    </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-[#fce7f3] text-[#be185d] font-code-sm text-[10px] flex items-center justify-center font-medium">AN</div>
+<span class="text-on-surface">Alex N.</span>
+</div>
+</td>
+<td class="py-3 px-4 font-code-sm text-secondary">
+                    Oct 15, 2026
+                  </td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Row options" class="text-secondary hover:text-on-surface p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[17px]">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-4 py-3 bg-white border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-secondary">
+<span class="font-code-sm text-code-sm">Showing 8 of 25 tasks</span>
+<div class="inline-flex items-center gap-1 font-label-md text-label-md">
+<button class="px-2.5 py-1 rounded border border-[#e2e8f0] text-secondary hover:text-on-surface hover:bg-[#f8fafc] disabled:opacity-50 transition-colors" type="button">
+                Previous
+              </button>
+<button class="w-7 h-7 rounded border border-primary-container bg-primary-container text-white font-semibold flex items-center justify-center" type="button">
+                1
+              </button>
+<button class="w-7 h-7 rounded border border-[#e2e8f0] text-secondary hover:text-on-surface hover:bg-[#f8fafc] flex items-center justify-center transition-colors" type="button">
+                2
+              </button>
+<button class="w-7 h-7 rounded border border-[#e2e8f0] text-secondary hover:text-on-surface hover:bg-[#f8fafc] flex items-center justify-center transition-colors" type="button">
+                3
+              </button>
+<button class="px-2.5 py-1 rounded border border-[#e2e8f0] text-secondary hover:text-on-surface hover:bg-[#f8fafc] transition-colors" type="button">
+                Next
+              </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>
