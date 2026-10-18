@@ -46,7 +46,7 @@ export function TaskList({
   }
 
   return (
-    <div className={styles.list} role="list">
+    <div className={styles.list} role="list" data-testid="task-list">
       {tasks.map((task) => (
         <TaskCard
           key={task.id}

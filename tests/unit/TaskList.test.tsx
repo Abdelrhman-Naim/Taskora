@@ -87,5 +87,7 @@ describe('TaskList Component', () => {
     expect(screen.getByText('Second Task')).toBeInTheDocument();
     const list = container.querySelector('[role="list"]');
     expect(list).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="task-list"]')).toBeInTheDocument();
+    expect(container.querySelectorAll('[data-testid="task-item"]').length).toBe(2);
   });
 });

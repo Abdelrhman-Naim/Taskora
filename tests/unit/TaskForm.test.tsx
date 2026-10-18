@@ -34,6 +34,14 @@ describe('TaskForm Component', () => {
       />
     );
 
+    expect(screen.getByTestId('task-form-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('task-title-input')).toBeInTheDocument();
+    expect(screen.getByTestId('task-description-input')).toBeInTheDocument();
+    expect(screen.getByTestId('task-priority-select')).toBeInTheDocument();
+    expect(screen.getByTestId('task-due-date-input')).toBeInTheDocument();
+    expect(screen.getByTestId('task-assignee-select')).toBeInTheDocument();
+    expect(screen.getByTestId('save-task-btn')).toBeInTheDocument();
+
     const titleInput = screen.getByLabelText(/Title/i);
     fireEvent.change(titleInput, { target: { value: 'ab' } }); // Short title (< 3)
 

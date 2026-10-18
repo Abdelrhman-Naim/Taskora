@@ -227,18 +227,18 @@ export default function ProjectPage(): React.ReactElement | null {
 
   return (
     <div>
-      <div className={styles.header}>
+      <div className={styles.header} data-testid="project-header">
         <Link href="/dashboard" className={styles.backLink}>
           <Icon name="arrow" size={16} />
           <span>{t('common.backToDashboard')}</span>
         </Link>
         <div className={styles.topRow}>
           <div className={styles.titleContainer}>
-            <h1 className={styles.projectTitle}>
+            <h1 className={styles.projectTitle} data-testid="project-name">
               <bdi>{project.name}</bdi>
             </h1>
             {project.description && (
-              <p dir="auto" className={styles.projectDesc}>
+              <p dir="auto" className={styles.projectDesc} data-testid="project-description">
                 {project.description}
               </p>
             )}
@@ -247,7 +247,7 @@ export default function ProjectPage(): React.ReactElement | null {
           <div className={styles.actions}>
             {isOwner && (
               <Link href={`/projects/${project.id}/settings`}>
-                <Button variant="secondary" icon="settings">
+                <Button variant="secondary" icon="settings" data-testid="project-settings-btn">
                   {t('project.edit.title')}
                 </Button>
               </Link>
@@ -256,6 +256,7 @@ export default function ProjectPage(): React.ReactElement | null {
             <Button
               variant="primary"
               icon="plus"
+              data-testid="project-new-task-btn"
               onClick={() => {
                 setEditingTask(null);
                 setShowCreateForm(true);
@@ -268,7 +269,7 @@ export default function ProjectPage(): React.ReactElement | null {
 
         {/* Project Summary: Progress Bar & Team Members */}
         <div className={styles.summaryRow}>
-          <div className={styles.progressSummary}>
+          <div className={styles.progressSummary} data-testid="project-metrics">
             <div className={styles.progressLabelRow}>
               <span>{t('dashboard.table.progress')}</span>
               <strong className="num">{progress}% ({doneTasks}/{totalTasks})</strong>
@@ -280,7 +281,7 @@ export default function ProjectPage(): React.ReactElement | null {
             />
           </div>
 
-          <div className={styles.membersRow}>
+          <div className={styles.membersRow} data-testid="project-members">
             <span className={styles.membersLabel}>{t('dashboard.table.members')}:</span>
             <div className={styles.avatarStack}>
               {project.memberIds.slice(0, 5).map((uid) => (

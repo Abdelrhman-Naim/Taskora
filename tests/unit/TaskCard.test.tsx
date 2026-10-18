@@ -143,7 +143,7 @@ describe('TaskCard Component', () => {
     expect(screen.getByText('CA')).toBeInTheDocument();
   });
 
-  it('renders action controls at inline-end in fixed order: status change -> edit -> delete', () => {
+  it('renders action controls at inline-end in fixed order: status change -> edit -> delete, with all standard data-testids', () => {
     const { container } = renderWithProviders(
       <TaskCard
         task={overdueTask}
@@ -155,6 +155,14 @@ describe('TaskCard Component', () => {
         onStatusChange={() => {}}
       />
     );
+
+    const card = container.querySelector('[data-testid="task-item"]');
+    expect(card).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="task-title"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="task-status-badge"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="task-priority-badge"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="task-assignee"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-testid="task-due-date"]')).toBeInTheDocument();
 
     const actions = container.querySelector('[data-testid="task-actions"]');
     expect(actions).toBeInTheDocument();

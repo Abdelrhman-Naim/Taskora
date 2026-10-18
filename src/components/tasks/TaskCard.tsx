@@ -59,16 +59,20 @@ export function TaskCard({
   const deletable = canDeleteTask(task, currentUserId, isOwner);
 
   return (
-    <div className={styles.card} role="listitem">
+    <div className={styles.card} role="listitem" data-testid="task-item">
       {/* Main info column: Title & Badges */}
       <div className={styles.mainCol}>
         <div className={styles.titleRow}>
-          <h3 dir="auto" className={styles.title}>
+          <h3 dir="auto" className={styles.title} data-testid="task-title">
             <bdi dir="auto">{task.title}</bdi>
           </h3>
           <div className={styles.badges}>
-            <Badge kind={task.status} />
-            <Badge kind={task.priority} />
+            <span data-testid="task-status-badge">
+              <Badge kind={task.status} />
+            </span>
+            <span data-testid="task-priority-badge">
+              <Badge kind={task.priority} />
+            </span>
             {overdue && <Badge kind="overdue" />}
           </div>
         </div>
@@ -81,7 +85,7 @@ export function TaskCard({
       </div>
 
       {/* Assignee column */}
-      <div className={styles.assigneeCol}>
+      <div className={styles.assigneeCol} data-testid="task-assignee">
         <Avatar name={assigneeName} size="sm" />
         <span className={styles.assigneeName}>
           <bdi>{assigneeName}</bdi>
@@ -89,7 +93,7 @@ export function TaskCard({
       </div>
 
       {/* Due date column */}
-      <div className={styles.dueCol}>
+      <div className={styles.dueCol} data-testid="task-due-date">
         {task.dueDate ? (
           <>
             <span className={overdue ? styles.dueOverdue : styles.dueDate}>

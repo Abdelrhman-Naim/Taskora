@@ -99,6 +99,7 @@ export function TaskForm({
       onSubmit={handleSubmit}
       noValidate
       className={styles.form}
+      data-testid="task-form-modal"
     >
       {saveError && (
         <div role="alert" className={styles.errorAlert}>
@@ -121,6 +122,7 @@ export function TaskForm({
             onChange={(e) => setTitle(e.target.value)}
             disabled={submitting}
             placeholder={t('task.field.titlePlaceholder')}
+            data-testid="task-title-input"
           />
         )}
       </Field>
@@ -139,6 +141,7 @@ export function TaskForm({
             disabled={submitting}
             placeholder={t('task.field.descriptionPlaceholder')}
             rows={3}
+            data-testid="task-description-input"
           />
         )}
       </Field>
@@ -151,6 +154,7 @@ export function TaskForm({
               value={priority}
               onChange={(e) => setPriority(e.target.value as TaskPriority)}
               disabled={submitting}
+              data-testid="task-priority-select"
             >
               <option value="low">{t('task.priority.low')}</option>
               <option value="medium">{t('task.priority.medium')}</option>
@@ -167,6 +171,7 @@ export function TaskForm({
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               disabled={submitting}
+              data-testid="task-due-date-input"
             />
           )}
         </Field>
@@ -180,6 +185,7 @@ export function TaskForm({
               value={assigneeId || ''}
               onChange={(e) => setAssigneeId(e.target.value || null)}
               disabled={submitting || !reassignAllowed}
+              data-testid="task-assignee-select"
             >
               <option value="">{t('task.assignee.unassigned')}</option>
               {Object.entries(project.memberNames).map(([uid, name]) => (
@@ -199,6 +205,7 @@ export function TaskForm({
                 value={status}
                 onChange={(e) => setStatus(e.target.value as TaskStatus)}
                 disabled={submitting || !statusAllowed}
+                data-testid="task-status-select"
               >
                 <option value="todo">{t('task.status.todo')}</option>
                 <option value="in_progress">{t('task.status.in_progress')}</option>
@@ -222,6 +229,7 @@ export function TaskForm({
           type="submit"
           variant="primary"
           loading={submitting}
+          data-testid="save-task-btn"
         >
           {isEditing ? t('common.save') : t('task.new.title')}
         </Button>
