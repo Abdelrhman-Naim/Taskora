@@ -1,113 +1,116 @@
-# TaskFlow — Collaborative Project & Task Management
+# Taskora (TaskFlow) — Collaborative Project & Task Management
 
-TaskFlow is a collaborative project and task management system designed for small teams, built with Next.js App Router, Firebase Modular SDK (Auth & Firestore), CSS Modules with CSS Logical Properties (strictly zero Tailwind CSS), bilingual Arabic/English internationalization, accessible HTML/CSS charts, and a petrol/jade dark/light theme system.
+Taskora is an executive-grade, bilingual collaborative project and task management system built with Next.js 16 (Turbopack, App Router), Firebase Modular SDK (Authentication & Cloud Firestore), and pure CSS Modules with CSS Logical Properties (strictly zero Tailwind CSS in application code).
+
+The visual aesthetic and layout architecture were designed through a rigorous **Google Stitch MCP Design Workflow**, evaluated against an **11-point design rubric**, guaranteeing WCAG 2.1 AA accessibility, seamless English/Arabic bidirectional parity, zero horizontal overflow across all viewports (320px–1280px+), and complete dark/light mode consistency.
 
 ---
 
-## Deployment & Repository
-- **Live Production URL**: [https://taskora-eta-flame.vercel.app](https://taskora-eta-flame.vercel.app)
+## Live Deployment & Repository
+- **Production URL**: [https://taskora-eta-flame.vercel.app](https://taskora-eta-flame.vercel.app)
 - **GitHub Repository**: [https://github.com/Abdelrhman-Naim/Taskora](https://github.com/Abdelrhman-Naim/Taskora)
 - **Firebase Project ID**: `taskora-bf729` (Cloud Firestore & Auth enabled)
 - **Deployment Platform**: Vercel
 
 ---
 
-## Features
+## Visual Previews
 
-### Application Shell & Navigation (Phase 3)
-- **Desktop Sidebar**: Fixed inline-start sidebar (264px–280px) on viewports > 1024px with quick project switching, dashboard link, and new project action.
-- **Mobile Drawer**: Focus-trapped sliding modal drawer (`role="dialog"`) on mobile screens (≤ 1024px) triggered by hamburger button and dismissible via `Escape` or backdrop click.
-- **Top Bar**: Sticky header featuring the current section title, Language Switcher (`LocaleSwitcher`), Theme Toggle (`ThemeToggle`), and a keyboard-accessible User Profile Menu (`UserMenu`).
-- **User Profile Menu**: Dropdown displaying user initials avatar, display name, LTR email address, and sign out trigger.
+| Light Mode (LTR / Desktop 1280px) | Dark Mode (RTL / Arabic 1280px) |
+|---|---|
+| ![Dashboard Light](docs/screenshots/02-dashboard.png) | ![Dashboard Arabic](docs/screenshots/phase3/dashboard-desktop-ar-light.png) |
 
-### Professional Dashboard & Metrics
-The dashboard consolidates all team projects and assignments using a pure, single source of truth (`dashboardMetrics.ts`):
-- **KPI Strip**: 5 continuous metric cells:
-  - **Open tasks**: Active tasks (`status !== 'done'`).
-  - **In progress**: Tasks currently being worked on (`status === 'in_progress'`).
-  - **Completed**: Finished tasks (`status === 'done'`) with percentage done rate (`Math.round(done / total * 100)`).
-  - **Overdue**: Overdue tasks (`dueDate < today` and `status !== 'done'`) with warning icon and alert styling.
-  - **Due this week**: Tasks due within the current rolling window `[today, today + 6 days]`.
-- **Accessible HTML/CSS Charts**:
-  - **Stacked Bars**: Status distribution per project with relative segment widths, keyboard focus tooltip, and toggleable accessible `<table>` alternative.
-  - **14-Day Due Timeline**: Column chart showing upcoming due tasks per day, highlighting today and calling out overdue tasks.
-- **Action & Attention Widgets**:
-  - **Needs Attention**: Overdue tasks prioritized by oldest due date first, followed by tasks due today and tomorrow.
-  - **My Tasks**: Open tasks assigned directly to the authenticated user, prioritized by deadline.
-  - **Projects Table**: Sortable and searchable table with progress bars, member avatar clusters, and responsive collapse to stacked cards at ≤ 768px.
-  - **Recently Updated**: Chronological feed of tasks ordered by latest update timestamp.
-  - **Onboarding Empty State**: 3-step numbered onboarding guide for new teams with no existing projects.
+| Task Board & Filtering | Mobile Responsive (375px) |
+|---|---|
+| ![Task Board](docs/screenshots/03-project-tasks.png) | ![Mobile 375px](docs/screenshots/06-mobile-375px.png) |
 
-### Internationalization & RTL Hygiene
-- **Bilingual Parity**: Arabic (`ar`, RTL) and English (`en`, LTR) with 100% dictionary key parity.
-- **Locale Negotiation**: Determined from cookie (`tf-locale`) or `Accept-Language` header, defaulting to `en` if unspecified.
-- **Latin Numerals Consistency**: Both languages render Latin digits (`NUMBERING = 'latn'`) for reliable numeric scanning in charts and KPIs.
-- **Bidirectional Isolation (`<bdi>`)**: All user-supplied text (project names, task titles, descriptions) is wrapped in `<bdi dir="auto">` to eliminate bidirectional text spillover. Technical identifiers and emails are strictly isolated in `dir="ltr"`.
-- **Timezone-Safe Dates**: All date arithmetic and formatting uses the fixed timezone `Asia/Riyadh` via native `Intl.DateTimeFormat`.
+---
 
-### Theming & Design System
-- **Petrol & Jade Palette**:
-  - Light mode: Warm porcelain canvas (`--bg: #F4F5F2`), white surfaces (`--surface: #FFFFFF`), jade accent (`--accent: #0E6B5C`), and brass hairline accent (`--brass: #B08D45`).
-  - Dark mode: Deep petrol canvas (`--bg: #0A1514`), dark teal surfaces (`--surface: #101F1D`), mint accent (`--accent: #5CCBAE`), and bright brass accent (`--brass: #C9A55A`).
-- **Zero Hardcoded Colors**: Enforced by automated AST tests; every color derives strictly from CSS variables defined in `src/styles/tokens.css`.
-- **WCAG AA Contrast**: Enforced by automated contrast calculation tests (minimum 4.5:1 for text, 3:1 for controls).
-- **Zero-Flash Theme Switching**: Handled via `tf-theme` cookie with client-side reconciliation.
+## Design Workflow (Google Stitch MCP)
 
-### UI Primitives Library (`src/components/ui/`)
+The visual system was created and iteratively refined using the **Google Stitch MCP**:
+
+### 1. Architectural Strategy
+- **Stitch as the Visual Reference:** Google Stitch was employed to explore compositions, visual hierarchies, color balances, and responsive layouts.
+- **Strict Implementation Separation:** HTML, Tailwind CSS, or inline styles generated by Stitch models were **never copied directly into application source code**. Instead, every component was meticulously engineered in pure React 19 + Next.js 16 CSS Modules using CSS Logical Properties and semantic CSS variables.
+- **Google Stitch Project:** `Taskora` (ID: `9219100436315328520`).
+- **Generation Budgeting:** 11 total generations utilized (strictly capped below the 80 ceiling), logged in `docs/design/stitch/manifest.json`.
+
+### 2. Stitch MCP Tools Utilized
+- `create_project`: Initialized the `Taskora` design workspace.
+- `generate_screen_from_text`: Generated desktop and mobile design references from structured briefs.
+- `get_screen`: Extracted design system metadata, HTML visual references, and responsive layouts.
+- `create_design_system_from_design_md`: Synthesized the authoritative design system tokens from `DESIGN.md`.
+- `apply_design_system`: Applied the design system across generated screen variants.
+
+### 3. Verification & 11-Point Rubric
+Every screen was scored against an 11-point rubric (`docs/design/RUBRIC.md`) requiring a minimum score of 9/11 and zero critical failures. The final holistic review achieved **11/11 (100%)**:
+- **[حرج] Visual Hierarchy:** Dominant headings, single primary action, clean content strata.
+- **[حرج] Singular Primary Action:** Exactly one prominent primary button per screen state.
+- **Consistent Spacing Grid:** 4px/8px multiples (`--space-1` to `--space-8`).
+- **Typographic Discipline:** Two font families (`Inter` for Latin, `Cairo` for Arabic) across 5 constrained size steps.
+- **Restrained Palette:** Slate surface system, deep teal accent, and dedicated semantic status colors.
+- **[حرج] Contrast & Semantic Indicators:** Automated Axe-core verification of WCAG 2.1 AA (≥ 4.5:1 text contrast). Status badges combine semantic color, text, and SVG iconography.
+- **[حرج] Application Shell & Sidebar:** Docked sidebar on desktop converting to an accessible focus-trapped drawer dialog on screens < 1024px.
+- **Appropriate Density & Scaled Roundness:** 4px for inputs, 6px for buttons, 8px for cards, 9999px for pills.
+- **Engineered UI States:** Customized `LoadingState` skeletons, `EmptyState` invitations with CTAs, and `ErrorState` retry cards.
+- **Zero Phantom Features:** Completely pruned notification bells, global omnisearch bars, billing upgrade prompts, and simulated charts.
+- **RTL Mirroring & Logical Layouts:** 100% CSS Logical Properties (`inline-size`, `margin-inline-start`, etc.) with `<bdi>` protection.
+
+All individual screen reviews and final system audits are archived in `docs/design/reviews/`.
+
+---
+
+## Key Features
+
+### 1. Application Shell & Navigation
+- **Docked Sidebar (Desktop ≥ 1024px):** Fixed navigation with Taskora logo, project counters, and user profile card.
+- **Responsive Drawer (Mobile < 1024px):** Accessible slide-out dialog (`role="dialog"`, `aria-modal="true"`) with backdrop dismissal, focus trap, and `Escape` key handling.
+- **Sticky TopBar:** Context title, Language Switcher, Theme Switcher, and User Profile Menu with avatar and sign-out trigger.
+
+### 2. Executive Dashboard & Metrics
+- **Consolidated KPI Strip:** Live counts for Open tasks, In Progress, Completed (with percentage completion rate), Overdue (with alert icon), and Due This Week.
+- **Accessible HTML/CSS Charts:**
+  - **Stacked Bars:** Status breakdown per project with keyboard focus tooltips and an accessible `<table>` alternative toggle.
+  - **14-Day Timeline (Column Chart):** Workload timeline highlighting today's deadline and alerting on overdue tasks.
+- **Attention Widgets:** "Needs Attention" queue prioritizing overdue and impending tasks, "My Tasks" personalized list, and sortable Projects Table.
+
+### 3. Project & Task Management
+- **Project Detail View:** Progress summary, team member avatars, status filtering, and keyword search.
+- **Task Management Modal:** Modal dialog for creating and updating tasks with validation, priority selection, assignee allocation, and due date picking.
+- **Permission-Aware Controls:** Enforces ownership rules (only creators or project owners can delete tasks; only assignees can mark tasks completed).
+- **Project Settings:** Project metadata updates, owner transfer guards, and atomic member invitation/removal with task reassignment cascades.
+
+### 4. Internationalization & Bidirectional Safety
+- **Bilingual Parity:** English (`en`, LTR) and Arabic (`ar`, RTL) with 100% key parity across translation dictionaries.
+- **Bidirectional Isolation (`<bdi>`):** User-generated text (names, titles, notes) is strictly wrapped in `<bdi dir="auto">` to eliminate bidirectional text spillover.
+- **Latin Numerals:** Consistent Latin numbering (`latn`) across Arabic and English for clear data scanning in tables and KPIs.
+- **Timezone Safety:** Native `Intl.DateTimeFormat` configured with `Asia/Riyadh` timezone to prevent server/client hydration drift.
+
+### 5. UI Primitives Library (`src/components/ui/`)
 21 hand-crafted, accessible primitives built strictly with CSS Modules and CSS Logical Properties:
-1. **Avatar**: Bilingual initial generation (up to 2 initials, supporting Arabic script like "أحمد محمد" → "أم"), `--surface-2` background.
-2. **Badge**: Status and priority indicators with distinct icons for color-blind accessibility.
-3. **Button**: Primary, secondary, outline, danger, and ghost variants; accessible loading and disabled states.
-4. **Card**: Surface container with soft border and subtle hover feedback.
-5. **Checkbox**: Accessible custom checkbox with hidden native input and high-contrast SVG checkmark.
-6. **ConfirmDialog**: Confirmation modal for critical actions.
-7. **Dialog**: Accessible modal dialog with focus trapping, `Escape` key dismissal, and backdrop click handler.
-8. **EmptyState**: Empty collection indicator with title, message, and call-to-action button.
-9. **ErrorState**: Failure recovery state with retry trigger.
-10. **Field**: Accessible form field wrapper connecting label, hint, and error message to input.
-11. **Icon**: 14 hand-crafted inline SVG icons with automatic RTL mirroring (`.dirIcon`).
-12. **IconButton**: Accessible square icon button with tooltip and ARIA label.
-13. **Input**: Text, email, and password inputs with start alignment and focus ring.
-14. **LocaleSwitcher**: Segmented language selector with cookie persistence.
-15. **ProgressBar**: Accessible percentage progress track (`role="progressbar"`).
-16. **Segmented**: Segmented control for toggling views or chart modes.
-17. **Select**: Dropdown select with start alignment and custom styled chevron.
-18. **Skeleton**: Layout-identical loading skeleton with pulsing shimmer animation.
-19. **Spinner**: Accessible loading spinner with screen-reader text.
-20. **Textarea**: Auto-resizing multiline text input.
-21. **Toast**: Ephemeral feedback notification provider and hook.
+`Avatar`, `Badge`, `Button`, `Card`, `Checkbox`, `ConfirmDialog`, `Dialog`, `EmptyState`, `ErrorState`, `Field`, `Icon`, `IconButton`, `Input`, `LocaleSwitcher`, `ProgressBar`, `Segmented`, `Select`, `Skeleton`, `Spinner`, `Textarea`, `Toast`.
 
 ---
 
-## Automated Safety & Integrity Guards
+## Automated Test Matrix & Safety Guards
 
-TaskFlow enforces strict code hygiene through automated static analysis and unit tests:
-1. **`css-integrity.test.ts`**:
-   - Asserts every `var(--*)` used across all CSS and TSX files is explicitly declared in `tokens.css`.
-   - Asserts zero hardcoded hex, rgb, rgba, or hsl colors exist anywhere outside `tokens.css`.
-   - Asserts light and dark theme blocks in `tokens.css` declare identical variable sets.
-2. **`i18n-hygiene.test.ts`**:
-   - Asserts zero untranslated English strings exist in Arabic UI attributes or JSX literals.
-   - Asserts dynamic user text in task cards and tables is properly isolated with `<bdi>`.
-   - Asserts forbidden decorative prefixes (such as `+ ` or `•`) are absent.
-3. **`tokens-contrast.test.ts`**:
-   - Calculates real WCAG 2.1 relative luminance for all token pairs in both light and dark themes to guarantee AA compliance (≥ 4.5:1 text contrast).
-4. **`i18n-parity.test.ts`**:
-   - Verifies 100% key parity between English and Arabic message dictionaries.
+The project enforces continuous code quality via automated static analysis, unit tests, security rules emulators, and Playwright visual baselines:
 
----
-
-## Test Evidence & Automated Test Matrix
-
-The test suite contains **283+ automated tests** with 100% PASS rate:
-
-| Test Suite | Files | Tests Passing | Environment |
+| Test Suite | Files | Tests Passing | Test Framework / Environment |
 |:---|:---:|:---:|:---|
-| **Unit Tests & Integrity Guards** | 29 | **197** | Vitest + React Testing Library + jsdom |
-| **Firestore Security Rules** | 5 | **46** | Vitest + `@firebase/rules-unit-testing` + Local Emulators |
+| **Unit Tests & Static Integrity** | 30 | **211** | Vitest + React Testing Library + jsdom |
+| **Firestore Security Rules** | 5 | **46** | Vitest + `@firebase/rules-unit-testing` + Local Firestore Emulator |
 | **Service Integration Tests** | 4 | **22** | Vitest + Local Auth & Firestore Emulators |
-| **Acceptance & E2E Tests** | 3 | **18+** | Playwright (Phase 1 Acceptance + Phase 2 i18n/Theme + Phase 3 Dashboard) |
-| **Total** | **41 files** | **283+ tests** | **100% PASS** |
+| **Visual Baselines & A11y Suite** | 1 | **20** | Playwright (20 combos: LTR/RTL × Light/Dark × 3 Viewports) |
+| **Shell & Dashboard E2E Tests** | 3 | **5** | Playwright (Shell, Dashboard, Contrast Audits) |
+| **Total Test Count** | **43 files** | **304 tests** | **100% PASS** |
+
+### Automated Guards:
+- **`css-integrity.test.ts`**: Verifies every `var(--*)` exists in `tokens.css` and ensures zero hardcoded color literals exist outside `tokens.css`.
+- **`tokens-contrast.test.ts`**: Mathematically computes WCAG 2.1 relative luminance ratios for all tokens in both themes.
+- **`i18n-hygiene.test.ts`**: Enforces zero untranslated English strings in Arabic attributes, verified `<bdi>` wrapping, and zero decorative symbol prefixes.
+- **`visual.spec.ts`**: Validates zero horizontal overflow on all pages from 375px to 1280px, checks RTL sidebar right-alignment, and runs Axe-core accessibility audits.
 
 ---
 
@@ -125,7 +128,7 @@ npm install
 npm run typecheck
 npm run lint
 
-# 3. Unit, Integrity & Safety Tests (197 tests)
+# 3. Unit, Integrity & Safety Tests (211 tests)
 npm run test:unit
 
 # 4. Security Rules Tests (46 tests)
@@ -134,7 +137,7 @@ npm run test:rules
 # 5. Service Integration Tests (22 tests)
 npm run test:services
 
-# 6. Full E2E & Visual Matrix (Playwright)
+# 6. Playwright Visual Baselines & E2E Suites
 npm run test:e2e
 
 # 7. Production Build (Next.js Turbopack)

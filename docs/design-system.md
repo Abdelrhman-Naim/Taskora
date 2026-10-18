@@ -95,15 +95,15 @@ The Taskora Design System provides a calm, prestigious, and high-density interfa
 
 ## 4. Typography & Arabic Text Guidelines
 
-1. **Display & Numbers (`--font-display`):**
-   - Fallback chain: `Newsreader`, `Amiri`, `Georgia`, `serif`.
-   - Used for main section titles, dashboard statistics, and metric callouts.
+1. **Display & Headings (`--font-display`):**
+   - Font family: `Inter` for Latin, `Cairo` for Arabic, `system-ui`, `sans-serif`.
+   - Used for main section titles, dashboard headings, project titles, and metric callouts.
    - For numbers, use the `.num` helper class: `font-variant-numeric: lining-nums tabular-nums;` to guarantee column alignment.
 
 2. **Interface Body (`--font-body`):**
-   - Fallback chain: `Hanken Grotesk`, `IBM Plex Sans Arabic`, `system-ui`, `sans-serif`.
-   - Used for labels, buttons, navigation, and user-generated text.
-   - Arabic line-height is tuned to `1.7`–`1.75` for comfortable Nastaliq/Naskh ascender and descender clearance.
+   - Font family: `Inter` for Latin, `Cairo` for Arabic, `system-ui`, `sans-serif`.
+   - Used for labels, buttons, navigation, table cells, and user-generated text.
+   - Arabic line-height is tuned to `1.7`–`1.75` for comfortable ascender and descender clearance.
 
 ---
 
