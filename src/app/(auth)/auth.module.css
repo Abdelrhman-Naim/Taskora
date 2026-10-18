@@ -3,7 +3,7 @@
   flex-direction: column;
   justify-content: space-between;
   min-block-size: 100vh;
-  background-color: var(--surface);
+  background-color: var(--bg);
   color: var(--text);
   box-sizing: border-box;
 }
@@ -13,28 +13,28 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-inline: var(--space-6, 24px);
+  padding-inline: var(--sp-5);
   block-size: 56px;
   border-block-end: 1px solid var(--border);
-  background-color: var(--card-bg, #ffffff);
+  background-color: var(--surface);
   box-sizing: border-box;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--sp-2);
 }
 
 .logoMonogram {
   inline-size: 28px;
   block-size: 28px;
-  border-radius: var(--radius-sm, 4px);
-  background-color: var(--accent, #0d5c5a);
+  border-radius: var(--radius-sm);
+  background-color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--on-accent);
   flex-shrink: 0;
 }
 
@@ -49,18 +49,18 @@
 .versionBadge {
   padding-inline: 6px;
   padding-block: 2px;
-  border-radius: var(--radius-sm, 4px);
-  background-color: var(--surface-muted, #f1f5f9);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
   border: 1px solid var(--border);
-  font-family: var(--font-mono, monospace);
-  font-size: 0.6875rem;
+  font-family: var(--font-body);
+  font-size: var(--fs-0);
   color: var(--text-muted);
 }
 
 .topBarActions {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--sp-2);
 }
 
 .mainArea {
@@ -68,16 +68,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-4, 16px);
+  padding: var(--sp-4);
 }
 
 .cardWrapper {
   inline-size: 100%;
   max-inline-size: 28rem;
-  background-color: var(--card-bg, #ffffff);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg, 8px);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
   position: relative;
   overflow: hidden;
 }
@@ -85,11 +85,11 @@
 .accentBar {
   block-size: 3px;
   inline-size: 100%;
-  background-color: var(--accent, #0d5c5a);
+  background-color: var(--accent);
 }
 
 .cardBody {
-  padding: var(--space-6, 24px) var(--space-8, 32px);
+  padding: var(--sp-6) var(--sp-6);
 }
 
 .headerBlock {
@@ -97,52 +97,52 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-block-end: var(--space-6, 24px);
+  margin-block-end: var(--sp-6);
 }
 
 .headerLogo {
   inline-size: 44px;
   block-size: 44px;
-  border-radius: var(--radius-md, 6px);
-  background-color: var(--accent, #0d5c5a);
+  border-radius: var(--radius-md);
+  background-color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  margin-block-end: var(--space-3, 12px);
+  color: var(--on-accent);
+  margin-block-end: var(--sp-3);
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: var(--fs-4);
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text);
   margin-block-start: 0;
-  margin-block-end: 6px;
+  margin-block-end: var(--sp-1);
 }
 
 .subtitle {
-  font-size: 0.875rem;
+  font-size: var(--fs-1);
   color: var(--text-muted);
   margin: 0;
-  line-height: 1.5;
+  line-height: var(--lh-body);
 }
 
 .footerRow {
-  margin-block-start: var(--space-6, 24px);
-  padding-block-start: var(--space-4, 16px);
+  margin-block-start: var(--sp-6);
+  padding-block-start: var(--sp-4);
   border-block-start: 1px solid var(--border);
   text-align: center;
-  font-size: 0.875rem;
+  font-size: var(--fs-1);
   color: var(--text-muted);
 }
 
 .switchLink {
-  color: var(--accent, #0d5c5a);
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
-  margin-inline-start: 4px;
+  margin-inline-start: var(--sp-1);
 }
 
 .switchLink:hover {
@@ -150,8 +150,8 @@
 }
 
 .pageFooter {
-  padding-block: var(--space-4, 16px);
+  padding-block: var(--sp-4);
   text-align: center;
-  font-size: 0.75rem;
+  font-size: var(--fs-0);
   color: var(--text-muted);
 }

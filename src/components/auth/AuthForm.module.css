@@ -2,24 +2,24 @@
   inline-size: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4, 16px);
+  gap: var(--sp-4);
 }
 
 .alert {
-  padding: 10px 14px;
-  border-radius: var(--radius-md, 6px);
-  background-color: var(--st-overdue-bg, rgba(220, 38, 38, 0.08));
-  border: 1px solid var(--st-overdue-fg, #dc2626);
-  color: var(--st-overdue-fg, #dc2626);
-  font-size: 0.875rem;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-md);
+  background-color: var(--st-overdue-bg);
+  border: 1px solid var(--st-overdue-fg);
+  color: var(--st-overdue-fg);
+  font-size: var(--fs-0);
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-2);
 }
 
 .submitButton {
-  margin-block-start: var(--space-2, 8px);
+  margin-block-start: var(--sp-2);
   inline-size: 100%;
   block-size: 40px;
   font-weight: 600;
