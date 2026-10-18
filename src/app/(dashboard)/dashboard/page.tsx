@@ -1,199 +1,290 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
-import { Project, Task } from '@/types';
-import { getDb } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
-import { DashboardStats } from '@/components/dashboard/DashboardStats';
-import { Spinner } from '@/components/ui/Spinner';
-import { ErrorState } from '@/components/ui/ErrorState';
-import { Button } from '@/components/ui/Button';
-import { IconButton } from '@/components/ui/IconButton';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { AppError } from '@/lib/errors';
-import { computeStats, loadDashboardData, DashboardStatsData } from '@/lib/stats';
-import { todayString } from '@/lib/dates';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
+import { useDashboardData } from '@/components/dashboard/useDashboardData';
+import { KpiStrip } from '@/components/dashboard/KpiStrip';
+import { NeedsAttention } from '@/components/dashboard/NeedsAttention';
+import { MyTasks } from '@/components/dashboard/MyTasks';
+import { ProjectsTable } from '@/components/dashboard/ProjectsTable';
+import { RecentlyUpdated } from '@/components/dashboard/RecentlyUpdated';
+import { OnboardingEmpty } from '@/components/dashboard/OnboardingEmpty';
+import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
+import { ChartPanel } from '@/components/charts/ChartPanel';
+import { StackedBars } from '@/components/charts/StackedBars';
+import { ColumnChart } from '@/components/charts/ColumnChart';
+import { ErrorState } from '@/components/ui/ErrorState';
+import { Icon } from '@/components/ui/Icon';
+import {
+  computeMetrics,
+  summarizeProjects,
+  topProjectsByOpen,
+  dueTimeline,
+  needsAttention,
+  myTasks,
+  recentlyUpdated,
+} from '@/lib/dashboardMetrics';
+import { todayString, APP_TIME_ZONE } from '@/lib/dates';
 import styles from './page.module.css';
 
 export default function DashboardPage(): React.ReactElement {
   const { user } = useAuth();
-  const { t, tp, formatDueDate } = useI18n();
+  const { t, locale } = useI18n();
   const getErrorMessage = useErrorMessage();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<AppError | null>(null);
+  const { projects, tasks, loading, error, reload } = useDashboardData();
 
-  useEffect(() => {
-    let ignore = false;
-    async function load() {
-      if (!user) return;
-      try {
-        const db = getDb();
-        const data = await loadDashboardData(db, user.uid);
-        if (!ignore) {
-          setProjects(data.projects);
-          setTasks(data.tasks);
-        }
-      } catch (err) {
-        if (!ignore) {
-          if (err instanceof AppError) {
-            setError(err);
-          } else {
-            setError(new AppError('unknown', 'Failed to load dashboard data.'));
-          }
-        }
-      } finally {
-        if (!ignore) {
-          setLoading(false);
-        }
-      }
+  const today = useMemo(() => todayString(), []);
+
+  // Riyadh-based hour for greeting
+  const isMorning = useMemo(() => {
+    try {
+      const hourStr = new Intl.DateTimeFormat('en-US', {
+        timeZone: APP_TIME_ZONE,
+        hour: 'numeric',
+        hourCycle: 'h23',
+      }).format(new Date());
+      const hour = parseInt(hourStr, 10);
+      return hour >= 5 && hour < 12;
+    } catch {
+      return true;
     }
-    load();
-    return () => {
-      ignore = true;
-    };
-  }, [user]);
+  }, []);
 
-  const handleRetry = () => {
-    setLoading(true);
-    setError(null);
-    if (!user) return;
-    const db = getDb();
-    loadDashboardData(db, user.uid)
-      .then((data) => {
-        setProjects(data.projects);
-        setTasks(data.tasks);
-      })
-      .catch((err) => {
-        if (err instanceof AppError) {
-          setError(err);
-        } else {
-          setError(new AppError('unknown', 'Failed to load dashboard data.'));
-        }
-      })
-      .finally(() => setLoading(false));
-  };
+  const fullDateFormatted = useMemo(() => {
+    try {
+      return new Intl.DateTimeFormat(`${locale}-u-nu-latn-ca-gregory`, {
+        timeZone: APP_TIME_ZONE,
+        dateStyle: 'full',
+      }).format(new Date());
+    } catch {
+      return '';
+    }
+  }, [locale]);
+
+  const projectNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const p of projects) {
+      map.set(p.id, p.name);
+    }
+    return (id: string) => map.get(id) || 'Unknown';
+  }, [projects]);
+
+  const metrics = useMemo(() => computeMetrics(tasks, today), [tasks, today]);
+
+  const summaries = useMemo(
+    () => summarizeProjects(projects, tasks, user?.uid || '', today),
+    [projects, tasks, user, today]
+  );
+
+  const topProjects = useMemo(() => topProjectsByOpen(summaries, 6), [summaries]);
+  const timeline = useMemo(() => dueTimeline(tasks, today, 14), [tasks, today]);
+  const attentionItems = useMemo(() => needsAttention(tasks, today, 6), [tasks, today]);
+  const userTasks = useMemo(() => myTasks(tasks, user?.uid || '', today, 6), [tasks, user, today]);
+  const recentTasks = useMemo(() => recentlyUpdated(tasks, 8), [tasks]);
+
+  // Chart configs
+  const series = useMemo(
+    () => [
+      { key: 'todo', label: t('task.status.todo'), color: 'var(--chart-todo)' },
+      { key: 'in_progress', label: t('task.status.in_progress'), color: 'var(--chart-progress)' },
+      { key: 'done', label: t('task.status.done'), color: 'var(--chart-done)' },
+    ],
+    [t]
+  );
+
+  const stackedRows = useMemo(
+    () =>
+      topProjects.rows.map((s) => ({
+        id: s.project.id,
+        label: s.project.name,
+        href: `/projects/${s.project.id}`,
+        values: {
+          todo: s.todo,
+          in_progress: s.inProgress,
+          done: s.done,
+        },
+      })),
+    [topProjects]
+  );
+
+  const stackedTable = useMemo(
+    () => ({
+      headers: [
+        t('dashboard.table.project'),
+        t('task.status.todo'),
+        t('task.status.in_progress'),
+        t('task.status.done'),
+        t('dashboard.stats.total'),
+      ],
+      rows: topProjects.rows.map((s) => [
+        s.project.name,
+        s.todo,
+        s.inProgress,
+        s.done,
+        s.total,
+      ]),
+    }),
+    [topProjects, t]
+  );
+
+  const columnBuckets = useMemo(
+    () => [
+      ...(timeline.overdue > 0
+        ? [
+            {
+              id: 'overdue',
+              label: t('dashboard.stats.overdue'),
+              value: timeline.overdue,
+              tone: 'overdue' as const,
+            },
+          ]
+        : []),
+      ...timeline.buckets.map((b) => ({
+        id: b.date,
+        label: b.date.slice(5),
+        value: b.count,
+        highlight: b.isToday,
+      })),
+    ],
+    [timeline, t]
+  );
+
+  const columnTable = useMemo(
+    () => ({
+      headers: [t('task.field.dueDate'), t('dashboard.kpi.open')],
+      rows: [
+        ...(timeline.overdue > 0 ? [[t('dashboard.stats.overdue'), timeline.overdue]] : []),
+        ...timeline.buckets.map((b) => [b.date, b.count]),
+      ],
+    }),
+    [timeline, t]
+  );
 
   if (loading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (error) {
+    return <ErrorState message={getErrorMessage(error)} onRetry={reload} />;
+  }
+
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
+
+  if (projects.length === 0) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minBlockSize: '40vh' }}>
-        <Spinner size={36} label={t('common.loading')} />
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.topRow}>
+            <div className={styles.greetingArea}>
+              <h1 className={styles.greeting}>
+                {isMorning
+                  ? t('dashboard.greetingMorning', { name: displayName })
+                  : t('dashboard.greetingEvening', { name: displayName })}
+              </h1>
+              {fullDateFormatted && (
+                <span className={styles.dateDisplay}>{fullDateFormatted}</span>
+              )}
+            </div>
+
+            <Link href="/projects/new" className={styles.newProjectBtn}>
+              <Icon name="plus" size={16} />
+              <span>{t('dashboard.projects.createButton')}</span>
+            </Link>
+          </div>
+          <div className={styles.brassDivider} aria-hidden="true" />
+        </div>
+        <OnboardingEmpty />
       </div>
     );
   }
 
-  if (error) {
-    return <ErrorState message={getErrorMessage(error)} onRetry={handleRetry} />;
-  }
-
-  const stats: DashboardStatsData = computeStats(tasks, todayString());
-
   return (
-    <div>
-      {/* Header with Brass Hairline Rule */}
+    <div className={styles.container}>
+      {/* Top Header */}
       <div className={styles.header}>
         <div className={styles.topRow}>
-          <div>
+          <div className={styles.greetingArea}>
             <h1 className={styles.greeting}>
-              {(() => {
-                const template = t('dashboard.welcome', { name: '___NAME___' });
-                const [pre, post] = template.split('___NAME___');
-                return (
-                  <>
-                    {pre}
-                    <bdi>{user?.displayName || user?.email || ''}</bdi>
-                    {post}
-                  </>
-                );
-              })()}
+              {isMorning ? (
+                <>
+                  {t('dashboard.greetingMorning', { name: '' }).replace(/,\s*$/, '')},{' '}
+                  <bdi>{displayName}</bdi>
+                </>
+              ) : (
+                <>
+                  {t('dashboard.greetingEvening', { name: '' }).replace(/,\s*$/, '')},{' '}
+                  <bdi>{displayName}</bdi>
+                </>
+              )}
             </h1>
+            {fullDateFormatted && (
+              <span className={styles.dateDisplay}>{fullDateFormatted}</span>
+            )}
           </div>
 
-          <Button href="/projects/new" variant="primary" icon="plus">
-            {t('dashboard.projects.createButton')}
-          </Button>
+          <Link href="/projects/new" className={styles.newProjectBtn}>
+            <Icon name="plus" size={16} />
+            <span>{t('dashboard.projects.createButton')}</span>
+          </Link>
         </div>
 
-        {/* The Bold Brass Rule */}
-        <div className={styles.brassRule} />
+        <div className={styles.brassDivider} aria-hidden="true" />
       </div>
 
-      {/* Dashboard Statistics & Overdue List */}
-      <DashboardStats
-        stats={stats}
-        projects={projects}
-        hasProjects={projects.length > 0}
-      />
+      {/* KPI Strip */}
+      <KpiStrip metrics={metrics} />
 
-      {/* Projects List as Rows */}
-      {projects.length > 0 && (
-        <section className={styles.projectsSection}>
-          <div className={styles.projectsHeader}>
-            <h2 className={styles.projectsTitle}>
-              {t('dashboard.projects.title')}{' '}
-              <span className="num" style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                ({projects.length})
-              </span>
-            </h2>
-          </div>
+      {/* 12-Column Grid: Charts */}
+      <div className={styles.grid}>
+        <div className={styles.col7}>
+          <ChartPanel
+            title={t('dashboard.projectsDistribution')}
+            legend={series}
+            table={stackedTable}
+          >
+            <StackedBars
+              rows={stackedRows}
+              series={series}
+              ariaLabel={t('dashboard.projectsDistribution')}
+            />
+          </ChartPanel>
+        </div>
 
-          <div className={styles.projectsList}>
-            {projects.map((project) => {
-              const projTasks = tasks.filter((task) => task.projectId === project.id);
-              const doneTasks = projTasks.filter((task) => task.status === 'done').length;
-              const totalTasks = projTasks.length;
-              const isoDate = project.updatedAt instanceof Date
-                ? project.updatedAt.toISOString().slice(0, 10)
-                : null;
+        <div className={styles.col5}>
+          <ChartPanel
+            title={t('dashboard.dueTimeline')}
+            table={columnTable}
+          >
+            <ColumnChart
+              buckets={columnBuckets}
+              ariaLabel={t('dashboard.dueTimeline')}
+              valueLabel={t('dashboard.kpi.open')}
+            />
+          </ChartPanel>
+        </div>
 
-              return (
-                <div key={project.id} className={styles.projectRow}>
-                  <div className={styles.projectInfo}>
-                    <Link href={`/projects/${project.id}`} className={styles.projectName} dir="auto">
-                      {project.name}
-                    </Link>
-                    <div className={styles.projectMeta}>
-                      <span>{tp('members.count', project.memberIds.length)}</span>
-                      {isoDate && (
-                        <>
-                          <span>&bull;</span>
-                          <span>{t('project.card.updated', { date: formatDueDate(isoDate) })}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
+        {/* Attention & My Tasks */}
+        <div className={styles.col6}>
+          <NeedsAttention items={attentionItems} projectName={projectNameMap} />
+        </div>
 
-                  <div className={styles.progressContainer}>
-                    <ProgressBar
-                      value={doneTasks}
-                      max={totalTasks}
-                      label={`${doneTasks} / ${totalTasks}`}
-                    />
-                    <span className={styles.progressLabel}>
-                      {doneTasks}/{totalTasks} {t('dashboard.stats.done')}
-                    </span>
-                  </div>
+        <div className={styles.col6}>
+          <MyTasks tasks={userTasks} projectName={projectNameMap} />
+        </div>
 
-                  <div className={styles.rowActions}>
-                    <Link href={`/projects/${project.id}/settings`}>
-                      <IconButton
-                        icon="settings"
-                        label={t('project.card.settings')}
-                        variant="ghost"
-                        size="sm"
-                      />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
+        {/* Projects Table */}
+        <div className={styles.col12}>
+          <ProjectsTable summaries={summaries} />
+        </div>
+
+        {/* Recently Updated */}
+        <div className={styles.col12}>
+          <RecentlyUpdated tasks={recentTasks} projectName={projectNameMap} />
+        </div>
+      </div>
     </div>
   );
 }

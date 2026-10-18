@@ -1,5 +1,13 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  max-inline-size: 80rem;
+  margin-inline: auto;
+}
+
 .header {
-  margin-block-end: 28px;
+  margin-block-end: 1.5rem;
 }
 
 .topRow {
@@ -7,24 +15,53 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-block-end: 16px;
+  gap: 1rem;
+}
+
+.greetingArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .greeting {
-  font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--text);
   margin: 0;
+  line-height: 1.2;
 }
 
-.brassRule {
+.dateDisplay {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.newProjectBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity var(--dur-1) var(--ease);
+}
+
+.newProjectBtn:hover {
+  opacity: 0.9;
+}
+
+.brassDivider {
+  inline-size: 100%;
   block-size: 1px;
   background-color: var(--brass);
-  inline-size: 100%;
+  margin-block: 1rem 1.5rem;
   transform-origin: inline-start;
-  animation: drawRule var(--dur-rule) var(--ease) forwards;
+  animation: drawRule 400ms var(--ease) forwards;
 }
 
 @keyframes drawRule {
@@ -37,98 +74,39 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .brassRule {
+  .brassDivider {
     animation: none;
     transform: none;
   }
 }
 
-.projectsSection {
-  margin-block-start: 40px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  margin-block-end: 1.5rem;
 }
 
-.projectsHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-block-end: 16px;
+.col7 {
+  grid-column: span 7;
 }
 
-.projectsTitle {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text);
-  margin: 0;
+.col5 {
+  grid-column: span 5;
 }
 
-.projectsList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.col6 {
+  grid-column: span 6;
 }
 
-.projectRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-inline: 20px;
-  padding-block: 16px;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  gap: 20px;
-  flex-wrap: wrap;
-  transition: border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
+.col12 {
+  grid-column: span 12;
 }
 
-.projectRow:hover {
-  border-color: var(--control-border);
-  background-color: var(--surface-hover);
-}
-
-.projectInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-inline-size: 200px;
-  flex: 1;
-}
-
-.projectName {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.projectName:hover {
-  color: var(--accent);
-}
-
-.projectMeta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-}
-
-.progressContainer {
-  inline-size: 180px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.progressLabel {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.rowActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+@media (max-width: 1024px) {
+  .col7,
+  .col5,
+  .col6 {
+    grid-column: span 12;
+  }
 }

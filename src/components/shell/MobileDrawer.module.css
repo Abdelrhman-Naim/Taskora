@@ -24,11 +24,11 @@
   box-shadow: var(--shadow-pop);
   display: flex;
   flex-direction: column;
-  animation: slideIn var(--dur-2) var(--ease);
+  animation: slideInLTR var(--dur-2) var(--ease);
   outline: none;
 }
 
-@keyframes slideIn {
+@keyframes slideInLTR {
   from {
     transform: translateX(-100%);
   }
@@ -37,13 +37,17 @@
   }
 }
 
-[dir="rtl"] @keyframes slideIn {
+@keyframes slideInRTL {
   from {
     transform: translateX(100%);
   }
   to {
     transform: translateX(0);
   }
+}
+
+:global([dir="rtl"]) .drawer {
+  animation-name: slideInRTL;
 }
 
 .header {
