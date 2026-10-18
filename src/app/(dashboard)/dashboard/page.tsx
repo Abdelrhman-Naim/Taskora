@@ -175,7 +175,7 @@ export default function DashboardPage(): React.ReactElement {
 
   if (projects.length === 0) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} data-testid="page-ready">
         <div className={styles.header}>
           <div className={styles.topRow}>
             <div className={styles.greetingArea}>
@@ -202,7 +202,7 @@ export default function DashboardPage(): React.ReactElement {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-testid="page-ready">
       {/* Top Header */}
       <div className={styles.header}>
         <div className={styles.topRow}>
@@ -239,7 +239,7 @@ export default function DashboardPage(): React.ReactElement {
 
       {/* 12-Column Grid: Charts */}
       <div className={styles.grid}>
-        <div className={styles.col7}>
+        <div className={styles.col7} data-testid="chart-tasks-by-project">
           <ChartPanel
             title={t('dashboard.projectsDistribution')}
             legend={series}
@@ -253,7 +253,7 @@ export default function DashboardPage(): React.ReactElement {
           </ChartPanel>
         </div>
 
-        <div className={styles.col5}>
+        <div className={styles.col5} data-testid="chart-due-timeline">
           <ChartPanel
             title={t('dashboard.dueTimeline')}
             table={columnTable}

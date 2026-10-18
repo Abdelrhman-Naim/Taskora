@@ -12,7 +12,12 @@ export function OnboardingEmpty({ onCreateProject }: OnboardingEmptyProps): Reac
   const { t } = useI18n();
 
   return (
-    <div className={styles.container} role="region" aria-label={t('dashboard.onboarding.title')}>
+    <div
+      data-testid="onboarding"
+      className={styles.container}
+      role="region"
+      aria-label={t('dashboard.onboarding.title')}
+    >
       <h2 className={styles.title}>{t('dashboard.onboarding.title')}</h2>
       <p className={styles.subtitle}>
         <strong>{t('dashboard.projects.emptyTitle')}</strong> — {t('dashboard.projects.emptyDescription')}

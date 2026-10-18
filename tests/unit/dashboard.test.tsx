@@ -309,4 +309,79 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       expect(skeleton).toHaveAttribute('aria-busy', 'true');
     });
   });
+
+  describe('Structural & Quality Standards (Task 35)', () => {
+    it('provides data-testid on all key dashboard components', () => {
+      const metrics = computeMetrics(mockTasks, today);
+      const items = needsAttention(mockTasks, today);
+      const tasks = myTasks(mockTasks, currentUid, today);
+      const summaries = summarizeProjects(mockProjects, mockTasks, currentUid, today);
+      const recent = recentlyUpdated(mockTasks);
+
+      const { unmount: unmountKpi } = renderWithProviders(<KpiStrip metrics={metrics} />);
+      expect(screen.getByTestId('kpi-strip')).toBeInTheDocument();
+      unmountKpi();
+
+      const { unmount: unmountAttn } = renderWithProviders(<NeedsAttention items={items} projectName={projectNameMap} />);
+      expect(screen.getByTestId('needs-attention')).toBeInTheDocument();
+      unmountAttn();
+
+      const { unmount: unmountTasks } = renderWithProviders(<MyTasks tasks={tasks} projectName={projectNameMap} />);
+      expect(screen.getByTestId('my-tasks')).toBeInTheDocument();
+      unmountTasks();
+
+      const { unmount: unmountTable } = renderWithProviders(<ProjectsTable summaries={summaries} />);
+      expect(screen.getByTestId('projects-table')).toBeInTheDocument();
+      unmountTable();
+
+      const { unmount: unmountRecent } = renderWithProviders(<RecentlyUpdated tasks={recent} projectName={projectNameMap} />);
+      expect(screen.getByTestId('recently-updated')).toBeInTheDocument();
+      unmountRecent();
+
+      const { unmount: unmountOnboarding } = renderWithProviders(<OnboardingEmpty />);
+      expect(screen.getByTestId('onboarding')).toBeInTheDocument();
+      unmountOnboarding();
+    });
+
+    it('ensures math consistency and safe 0% calculation for empty projects', () => {
+      const emptyProject: Project = {
+        id: 'proj-empty',
+        name: 'Empty Project',
+        description: '',
+        ownerId: currentUid,
+        memberIds: [currentUid],
+        memberNames: { [currentUid]: 'Sara' },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const summaries = summarizeProjects([emptyProject], [], currentUid, today);
+      expect(summaries[0].progress).toBe(0);
+      expect(isNaN(summaries[0].progress)).toBe(false);
+
+      const metrics = computeMetrics(mockTasks, today);
+      const projectSummaries = summarizeProjects(mockProjects, mockTasks, currentUid, today);
+      const sumOfOpenInProjects = projectSummaries.reduce((acc, p) => acc + p.open, 0);
+      expect(sumOfOpenInProjects).toBe(metrics.open);
+    });
+
+    it('passes Phantom Features Audit: banned elements and labels are absent', () => {
+      const metrics = computeMetrics(mockTasks, today);
+      const summaries = summarizeProjects(mockProjects, mockTasks, currentUid, today);
+
+      renderWithProviders(
+        <div>
+          <KpiStrip metrics={metrics} />
+          <ProjectsTable summaries={summaries} />
+        </div>
+      );
+
+      // No notifications bell
+      expect(screen.queryByLabelText(/notification|notifications/i)).not.toBeInTheDocument();
+      // No billing or upgrade triggers
+      expect(screen.queryByRole('button', { name: /upgrade|billing|pro plan/i })).not.toBeInTheDocument();
+      // No growth rate badges (e.g., +12% or -5%)
+      expect(screen.queryByText(/\+\d+%/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/-\d+%/)).not.toBeInTheDocument();
+    });
+  });
 });

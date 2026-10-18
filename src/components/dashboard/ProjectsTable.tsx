@@ -83,7 +83,12 @@ export function ProjectsTable({ summaries }: ProjectsTableProps): React.ReactEle
   };
 
   return (
-    <div className={styles.panel} role="region" aria-label={t('dashboard.projects.title')}>
+    <div
+      data-testid="projects-table"
+      className={styles.panel}
+      role="region"
+      aria-label={t('dashboard.projects.title')}
+    >
       <div className={styles.header}>
         <div className={styles.titleArea}>
           <span className={styles.title}>{t('dashboard.projects.title')}</span>

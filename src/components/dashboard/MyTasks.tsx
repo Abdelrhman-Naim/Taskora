@@ -14,7 +14,12 @@ export function MyTasks({ tasks, projectName }: MyTasksProps): React.ReactElemen
   const { t } = useI18n();
 
   return (
-    <div className={styles.panel} role="region" aria-label={t('dashboard.myTasks.title')}>
+    <div
+      data-testid="my-tasks"
+      className={styles.panel}
+      role="region"
+      aria-label={t('dashboard.myTasks.title')}
+    >
       <div className={styles.header}>
         <div className={styles.title}>
           <Icon name="check" size={18} />

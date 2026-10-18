@@ -15,7 +15,12 @@ export function RecentlyUpdated({ tasks, projectName }: RecentlyUpdatedProps): R
   const { t, locale } = useI18n();
 
   return (
-    <div className={styles.panel} role="region" aria-label={t('dashboard.recent.title')}>
+    <div
+      data-testid="recently-updated"
+      className={styles.panel}
+      role="region"
+      aria-label={t('dashboard.recent.title')}
+    >
       <div className={styles.header}>
         <div className={styles.title}>
           <Icon name="clock" size={18} />

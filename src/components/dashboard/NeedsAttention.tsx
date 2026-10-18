@@ -17,7 +17,12 @@ export function NeedsAttention({
   const { t, tp } = useI18n();
 
   return (
-    <div className={styles.panel} role="region" aria-label={t('dashboard.attention.title')}>
+    <div
+      data-testid="needs-attention"
+      className={styles.panel}
+      role="region"
+      aria-label={t('dashboard.attention.title')}
+    >
       <div className={styles.header}>
         <div className={styles.title}>
           <Icon name="alert" size={18} className={styles.alertIcon} />

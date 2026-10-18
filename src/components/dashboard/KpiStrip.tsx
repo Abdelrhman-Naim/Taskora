@@ -12,7 +12,12 @@ export function KpiStrip({ metrics }: KpiStripProps): React.ReactElement {
   const { t } = useI18n();
 
   return (
-    <div className={styles.kpiStrip} role="region" aria-label={t('dashboard.kpi.region')}>
+    <div
+      data-testid="kpi-strip"
+      className={styles.kpiStrip}
+      role="region"
+      aria-label={t('dashboard.kpi.region')}
+    >
       {/* 1: Open Tasks */}
       <div className={styles.cell}>
         <div className={styles.cellHeader}>
