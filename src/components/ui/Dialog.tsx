@@ -152,7 +152,7 @@ export function Dialog({
                 fontSize: '14px',
                 fontWeight: 500,
                 backgroundColor: 'transparent',
-                color: 'var(--fg-muted)',
+                color: 'var(--text-muted)',
                 border: '1px solid var(--border)',
                 borderRadius: 'var(--radius-md)',
                 cursor: 'pointer',
@@ -169,7 +169,7 @@ export function Dialog({
                 fontWeight: 500,
                 backgroundColor: isDangerous ? 'var(--st-overdue-bg)' : 'var(--accent)',
                 color: isDangerous ? 'var(--st-overdue-fg)' : 'var(--on-accent)',
-                border: isDangerous ? '1px solid var(--st-overdue)' : '1px solid transparent',
+                border: isDangerous ? '1px solid var(--st-overdue-fg)' : '1px solid transparent',
                 borderRadius: 'var(--radius-md)',
                 cursor: 'pointer',
               }}

@@ -20,20 +20,20 @@
   background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  color: var(--fg);
+  box-shadow: var(--shadow-pop);
+  color: var(--text);
   font-size: 0.875rem;
   font-weight: 500;
   pointer-events: auto;
-  animation: slideIn var(--dur-normal) ease;
+  animation: slideIn var(--dur-2) var(--ease);
 }
 
 .success {
-  border-inline-start: 4px solid var(--st-done);
+  border-inline-start: 4px solid var(--st-done-fg);
 }
 
 .error {
-  border-inline-start: 4px solid var(--st-overdue);
+  border-inline-start: 4px solid var(--st-overdue-fg);
 }
 
 .icon {
@@ -41,11 +41,11 @@
 }
 
 .success .icon {
-  color: var(--st-done);
+  color: var(--st-done-fg);
 }
 
 .error .icon {
-  color: var(--st-overdue);
+  color: var(--st-overdue-fg);
 }
 
 .message {

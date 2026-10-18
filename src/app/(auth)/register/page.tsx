@@ -76,7 +76,7 @@ export default function RegisterPage() {
                 fontWeight: 700,
                 marginBlockStart: 0,
                 marginBlockEnd: '8px',
-                color: 'var(--fg)',
+                color: 'var(--text)',
               }}
             >
               {t('auth.register.title')}
@@ -84,7 +84,7 @@ export default function RegisterPage() {
             <p
               style={{
                 fontSize: '0.875rem',
-                color: 'var(--fg-muted)',
+                color: 'var(--text-muted)',
                 margin: 0,
                 lineHeight: 1.5,
               }}
@@ -100,7 +100,7 @@ export default function RegisterPage() {
               marginBlockStart: '24px',
               textAlign: 'center',
               fontSize: '0.875rem',
-              color: 'var(--fg-muted)',
+              color: 'var(--text-muted)',
             }}
           >
             {t('auth.register.hasAccount')}{' '}

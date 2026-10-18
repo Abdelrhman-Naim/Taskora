@@ -216,7 +216,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
             paddingInline: '16px',
             marginBlockEnd: '20px',
             backgroundColor: 'var(--st-overdue-bg)',
-            border: '1px solid var(--st-overdue)',
+            border: '1px solid var(--st-overdue-fg)',
             borderRadius: 'var(--radius-md)',
             color: 'var(--st-overdue-fg)',
             fontSize: '0.875rem',
@@ -270,7 +270,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
           backgroundColor: 'var(--surface)',
           padding: '24px',
           borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--st-overdue)',
+          border: '1px solid var(--st-overdue-fg)',
         }}
       >
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--st-overdue-fg)', marginBlockStart: 0, marginBlockEnd: '8px' }}>

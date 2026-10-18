@@ -104,6 +104,28 @@ describe('Design Tokens Contrast and Consistency (WCAG AA)', () => {
     expect(contrastRatio(vars['--st-done-fg'], vars['--st-done-bg'])).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(vars['--st-overdue-fg'], vars['--st-overdue-bg'])).toBeGreaterThanOrEqual(4.5);
 
+    // Priority badges fg on surface and surface-2 >= 4.5:1
+    const priorityFgs = [vars['--pr-low-fg'], vars['--pr-medium-fg'], vars['--pr-high-fg']];
+    for (const prFg of priorityFgs) {
+      expect(contrastRatio(prFg, vars['--surface']), `Priority fg ${prFg} on surface must be >= 4.5`).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(prFg, vars['--surface-2']), `Priority fg ${prFg} on surface-2 must be >= 4.5`).toBeGreaterThanOrEqual(4.5);
+    }
+
+    // on-accent on accent-hover >= 4.5:1
+    expect(contrastRatio(vars['--on-accent'], vars['--accent-hover'])).toBeGreaterThanOrEqual(4.5);
+
+    // text on surface-hover >= 4.5:1
+    expect(contrastRatio(vars['--text'], vars['--surface-hover'])).toBeGreaterThanOrEqual(4.5);
+
+    // Charts on surface >= 3:1
+    const chartColors = [vars['--chart-todo'], vars['--chart-progress'], vars['--chart-done'], vars['--chart-neutral']];
+    for (const c of chartColors) {
+      expect(contrastRatio(c, vars['--surface']), `Chart color ${c} on surface must be >= 3`).toBeGreaterThanOrEqual(3.0);
+    }
+
+    // Overdue on surface >= 3:1
+    expect(contrastRatio(vars['--st-overdue-fg'], vars['--surface'])).toBeGreaterThanOrEqual(3.0);
+
     // Control border on backgrounds >= 3:1
     for (const bg of backgrounds) {
       expect(contrastRatio(vars['--control-border'], bg), `Control border on ${bg} must be >= 3`).toBeGreaterThanOrEqual(3.0);
@@ -135,6 +157,28 @@ describe('Design Tokens Contrast and Consistency (WCAG AA)', () => {
     expect(contrastRatio(vars['--st-progress-fg'], vars['--st-progress-bg'])).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(vars['--st-done-fg'], vars['--st-done-bg'])).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(vars['--st-overdue-fg'], vars['--st-overdue-bg'])).toBeGreaterThanOrEqual(4.5);
+
+    // Priority badges fg on surface and surface-2 >= 4.5:1
+    const priorityFgs = [vars['--pr-low-fg'], vars['--pr-medium-fg'], vars['--pr-high-fg']];
+    for (const prFg of priorityFgs) {
+      expect(contrastRatio(prFg, vars['--surface']), `Dark priority fg ${prFg} on surface must be >= 4.5`).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(prFg, vars['--surface-2']), `Dark priority fg ${prFg} on surface-2 must be >= 4.5`).toBeGreaterThanOrEqual(4.5);
+    }
+
+    // on-accent on accent-hover >= 4.5:1
+    expect(contrastRatio(vars['--on-accent'], vars['--accent-hover'])).toBeGreaterThanOrEqual(4.5);
+
+    // text on surface-hover >= 4.5:1
+    expect(contrastRatio(vars['--text'], vars['--surface-hover'])).toBeGreaterThanOrEqual(4.5);
+
+    // Charts on surface >= 3:1
+    const chartColors = [vars['--chart-todo'], vars['--chart-progress'], vars['--chart-done'], vars['--chart-neutral']];
+    for (const c of chartColors) {
+      expect(contrastRatio(c, vars['--surface']), `Dark chart color ${c} on surface must be >= 3`).toBeGreaterThanOrEqual(3.0);
+    }
+
+    // Overdue on surface >= 3:1
+    expect(contrastRatio(vars['--st-overdue-fg'], vars['--surface'])).toBeGreaterThanOrEqual(3.0);
 
     for (const bg of backgrounds) {
       expect(contrastRatio(vars['--control-border'], bg), `Dark control border on ${bg} must be >= 3`).toBeGreaterThanOrEqual(3.0);

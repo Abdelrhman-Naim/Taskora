@@ -24,7 +24,7 @@
 }
 
 .ledgerItem:not(:last-child) {
-  border-inline-end: 1px solid var(--border-subtle);
+  border-inline-end: 1px solid var(--border);
 }
 
 .statNum {
@@ -32,7 +32,7 @@
   font-size: 2.25rem;
   font-weight: 700;
   line-height: 1.1;
-  color: var(--fg);
+  color: var(--text);
 }
 
 .statNum.overdue {
@@ -42,7 +42,7 @@
 .statLabel {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--fg-muted);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -65,7 +65,7 @@
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--fg);
+  color: var(--text);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -86,7 +86,7 @@
   padding-block: 12px;
   background-color: var(--bg);
   border: 1px solid var(--border);
-  border-inline-start: 4px solid var(--st-overdue);
+  border-inline-start: 4px solid var(--st-overdue-fg);
   border-radius: var(--radius-md);
   flex-wrap: wrap;
   gap: 12px;
@@ -101,7 +101,7 @@
 .itemTitle {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--fg);
+  color: var(--text);
 }
 
 .itemMeta {
@@ -109,13 +109,13 @@
   align-items: center;
   gap: 8px;
   font-size: 0.8125rem;
-  color: var(--fg-muted);
+  color: var(--text-muted);
 }
 
 .noOverdue {
   padding-block: 24px;
   text-align: center;
-  color: var(--fg-muted);
+  color: var(--text-muted);
   font-size: 0.875rem;
 }
 

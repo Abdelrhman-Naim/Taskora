@@ -20,17 +20,17 @@ export function ErrorState({
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        padding: '32px 24px',
-        backgroundColor: 'var(--danger-bg)',
+        padding: 'var(--sp-6) var(--sp-5)',
+        backgroundColor: 'var(--st-overdue-bg)',
         borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--danger-border)',
-        margin: '16px 0',
+        border: '1px solid var(--border)',
+        margin: 'var(--sp-4) 0',
       }}
     >
-      <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--danger)', marginBottom: '6px' }}>
+      <h3 style={{ fontSize: 'var(--fs-2)', fontWeight: 600, color: 'var(--st-overdue-fg)', marginBottom: 'var(--sp-1)' }}>
         {title}
       </h3>
-      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '420px', marginBottom: onRetry ? '16px' : '0' }}>
+      <p style={{ fontSize: 'var(--fs-1)', color: 'var(--text-muted)', maxWidth: '420px', marginBottom: onRetry ? 'var(--sp-4)' : '0' }}>
         {message}
       </p>
 
@@ -39,11 +39,11 @@ export function ErrorState({
           type="button"
           onClick={onRetry}
           style={{
-            padding: '8px 16px',
-            fontSize: '13px',
+            padding: 'var(--sp-2) var(--sp-4)',
+            fontSize: 'var(--fs-0)',
             fontWeight: 600,
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-fg)',
+            backgroundColor: 'var(--accent)',
+            color: 'var(--on-accent)',
             border: 'none',
             borderRadius: 'var(--radius-sm)',
             cursor: 'pointer',

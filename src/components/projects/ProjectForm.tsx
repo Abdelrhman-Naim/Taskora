@@ -86,7 +86,7 @@ export function ProjectForm({
             padding: '12px 16px',
             borderRadius: 'var(--radius-md)',
             backgroundColor: 'var(--st-overdue-bg)',
-            border: '1px solid var(--st-overdue)',
+            border: '1px solid var(--st-overdue-fg)',
             color: 'var(--st-overdue-fg)',
             fontSize: '0.875rem',
             fontWeight: 500,

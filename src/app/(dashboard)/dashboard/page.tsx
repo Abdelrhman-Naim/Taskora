@@ -126,7 +126,7 @@ export default function DashboardPage(): React.ReactElement {
           <div className={styles.projectsHeader}>
             <h2 className={styles.projectsTitle}>
               {t('dashboard.projects.title')}{' '}
-              <span className="num" style={{ fontSize: '1rem', color: 'var(--fg-muted)', fontWeight: 500 }}>
+              <span className="num" style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>
                 ({projects.length})
               </span>
             </h2>

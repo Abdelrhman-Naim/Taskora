@@ -49,7 +49,7 @@ export default function DesignSystemPage() {
     { name: 'Pearl / Petrol', role: 'Background (--bg)', hex: 'Light #F4F5F2 / Dark #0A1514', varName: 'var(--bg)', contrast: '≥ 4.5:1 (AA)' },
     { name: 'Porcelain / Deep', role: 'Surfaces (--surface)', hex: 'Light #FFFFFF / Dark #101F1D', varName: 'var(--surface)', contrast: '≥ 4.5:1 (AA)' },
     { name: 'Jade', role: 'Primary Action (--accent)', hex: 'Light #0E6B5C / Dark #5CCBAE', varName: 'var(--accent)', contrast: '4.6:1 (AA)' },
-    { name: 'Ink / Mist', role: 'Text (--fg)', hex: 'Light #0F1E1C / Dark #EAF0EC', varName: 'var(--fg)', contrast: '13.8:1 (AAA)' },
+    { name: 'Ink / Mist', role: 'Text (--text)', hex: 'Light #0F1E1C / Dark #EAF0EC', varName: 'var(--text)', contrast: '13.8:1 (AAA)' },
     { name: 'Brass', role: 'Hairline Accent (--brass)', hex: 'Light #B08D45 / Dark #C9A55A', varName: 'var(--brass)', contrast: '3.1:1 UI (AA)' },
   ];
 
@@ -92,7 +92,7 @@ export default function DesignSystemPage() {
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700 }}>
                 Display Title: Newsreader & Amiri (سيريف عرض)
               </div>
-              <div style={{ fontSize: '1rem', color: 'var(--fg)', lineHeight: 1.75 }}>
+              <div style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.75 }}>
                 Body Text: Hanken Grotesk & IBM Plex Sans Arabic (خط القراءة sans-serif المريح)
               </div>
               <div className="num" style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', color: 'var(--accent)' }}>

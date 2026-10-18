@@ -66,7 +66,7 @@ export default function LoginPage() {
                 fontWeight: 700,
                 marginBlockStart: 0,
                 marginBlockEnd: '8px',
-                color: 'var(--fg)',
+                color: 'var(--text)',
               }}
             >
               {t('auth.login.title')}
@@ -74,7 +74,7 @@ export default function LoginPage() {
             <p
               style={{
                 fontSize: '0.875rem',
-                color: 'var(--fg-muted)',
+                color: 'var(--text-muted)',
                 margin: 0,
                 lineHeight: 1.5,
               }}
@@ -90,7 +90,7 @@ export default function LoginPage() {
               marginBlockStart: '24px',
               textAlign: 'center',
               fontSize: '0.875rem',
-              color: 'var(--fg-muted)',
+              color: 'var(--text-muted)',
             }}
           >
             {t('auth.login.noAccount')}{' '}

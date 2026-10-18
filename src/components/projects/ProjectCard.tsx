@@ -28,7 +28,7 @@ export function ProjectCard({ project }: ProjectCardProps): React.ReactElement {
         border: '1px solid var(--border)',
         textDecoration: 'none',
         color: 'inherit',
-        transition: 'border-color var(--dur-short) var(--ease-standard), background-color var(--dur-short) var(--ease-standard)',
+        transition: 'border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBlockEnd: '8px', gap: '12px' }}>

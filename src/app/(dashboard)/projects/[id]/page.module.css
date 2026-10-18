@@ -10,7 +10,7 @@
   color: var(--text-muted);
   text-decoration: none;
   margin-block-end: 12px;
-  transition: color var(--dur-short) var(--ease-standard);
+  transition: color var(--dur-1) var(--ease);
 }
 
 .backLink:hover {
@@ -61,7 +61,7 @@
   background-color: var(--brass);
   inline-size: 100%;
   transform-origin: inline-start;
-  animation: drawRule var(--dur-rule) ease forwards;
+  animation: drawRule var(--dur-rule) var(--ease) forwards;
 }
 
 @keyframes drawRule {

@@ -139,7 +139,7 @@ export function MemberManager({
                         paddingBlock: '2px',
                         paddingInline: '8px',
                         borderRadius: '999px',
-                        backgroundColor: 'var(--accent-dim)',
+                        backgroundColor: 'var(--accent-soft)',
                         color: 'var(--accent-text)',
                       }}
                     >
@@ -161,7 +161,7 @@ export function MemberManager({
                       fontWeight: 600,
                       backgroundColor: 'transparent',
                       color: 'var(--st-overdue-fg)',
-                      border: '1px solid var(--st-overdue)',
+                      border: '1px solid var(--st-overdue-fg)',
                       borderRadius: 'var(--radius-sm)',
                       cursor: loadingCount ? 'not-allowed' : 'pointer',
                     }}

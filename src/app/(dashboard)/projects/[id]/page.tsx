@@ -287,7 +287,7 @@ export default function ProjectPage(): React.ReactElement | null {
             paddingBlock: '12px',
             paddingInline: '16px',
             backgroundColor: 'var(--st-overdue-bg)',
-            border: '1px solid var(--st-overdue)',
+            border: '1px solid var(--st-overdue-fg)',
             borderRadius: 'var(--radius-md)',
             color: 'var(--st-overdue-fg)',
             fontSize: '0.875rem',

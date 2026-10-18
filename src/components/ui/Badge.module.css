@@ -15,42 +15,42 @@
 .todo {
   background-color: var(--st-todo-bg);
   color: var(--st-todo-fg);
-  border-color: rgba(0, 0, 0, 0.06);
+  border-color: var(--border);
 }
 
 .in_progress {
-  background-color: var(--st-in-progress-bg);
-  color: var(--st-in-progress-fg);
-  border-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--st-progress-bg);
+  color: var(--st-progress-fg);
+  border-color: var(--border);
 }
 
 .done {
   background-color: var(--st-done-bg);
   color: var(--st-done-fg);
-  border-color: rgba(0, 0, 0, 0.06);
+  border-color: var(--border);
 }
 
 .overdue {
   background-color: var(--st-overdue-bg);
   color: var(--st-overdue-fg);
-  border-color: var(--st-overdue);
+  border-color: var(--st-overdue-fg);
 }
 
 .low {
   background-color: var(--surface-hover);
-  color: var(--st-priority-low);
+  color: var(--pr-low-fg);
   border-color: var(--border);
 }
 
 .medium {
   background-color: var(--surface-hover);
-  color: var(--st-priority-medium);
+  color: var(--pr-medium-fg);
   border-color: var(--border);
 }
 
 .high {
   background-color: var(--surface-hover);
-  color: var(--st-priority-high);
+  color: var(--pr-high-fg);
   border-color: var(--border);
 }
 

@@ -66,7 +66,7 @@ export function TaskCard({
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        transition: 'border-color var(--dur-fast) ease, background-color var(--dur-fast) ease',
+        transition: 'border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
@@ -75,7 +75,7 @@ export function TaskCard({
           style={{
             fontSize: '1rem',
             fontWeight: 600,
-            color: 'var(--fg)',
+            color: 'var(--text)',
             margin: 0,
             wordBreak: 'break-word',
           }}
@@ -95,7 +95,7 @@ export function TaskCard({
           dir="auto"
           style={{
             fontSize: '0.875rem',
-            color: 'var(--fg-muted)',
+            color: 'var(--text-muted)',
             margin: 0,
             lineHeight: 1.6,
             wordBreak: 'break-word',
@@ -112,16 +112,16 @@ export function TaskCard({
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '8px',
-          borderBlockStart: '1px solid var(--border-subtle)',
+          borderBlockStart: '1px solid var(--border)',
           paddingBlockStart: '10px',
           fontSize: '0.8125rem',
-          color: 'var(--fg-muted)',
+          color: 'var(--text-muted)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <span>
             {t('task.field.assignee')}:{' '}
-            <strong dir="auto" style={{ color: 'var(--fg)', fontWeight: 500 }}>
+            <strong dir="auto" style={{ color: 'var(--text)', fontWeight: 500 }}>
               {assigneeName}
             </strong>
           </span>
@@ -129,7 +129,7 @@ export function TaskCard({
           {task.dueDate && (
             <span>
               {t('task.field.dueDate')}:{' '}
-              <strong style={{ color: overdue ? 'var(--st-overdue-fg)' : 'var(--fg)', fontWeight: 500 }}>
+              <strong style={{ color: overdue ? 'var(--st-overdue-fg)' : 'var(--text)', fontWeight: 500 }}>
                 {formatDueDate(task.dueDate)}
               </strong>
             </span>
@@ -150,7 +150,7 @@ export function TaskCard({
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--control-border)',
                 backgroundColor: 'var(--surface)',
-                color: 'var(--fg)',
+                color: 'var(--text)',
                 cursor: 'pointer',
               }}
             >

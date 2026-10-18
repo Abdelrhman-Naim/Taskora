@@ -9,12 +9,12 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--fg);
+  color: var(--text);
 }
 
 .hint {
   font-size: 0.8125rem;
-  color: var(--fg-muted);
+  color: var(--text-muted);
 }
 
 .error {

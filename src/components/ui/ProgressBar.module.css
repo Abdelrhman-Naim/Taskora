@@ -14,5 +14,5 @@
   inset-inline-start: 0;
   background-color: var(--accent);
   border-radius: var(--radius-pill);
-  transition: inline-size var(--dur-normal) ease;
+  transition: inline-size var(--dur-2) var(--ease);
 }

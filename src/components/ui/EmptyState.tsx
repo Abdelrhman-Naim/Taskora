@@ -20,17 +20,17 @@ export function EmptyState({ title, message, action }: EmptyStateProps) {
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        padding: '48px 24px',
-        backgroundColor: 'var(--bg-card)',
+        padding: 'var(--sp-7) var(--sp-5)',
+        backgroundColor: 'var(--surface)',
         borderRadius: 'var(--radius-md)',
-        border: '1px dashed var(--border-color)',
-        margin: '16px 0',
+        border: '1px dashed var(--border)',
+        margin: 'var(--sp-4) 0',
       }}
     >
-      <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
+      <h3 style={{ fontSize: 'var(--fs-3)', fontWeight: 600, color: 'var(--text)', marginBottom: 'var(--sp-2)' }}>
         {title}
       </h3>
-      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '400px', marginBottom: action ? '20px' : '0' }}>
+      <p style={{ fontSize: 'var(--fs-1)', color: 'var(--text-muted)', maxWidth: '400px', marginBottom: action ? 'var(--sp-5)' : '0' }}>
         {message}
       </p>
 
@@ -39,11 +39,11 @@ export function EmptyState({ title, message, action }: EmptyStateProps) {
           <Link
             href={action.href}
             style={{
-              padding: '8px 16px',
-              fontSize: '14px',
+              padding: 'var(--sp-2) var(--sp-4)',
+              fontSize: 'var(--fs-1)',
               fontWeight: 600,
-              backgroundColor: 'var(--primary)',
-              color: 'var(--primary-fg)',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--on-accent)',
               borderRadius: 'var(--radius-sm)',
               textDecoration: 'none',
             }}
@@ -55,11 +55,11 @@ export function EmptyState({ title, message, action }: EmptyStateProps) {
             type="button"
             onClick={action.onClick}
             style={{
-              padding: '8px 16px',
-              fontSize: '14px',
+              padding: 'var(--sp-2) var(--sp-4)',
+              fontSize: 'var(--fs-1)',
               fontWeight: 600,
-              backgroundColor: 'var(--primary)',
-              color: 'var(--primary-fg)',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--on-accent)',
               border: 'none',
               borderRadius: 'var(--radius-sm)',
               cursor: 'pointer',

@@ -4,6 +4,7 @@ import React from 'react';
 import { TaskFilters, DEFAULT_FILTERS } from '@/lib/taskFilters';
 import { TaskPriority, TaskStatus } from '@/types';
 import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { useI18n } from '@/i18n/I18nProvider';
 import styles from './FilterBar.module.css';
 
@@ -126,16 +127,12 @@ export function FilterBar({
 
       {/* Overdue Only Checkbox */}
       <div className={styles.checkboxContainer}>
-        <label htmlFor="filter-overdue" className={styles.checkboxLabel}>
-          <input
-            id="filter-overdue"
-            type="checkbox"
-            className={styles.checkbox}
-            checked={filters.overdueOnly}
-            onChange={handleOverdueChange}
-          />
-          {t('filter.overdueOnly')}
-        </label>
+        <Checkbox
+          id="filter-overdue"
+          label={t('filter.overdueOnly')}
+          checked={filters.overdueOnly}
+          onChange={handleOverdueChange}
+        />
       </div>
 
       {/* Reset Button */}

@@ -1,37 +1,6 @@
 @import '../styles/tokens.css';
 @import '../styles/base.css';
 
-/* Migration compatibility mapping */
-:root {
-  --bg-primary: var(--bg);
-  --bg-card: var(--surface);
-  --background: var(--bg);
-  --text-primary: var(--text);
-  --text-secondary: var(--text-muted);
-  --border-color: var(--border);
-  --border-focus: var(--focus);
-
-  --primary: var(--accent);
-  --primary-hover: var(--accent-text);
-  --primary-fg: var(--on-accent);
-
-  --danger: var(--st-overdue-fg);
-  --danger-hover: var(--st-overdue-fg);
-  --danger-bg: var(--st-overdue-bg);
-  --danger-border: var(--border);
-
-  --success: var(--st-done-fg);
-  --success-bg: var(--st-done-bg);
-  --warning: var(--brass-text);
-  --warning-bg: var(--surface-2);
-
-  --space-xs: var(--sp-1);
-  --space-sm: var(--sp-2);
-  --space-md: var(--sp-4);
-  --space-lg: var(--sp-6);
-  --space-xl: var(--sp-7);
-}
-
 * {
   box-sizing: border-box;
 }

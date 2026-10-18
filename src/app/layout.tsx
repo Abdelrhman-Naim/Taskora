@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { cookies, headers } from 'next/headers';
 import { Newsreader, Amiri, Hanken_Grotesk, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import './globals.css';
@@ -32,11 +32,21 @@ const hanken = Hanken_Grotesk({
 const plexArabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic'],
   display: 'swap',
-  weight: ['400', '700'],
+  weight: ['400', '500', '600', '700'],
   variable: '--f-plex-arabic',
 });
 
 const fontClasses = `${newsreader.variable} ${amiri.variable} ${hanken.variable} ${plexArabic.variable}`;
+
+export async function generateViewport(): Promise<Viewport> {
+  return {
+    colorScheme: 'light dark',
+    themeColor: [
+      { media: '(prefers-color-scheme: light)', color: '#F4F5F2' },
+      { media: '(prefers-color-scheme: dark)', color: '#0A1514' },
+    ],
+  };
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();

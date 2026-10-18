@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,7 +17,7 @@
   padding: 24px;
   max-inline-size: 440px;
   inline-size: 100%;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-pop);
   box-sizing: border-box;
 }
 
@@ -27,12 +27,12 @@
   font-weight: 600;
   margin-block-start: 0;
   margin-block-end: 8px;
-  color: var(--fg);
+  color: var(--text);
 }
 
 .description {
   font-size: 0.875rem;
-  color: var(--fg-muted);
+  color: var(--text-muted);
   margin-block-start: 0;
   margin-block-end: 24px;
   line-height: 1.6;

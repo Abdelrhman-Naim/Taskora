@@ -15,7 +15,7 @@
   font-family: var(--font-display);
   font-size: 2rem;
   font-weight: 700;
-  color: var(--fg);
+  color: var(--text);
   margin: 0;
 }
 
@@ -24,7 +24,7 @@
   background-color: var(--brass);
   inline-size: 100%;
   transform-origin: inline-start;
-  animation: drawRule var(--dur-rule) ease forwards;
+  animation: drawRule var(--dur-rule) var(--ease) forwards;
 }
 
 @keyframes drawRule {
@@ -58,7 +58,7 @@
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--fg);
+  color: var(--text);
   margin: 0;
 }
 
@@ -79,11 +79,11 @@
   border-radius: var(--radius-lg);
   gap: 20px;
   flex-wrap: wrap;
-  transition: border-color var(--dur-fast) ease, background-color var(--dur-fast) ease;
+  transition: border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
 
 .projectRow:hover {
-  border-color: var(--border-strong);
+  border-color: var(--control-border);
   background-color: var(--surface-hover);
 }
 
@@ -99,7 +99,7 @@
   font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--fg);
+  color: var(--text);
   text-decoration: none;
 }
 
@@ -112,7 +112,7 @@
   align-items: center;
   gap: 12px;
   font-size: 0.8125rem;
-  color: var(--fg-muted);
+  color: var(--text-muted);
 }
 
 .progressContainer {
@@ -124,7 +124,7 @@
 
 .progressLabel {
   font-size: 0.75rem;
-  color: var(--fg-muted);
+  color: var(--text-muted);
 }
 
 .rowActions {

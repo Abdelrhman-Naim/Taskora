@@ -29,7 +29,7 @@
 .label {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--fg-muted);
+  color: var(--text-muted);
 }
 
 .input,
@@ -37,19 +37,19 @@
   min-block-size: 40px;
   padding-inline: 12px;
   background-color: var(--bg);
-  color: var(--fg);
+  color: var(--text);
   border: 1px solid var(--control-border);
   border-radius: var(--radius-md);
   font-size: 0.875rem;
   outline: none;
-  transition: border-color var(--dur-fast) ease;
+  transition: border-color var(--dur-1) var(--ease);
   inline-size: 100%;
 }
 
 .input:focus-visible,
 .select:focus-visible {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--focus-ring);
+  box-shadow: var(--focus-ring);
 }
 
 .checkboxContainer {
@@ -67,7 +67,7 @@
   gap: 8px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--fg);
+  color: var(--text);
   cursor: pointer;
 }
 
