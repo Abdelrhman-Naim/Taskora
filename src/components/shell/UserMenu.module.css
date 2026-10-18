@@ -1,0 +1,123 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding-block: 2px;
+  padding-inline: 4px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: all var(--dur-1) var(--ease);
+}
+
+.trigger:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--border);
+}
+
+.trigger:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.userName {
+  max-inline-size: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .userName {
+    display: none;
+  }
+}
+
+.menu {
+  position: absolute;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-end: 0;
+  inline-size: 240px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 6px;
+  box-shadow: var(--shadow-pop);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  animation: menuFadeIn var(--dur-1) var(--ease);
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.userInfo {
+  padding-block: 8px;
+  padding-inline: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userInfoName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.userInfoEmail {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.divider {
+  block-size: 1px;
+  background-color: var(--border);
+  margin-block: 4px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-block: 8px;
+  padding-inline: 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  inline-size: 100%;
+  text-align: start;
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.item:hover,
+.item:focus-visible {
+  background-color: var(--surface-hover);
+  color: var(--st-overdue-fg);
+  outline: none;
+}

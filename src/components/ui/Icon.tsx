@@ -21,7 +21,9 @@ export type IconName =
   | 'bars'
   | 'folder'
   | 'globe'
-  | 'filter';
+  | 'filter'
+  | 'menu'
+  | 'dashboard';
 
 export interface IconProps {
   name: IconName;
@@ -179,6 +181,23 @@ export function Icon({
         );
       case 'filter':
         return <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />;
+      case 'menu':
+        return (
+          <>
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </>
+        );
+      case 'dashboard':
+        return (
+          <>
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+          </>
+        );
       default:
         return null;
     }

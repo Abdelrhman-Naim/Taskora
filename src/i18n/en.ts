@@ -28,6 +28,12 @@ export const en = {
   'nav.logout': 'Log out',
   'nav.theme': 'Theme',
   'nav.language': 'Language',
+  'nav.userMenu': 'User menu',
+  'nav.projects': 'Projects',
+  'nav.viewAll': 'View all',
+  'nav.main': 'Main navigation',
+  'nav.openMenu': 'Open navigation menu',
+  'nav.closeMenu': 'Close navigation menu',
 
   // Auth
   'auth.login.title': 'Log in to Taskora',

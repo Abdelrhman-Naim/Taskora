@@ -30,6 +30,12 @@ export const ar: Record<MessageKey, string> = {
   'nav.logout': 'تسجيل الخروج',
   'nav.theme': 'المظهر',
   'nav.language': 'اللغة',
+  'nav.userMenu': 'قائمة المستخدم',
+  'nav.projects': 'المشاريع',
+  'nav.viewAll': 'عرض الكل',
+  'nav.main': 'التنقل الرئيسي',
+  'nav.openMenu': 'فتح قائمة التنقل',
+  'nav.closeMenu': 'إغلاق قائمة التنقل',
 
   // Auth
   'auth.login.title': 'تسجيل الدخول إلى Taskora',

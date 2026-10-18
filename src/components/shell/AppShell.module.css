@@ -1,0 +1,38 @@
+.shell {
+  display: flex;
+  min-block-size: 100vh;
+  background-color: var(--bg);
+}
+
+.desktopSidebar {
+  display: block;
+}
+
+@media (max-width: 1023px) {
+  .desktopSidebar {
+    display: none;
+  }
+}
+
+.mainWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.mainContent {
+  flex: 1;
+  inline-size: 100%;
+  max-inline-size: 80rem;
+  margin-inline: auto;
+  padding-block: 28px;
+  padding-inline: 32px;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding-block: 20px;
+    padding-inline: 16px;
+  }
+}

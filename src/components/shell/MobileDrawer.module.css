@@ -1,0 +1,82 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--scrim);
+  z-index: 2000;
+  display: flex;
+  animation: fadeIn var(--dur-2) var(--ease);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.drawer {
+  background-color: var(--surface);
+  inline-size: 280px;
+  max-inline-size: 85vw;
+  block-size: 100vh;
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn var(--dur-2) var(--ease);
+  outline: none;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+[dir="rtl"] @keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 12px;
+  border-block-end: 1px solid var(--border);
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background-color: var(--surface-hover);
+  color: var(--text);
+}
+
+.closeBtn:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+}
