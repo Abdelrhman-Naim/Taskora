@@ -1,0 +1,14 @@
+{
+  "stitchProjectId": "9219100436315328520",
+  "projectName": "Taskora",
+  "generationsUsed": 1,
+  "generationsBudget": 80,
+  "pages": {
+    "smoke": {
+      "screenId": "9da23100c85943c280118e5880148605",
+      "deviceType": "DESKTOP",
+      "rounds": 1,
+      "generationsUsed": 1
+    }
+  }
+}
