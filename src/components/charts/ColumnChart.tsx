@@ -78,6 +78,7 @@ export function ColumnChart({
             <div
               key={b.id}
               tabIndex={0}
+              role="img"
               className={styles.colWrapper}
               aria-label={barAriaLabel}
               onMouseEnter={handleFocusOrHover}

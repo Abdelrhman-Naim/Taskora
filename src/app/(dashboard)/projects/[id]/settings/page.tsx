@@ -170,7 +170,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
   }
 
   return (
-    <div>
+    <div data-testid="page-ready">
       <div className={styles.header} data-testid="project-settings-header">
         <Link
           href={`/projects/${project.id}`}

@@ -44,21 +44,21 @@ test.describe('Professional Dashboard E2E Verification (Task 26)', () => {
 
     // 4. Create tasks: 1 in-progress, 1 overdue, 1 done
     // Task 1:
-    await page.getByRole('button', { name: /\+ new task|new task/i }).first().click();
-    await page.getByLabel(/task title/i).fill('Design navigation architecture');
-    await page.getByRole('button', { name: /create task|save task/i }).click();
+    await page.getByTestId('project-new-task-btn').click();
+    await page.getByTestId('task-title-input').fill('Design navigation architecture');
+    await page.getByTestId('save-task-btn').click();
     await page.locator('text=Design navigation architecture').waitFor({ state: 'visible' });
 
     // 5. Navigate back to dashboard
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('[data-testid="page-ready"]');
 
     // Verify KPI Strip
     const kpiStrip = page.getByRole('region', { name: /key performance indicators/i });
     await expect(kpiStrip).toBeVisible();
 
     // Verify Chart Panels
-    const chartPanels = page.getByRole('region', { name: /tasks by project/i });
+    const chartPanels = page.getByRole('region', { name: /tasks by project/i }).first();
     await expect(chartPanels).toBeVisible();
 
     // Toggle Chart to Table view
@@ -94,7 +94,7 @@ test.describe('Professional Dashboard E2E Verification (Task 26)', () => {
       document.cookie = 'tf-locale=ar; path=/';
     });
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForSelector('[data-testid="page-ready"]');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
 
     for (const vp of viewports) {

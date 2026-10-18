@@ -27,7 +27,7 @@ test.describe('A11y & Contrast Audits (Task 21 Step 5)', () => {
     await seedPage.waitForURL('**/dashboard');
 
     // Create a project
-    await seedPage.getByRole('link', { name: /\+ new project/i }).first().click();
+    await seedPage.getByRole('link', { name: /\+? ?new project/i }).first().click();
     await seedPage.waitForURL('**/projects/new');
     await seedPage.getByLabel(/project name/i).fill('Core Platform');
     await seedPage.getByLabel(/description/i).fill('Design system and token contrast audit project');
@@ -37,9 +37,9 @@ test.describe('A11y & Contrast Audits (Task 21 Step 5)', () => {
     const projectId = seedPage.url().split('/projects/')[1].split(/[?#]/)[0];
 
     // Create a task in the project
-    await seedPage.getByRole('button', { name: /\+ new task/i }).first().click();
-    await seedPage.getByLabel(/task title/i).fill('Fix color tokens');
-    await seedPage.getByRole('button', { name: /create task|save task/i }).click();
+    await seedPage.getByTestId('project-new-task-btn').click();
+    await seedPage.getByTestId('task-title-input').fill('Fix color tokens');
+    await seedPage.getByTestId('save-task-btn').click();
     await seedPage.locator('text=Fix color tokens').waitFor({ state: 'visible' });
 
     // Extract storage state so subsequent authenticated views can reuse auth

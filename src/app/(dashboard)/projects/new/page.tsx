@@ -28,7 +28,7 @@ export default function NewProjectPage(): React.ReactElement {
   };
 
   return (
-    <div>
+    <div data-testid="page-ready">
       <div className={styles.header}>
         <Link href="/dashboard" className={styles.backLink}>
           <Icon name="arrow" size={16} />

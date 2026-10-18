@@ -226,7 +226,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   return (
-    <div>
+    <div data-testid="page-ready">
       <div className={styles.header} data-testid="project-header">
         <Link href="/dashboard" className={styles.backLink}>
           <Icon name="arrow" size={16} />

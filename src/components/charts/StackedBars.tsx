@@ -69,6 +69,7 @@ export function StackedBars({
           <div
             key={row.id}
             tabIndex={0}
+            role="img"
             className={styles.row}
             aria-label={rowAriaLabel}
             onMouseEnter={handleFocusOrHover}

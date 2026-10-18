@@ -44,13 +44,15 @@ test.describe('Documentation Screenshots Capture', () => {
     await saveShot(page, '01-login.png');
 
     // Register Member
-    await page.goto('/register');
-    await page.getByLabel(/full name/i).fill('Sarah Developer');
-    await page.getByLabel(/email/i).fill(memberEmail);
-    await page.getByLabel(/password/i).fill(password);
-    await page.getByRole('button', { name: /sign up|create account/i }).click();
-    await page.waitForURL('**/dashboard');
-    await page.getByRole('button', { name: /log out/i }).click();
+    const memberContext = await browser.newContext();
+    const memberPage = await memberContext.newPage();
+    await memberPage.goto('/register');
+    await memberPage.getByLabel(/full name/i).fill('Sarah Developer');
+    await memberPage.getByLabel(/email/i).fill(memberEmail);
+    await memberPage.getByLabel(/password/i).fill(password);
+    await memberPage.getByRole('button', { name: /sign up|create account/i }).click();
+    await memberPage.waitForURL('**/dashboard');
+    await memberContext.close();
 
     // Register Owner
     await page.goto('/register');
@@ -61,7 +63,7 @@ test.describe('Documentation Screenshots Capture', () => {
     await page.waitForURL('**/dashboard');
 
     // Create Demo Project
-    await page.getByRole('link', { name: /\+ new project/i }).first().click();
+    await page.getByRole('link', { name: /\+? ?new project/i }).first().click();
     await page.waitForURL('**/projects/new');
     await page.getByLabel(/project name/i).fill('Website Redesign');
     await page.getByLabel(/description/i).fill('Company website overhaul with responsive design and modern UX');
@@ -83,39 +85,39 @@ test.describe('Documentation Screenshots Capture', () => {
     await page.goto(`/projects/${projectId}`);
 
     // Task 1: Build navbar
-    await page.getByRole('button', { name: /\+ new task/i }).click();
+    await page.getByTestId('project-new-task-btn').click();
     await page.getByLabel(/title/i).fill('Build navbar');
     await page.getByLabel(/description/i).fill('Create responsive top navigation component');
     await page.locator('#task-priority').selectOption('high');
     await page.locator('#task-assignee').selectOption({ label: 'Sarah Developer' });
-    await page.locator('form').getByRole('button', { name: /create task|save/i }).click();
+    await page.getByTestId('save-task-btn').click();
     await page.locator('text=Build navbar').waitFor({ state: 'visible' });
 
     // Task 2: Fix overdue bug
-    await page.getByRole('button', { name: /\+ new task/i }).click();
+    await page.getByTestId('project-new-task-btn').click();
     await page.getByLabel(/title/i).fill('Fix overdue bug');
     await page.getByLabel(/description/i).fill('Critical authentication bug in navigation bar');
     await page.locator('#task-priority').selectOption('high');
     await page.locator('#task-assignee').selectOption({ label: 'Sarah Developer' });
     await page.locator('input[type="date"]').fill('2026-10-16');
-    await page.locator('form').getByRole('button', { name: /create task|save/i }).click();
+    await page.getByTestId('save-task-btn').click();
     await page.locator('text=Fix overdue bug').waitFor({ state: 'visible' });
 
     // Task 3: Setup Database
-    await page.getByRole('button', { name: /\+ new task/i }).click();
+    await page.getByTestId('project-new-task-btn').click();
     await page.getByLabel(/title/i).fill('Setup Database');
     await page.getByLabel(/description/i).fill('Configure Firestore collections and security rules');
     await page.locator('#task-priority').selectOption('medium');
     await page.locator('#task-assignee').selectOption({ label: 'Sarah Developer' });
-    await page.locator('form').getByRole('button', { name: /create task|save/i }).click();
+    await page.getByTestId('save-task-btn').click();
     await page.locator('text=Setup Database').waitFor({ state: 'visible' });
 
     // Task 4: Write Documentation
-    await page.getByRole('button', { name: /\+ new task/i }).click();
+    await page.getByTestId('project-new-task-btn').click();
     await page.getByLabel(/title/i).fill('Write Documentation');
     await page.getByLabel(/description/i).fill('API architecture and deployment guidelines');
     await page.locator('#task-priority').selectOption('low');
-    await page.locator('form').getByRole('button', { name: /create task|save/i }).click();
+    await page.getByTestId('save-task-btn').click();
     await page.locator('text=Write Documentation').waitFor({ state: 'visible' });
 
     // Screen 3: Project Detail & Task Board

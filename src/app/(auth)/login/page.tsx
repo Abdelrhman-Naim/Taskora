@@ -40,7 +40,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.pageContainer} data-testid="page-ready">
       <header className={styles.topBar}>
         <div className={styles.brand}>
           <div className={styles.logoMonogram}>
