@@ -6,8 +6,8 @@
   position: sticky;
   inset-block-start: 0;
   inset-inline-start: 0;
-  background-color: var(--surface);
-  border-inline-end: 1px solid var(--border);
+  background-color: var(--sidebar-bg);
+  border-inline-end: 1px solid var(--sidebar-border);
   padding: 16px;
   gap: 20px;
   overflow-y: auto;
@@ -71,8 +71,8 @@
 }
 
 .navLinkActive {
-  background-color: var(--surface-2);
-  color: var(--accent);
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
   font-weight: 600;
 }
 
@@ -90,7 +90,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted);
+  color: var(--sidebar-text);
 }
 
 .projectList {
@@ -108,7 +108,7 @@
   padding-inline: 12px;
   border-radius: var(--radius-md);
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--sidebar-text);
   text-decoration: none;
   transition: all var(--dur-1) var(--ease);
 }
@@ -119,8 +119,8 @@
 }
 
 .projectLinkActive {
-  background-color: var(--surface-2);
-  color: var(--accent);
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
   font-weight: 600;
 }
 
@@ -140,7 +140,7 @@
 }
 
 .projectLinkActive .projectDot {
-  background-color: var(--accent);
+  background-color: var(--sidebar-active-text);
 }
 
 .viewAllLink {

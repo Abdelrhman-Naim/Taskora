@@ -30,6 +30,7 @@ export function Sidebar({
 
   return (
     <nav
+      data-testid="app-sidebar"
       className={`${styles.sidebar} ${className || ''}`}
       aria-label={t('nav.main')}
     >

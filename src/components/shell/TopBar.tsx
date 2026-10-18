@@ -26,7 +26,7 @@ export function TopBar({ onOpenMobileMenu, title }: TopBarProps): React.ReactEle
   };
 
   return (
-    <header className={styles.topBar}>
+    <header data-testid="app-topbar" className={styles.topBar}>
       <div className={styles.leftSection}>
         <button
           type="button"

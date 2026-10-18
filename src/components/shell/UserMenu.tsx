@@ -14,6 +14,7 @@ export function UserMenu(): React.ReactElement | null {
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export function UserMenu(): React.ReactElement | null {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsOpen(false);
+        triggerRef.current?.focus();
       }
     };
 
@@ -47,9 +49,16 @@ export function UserMenu(): React.ReactElement | null {
   return (
     <div ref={containerRef} className={styles.wrapper}>
       <button
+        ref={triggerRef}
         type="button"
         className={styles.trigger}
         onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsOpen((prev) => !prev);
+          }
+        }}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         aria-label={`${t('nav.userMenu')} - ${displayName}`}
