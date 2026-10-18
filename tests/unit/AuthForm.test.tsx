@@ -6,16 +6,23 @@ import { AuthForm } from '@/components/auth/AuthForm';
 import { AppError } from '@/lib/errors';
 
 describe('AuthForm Component', () => {
-  it('renders all required form fields with associated labels', () => {
+  it('renders all required form fields with associated labels and data-testids', () => {
     renderWithProviders(<AuthForm mode="register" onSubmit={vi.fn()} />);
 
     const nameInput = screen.getByLabelText(/name/i);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
+    const submitBtn = screen.getByRole('button', { name: /sign up|register/i });
 
     expect(nameInput).toBeDefined();
     expect(emailInput).toBeDefined();
     expect(passwordInput).toBeDefined();
+    expect(submitBtn).toBeDefined();
+
+    expect(nameInput.getAttribute('data-testid')).toBe('auth-name-input');
+    expect(emailInput.getAttribute('data-testid')).toBe('auth-email-input');
+    expect(passwordInput.getAttribute('data-testid')).toBe('auth-password-input');
+    expect(submitBtn.getAttribute('data-testid')).toBe('auth-submit-btn');
   });
 
   it('shows inline validation error for invalid email without calling onSubmit (TC-02)', async () => {

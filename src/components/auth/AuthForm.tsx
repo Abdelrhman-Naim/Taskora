@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { registerSchema, emailSchema, fieldErrors } from '@/lib/validation';
 import { AppError } from '@/lib/errors';
+import styles from './AuthForm.module.css';
 
 interface AuthFormProps {
   mode: 'login' | 'register';
@@ -76,20 +77,9 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate style={{ inlineSize: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <form onSubmit={handleSubmit} noValidate className={styles.form}>
       {generalError && (
-        <div
-          role="alert"
-          style={{
-            padding: '12px 16px',
-            borderRadius: 'var(--radius-md)',
-            backgroundColor: 'var(--st-overdue-bg)',
-            border: '1px solid var(--st-overdue-fg)',
-            color: 'var(--st-overdue-fg)',
-            fontSize: '0.875rem',
-            fontWeight: 500,
-          }}
-        >
+        <div role="alert" className={styles.alert}>
           {generalError}
         </div>
       )}
@@ -111,6 +101,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
               disabled={submitting}
               placeholder={t('auth.field.namePlaceholder')}
               autoComplete="name"
+              data-testid="auth-name-input"
             />
           )}
         </Field>
@@ -132,6 +123,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
             disabled={submitting}
             placeholder={t('auth.field.emailPlaceholder')}
             autoComplete="email"
+            data-testid="auth-email-input"
           />
         )}
       </Field>
@@ -151,6 +143,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
             disabled={submitting}
             placeholder={t('auth.field.passwordPlaceholder')}
             autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
+            data-testid="auth-password-input"
           />
         )}
       </Field>
@@ -159,7 +152,8 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
         type="submit"
         variant="primary"
         loading={submitting}
-        style={{ marginBlockStart: 8, inlineSize: '100%' }}
+        className={styles.submitButton}
+        data-testid="auth-submit-btn"
       >
         {submitting
           ? mode === 'register'
