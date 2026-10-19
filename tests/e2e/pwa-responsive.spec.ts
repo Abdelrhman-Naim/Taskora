@@ -13,8 +13,8 @@ test.describe('PWA Suite & Canonical Responsive Sweep', () => {
     expect(manifest.short_name).toBe('Taskora');
     expect(manifest.display).toBe('standalone');
     expect(manifest.start_url).toContain('/dashboard');
-    expect(manifest.theme_color).toBe('#0D5C5A');
-    expect(manifest.background_color).toBe('#F8FAFC');
+    expect(manifest.theme_color).toBe('#0C0B0A');
+    expect(manifest.background_color).toBe('#0C0B0A');
 
     // Verify icons
     expect(Array.isArray(manifest.icons)).toBe(true);

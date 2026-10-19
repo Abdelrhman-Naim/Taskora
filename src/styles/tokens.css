@@ -43,6 +43,8 @@
   --sidebar-bg: #11100E;
   --sidebar-border: #2C2824;
   --sidebar-text: #EFE9DD;
+  --sidebar-text-2: #B5AC9C;
+  --sidebar-text-3: #9A9183;
   --sidebar-active-bg: #1C1A17;
   --sidebar-active-text: #D4B26E;
   --topbar-bg: #FFFFFF;
@@ -97,6 +99,8 @@
     --sidebar-bg: #11100E;
     --sidebar-border: #2C2824;
     --sidebar-text: #EFE9DD;
+    --sidebar-text-2: #B5AC9C;
+    --sidebar-text-3: #9A9183;
     --sidebar-active-bg: #1C1A17;
     --sidebar-active-text: #D4B26E;
     --topbar-bg: #0C0B0A;
@@ -151,6 +155,8 @@
   --sidebar-bg: #11100E;
   --sidebar-border: #2C2824;
   --sidebar-text: #EFE9DD;
+  --sidebar-text-2: #B5AC9C;
+  --sidebar-text-3: #9A9183;
   --sidebar-active-bg: #1C1A17;
   --sidebar-active-text: #D4B26E;
   --topbar-bg: #0C0B0A;

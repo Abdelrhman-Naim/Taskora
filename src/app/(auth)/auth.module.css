@@ -25,7 +25,7 @@
 
 .identityRail {
   background-color: var(--sidebar-bg);
-  border-block-end: 1px solid var(--line);
+  border-block-end: 1px solid var(--sidebar-border);
   padding: var(--sp-6) var(--sp-6);
   display: flex;
   flex-direction: column;
@@ -39,7 +39,7 @@
 @media (min-width: 860px) {
   .identityRail {
     border-block-end: none;
-    border-inline-end: 1px solid var(--line);
+    border-inline-end: 1px solid var(--sidebar-border);
     padding: var(--sp-8) var(--sp-8);
     min-block-size: 100dvh;
   }
@@ -87,7 +87,7 @@
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--sidebar-text-3);
   margin: 0;
 }
 
@@ -104,12 +104,12 @@
   gap: 0.5rem;
   padding: 0.25rem 0.65rem;
   border-radius: 4px;
-  background-color: var(--surface-raised);
-  border: 1px solid var(--line);
+  background-color: var(--sidebar-active-bg);
+  border: 1px solid var(--sidebar-border);
   font-size: 0.7rem;
   font-family: monospace;
   letter-spacing: 0.05em;
-  color: var(--text-2);
+  color: var(--sidebar-text-2);
   align-self: flex-start;
 }
 
@@ -141,16 +141,16 @@
   font-family: var(--font-body);
   font-size: 0.9rem;
   line-height: 1.6;
-  color: var(--text-2);
+  color: var(--sidebar-text-2);
   margin: 0;
 }
 
 .railFooter {
   padding-block-start: var(--sp-4);
-  border-block-start: 1px solid var(--line);
+  border-block-start: 1px solid var(--sidebar-border);
   font-size: 0.75rem;
   font-family: monospace;
-  color: var(--text-3);
+  color: var(--sidebar-text-3);
   display: flex;
   justify-content: space-between;
   align-items: center;
