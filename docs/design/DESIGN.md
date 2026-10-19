@@ -1,219 +1,242 @@
 ---
-name: Taskora Executive Precision
+name: Obsidian Ledger
 colors:
-  surface: '#ffffff'
-  surface-dim: '#f8fafc'
-  surface-bright: '#ffffff'
-  surface-container-lowest: '#ffffff'
-  surface-container-low: '#f8fafc'
-  surface-container: '#f1f5f9'
-  surface-container-high: '#e2e8f0'
-  surface-container-highest: '#cbd5e1'
-  on-surface: '#0f172a'
-  on-surface-variant: '#334155'
-  inverse-surface: '#0b1118'
-  inverse-on-surface: '#f8fafc'
-  outline: '#cbd5e1'
-  outline-variant: '#e2e8f0'
-  surface-tint: '#0d5c5a'
-  primary: '#0d5c5a'
-  on-primary: '#ffffff'
-  primary-container: '#e6f4f2'
-  on-primary-container: '#063837'
-  secondary: '#334155'
-  on-secondary: '#ffffff'
-  secondary-container: '#f1f5f9'
-  on-secondary-container: '#1e293b'
-  tertiary: '#0284c7'
-  on-tertiary: '#ffffff'
-  tertiary-container: '#e0f2fe'
-  on-tertiary-container: '#0369a1'
-  error: '#dc2626'
-  on-error: '#ffffff'
-  error-container: '#fee2e2'
-  on-error-container: '#7f1d1d'
-  background: '#f8fafc'
-  on-background: '#0f172a'
+  surface: '#141211'
+  surface-dim: '#0C0B0A'
+  surface-bright: '#1C1A17'
+  surface-container-lowest: '#0C0B0A'
+  surface-container-low: '#11100E'
+  surface-container: '#141211'
+  surface-container-high: '#1C1A17'
+  surface-container-highest: '#26231F'
+  on-surface: '#EFE9DD'
+  on-surface-variant: '#B5AC9C'
+  inverse-surface: '#EDECE8'
+  inverse-on-surface: '#1B1915'
+  outline: '#2C2824'
+  outline-variant: '#3A352F'
+  surface-tint: '#D4B26E'
+  primary: '#D4B26E'
+  on-primary: '#1A1408'
+  primary-container: '#2C2415'
+  on-primary-container: '#E2C282'
+  inverse-primary: '#7A5818'
+  secondary: '#B5AC9C'
+  on-secondary: '#141211'
+  secondary-container: '#1C1A17'
+  on-secondary-container: '#EFE9DD'
+  tertiary: '#9A9183'
+  on-tertiary: '#141211'
+  tertiary-container: '#26231F'
+  on-tertiary-container: '#EDE8DF'
+  error: '#EE8A78'
+  on-error: '#1A0C0A'
+  error-container: '#331915'
+  on-error-container: '#FFDAD4'
+  background: '#0C0B0A'
+  on-background: '#EFE9DD'
+  surface-variant: '#1C1A17'
 typography:
   display-lg:
-    fontFamily: Inter
-    fontSize: 32px
+    fontFamily: Fraunces
+    fontSize: 48px
     fontWeight: '600'
-    lineHeight: 40px
-    letterSpacing: -0.025em
-  headline-lg:
-    fontFamily: Inter
-    fontSize: 24px
-    fontWeight: '600'
-    lineHeight: 32px
+    lineHeight: 56px
     letterSpacing: -0.02em
-  headline-md:
-    fontFamily: Inter
-    fontSize: 20px
+  headline-lg:
+    fontFamily: Fraunces
+    fontSize: 28px
     fontWeight: '600'
-    lineHeight: 28px
+    lineHeight: 36px
     letterSpacing: -0.015em
+  headline-md:
+    fontFamily: Fraunces
+    fontSize: 22px
+    fontWeight: '600'
+    lineHeight: 30px
+    letterSpacing: -0.01em
   headline-sm:
-    fontFamily: Inter
+    fontFamily: Instrument Sans
     fontSize: 16px
     fontWeight: '600'
     lineHeight: 24px
-    letterSpacing: -0.01em
+    letterSpacing: -0.005em
   body-lg:
-    fontFamily: Inter
+    fontFamily: Instrument Sans
     fontSize: 16px
     fontWeight: '400'
     lineHeight: 24px
-    letterSpacing: -0.005em
+    letterSpacing: 0em
   body-md:
-    fontFamily: Inter
+    fontFamily: Instrument Sans
     fontSize: 14px
     fontWeight: '400'
     lineHeight: 20px
     letterSpacing: 0em
   body-sm:
-    fontFamily: Inter
+    fontFamily: Instrument Sans
     fontSize: 13px
     fontWeight: '400'
     lineHeight: 18px
     letterSpacing: 0.005em
   label-md:
-    fontFamily: Inter
+    fontFamily: Instrument Sans
     fontSize: 12px
     fontWeight: '500'
     lineHeight: 16px
     letterSpacing: 0.01em
   label-sm:
-    fontFamily: Inter
+    fontFamily: Instrument Sans
     fontSize: 11px
-    fontWeight: '600'
+    fontWeight: '500'
     lineHeight: 14px
-    letterSpacing: 0.04em
+    letterSpacing: 0.02em
+  code-sm:
+    fontFamily: monospace
+    fontSize: 12px
+    fontWeight: '400'
+    lineHeight: 16px
+    letterSpacing: 0em
 rounded:
-  sm: 0.25rem
-  DEFAULT: 0.375rem
-  md: 0.5rem
-  lg: 0.75rem
-  xl: 1rem
+  sm: 4px
+  DEFAULT: 6px
+  md: 6px
+  lg: 10px
+  xl: 14px
   full: 9999px
 spacing:
-  space-2xs: 0.25rem
-  space-xs: 0.5rem
-  space-sm: 0.75rem
-  space-md: 1rem
-  space-base: 1rem
-  space-lg: 1.5rem
-  space-xl: 2rem
-  space-2xl: 3rem
+  gutter: 1.5rem
+  gutter-desktop: 2rem
+  margin: 1rem
+  margin-desktop: 2.5rem
+  space-2xs: 2px
+  space-xs: 4px
+  space-sm: 8px
+  space-md: 12px
+  space-base: 16px
+  space-lg: 24px
+  space-xl: 32px
+  space-2xl: 48px
 ---
 
-# Taskora Design System Specification
+## Brand & Style
 
-## 1. Brand & Aesthetic Principles
+**Obsidian Ledger** is an editorial luxury design language created for Taskora. It draws direct inspiration from high-end private banking ledgers, horological craftsmanship, and tactile publishing. It rejects standard SaaS tropes in favor of quiet luxury, calculated density, and structural restraint.
 
-Taskora is an executive-grade, high-order collaborative task management workspace built for operators and product leads. The design philosophy embodies **Quiet Luxury** and **Architectural Precision**:
-- High spatial density with calm, soothing whitespace intervals.
-- Calibrated slate neutrals over harsh pure black or stark eye-straining whites.
-- Deep architectural teal (`#0D5C5A`) primary accent communicating stability and intentionality.
-- Total bidirectional balance: natively symmetric LTR (English) and RTL (Arabic) interfaces via CSS logical properties.
-- **Zero Phantom Features:** No noisy notifications bells, unbacked search bars, or fake growth trends.
-
----
-
-## 2. Color Palettes & Contrast (WCAG 2.1 AA)
-
-### Light Theme
-| Token Name | Hex Value | Semantic Role | Contrast vs Canvas/Surface |
-|------------|-----------|---------------|---------------------------|
-| `--bg-canvas` | `#f8fafc` | Main application background | 1.05:1 vs Surface |
-| `--bg-surface` | `#ffffff` | Primary elevated card/panel surface | Base surface |
-| `--bg-subtle` | `#f1f5f9` | Wells, input backgrounds, table headers | 1.15:1 |
-| `--color-primary` | `#0d5c5a` | Dominant CTA, active indicators | 7.42:1 vs White (AAA) |
-| `--color-primary-hover` | `#063837` | Hovered state for primary button | 11.2:1 vs White |
-| `--color-primary-wash` | `#e6f4f2` | Primary badge wash / active tint | 1.12:1 vs White |
-| `--border-subtle` | `#e2e8f0` | Dividers, card boundaries | 1.25:1 |
-| `--border-interactive` | `#cbd5e1` | Inputs, interactive buttons borders | 1.54:1 |
-| `--text-primary` | `#0f172a` | High-contrast headings and numerals | 15.6:1 (AAA) |
-| `--text-secondary` | `#334155` | Body labels, navigation text | 9.6:1 (AAA) |
-| `--text-muted` | `#64748b` | Captions, metadata, inactive items | 4.8:1 (AA) |
-
-### Dark Theme
-| Token Name | Hex Value | Semantic Role | Contrast vs Surface |
-|------------|-----------|---------------|---------------------|
-| `--bg-canvas` | `#0b1118` | Main dark background canvas | Base |
-| `--bg-surface` | `#131f2d` | Elevated dark card and panel surface | 1.15:1 vs Canvas |
-| `--bg-subtle` | `#162536` | Subdued wells and headers | 1.25:1 vs Canvas |
-| `--color-primary` | `#14b8a6` | High-contrast luminous primary accent | 6.8:1 vs Dark Surface (AA) |
-| `--color-primary-hover` | `#2dd4bf` | Active/hover teal accent | 8.9:1 vs Dark Surface |
-| `--color-primary-wash` | `rgba(20, 184, 166, 0.15)` | Soft active tint fill | - |
-| `--border-subtle` | `#233549` | Subtle dark boundary lines | 1.5:1 |
-| `--border-interactive` | `#334b66` | Form input and card interactive borders | 2.1:1 |
-| `--text-primary` | `#f8fafc` | Crisp headings and values | 13.8:1 (AAA) |
-| `--text-secondary` | `#cbd5e1` | Secondary text and labels | 9.1:1 (AAA) |
-| `--text-muted` | `#94a3b8` | Timestamps and secondary metadata | 5.2:1 (AA) |
-
-### Semantic Status Colors (Light / Dark)
-- **`todo`**: Slate (`#475569` / `#94a3b8`) + Circle icon
-- **`in_progress`**: Blue/Sky (`#0284c7` / `#38bdf8`) + Spinner icon
-- **`done`**: Emerald (`#16a34a` / `#4ade80`) + Checkmark icon
-- **`overdue`**: Crimson (`#dc2626` / `#f87171`) + Alert icon
+The interface treats information as a refined financial ledger: data rows separated by hairline rules, large tabular display numerals, and calm surfaces. The visual weight is focused on a single **Hero Metric** in the header. Everything surrounding it is disciplined and unobtrusive.
 
 ---
 
-## 3. Typography & Font Families
+## Colors
 
-- **Latin Family:** Inter (`font-sans`, weights 400, 500, 600)
-- **Arabic Family:** Cairo / Alexandria (`font-arabic`, weights 400, 500, 600, 700)
-- **Scale:**
-  - `Display Lg`: 32px / line-height 40px / letter-spacing -0.025em
-  - `Headline Lg`: 24px / line-height 32px / letter-spacing -0.02em
-  - `Headline Md`: 20px / line-height 28px / letter-spacing -0.015em
-  - `Headline Sm`: 16px / line-height 24px / letter-spacing -0.01em
-  - `Body Lg`: 16px / line-height 24px
-  - `Body Md`: 14px / line-height 20px
-  - `Body Sm`: 13px / line-height 18px
-  - `Label Md`: 12px / line-height 16px / font-weight 500
-  - `Label Sm`: 11px / line-height 14px / font-weight 600 / uppercase letter-spacing 0.04em
+### Dark Mode (Primary Baseline)
+- **Canvas Background (`--bg`):** Deep Obsidian `#0C0B0A`.
+- **Standard Surfaces (`--surface`):** Near-black `#141211`.
+- **Raised Surfaces (`--surface-raised`):** Warm Charcoal `#1C1A17` (max two raised surfaces per page).
+- **Overlay Surfaces (`--surface-overlay`):** Deep Stone `#26231F` for dialogs and popovers.
+- **Hairlines & Dividers (`--line` / `--line-strong`):** `#2C2824` / `#3A352F`.
+- **Typography:**
+  - Primary text (`--text`): Warm Ivory `#EFE9DD`.
+  - Secondary text (`--text-2`): Muted Sand `#B5AC9C`.
+  - Tertiary metadata (`--text-3`): Warm Slate `#9A9183`.
+- **Brand Accent (Champagne Gold):**
+  - Primary Accent (`--accent`): `#D4B26E`.
+  - Hover Accent (`--accent-hover`): `#E2C282`.
+  - On-Accent text (`--on-accent`): Deep Umber `#1A1408` (contrast > 9:1).
+- **Status Identifiers (Text + Icon mandatory):**
+  - Todo: `#B3AC9E`
+  - In Progress: `#8DB4E8`
+  - Done: `#9CC5A1`
+  - Overdue: `#EE8A78`
+- **Sidebar (`--sidebar-bg` / `--sidebar-text`):** `#11100E` with `#EFE9DD` text. **Always dark in both themes.**
 
----
+### Light Mode ("Pearl & Bronze")
+- **Canvas Background:** `#F4F4F2`.
+- **Surfaces:** `#FFFFFF`, sunken wells `#EDECE8`, dividers `#DDDAD3`.
+- **Typography:** Primary `#1B1915`, Secondary `#5A5348`, Tertiary `#736B5E`.
+- **Brand Accent (Bronze):** Deep Bronze `#7A5818` for text and interactive buttons (contrast 6.49:1 on white). Line accent `#B88A3A` for non-text borders.
+- **Sidebar:** Remains dark `#11100E` with `#EFE9DD` text for institutional gravity.
 
-## 4. Spacing, Elevation & Corner Radii
-
-- **Spacing Scale:**
-  - `space-2xs`: 4px (`0.25rem`)
-  - `space-xs`: 8px (`0.5rem`)
-  - `space-sm`: 12px (`0.75rem`)
-  - `space-md` / `space-base`: 16px (`1rem`)
-  - `space-lg`: 24px (`1.5rem`)
-  - `space-xl`: 32px (`2rem`)
-  - `space-2xl`: 48px (`3rem`)
-- **Corner Radii:**
-  - `4px` (`rounded-sm`): Checkboxes, badge tags, status dots
-  - `6px` (`rounded-md`): Buttons, inputs, select triggers, table rows
-  - `8px` (`rounded-lg`): Cards, analytical panels, dialog containers
-  - `9999px` (`rounded-full`): Avatars, pill badges, segmented control sliders
-- **Elevation Layers:**
-  - Flat Level 0: Background canvas
-  - Level 1: Cards with hairline 1px border and 1px micro-shadow
-  - Level 2: Hovered cards with `box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05)`
-  - Level 3: Dropdowns and popovers with `box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08)`
-  - Level 4: Modals with backdrop blur scrim and `box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12)`
+### Three Sacred Accent Placements
+The champagne gold accent is strictly restricted to:
+1. The single primary affirmative action button on the screen.
+2. The active navigation indicator (1px hairline rule + active text).
+3. A single data highlight in charts/progress.
 
 ---
 
-## 5. Component Style Specifications
+## Typography
+
+- **Display, Page Titles & KPI Numerals:** **Fraunces** (variable, large optical size `opsz`, lining and tabular figures via `font-variant-numeric: lining-nums tabular-nums`).
+- **Body & Controls:** **Instrument Sans** (crisp, humanist geometric sans-serif).
+- **Arabic Script:**
+  - Headlines & Titles: **Amiri**.
+  - Body & Form Controls: **IBM Plex Sans Arabic**.
+  - Numbers in Arabic context remain Latin tabular digits (`latn`).
+- **No Third Latin Family:** Inter, Roboto, Geist, Newsreader, and Hanken Grotesk are strictly banned.
+
+---
+
+## Layout & Spatial Composition
+
+- **Desktop (≥ 1280px):**
+  - Persistent 264px dark navigation sidebar on the start edge.
+  - Active navigation item indicated by a 1px champagne start-edge rule (`inset-inline-start`).
+  - Top bar with section title, language toggle, theme toggle, and user avatar.
+  - Page header featuring the **Hero Numeral** (large completion percentage with thin champagne divider rule).
+  - Main workplane formatted as continuous ledger rows separated by 1px hairlines.
+- **Tablet / Mobile (< 1024px):**
+  - Sidebar folds into an off-canvas modal drawer.
+  - Top bar provides hamburger trigger and condensed brand title.
+  - Ledger rows stack fluidly with comfortable touch targets (minimum 44px).
+
+---
+
+## Elevation & Depth
+
+- **Dark Mode:** No drop shadows. Spatial depth is established strictly through tonal surface layering (`--bg` → `--surface` → `--surface-raised`) complemented by a subtle inner top highlight: `box-shadow: inset 0 1px 0 rgba(239, 233, 221, 0.04)`.
+- **Light Mode:** Flat clean surfaces bounded by hairlines (`#DDDAD3`). A single soft ambient drop shadow `0 12px 32px -12px rgba(27, 25, 21, 0.18)` is permitted only on elevated modal overlays.
+
+---
+
+## Components
 
 ### Buttons
-- **Primary:** Solid teal (`--color-primary`), text white, font-weight 500, radius 6px, hover to `--color-primary-hover`. Focus outline: 2px offset ring.
-- **Secondary / Outline:** Background white (light) / surface (dark), border `--border-interactive`, text `--text-secondary`.
-- **Destructive:** Border and text `--color-error`, subtle red wash on hover.
+- **Primary:** Solid Champagne `#D4B26E` background, dark umber text `#1A1408`, 6px corner radius, font weight 600.
+- **Secondary / Ledger Action:** Transparent background, hairline border `#2C2824`, text `#EFE9DD`. Hover shifts to `#1C1A17`.
+- **Ghost:** Transparent background, text `#B5AC9C`. Hover shifts to `#1C1A17` and text `#EFE9DD`.
+- **Destructive:** Warm coral outline/wash `#EE8A78`, text `#EE8A78`.
 
-### Inputs & Form Fields
-- Height 38px (desktop) / 44px (touch mobile).
-- Border `--border-interactive`, background `--bg-surface`.
-- Focus state: border `--color-primary`, subtle teal aura box-shadow.
+### Ledger Rows & Panels
+- Replaces standard cards. Sections are bounded by 1px hairlines (`#2C2824`).
+- Hovering interactive rows triggers a calm surface shift to `#181614` without displacement.
 
-### Table & List Rows
-- Height 44px minimum. Hairline divider `--border-subtle`.
-- Hover trigger subtle background shift (`--bg-subtle`).
-- Status indicators combine semantic badge pill + distinct SVG icon.
+### Form Inputs
+- Height 40px, 6px corner radius, background `#141211`, 1px border `#2C2824`.
+- Focus state: border turns to `#D4B26E` with a subtle 2px champagne ring (`rgba(212, 178, 110, 0.2)`).
+
+---
+
+## Strict Do / Don't Rules (Forbidden List)
+
+### DO:
+- Maintain calm, spacious, editorial luxury with generous white space.
+- Use tabular figures for all data and KPIs.
+- Ensure all status indicators combine clear text and icons.
+- Support bidirectional layout (LTR & RTL) through logical CSS properties.
+
+### DON'T (Strictly Forbidden):
+- **NO Teal, Jade, or Petrol:** `#0d5c5a`, `#13966F`, `#22A67F` or any green/teal shades are forbidden.
+- **NO Inter font:** Inter and its variants are completely banned.
+- **NO Default Tailwind Blue/Purple:** `#6366F1`, `#3B82F6` are forbidden.
+- **NO Card Soup:** Do not chop pages into identical rounded white rectangles with 1px gray borders.
+- **NO Wide Colored Gradients or Neon:** No glowing cyber buttons or neon highlights.
+- **NO Spaced-Out Uppercase Labels:** Do not use `text-transform: uppercase` with wide letter-spacing.
+- **NO Middle Dots (`·`):** Do not place bullet dots between metadata items.
+- **NO Arrow Icons (`→`):** Do not append directional arrows to buttons.
+- **NO Command Palette (Cmd + K):** No global omnisearch or quick-switcher.
+- **NO Global Search Bar:** Search is strictly scoped inside project task lists.
+- **NO Notification Bell:** No notification center or alert popovers.
+- **NO Billing / Upgrade Banners:** Taskora is a focused team task manager, not a commercial SaaS tier funnel.
+- **NO Growth Percentages:** No `+12% vs last month` speculative metrics.
+- **NO Detail Inspector Pane:** No third column inspector or tree-view sidebars.

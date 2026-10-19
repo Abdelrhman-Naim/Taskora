@@ -2,12 +2,24 @@
   "oldProjectId": "9219100436315328520",
   "newProjectId": "1925018263022126574",
   "designSystemId": "740bfefb8f9e46d4af43ed2ce7b44189",
-  "generationsUsed": 1,
+  "generationsUsed": 5,
   "generationsBudget": 90,
   "pages": {
     "login_smoke": {
       "screenId": "649bfaf729b64e9e822c04239ae4896f",
       "deviceType": "DESKTOP"
+    },
+    "dashboard_dark": {
+      "screenId": "a9f2eac7efcc45c4ac7ca2636d45d99b",
+      "deviceType": "DESKTOP"
+    },
+    "dashboard_light": {
+      "screenId": "91538f4a52b34723b92a0a0d42dddc04",
+      "deviceType": "DESKTOP"
+    },
+    "dashboard_mobile": {
+      "screenId": "730ce2563bc6427f98ffc54810c11cbf",
+      "deviceType": "MOBILE"
     }
   }
 }

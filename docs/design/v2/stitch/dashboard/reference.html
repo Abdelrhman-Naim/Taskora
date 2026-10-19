@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+<html class="dark" dir="ltr" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Taskora — Private Operations Ledger</title>
+<!-- Typography: Fraunces & Instrument Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed-dim": "#e5c27c",
+            "surface-variant": "#38342f",
+            "primary": "#D4B26E",
+            "on-surface-variant": "#B5AC9C",
+            "on-primary-fixed": "#261900",
+            "surface-tint": "#e5c27c",
+            "surface-container-highest": "#38342f",
+            "surface-container": "#141211",
+            "on-secondary": "#353024",
+            "on-primary": "#1A1408",
+            "tertiary-fixed": "#dbe1ff",
+            "on-error-container": "#ffdad6",
+            "surface-container-high": "#1C1A17",
+            "tertiary-fixed-dim": "#b7c5f6",
+            "inverse-on-surface": "#33302a",
+            "inverse-surface": "#e9e1d9",
+            "surface-bright": "#1C1A17",
+            "error-container": "#93000a",
+            "secondary-container": "#4c4639",
+            "surface-container-low": "#11100E",
+            "on-secondary-fixed": "#201b11",
+            "primary-container": "#d4b26e",
+            "on-error": "#690005",
+            "tertiary-container": "#a7b5e5",
+            "surface-container-lowest": "#0C0B0A",
+            "secondary-fixed-dim": "#cfc5b5",
+            "surface-dim": "#16130e",
+            "on-secondary-container": "#bdb4a4",
+            "error": "#EE8A78",
+            "on-background": "#e9e1d9",
+            "outline-variant": "#4d4639",
+            "on-tertiary-fixed-variant": "#37456e",
+            "on-primary-container": "#5c4409",
+            "outline": "#2C2824",
+            "background": "#0C0B0A",
+            "on-primary-fixed-variant": "#5b4308",
+            "secondary": "#B5AC9C",
+            "on-tertiary": "#202f56",
+            "on-surface": "#EFE9DD",
+            "tertiary": "#9A9183",
+            "surface": "#141211",
+            "on-tertiary-fixed": "#081940",
+            "secondary-fixed": "#ece1d0",
+            "primary-fixed": "#ffdea1",
+            "on-secondary-fixed-variant": "#4c4639",
+            "on-tertiary-container": "#38466f",
+            "inverse-primary": "#755a1f"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.375rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xs": "4px",
+            "space-xl": "32px",
+            "space-lg": "24px",
+            "space-base": "16px",
+            "margin": "1rem",
+            "gutter-desktop": "2rem",
+            "gutter": "1.5rem",
+            "space-2xl": "48px",
+            "margin-desktop": "2.5rem",
+            "space-md": "12px",
+            "space-sm": "8px"
+          },
+          "fontFamily": {
+            "headline-lg": ["Fraunces", "serif"],
+            "body-sm": ["Instrument Sans", "sans-serif"],
+            "headline-md": ["Fraunces", "serif"],
+            "code-sm": ["monospace"],
+            "body-md": ["Instrument Sans", "sans-serif"],
+            "headline-sm": ["Instrument Sans", "sans-serif"],
+            "label-sm": ["Instrument Sans", "sans-serif"],
+            "label-md": ["Instrument Sans", "sans-serif"],
+            "display-lg": ["Fraunces", "serif"],
+            "body-lg": ["Instrument Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    .tabular-nums {
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0C0B0A;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2C2824;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-primary-container selection:text-on-primary">
+<!-- 1. PERSISTENT 264PX NAVIGATION SIDEBAR -->
+<aside class="fixed top-0 left-0 h-screen w-[264px] bg-surface-container-low border-r border-outline flex flex-col justify-between p-4 z-40 select-none">
+<div class="flex flex-col gap-6">
+<!-- Brand & Emblem Anchor -->
+<div class="px-2 pt-2 pb-1 border-b border-outline">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 bg-surface-container-high border border-outline flex items-center justify-center text-primary font-headline-md text-sm font-semibold tracking-tighter">
+            T
+          </div>
+<div>
+<h1 class="font-headline-md text-headline-md tracking-tight font-semibold text-primary leading-none">
+              TASKORA
+            </h1>
+<p class="font-label-sm text-[10px] tracking-widest uppercase text-tertiary mt-1">
+              Private Operations
+            </p>
+</div>
+</div>
+</div>
+<!-- Sacred Placement #2: Single Primary Button in Champagne Gold -->
+<div class="px-1">
+<button class="w-full bg-primary hover:bg-primary-fixed-dim text-on-primary font-body-md text-body-sm font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 transition-colors duration-150 active:scale-[0.99] shadow-none" type="button">
+<span class="material-symbols-outlined text-[16px] leading-none">add</span>
+<span>+ New project</span>
+</button>
+</div>
+<!-- Navigation Tree -->
+<nav class="flex flex-col gap-1">
+<div class="px-2 pb-1">
+<span class="font-label-sm text-[10px] uppercase tracking-wider text-tertiary font-semibold">Ledger Views</span>
+</div>
+<!-- Sacred Placement #1: Active Navigation Hairline Indicator (1px start-edge champagne rule & text) -->
+<a class="text-primary border-l border-primary bg-surface-container font-label-md text-label-md pl-3 pr-3 py-2 flex items-center justify-between transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+<span class="font-medium">Dashboard</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<!-- Projects Group with nested items & badges -->
+<div class="pt-2">
+<div class="px-2 py-1.5 flex items-center justify-between text-on-surface-variant font-label-md text-label-md">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px]">folder_open</span>
+<span>Projects</span>
+</div>
+<span class="font-code-sm text-[11px] text-tertiary">4</span>
+</div>
+<div class="ml-4 pl-3 border-l border-outline flex flex-col gap-0.5 mt-1">
+<a class="px-2 py-1.5 flex items-center justify-between text-on-surface hover:text-primary transition-colors font-body-sm text-body-sm group" href="#">
+<span class="truncate">Cloud Migration</span>
+<span class="font-code-sm text-label-sm text-tertiary tabular-nums bg-surface-container-high px-1.5 py-0.2 rounded group-hover:text-primary">12</span>
+</a>
+<a class="px-2 py-1.5 flex items-center justify-between text-on-surface hover:text-primary transition-colors font-body-sm text-body-sm group" href="#">
+<span class="truncate">Website Redesign</span>
+<span class="font-code-sm text-label-sm text-tertiary tabular-nums bg-surface-container-high px-1.5 py-0.2 rounded group-hover:text-primary">7</span>
+</a>
+</div>
+</div>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md px-3 py-2 flex items-center gap-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>Ledger Archive</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md px-3 py-2 flex items-center gap-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">monitoring</span>
+<span>Reports</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-md text-label-md px-3 py-2 flex items-center gap-2.5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Settings</span>
+</a>
+</nav>
+</div>
+<!-- User Profile Anchor at Bottom (Initials Only, No Photo) -->
+<div class="pt-3 border-t border-outline flex flex-col gap-2">
+<div class="flex items-center gap-3 px-1 py-1">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline flex items-center justify-center text-on-surface font-headline-sm text-xs font-semibold">
+          M
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-sm font-medium text-on-surface truncate">Maya Al-Mansoor</span>
+<span class="font-label-sm text-[11px] text-tertiary truncate">Principal Partner</span>
+</div>
+</div>
+<div class="flex justify-between items-center px-1 pt-1 text-[11px] font-label-sm text-tertiary">
+<span class="tabular-nums">EST. 2021 · 0x88F</span>
+<button class="text-tertiary hover:text-error transition-colors" type="button">Sign out</button>
+</div>
+</div>
+</aside>
+<!-- MAIN VIEWPORT CANVAS (Offset by sidebar width 264px) -->
+<div class="pl-[264px] min-h-screen flex flex-col bg-background">
+<!-- 2. TOP BAR -->
+<header class="h-14 w-full border-b border-outline px-8 flex items-center justify-between bg-surface-container-low sticky top-0 z-30">
+<div class="flex items-center gap-3">
+<span class="font-headline-sm text-headline-sm font-medium tracking-tight text-on-surface">Dashboard</span>
+<span class="text-outline">/</span>
+<span class="font-code-sm text-[11px] text-tertiary tracking-wider uppercase">Overview</span>
+</div>
+<!-- Right controls: Strict Exclusion compliance (NO search, NO bell, NO Cmd+K) -->
+<div class="flex items-center gap-6">
+<!-- Language Switcher (EN / العربية) -->
+<button class="font-body-sm text-[12px] text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1.5" type="button">
+<span class="font-semibold text-on-surface">EN</span>
+<span class="text-outline">/</span>
+<span class="text-tertiary hover:text-on-surface">العربية</span>
+</button>
+<!-- Subtle Dark Mode Icon indicator -->
+<div class="flex items-center text-tertiary hover:text-on-surface transition-colors cursor-pointer" title="Mode: Obsidian Fixed">
+<span class="material-symbols-outlined text-[17px]">dark_mode</span>
+</div>
+<!-- Initial Avatar Badge -->
+<div class="w-6 h-6 rounded bg-surface-container border border-outline flex items-center justify-center font-label-sm text-[10px] text-primary font-semibold">
+          M
+        </div>
+</div>
+</header>
+<!-- CONTENT WRAPPER -->
+<main class="flex-1 px-8 py-8 max-w-7xl w-full mx-auto space-y-10">
+<!-- 3. PAGE HEADER -->
+<section class="border-b border-outline pb-6">
+<div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-2">
+<div>
+<h1 class="font-headline-lg text-headline-lg font-light text-on-surface tracking-tight">
+              Good evening, Maya
+            </h1>
+<p class="font-body-sm text-body-sm text-tertiary mt-1">
+              Thursday, October 24, 2024 · Vault Node 01
+            </p>
+</div>
+<div class="text-right flex items-center gap-3 self-start md:self-auto">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 border border-outline bg-surface-container text-tertiary font-code-sm text-[11px] uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500/80"></span> Synchronized
+            </span>
+<span class="font-code-sm text-[11px] text-tertiary tabular-nums">Block #48,192</span>
+</div>
+</div>
+</section>
+<!-- 4. HERO METRIC (hero-metric) & EXECUTIVE SUMMARY (Max two raised panels in layout) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+<!-- Raised Panel 1: Hero Metric Completion Card -->
+<div class="lg:col-span-5 bg-surface-container-high border border-outline p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-baseline mb-1">
+<span class="font-label-sm text-[11px] uppercase tracking-wider text-tertiary font-semibold">
+                Quarterly Target Execution
+              </span>
+<span class="font-code-sm text-xs text-secondary tabular-nums">FY24-Q4</span>
+</div>
+<!-- Massive Fraunces Serifslining and tabular figures -->
+<div class="my-3">
+<span class="font-display-lg text-[64px] leading-none font-normal text-on-surface tabular-nums">
+                87%
+              </span>
+</div>
+<!-- Delicate 1px champagne rule directly beneath numeral -->
+<div class="w-full h-px bg-primary my-4"></div>
+</div>
+<!-- Tabular breakdown below with status dots -->
+<div class="pt-2 flex items-center justify-between font-body-sm text-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></span>
+<span class="text-tertiary">Open</span>
+<span class="font-code-sm text-on-surface font-medium tabular-nums ml-1">41</span>
+</div>
+<span class="text-outline">·</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/70"></span>
+<span class="text-tertiary">In progress</span>
+<span class="font-code-sm text-on-surface font-medium tabular-nums ml-1">12</span>
+</div>
+<span class="text-outline">·</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="text-tertiary">Overdue</span>
+<span class="font-code-sm text-error font-medium tabular-nums ml-1">3</span>
+</div>
+</div>
+</div>
+<!-- Raised Panel 2: Ledger Status & Allocation Balance -->
+<div class="lg:col-span-7 bg-surface-container-high border border-outline p-6 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline">
+<span class="font-label-sm text-[11px] uppercase tracking-wider text-tertiary font-semibold">
+                Governance &amp; Fiduciary Status
+              </span>
+<span class="font-code-sm text-[11px] text-tertiary uppercase">Audit Grade A+</span>
+</div>
+<div class="grid grid-cols-3 gap-4 pt-5 pb-2">
+<div class="flex flex-col">
+<span class="font-label-sm text-[11px] text-tertiary">Custody Assets</span>
+<span class="font-headline-md text-headline-md font-normal text-on-surface tabular-nums mt-1">$482.4M</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant mt-1">Multi-sig verified</span>
+</div>
+<div class="flex flex-col border-l border-outline pl-4">
+<span class="font-label-sm text-[11px] text-tertiary">Active Enclaves</span>
+<span class="font-headline-md text-headline-md font-normal text-on-surface tabular-nums mt-1">6 / 6</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant mt-1">Zurich · SG · NYC</span>
+</div>
+<div class="flex flex-col border-l border-outline pl-4">
+<span class="font-label-sm text-[11px] text-tertiary">Operational Risk</span>
+<span class="font-headline-md text-headline-md font-normal text-on-surface tabular-nums mt-1">0.04</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant mt-1">Low exposure delta</span>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline flex items-center justify-between text-tertiary font-body-sm text-[12px]">
+<span>Next settlement window initiates in 4h 12m</span>
+<span class="font-code-sm text-on-surface-variant">LEDGER-HASH-7F49</span>
+</div>
+</div>
+</section>
+<!-- 5. NEEDS ATTENTION (Continuous ledger rows divided by crisp 1px hairlines) -->
+<section class="space-y-3" id="needs-attention">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<h2 class="font-headline-md text-headline-sm font-semibold tracking-tight text-on-surface">
+              Needs Attention
+            </h2>
+</div>
+<span class="font-label-sm text-xs text-tertiary">3 Critical Exceptions Requiring Sign-off</span>
+</div>
+<div class="border border-outline bg-surface-container-low divide-y divide-outline">
+<!-- Urgent Task 1: Overdue -->
+<div class="px-5 py-3.5 flex items-center justify-between hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4 min-w-0">
+<span class="material-symbols-outlined text-error text-[18px] shrink-0">error_outline</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md font-medium text-on-surface truncate">
+                    Consolidate cryptographic custody audit
+                  </span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-error/15 text-error border border-error/30 tracking-tight">
+                    OVERDUE
+                  </span>
+</div>
+<div class="flex items-center gap-2 text-tertiary font-body-sm text-[12px] mt-0.5">
+<span class="text-on-surface-variant">Institutional Security Audit</span>
+<span>·</span>
+<span>Mandated by Advisory Board</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6 shrink-0 ml-4">
+<!-- Assignee Initial Badge -->
+<div class="w-6 h-6 rounded bg-surface-container-high border border-outline flex items-center justify-center font-label-sm text-[10px] text-on-surface font-semibold" title="Maya Al-Mansoor">
+                MA
+              </div>
+<div class="text-right">
+<div class="font-code-sm text-[12px] text-error tabular-nums font-medium">Due Oct 22</div>
+<div class="font-label-sm text-[10px] text-tertiary">2 days elapsed</div>
+</div>
+<button class="px-3 py-1 bg-surface-container-high border border-outline hover:border-on-surface-variant text-on-surface font-label-sm text-[11px] rounded transition-colors" type="button">
+                Audit Log
+              </button>
+</div>
+</div>
+<!-- Urgent Task 2: Due Today -->
+<div class="px-5 py-3.5 flex items-center justify-between hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4 min-w-0">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0">schedule</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md font-medium text-on-surface truncate">
+                    Sign off on Swiss data enclave transfer
+                  </span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-surface-container-high text-on-surface border border-outline tracking-tight">
+                    DUE TODAY
+                  </span>
+</div>
+<div class="flex items-center gap-2 text-tertiary font-body-sm text-[12px] mt-0.5">
+<span class="text-on-surface-variant">Cloud Migration</span>
+<span>·</span>
+<span>Direct Transfer Protocol v3.1</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6 shrink-0 ml-4">
+<!-- Assignee Initial Badge -->
+<div class="w-6 h-6 rounded bg-surface-container-high border border-outline flex items-center justify-center font-label-sm text-[10px] text-on-surface font-semibold" title="Rashid Hassan">
+                RH
+              </div>
+<div class="text-right">
+<div class="font-code-sm text-[12px] text-on-surface tabular-nums font-medium">Due Oct 24</div>
+<div class="font-label-sm text-[10px] text-tertiary">17:00 CET</div>
+</div>
+<button class="px-3 py-1 bg-surface-container-high border border-outline hover:border-on-surface-variant text-on-surface font-label-sm text-[11px] rounded transition-colors" type="button">
+                Sign off
+              </button>
+</div>
+</div>
+<!-- Urgent Task 3: Due Tomorrow -->
+<div class="px-5 py-3.5 flex items-center justify-between hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-4 min-w-0">
+<span class="material-symbols-outlined text-tertiary text-[18px] shrink-0">event_upcoming</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md font-medium text-on-surface truncate">
+                    Finalize quarterly fiduciary disclosure
+                  </span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-code-sm bg-surface-container text-tertiary border border-outline tracking-tight">
+                    HIGH PRIORITY
+                  </span>
+</div>
+<div class="flex items-center gap-2 text-tertiary font-body-sm text-[12px] mt-0.5">
+<span class="text-on-surface-variant">Reports &amp; Archive</span>
+<span>·</span>
+<span>Partner review required</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6 shrink-0 ml-4">
+<!-- Assignee Initial Badge -->
+<div class="w-6 h-6 rounded bg-surface-container-high border border-outline flex items-center justify-center font-label-sm text-[10px] text-on-surface font-semibold" title="Karin Lindqvist">
+                KL
+              </div>
+<div class="text-right">
+<div class="font-code-sm text-[12px] text-on-surface-variant tabular-nums">Due Oct 25</div>
+<div class="font-label-sm text-[10px] text-tertiary">Tomorrow</div>
+</div>
+<button class="px-3 py-1 bg-surface-container-high border border-outline hover:border-on-surface-variant text-on-surface font-label-sm text-[11px] rounded transition-colors" type="button">
+                Review
+              </button>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. ANALYTICAL CHARTS (Restrained 2-column layout) -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Left: Tasks by Project (Stacked Horizontal Ledger Bars) -->
+<div class="border border-outline bg-surface-container-low p-6">
+<div class="flex justify-between items-baseline mb-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Tasks by Project</h3>
+<p class="font-body-sm text-body-sm text-tertiary mt-0.5">Distribution across primary custody portfolios</p>
+</div>
+<span class="font-code-sm text-[11px] text-tertiary">TOTAL 64</span>
+</div>
+<div class="space-y-4">
+<!-- Sacred Placement #3: Single Champagne Bar Highlight for 'Cloud Migration' -->
+<div>
+<div class="flex justify-between font-body-sm text-body-sm mb-1.5">
+<span class="text-on-surface font-medium flex items-center gap-1.5">
+<span>Cloud Migration</span>
+<span class="text-primary text-[10px]">★ Primary</span>
+</span>
+<span class="font-code-sm text-primary tabular-nums">24 tasks (38%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-none overflow-hidden">
+<div class="bg-primary h-full" style="width: 38%;"></div>
+</div>
+</div>
+<!-- Warm charcoal #3A352F bars for all other projects -->
+<div>
+<div class="flex justify-between font-body-sm text-body-sm mb-1.5">
+<span class="text-on-surface-variant">Institutional Security Audit</span>
+<span class="font-code-sm text-on-surface-variant tabular-nums">19 tasks (30%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-none overflow-hidden">
+<div class="bg-[#3A352F] h-full" style="width: 30%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-body-sm text-body-sm mb-1.5">
+<span class="text-on-surface-variant">Website Redesign</span>
+<span class="font-code-sm text-on-surface-variant tabular-nums">14 tasks (22%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-none overflow-hidden">
+<div class="bg-[#3A352F] h-full" style="width: 22%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-body-sm text-body-sm mb-1.5">
+<span class="text-on-surface-variant">Private Client Portal</span>
+<span class="font-code-sm text-on-surface-variant tabular-nums">7 tasks (10%)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-none overflow-hidden">
+<div class="bg-[#3A352F] h-full" style="width: 10%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Due in next 14 days (Hairline column distribution chart) -->
+<div class="border border-outline bg-surface-container-low p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-baseline mb-6">
+<div>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Due in Next 14 Days</h3>
+<p class="font-body-sm text-body-sm text-tertiary mt-0.5">Commitment deadlines Oct 25 – Nov 07</p>
+</div>
+<span class="font-code-sm text-[11px] text-tertiary">PEAK OCT 28</span>
+</div>
+<!-- Vertical column visualization with hairlines -->
+<div class="h-32 flex items-end justify-between gap-2 border-b border-outline pb-2 px-1">
+<!-- Day 1 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 38px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">25</span>
+</div>
+<!-- Day 2 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 22px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">26</span>
+</div>
+<!-- Day 3 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 12px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">27</span>
+</div>
+<!-- Day 4 (Peak) -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-on-surface-variant hover:bg-on-surface transition-colors" style="height: 84px;"></div>
+<span class="font-code-sm text-[10px] text-on-surface-variant font-medium">28</span>
+</div>
+<!-- Day 5 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 48px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">29</span>
+</div>
+<!-- Day 6 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 32px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">30</span>
+</div>
+<!-- Day 7 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 16px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">31</span>
+</div>
+<!-- Day 8 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 44px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">01</span>
+</div>
+<!-- Day 9 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 10px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">02</span>
+</div>
+<!-- Day 10 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 10px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">03</span>
+</div>
+<!-- Day 11 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 60px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">04</span>
+</div>
+<!-- Day 12 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 35px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">05</span>
+</div>
+<!-- Day 13 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 20px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">06</span>
+</div>
+<!-- Day 14 -->
+<div class="flex-1 flex flex-col items-center gap-1.5 group">
+<div class="w-full bg-[#3A352F] hover:bg-on-surface-variant transition-colors" style="height: 52px;"></div>
+<span class="font-code-sm text-[10px] text-tertiary">07</span>
+</div>
+</div>
+</div>
+<div class="pt-3 flex justify-between items-center text-[11px] font-label-sm text-tertiary">
+<span>Forecast window is stable</span>
+<span class="font-code-sm">Mean Velocity: 3.4 tasks/day</span>
+</div>
+</div>
+</section>
+<!-- 7. PROJECTS LEDGER (projects-ledger) -->
+<section class="space-y-3" id="projects-ledger">
+<div class="flex items-baseline justify-between">
+<h2 class="font-headline-md text-headline-sm font-semibold tracking-tight text-on-surface">
+            Projects Ledger
+          </h2>
+<span class="font-code-sm text-xs text-tertiary">4 Active Accounts</span>
+</div>
+<div class="border border-outline bg-surface-container-low overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline text-[11px] font-label-sm uppercase tracking-wider text-tertiary bg-surface-container">
+<th class="py-2.5 px-4 font-semibold">Project Name</th>
+<th class="py-2.5 px-4 font-semibold">Role</th>
+<th class="py-2.5 px-4 font-semibold">Members</th>
+<th class="py-2.5 px-4 font-semibold">Progress</th>
+<th class="py-2.5 px-4 font-semibold text-right">Open</th>
+<th class="py-2.5 px-4 font-semibold text-right">Overdue</th>
+<th class="py-2.5 px-4 font-semibold text-right">Last Updated</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline text-body-sm font-body-sm">
+<!-- Project 1: Cloud Migration -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-primary"></span>
+<span>Cloud Migration</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 border border-outline bg-surface-container-high text-on-surface-variant font-code-sm text-[11px] rounded">
+                    Owner
+                  </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex -space-x-1">
+<span class="w-5 h-5 rounded-sm bg-surface-container-highest border border-outline flex items-center justify-center font-code-sm text-[9px] text-on-surface">MA</span>
+<span class="w-5 h-5 rounded-sm bg-surface-container-high border border-outline flex items-center justify-center font-code-sm text-[9px] text-on-surface-variant">RH</span>
+<span class="w-5 h-5 rounded-sm bg-surface-container-low border border-outline flex items-center justify-center font-code-sm text-[9px] text-tertiary">KL</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-highest">
+<div class="bg-primary h-full" style="width: 82%;"></div>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface tabular-nums">82%</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-code-sm text-on-surface tabular-nums">12</td>
+<td class="py-3 px-4 text-right font-code-sm text-error tabular-nums">1</td>
+<td class="py-3 px-4 text-right font-code-sm text-tertiary tabular-nums">2h ago</td>
+</tr>
+<!-- Project 2: Website Redesign -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-surface-variant"></span>
+<span>Website Redesign</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 border border-outline bg-surface-container text-tertiary font-code-sm text-[11px] rounded">
+                    Member
+                  </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex -space-x-1">
+<span class="w-5 h-5 rounded-sm bg-surface-container-highest border border-outline flex items-center justify-center font-code-sm text-[9px] text-on-surface">KL</span>
+<span class="w-5 h-5 rounded-sm bg-surface-container-high border border-outline flex items-center justify-center font-code-sm text-[9px] text-on-surface-variant">MA</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-highest">
+<div class="bg-[#3A352F] h-full" style="width: 94%;"></div>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface tabular-nums">94%</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-code-sm text-on-surface tabular-nums">7</td>
+<td class="py-3 px-4 text-right font-code-sm text-tertiary tabular-nums">0</td>
+<td class="py-3 px-4 text-right font-code-sm text-tertiary tabular-nums">Yesterday</td>
+</tr>
+<!-- Project 3: Institutional Security Audit -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-error/70"></span>
+<span>Institutional Security Audit</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 border border-outline bg-surface-container-high text-on-surface-variant font-code-sm text-[11px] rounded">
+                    Owner
+                  </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex -space-x-1">
+<span class="w-5 h-5 rounded-sm bg-surface-container-highest border border-outline flex items-center justify-center font-code-sm text-[9px] text-on-surface">MA</span>
+<span class="w-5 h-5 rounded-sm bg-surface-container-low border border-outline flex items-center justify-center font-code-sm text-[9px] text-tertiary">RH</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-highest">
+<div class="bg-[#3A352F] h-full" style="width: 65%;"></div>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface tabular-nums">65%</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-code-sm text-on-surface tabular-nums">18</td>
+<td class="py-3 px-4 text-right font-code-sm text-error tabular-nums">2</td>
+<td class="py-3 px-4 text-right font-code-sm text-tertiary tabular-nums">3d ago</td>
+</tr>
+<!-- Project 4: Private Client Portal -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="py-3 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-surface-variant"></span>
+<span>Private Client Portal</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 border border-outline bg-surface-container text-tertiary font-code-sm text-[11px] rounded">
+                    Member
+                  </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex -space-x-1">
+<span class="w-5 h-5 rounded-sm bg-surface-container-high border border-outline flex items-center justify-center font-code-sm text-[9px] text-on-surface-variant">RH</span>
+<span class="w-5 h-5 rounded-sm bg-surface-container-highest border border-outline flex items-center justify-center font-code-sm text-[9px] text-on-surface">KL</span>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container-highest">
+<div class="bg-[#3A352F] h-full" style="width: 45%;"></div>
+</div>
+<span class="font-code-sm text-[11px] text-on-surface tabular-nums">45%</span>
+</div>
+</td>
+<td class="py-3 px-4 text-right font-code-sm text-on-surface tabular-nums">4</td>
+<td class="py-3 px-4 text-right font-code-sm text-tertiary tabular-nums">0</td>
+<td class="py-3 px-4 text-right font-code-sm text-tertiary tabular-nums">4d ago</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- 8. RECENTLY UPDATED (recently-updated) -->
+<section class="space-y-3 pb-12" id="recently-updated">
+<div class="flex items-baseline justify-between">
+<h2 class="font-headline-md text-headline-sm font-semibold tracking-tight text-on-surface">
+            Recently Updated
+          </h2>
+<span class="font-label-sm text-xs text-tertiary">Real-time Operations Log</span>
+</div>
+<div class="border border-outline bg-surface-container-low divide-y divide-outline">
+<!-- Stream Item 1 -->
+<div class="px-5 py-3 flex items-center justify-between text-body-sm hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded bg-surface-container-high border border-outline flex items-center justify-center font-label-sm text-[10px] text-on-surface font-semibold shrink-0">
+                RH
+              </div>
+<div class="text-on-surface">
+<span class="font-medium text-on-surface">Rashid Hassan</span>
+<span class="text-tertiary"> transitioned </span>
+<span class="text-on-surface-variant font-medium">Zurich HSM Gateway</span>
+<span class="text-tertiary"> to </span>
+<span class="text-primary font-code-sm text-[11px]">In Progress</span>
+</div>
+</div>
+<div class="font-code-sm text-[11px] text-tertiary tabular-nums">
+              14m ago
+            </div>
+</div>
+<!-- Stream Item 2 -->
+<div class="px-5 py-3 flex items-center justify-between text-body-sm hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded bg-surface-container-high border border-outline flex items-center justify-center font-label-sm text-[10px] text-on-surface font-semibold shrink-0">
+                MA
+              </div>
+<div class="text-on-surface">
+<span class="font-medium text-on-surface">Maya Al-Mansoor</span>
+<span class="text-tertiary"> resolved </span>
+<span class="text-on-surface-variant font-medium">Bespoke Client Multi-sig Policy</span>
+<span class="text-tertiary"> in </span>
+<span class="text-on-surface-variant">Private Client Portal</span>
+</div>
+</div>
+<div class="font-code-sm text-[11px] text-tertiary tabular-nums">
+              1h 20m ago
+            </div>
+</div>
+<!-- Stream Item 3 -->
+<div class="px-5 py-3 flex items-center justify-between text-body-sm hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded bg-surface-container-high border border-outline flex items-center justify-center font-label-sm text-[10px] text-on-surface font-semibold shrink-0">
+                KL
+              </div>
+<div class="text-on-surface">
+<span class="font-medium text-on-surface">Karin Lindqvist</span>
+<span class="text-tertiary"> attached verification log </span>
+<span class="font-code-sm text-[12px] text-on-surface-variant">#VAL-9921.sig</span>
+<span class="text-tertiary"> to </span>
+<span class="text-on-surface-variant">Cloud Migration</span>
+</div>
+</div>
+<div class="font-code-sm text-[11px] text-tertiary tabular-nums">
+              2h 45m ago
+            </div>
+</div>
+<!-- Stream Item 4 -->
+<div class="px-5 py-3 flex items-center justify-between text-body-sm hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-6 h-6 rounded bg-surface-container-high border border-outline flex items-center justify-center font-label-sm text-[10px] text-on-surface font-semibold shrink-0">
+                MA
+              </div>
+<div class="text-on-surface">
+<span class="font-medium text-on-surface">Maya Al-Mansoor</span>
+<span class="text-tertiary"> flagged </span>
+<span class="text-error font-medium">Consolidate cryptographic custody audit</span>
+<span class="text-tertiary"> as Overdue</span>
+</div>
+</div>
+<div class="font-code-sm text-[11px] text-tertiary tabular-nums">
+              5h ago
+            </div>
+</div>
+</div>
+</section>
+</main>
+<!-- Ledger Footer Hairline -->
+<footer class="border-t border-outline py-4 px-8 bg-surface-container-low text-[11px] font-label-sm text-tertiary flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span>TASKORA PRIVATE ENGINE v4.12</span>
+<span class="text-outline">|</span>
+<span class="tabular-nums">ZURICH VAULT ENCLAVE · SHA-256 VERIFIED</span>
+</div>
+<div>
+<span>AUTHENTICATED AS PRINCIPAL</span>
+</div>
+</footer>
+</div>
+</body></html>
