@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { cookies, headers } from 'next/headers';
-import { Inter, Cairo } from 'next/font/google';
+import { Fraunces, Instrument_Sans, Amiri, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import './globals.css';
 import { AuthProviderClient } from '@/components/auth/AuthProviderClient';
 import { parseTheme, THEME_COOKIE } from '@/theme/config';
@@ -10,21 +10,33 @@ import { I18nProvider } from '@/i18n/I18nProvider';
 import { en } from '@/i18n/en';
 import { ar } from '@/i18n/ar';
 
-const inter = Inter({
+const fraunces = Fraunces({
   subsets: ['latin'],
   display: 'swap',
-  weight: ['400', '500', '600', '700'],
-  variable: '--f-inter',
+  variable: '--f-fraunces',
 });
 
-const cairo = Cairo({
+const instrumentSans = Instrument_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--f-instrument',
+});
+
+const amiri = Amiri({
   subsets: ['arabic', 'latin'],
   display: 'swap',
-  weight: ['400', '500', '600', '700'],
-  variable: '--f-cairo',
+  weight: ['400', '700'],
+  variable: '--f-amiri',
 });
 
-const fontClasses = `${inter.variable} ${cairo.variable}`;
+const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
+  subsets: ['arabic'],
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+  variable: '--f-ibm-plex-arabic',
+});
+
+const fontClasses = `${fraunces.variable} ${instrumentSans.variable} ${amiri.variable} ${ibmPlexSansArabic.variable}`;
 
 import { PwaRegister } from '@/components/pwa/PwaRegister';
 
@@ -35,8 +47,8 @@ export async function generateViewport(): Promise<Viewport> {
     viewportFit: 'cover',
     colorScheme: 'light dark',
     themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#F8FAFC' },
-      { media: '(prefers-color-scheme: dark)', color: '#0B1118' },
+      { media: '(prefers-color-scheme: light)', color: '#F4F4F2' },
+      { media: '(prefers-color-scheme: dark)', color: '#0C0B0A' },
     ],
   };
 }

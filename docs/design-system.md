@@ -1,14 +1,16 @@
-# Taskora Design System
+# Taskora Design System — Obsidian Ledger
 
-The Taskora Design System provides a calm, prestigious, and high-density interface aesthetic derived from Google Stitch design explorations. It combines modern typography (Inter for Latin & Cairo for Arabic), bilingual parity (English & Arabic with full RTL support), and WCAG AA accessible contrast in both Light and Dark themes.
+The Taskora Design System embodies the **Obsidian Ledger** design philosophy: an editorial luxury aesthetic inspired by private banking ledgers, tactile publishing, and horological precision. It pairs classical display typography (**Fraunces** for Latin, **Amiri** for Arabic) with modern humanist sans-serifs (**Instrument Sans** for Latin, **IBM Plex Sans Arabic** for Arabic). It provides bilingual parity (English & Arabic with full RTL support) and strict WCAG AA contrast across both dark (Obsidian) and light (Pearl & Bronze) themes.
 
 ---
 
 ## 1. Design Direction & Core Identity
 
-- **The Anchor:** A calm, purposeful dashboard structure with a clean left/right sidebar, comprehensive KPI strip, intuitive charts, and high-density data tables.
-- **Restraint:** No gratuitous shadows or decorative clutter. Clean surfaces (`--surface`, `--border`) with subtle borders and crisp typography.
-- **Bilingual & Bidi-Safe:** Zero physical CSS layout properties (uses logical properties exclusively), with `<bdi>` isolation for all user strings and proper Arabic typography.
+- **The Ledger Principle:** Tasks and projects are rendered as an elegant ledger: clean rows separated by hairlines (`--line`), tabular numbers in high-contrast serif display, and at most two raised surfaces per page. No redundant card-chopping.
+- **Single Focal Hero Metric:** Visual energy is deliberately concentrated into a single, high-contrast hero numeral in the dashboard header with a thin champagne hairline rule beneath.
+- **Rationed Accent (Champagne Gold):** The brand accent appears in only three places: the single primary affirmative action, the active navigation marker, and a single focal chart data point.
+- **Persistent Obsidian Sidebar:** The navigation sidebar remains deep obsidian (`#11100E`) across both dark and light modes, creating institutional gravity and brand cohesion.
+- **Bilingual & Bidi-Safe:** Built entirely with CSS logical properties (`margin-inline-start`, `padding-inline`, `inset-inline-start`), with `<bdi>` isolation for all user strings and lining tabular numerals.
 
 ---
 
@@ -16,92 +18,92 @@ The Taskora Design System provides a calm, prestigious, and high-density interfa
 
 ### Palette & Roles
 
-| Token | Light | Dark | Semantic Role | WCAG Contrast |
+| Token | Light (Pearl & Bronze) | Dark (Obsidian Ledger) | Semantic Role | WCAG Contrast |
 |---|---|---|---|---|
-| `--bg` | `#F8FAFC` (Slate-50) | `#0B1118` (Deep Slate) | Application background | Base canvas |
-| `--surface` | `#FFFFFF` (White) | `#131F2D` (Slate-900) | Cards, panels, inputs | Base surface |
-| `--surface-2` | `#F1F5F9` | `#162536` | Elevated cards, avatars | Secondary surface |
-| `--surface-hover` | `#E2E8F0` | `#1E3146` | Hover states | Interactive feedback |
-| `--border` | `#E2E8F0` | `#233549` | Card borders, dividers | Structural containment |
-| `--control-border`| `#64748B` | `#64748B` | Input & button boundaries | ≥ 3.0:1 UI (AA) |
-| `--text` | `#0F172A` (Slate-900) | `#F8FAFC` (Slate-50) | Primary body & heading text | ≥ 13.8:1 (AAA) |
-| `--text-muted` | `#475569` | `#94A3B8` | Subtitles, hints, labels | ≥ 4.5:1 (AA) |
-| `--accent` | `#0D5C5A` (Deep Teal) | `#14B8A6` (Luminous Teal) | Primary calls-to-action | ≥ 4.6:1 (AA) |
-| `--on-accent` | `#FFFFFF` | `#042321` | Text on primary buttons | ≥ 4.5:1 (AA) |
-| `--sidebar-bg` | `#FFFFFF` | `#0E1724` | Sidebar background | Neutral canvas |
-| `--sidebar-text` | `#334155` | `#CBD5E1` | Sidebar navigation text | ≥ 5.0:1 (AA) |
-| `--sidebar-active-bg` | `#E6F4F2` | `#112F2E` | Sidebar active item background | Soft teal tint |
-| `--sidebar-active-text` | `#0D5C5A` | `#2DD4BF` | Sidebar active item text | ≥ 5.0:1 (AA) |
+| `--bg` | `#F4F4F2` | `#0C0B0A` | Canvas background | Base canvas |
+| `--surface` | `#FFFFFF` | `#141211` | Primary panels & ledger rows | Base surface |
+| `--surface-2` | `#EDECE8` | `#1C1A17` | Raised ledger wells & segments | Secondary surface |
+| `--surface-overlay` | `#FFFFFF` | `#26231F` | Modal dialogs and popovers | Overlaid surface |
+| `--surface-hover` | `#E8E6E0` | `#1E1C19` | Interactive hover feedback | Subtle shift |
+| `--line` | `#DDDAD3` | `#2C2824` | Hairline dividers & boundaries | Hairline rule |
+| `--line-strong` | `#C4C0B6` | `#3A352F` | Emphasized structural borders | Boundary rule |
+| `--control-border`| `#736B5E` | `#736B5E` | Input & button boundaries | ≥ 3.0:1 UI (AA) |
+| `--text` | `#1B1915` | `#EFE9DD` | Primary text | ≥ 14.3:1 (AAA) |
+| `--text-2` | `#5A5348` | `#B5AC9C` | Secondary text & labels | ≥ 6.4:1 (AA) |
+| `--text-3` | `#736B5E` | `#9A9183` | Metadata & hints | ≥ 4.5:1 (AA) |
+| `--accent` | `#7A5818` (Bronze) | `#D4B26E` (Champagne) | Primary calls-to-action | ≥ 6.4:1 (AA) |
+| `--on-accent` | `#FFFFFF` | `#1A1408` | Text on primary buttons | ≥ 6.4:1 (AA) |
+| `--sidebar-bg` | `#11100E` | `#11100E` | Persistent dark sidebar | Deep Obsidian |
+| `--sidebar-text` | `#EFE9DD` | `#EFE9DD` | Sidebar navigation labels | ≥ 15.7:1 (AAA) |
+| `--sidebar-active-bg` | `#1C1A17` | `#1C1A17` | Sidebar active item background | Raised surface |
+| `--sidebar-active-text`| `#D4B26E` | `#D4B26E` | Sidebar active item text | ≥ 8.5:1 (AAA) |
 
 ### Status & Priority Tokens
 
-| Kind | Text/Border Token | Background Token | Distinguishing Indicator |
+| Kind | Text/Border Token (Light / Dark) | Background Token (Light / Dark) | Indicator Style |
 |---|---|---|---|
-| `todo` | `--st-todo-fg` (`#475569` / `#94A3B8`) | `--st-todo-bg` (`#E2E8F0` / `#1E293B`) | Solid circular dot |
-| `in_progress` | `--st-progress-fg` (`#0369A1` / `#7DD3FC`) | `--st-progress-bg` (`#E0F2FE` / `#082F49`) | Ring indicator |
-| `done` | `--st-done-fg` (`#0D5C5A` / `#6EE7B7`) | `--st-done-bg` (`#E6F4F2` / `#064E3B`) | Checkmark icon |
-| `overdue` | `--st-overdue-fg` (`#991B1B` / `#FCA5A5`) | `--st-overdue-bg` (`#FEE2E2` / `#450A0A`) | Clock icon + textual badge |
-| `low` | `--pr-low-fg` | Soft surface background | 1-bar icon |
-| `medium` | `--pr-medium-fg` | Soft surface background | 2-bar icon |
-| `high` | `--pr-high-fg` | Soft surface background | 3-bar icon |
+| `todo` | `--st-todo-fg` (`#5A5348` / `#B3AC9E`) | `--st-todo-bg` (`#EDECE8` / `#26231F`) | Solid circular dot + text |
+| `in_progress` | `--st-progress-fg` (`#1E4D8A` / `#8DB4E8`) | `--st-progress-bg` (`#E3EDF8` / `#142136`) | Ring indicator + text |
+| `done` | `--st-done-fg` (`#235832` / `#9CC5A1`) | `--st-done-bg` (`#E1EFE4` / `#152618`) | Checkmark icon + text |
+| `overdue` | `--st-overdue-fg` (`#9C2E1F` / `#EE8A78`) | `--st-overdue-bg` (`#FCE8E5` / `#331915`) | Clock icon + text |
+| `low` | `--pr-low-fg` (`#5A5348` / `#B5AC9C`) | Soft surface background | 1-bar icon + text |
+| `medium` | `--pr-medium-fg` (`#1E4D8A` / `#8DB4E8`) | Soft surface background | 2-bar icon + text |
+| `high` | `--pr-high-fg` (`#9C2E1F` / `#EE8A78`) | Soft surface background | 3-bar icon + text |
 
 ### Chart Tokens
 
-| Token | Light | Dark | Semantic Purpose |
+| Token | Light | Dark | Semantic Role |
 |---|---|---|---|
-| `--chart-todo` | `#64748B` | `#94A3B8` | To-do segments in stacked bars |
-| `--chart-progress` | `#0284C7` | `#38BDF8` | In-progress segments |
-| `--chart-done` | `#0D5C5A` | `#2DD4BF` | Completed segments |
-| `--chart-neutral` | `#475569` | `#64748B` | Neutral / baseline items |
-| `--chart-grid` | `#E2E8F0` | `#1E293B` | Grid lines and separators |
+| `--chart-todo` | `#736B5E` | `#9A9183` | To-do segments in stacked bars |
+| `--chart-progress` | `#2D5FA8` | `#8DB4E8` | In-progress segments |
+| `--chart-done` | `#7A5818` | `#D4B26E` | Completed segments (Champagne / Bronze) |
+| `--chart-neutral` | `#5A5348` | `#6B665D` | Baseline & neutral data |
+| `--chart-grid` | `#DDDAD3` | `#2C2824` | Grid lines and hairline separators |
 
 ### Radii Hierarchy
 
-- `--radius-sm` (4px): Form inputs, checkboxes, textareas, selects, badges, segmented buttons.
-- `--radius-md` (6px): Primary/secondary/ghost/danger buttons, toast notifications.
-- `--radius-lg` (8px): Cards, dialog modals, sheet panels.
-- `--radius-xl` (12px): Large hero surfaces and featured panels.
-- `--radius-pill` (9999px): Progress bar tracks, avatars.
+- `--radius-sm` (4px): Checkboxes, compact tags.
+- `--radius-md` (6px): Form inputs, buttons, select menus, toast notifications.
+- `--radius-lg` (10px): Ledger panels, content surfaces.
+- `--radius-xl` (14px): Dialog modals, sheet overlays.
+- `--radius-pill` (9999px): Status badges, progress tracks, avatars.
 
 ---
 
 ## 3. Primitives & Components
 
 ### `Avatar`
-- Generates up to two initials from bilingual names (supports Arabic names such as "أحمد محمد" → "أم" and English names like "Sara Ali" → "SA").
-- Sizes: `sm` (24px) for compact lists and tables, `md` (32px) for user menu and cards.
-- Background `--surface-2`, border `--border`, centered bold text with `<bdi>` wrapping.
+- Initials-based avatar component supporting English ("Sara Ali" → "SA") and Arabic ("أحمد محمد" → "أم").
+- Sizes: `sm` (24px) for ledger rows and tables, `md` (32px) for user menu and headers.
+- Background `--surface-2`, border `--line`, centered bold text with `<bdi>` wrapping.
 
 ### `Checkbox`
 - Custom accessible checkbox element with hidden native input (`aria-checked`, focus ring).
-- Minimum touch target 40px block-size, high-contrast checkmark SVG in `--accent`.
+- Minimum touch target 44px block-size container, high-contrast checkmark in `--on-accent`.
 
 ### `Badge`
-- Semantic status and priority indicators with distinct icons for color-blind accessibility (never relies on color alone).
-- Roles: `owner` (brass accent), `member` (muted).
+- Pill-shaped status and priority indicators with distinct icons for color-blind accessibility. Never relies on color alone.
 
 ### Application Shell (`AppShell`)
-- **Desktop Sidebar:** Fixed inline-start sidebar (264px–280px) on wide viewports (≥1025px), displaying the brand logo, navigation links, and quick project switcher.
+- **Desktop Sidebar:** Fixed inline-start sidebar (264px) on wide viewports (≥1025px), displaying the Fraunces brand title, navigation ledger items with hairline dividers, and active champagne indicator.
 - **Mobile Drawer:** Accessible slide-in dialog (`role="dialog"`, `aria-modal="true"`) for viewports ≤1024px with focus trapping, backdrop click dismissal, and `Escape` key support.
 - **TopBar:** Sticky top bar housing section title, language switcher (`LocaleSwitcher`), theme switcher (`ThemeToggle`), and `UserMenu`.
-- **UserMenu:** Accessible dropdown menu with keyboard arrow navigation, avatar, user email, and logout action.
 
 ### Accessible Charts (`src/components/charts/`)
 - Pure HTML/CSS relative layouts with zero canvas/SVG coordinate hardcoding, automatically adapting to LTR and RTL.
 - Every chart panel includes a Segmented toggle to switch between visual bars and an accessible `<table>` with identical data.
-- Hover/focus tooltip with bounds checking and keyboard `Escape` dismissal.
 
 ---
 
 ## 4. Typography & Arabic Text Guidelines
 
 1. **Display & Headings (`--font-display`):**
-   - Font family: `Inter` for Latin, `Cairo` for Arabic, `system-ui`, `sans-serif`.
+   - Font family: `Fraunces` for Latin, `Amiri` for Arabic, `serif`.
    - Used for main section titles, dashboard headings, project titles, and metric callouts.
    - For numbers, use the `.num` helper class: `font-variant-numeric: lining-nums tabular-nums;` to guarantee column alignment.
 
 2. **Interface Body (`--font-body`):**
-   - Font family: `Inter` for Latin, `Cairo` for Arabic, `system-ui`, `sans-serif`.
+   - Font family: `Instrument Sans` for Latin, `IBM Plex Sans Arabic` for Arabic, `system-ui`, `sans-serif`.
    - Used for labels, buttons, navigation, table cells, and user-generated text.
    - Arabic line-height is tuned to `1.7`–`1.75` for comfortable ascender and descender clearance.
 
@@ -129,23 +131,19 @@ The Taskora Design System provides a calm, prestigious, and high-density interfa
 
 ---
 
-## 6. UX Copy Principles
+## 6. Strict Forbidden List
 
-- **Action-Oriented Verbs:** Buttons must state exactly what happens: "Create project", "Save changes", "Delete task" (avoid vague labels like "Submit" or "OK").
-- **Clear Error Guidance:** State what happened and how to resolve it directly without apologies (e.g., "Network connection unavailable. Please check your connection and try again.").
-- **Empty States as Invitations:** Invite the user to take action with a clear primary button: "No projects yet. Create your first project to start organizing tasks."
-
----
-
-## 7. Component Checklist for New Additions
-
-When creating any new component in `src/components/ui/`:
-1. [ ] Exclusively uses CSS Modules with CSS Logical Properties (`inline-size`, `padding-inline`, etc.).
-2. [ ] Zero hardcoded colors — uses tokens from `src/styles/tokens.css`.
-3. [ ] Interactive touch targets satisfy 44px min-block-size (`min-block-size: 44px`).
-4. [ ] All text is localized via `useI18n().t` or `tp`.
-5. [ ] Directional SVGs include the `.dirIcon` flip class.
-6. [ ] Visible `:focus-visible` ring using `var(--focus-ring)` with 2px offset.
-7. [ ] ARIA attributes (`aria-label`, `aria-busy`, `aria-invalid`, `aria-describedby`, `role`) tested and present.
-8. [ ] Color contrast verified against WCAG AA standards (≥ 4.5:1 text, ≥ 3:1 controls).
-9. [ ] Added to the showcase page at `/design-system`.
+- **NO Teal, Jade, or Petrol:** Legacy green, jade, and teal palette accents are strictly forbidden.
+- **NO Default Template Fonts:** Generic sans-serif defaults and old palette typography are completely banned.
+- **NO Default Tailwind Blue/Purple:** `#6366F1`, `#3B82F6` are forbidden.
+- **NO Card Soup:** Pages must not be broken into identical rounded rectangles with gray borders.
+- **NO Wide Gradients or Neon:** No glowing buttons, gradients, or cyberpunk accents.
+- **NO Spaced-Out Uppercase Labels:** Avoid spaced-out capitalized metadata labels.
+- **NO Middle Dots (`·`):** Avoid decorative bullet points between metadata.
+- **NO Arrow Icons (`→`):** Do not append directional arrows to buttons.
+- **NO Command Palette (Cmd + K):** No global omnisearch or quick-switcher.
+- **NO Global Search Bar:** Search is strictly scoped inside project task lists.
+- **NO Notification Bell:** No notification center or alert popovers.
+- **NO Billing / Upgrade Banners:** Taskora is a focused team task manager, not a commercial SaaS tier funnel.
+- **NO Growth Percentages:** No speculative metrics.
+- **NO Detail Inspector Pane:** No third column inspector or tree-view sidebars.

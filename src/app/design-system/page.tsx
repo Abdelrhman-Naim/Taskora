@@ -52,12 +52,12 @@ export default function DesignSystemPage() {
   const [segmentedVal, setSegmentedVal] = useState('list');
 
   const colors = [
-    { name: 'Slate Canvas', role: 'Background (--bg)', hex: 'Light #F8FAFC / Dark #0B1118', varName: 'var(--bg)', contrast: '≥ 4.5:1 (AA)' },
-    { name: 'White / Deep Slate', role: 'Surfaces (--surface)', hex: 'Light #FFFFFF / Dark #131F2D', varName: 'var(--surface)', contrast: '≥ 4.5:1 (AA)' },
-    { name: 'Deep / Luminous Teal', role: 'Primary Action (--accent)', hex: 'Light #0D5C5A / Dark #14B8A6', varName: 'var(--accent)', contrast: '≥ 4.6:1 (AA)' },
-    { name: 'Slate Ink / Mist', role: 'Text (--text)', hex: 'Light #0F172A / Dark #F8FAFC', varName: 'var(--text)', contrast: '≥ 13.8:1 (AAA)' },
-    { name: 'Sidebar Canvas', role: 'Sidebar (--sidebar-bg)', hex: 'Light #FFFFFF / Dark #0E1724', varName: 'var(--sidebar-bg)', contrast: '≥ 5.0:1 (AA)' },
-    { name: 'Muted Text', role: 'Muted Labels (--text-muted)', hex: 'Light #475569 / Dark #94A3B8', varName: 'var(--text-muted)', contrast: '≥ 4.5:1 (AA)' },
+    { name: 'Obsidian / Pearl Canvas', role: 'Background (--bg)', hex: 'Light #F4F4F2 / Dark #0C0B0A', varName: 'var(--bg)', contrast: '≥ 15.9:1 (AAA)' },
+    { name: 'Warm Charcoal / Pure White', role: 'Surfaces (--surface)', hex: 'Light #FFFFFF / Dark #141211', varName: 'var(--surface)', contrast: '≥ 15.4:1 (AAA)' },
+    { name: 'Champagne / Bronze', role: 'Primary Action (--accent)', hex: 'Light #7A5818 / Dark #D4B26E', varName: 'var(--accent)', contrast: '≥ 6.4:1 (AA)' },
+    { name: 'Warm Ivory / Deep Ink', role: 'Text (--text)', hex: 'Light #1B1915 / Dark #EFE9DD', varName: 'var(--text)', contrast: '≥ 15.4:1 (AAA)' },
+    { name: 'Persistent Dark Sidebar', role: 'Sidebar (--sidebar-bg)', hex: 'Both Themes #11100E', varName: 'var(--sidebar-bg)', contrast: '≥ 15.7:1 (AAA)' },
+    { name: 'Muted Sand / Stone', role: 'Muted Labels (--text-muted)', hex: 'Light #5A5348 / Dark #B5AC9C', varName: 'var(--text-muted)', contrast: '≥ 6.4:1 (AA)' },
   ];
 
   return (
@@ -67,7 +67,7 @@ export default function DesignSystemPage() {
           <div>
             <h1 className={styles.title}>{t('app.name')} Design System</h1>
             <p className={styles.subtitle}>
-              Bespoke tokens, primitives, typography and RTL layout verification
+              Obsidian Ledger tokens, primitives, typography and RTL layout verification
             </p>
           </div>
           <div className={styles.controls}>
@@ -96,11 +96,11 @@ export default function DesignSystemPage() {
           <h2 className={styles.sectionTitle}>Typography</h2>
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700 }}>
-                Display Title: Inter & Cairo (العنوان والترويسة)
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600 }}>
+                Display Title: Fraunces & Amiri (العنوان والترويسة)
               </div>
               <div style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.75 }}>
-                Body Text: Inter & Cairo (خط القراءة والواجهة النظيف والمريح)
+                Body Text: Instrument Sans & IBM Plex Sans Arabic (خط القراءة والواجهة النظيف والمريح)
               </div>
               <div className="num" style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', color: 'var(--accent)' }}>
                 12,500 · 34 · 98% (Lining & Tabular Numerals)

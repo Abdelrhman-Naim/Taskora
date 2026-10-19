@@ -9,7 +9,7 @@
   color: var(--text);
   background-color: var(--surface);
   border: 1px solid var(--control-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   box-sizing: border-box;
   transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
 }

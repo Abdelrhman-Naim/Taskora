@@ -4,7 +4,7 @@
   justify-content: center;
   border-radius: var(--radius-pill);
   background-color: var(--surface-2);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   color: var(--text);
   font-weight: 600;
   user-select: none;

@@ -2,9 +2,9 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding-inline: 7px;
+  padding-inline: 9px;
   padding-block: 3px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.2;
@@ -15,19 +15,19 @@
 .todo {
   background-color: var(--st-todo-bg);
   color: var(--st-todo-fg);
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 .in_progress {
   background-color: var(--st-progress-bg);
   color: var(--st-progress-fg);
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 .done {
   background-color: var(--st-done-bg);
   color: var(--st-done-fg);
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 .overdue {
@@ -39,19 +39,19 @@
 .low {
   background-color: var(--surface-hover);
   color: var(--pr-low-fg);
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 .medium {
   background-color: var(--surface-hover);
   color: var(--pr-medium-fg);
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 .high {
   background-color: var(--surface-hover);
   color: var(--pr-high-fg);
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 .icon {

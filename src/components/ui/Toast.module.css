@@ -17,8 +17,8 @@
   gap: 10px;
   padding-inline: 16px;
   padding-block: 12px;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
+  background-color: var(--surface-overlay);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-pop);
   color: var(--text);

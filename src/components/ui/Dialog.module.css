@@ -11,9 +11,9 @@
 }
 
 .dialog {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  background-color: var(--surface-overlay);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xl);
   padding: 24px;
   max-inline-size: 440px;
   inline-size: 100%;

@@ -57,3 +57,20 @@ Any element hallucinated by Stitch models that had no corresponding data model o
 - **Chart Bars Role:** Added `role="img"` to all bar chart items (`ColumnChart`, `HBars`, `StackedBars`) containing `aria-label` to comply with ARIA 1.2 / WCAG 4.1.2 requirements (`aria-prohibited-attr`).
 - **Focus Outlines:** Explicit 2px focus ring with `var(--focus-ring)` and 2px offset on all keyboard interactive triggers.
 - **Directional Mirroring:** Pure CSS logical properties throughout; zero hardcoded physical `left` or `right` properties in components. Dynamic user content strictly isolated with `<bdi>` or `dir="auto"`.
+
+---
+
+## 6. Obsidian Ledger Contrast & Token Decisions (Phase 5 — Task 44)
+
+During the translation of `DESIGN.md` into `src/styles/tokens.css`, the following calibration decisions were executed to guarantee strict WCAG AA/AAA compliance:
+
+| Token Name | Initial Candidate | Final Token Value | Context Surface | Contrast Ratio | Rationale |
+|---|---|---|---|---|---|
+| `--accent` (Light) | `#B88A3A` | `#7A5818` | `#FFFFFF` | **6.49:1 (AA)** | Initial champagne gold failed 4.5:1 on white; deep bronze selected for primary action buttons with white text (6.49:1). Non-text borders retain `#B88A3A`. |
+| `--chart-neutral` (Dark) | `#645F56` | `#6B665D` | `#141211` | **3.28:1 (AA)** | Initial warm gray was 2.95:1 on dark surface; adjusted to `#6B665D` to satisfy WCAG 2.1 AA 3.0:1 graphical threshold. |
+| `--control-border` (Dark) | `#4A443D` | `#736B5E` | `#141211` / `#1C1A17` | **3.55:1 / 3.30:1 (AA)** | Deep boundary tone adjusted to guarantee visible 3:1 contrast on all dark background tiers. |
+| `--sidebar-bg` (Light) | `#FFFFFF` | `#11100E` | Light Canvas | **15.73:1 (AAA)** | In accordance with the Obsidian Ledger core principle, the sidebar remains persistent dark across both themes for institutional gravity. |
+| `--on-accent` (Dark) | `#000000` | `#1A1408` | `#D4B26E` | **9.06:1 (AAA)** | Deep umber foreground text provides richer tactile depth and exceeds AAA requirements. |
+| `--font-display` | Newsreader / Inter | `Fraunces` / `Amiri` | Headings & KPIs | N/A | High-contrast variable serif displaying tabular numerals (`lining-nums tabular-nums`). |
+| `--font-body` | Inter / Cairo | `Instrument Sans` / `IBM Plex Sans Arabic` | Body & Controls | N/A | Humanist geometric sans-serif ensuring crisp legibility and optical density. |
+

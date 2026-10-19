@@ -9,8 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: '/',
     id: 'taskora-app',
     display: 'standalone',
-    background_color: '#F8FAFC',
-    theme_color: '#0D5C5A',
+    background_color: '#0C0B0A',
+    theme_color: '#0C0B0A',
     icons: [
       {
         src: '/icons/icon-192.png',

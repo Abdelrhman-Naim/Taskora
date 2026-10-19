@@ -1,9 +1,9 @@
 .segmented {
   display: inline-flex;
   align-items: center;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
   padding: 2px;
   gap: 2px;
 }

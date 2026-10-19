@@ -11,7 +11,7 @@ body {
 
 html[lang="ar"] body {
   line-height: var(--lh-ar);
-  font-family: var(--f-cairo), var(--font-body);
+  font-family: var(--f-ibm-plex-arabic), var(--font-body);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -27,7 +27,7 @@ html[lang="ar"] h3,
 html[lang="ar"] h4,
 html[lang="ar"] h5,
 html[lang="ar"] h6 {
-  font-family: var(--f-cairo), var(--font-display);
+  font-family: var(--f-amiri), var(--font-display);
 }
 
 :focus-visible {
