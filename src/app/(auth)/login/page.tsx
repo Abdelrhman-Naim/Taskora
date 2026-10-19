@@ -40,35 +40,48 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={styles.pageContainer} data-testid="page-ready">
-      <header className={styles.topBar}>
-        <div className={styles.brand}>
-          <div className={styles.logoMonogram}>
-            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
+    <div className={styles.splitPage} data-testid="page-ready">
+      {/* Left Pane: Identity Rail */}
+      <aside className={styles.identityRail} data-testid="auth-identity-rail">
+        <header className={styles.brandHeader}>
+          <div className={styles.logoMonogram}>T</div>
+          <div className={styles.brandMeta}>
+            <h1 className={styles.brandTitle}>Taskora</h1>
+            <span className={styles.brandSubtitle}>Private Operations</span>
           </div>
-          <span className={styles.brandName}>Taskora</span>
-          <span className={styles.versionBadge}>v2.4</span>
+        </header>
+
+        <div className={styles.narrativeBlock}>
+          <div className={styles.discretionBadge}>
+            <span className={styles.discretionDot} />
+            <span>RESTRICTED DISCRETION</span>
+          </div>
+          <h2 className={styles.narrativeHeadline}>
+            Private precision for ambitious teams.
+          </h2>
+          <div className={styles.champagneRule} />
+          <p className={styles.narrativeBody}>
+            Engineered for sovereign family offices, private capital consortia, and institutional directors requiring cryptographically validated workflows.
+          </p>
         </div>
-        <div className={styles.topBarActions}>
+
+        <footer className={styles.railFooter}>
+          <span>Vault Node 01 // SHA-256</span>
+          <span>v2.5</span>
+        </footer>
+      </aside>
+
+      {/* Right Pane: Clean Form Plane */}
+      <main className={styles.formPlane} data-testid="auth-form-plane">
+        <div className={styles.topBarUtility}>
           <LocaleSwitcher />
           <ThemeToggle />
         </div>
-      </header>
 
-      <main className={styles.mainArea}>
-        <div className={styles.cardWrapper} data-testid="auth-card">
-          <div className={styles.accentBar} />
-          <div className={styles.cardBody}>
+        <div className={styles.formContentWrapper}>
+          <div className={styles.cardWrapper} data-testid="auth-card">
             <div className={styles.headerBlock}>
-              <div className={styles.headerLogo}>
-                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 11l3 3L22 4" />
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                </svg>
-              </div>
-              <h1 className={styles.title}>{t('auth.login.title')}</h1>
+              <h2 className={styles.title}>{t('auth.login.title')}</h2>
               <p className={styles.subtitle}>{t('auth.login.subtitle')}</p>
             </div>
 
@@ -86,11 +99,11 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
-      </main>
 
-      <footer className={styles.pageFooter}>
-        <span>&copy; {new Date().getFullYear()} {t('app.name')}. {t('common.copyright')}</span>
-      </footer>
+        <div className={styles.securityNote}>
+          Strictly Confidential · All sessions cryptographically verified
+        </div>
+      </main>
     </div>
   );
 }

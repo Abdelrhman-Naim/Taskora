@@ -50,37 +50,48 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className={styles.pageContainer}>
-      <header className={styles.topBar}>
-        <div className={styles.brand}>
-          <div className={styles.logoMonogram}>
-            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
+    <div className={styles.splitPage} data-testid="page-ready">
+      {/* Left Pane: Identity Rail */}
+      <aside className={styles.identityRail} data-testid="auth-identity-rail">
+        <header className={styles.brandHeader}>
+          <div className={styles.logoMonogram}>T</div>
+          <div className={styles.brandMeta}>
+            <h1 className={styles.brandTitle}>Taskora</h1>
+            <span className={styles.brandSubtitle}>Private Operations</span>
           </div>
-          <span className={styles.brandName}>Taskora</span>
-          <span className={styles.versionBadge}>v2.4</span>
+        </header>
+
+        <div className={styles.narrativeBlock}>
+          <div className={styles.discretionBadge}>
+            <span className={styles.discretionDot} />
+            <span>ENCLAVE PROVISIONING</span>
+          </div>
+          <h2 className={styles.narrativeHeadline}>
+            Editorial task orchestration for high-trust teams.
+          </h2>
+          <div className={styles.champagneRule} />
+          <p className={styles.narrativeBody}>
+            Establish institutional credentials to participate in cryptographically partitioned ledgers with verifiable audit logs.
+          </p>
         </div>
-        <div className={styles.topBarActions}>
+
+        <footer className={styles.railFooter}>
+          <span>Zurich Enclave // HSM v4.2</span>
+          <span>Active</span>
+        </footer>
+      </aside>
+
+      {/* Right Pane: Clean Form Plane */}
+      <main className={styles.formPlane} data-testid="auth-form-plane">
+        <div className={styles.topBarUtility}>
           <LocaleSwitcher />
           <ThemeToggle />
         </div>
-      </header>
 
-      <main className={styles.mainArea}>
-        <div className={styles.cardWrapper} data-testid="auth-card">
-          <div className={styles.accentBar} />
-          <div className={styles.cardBody}>
+        <div className={styles.formContentWrapper}>
+          <div className={styles.cardWrapper} data-testid="auth-card">
             <div className={styles.headerBlock}>
-              <div className={styles.headerLogo}>
-                <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <line x1="19" y1="8" x2="19" y2="14" />
-                  <line x1="22" y1="11" x2="16" y2="11" />
-                </svg>
-              </div>
-              <h1 className={styles.title}>{t('auth.register.title')}</h1>
+              <h2 className={styles.title}>{t('auth.register.title')}</h2>
               <p className={styles.subtitle}>{t('auth.register.subtitle')}</p>
             </div>
 
@@ -98,11 +109,11 @@ export default function RegisterPage() {
             </div>
           </div>
         </div>
-      </main>
 
-      <footer className={styles.pageFooter}>
-        <span>&copy; {new Date().getFullYear()} {t('app.name')}. {t('common.copyright')}</span>
-      </footer>
+        <div className={styles.securityNote}>
+          Strictly Confidential · All accounts cryptographically provisioned
+        </div>
+      </main>
     </div>
   );
 }

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Taskora Private Ops — Project Settings</title>
+<!-- Fonts: Fraunces & Instrument Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-container": "#a7b5e5",
+            "surface-container": "#141211",
+            "outline-variant": "#4d4639",
+            "on-primary": "#1A1408",
+            "tertiary-fixed": "#dbe1ff",
+            "on-secondary-fixed-variant": "#4c4639",
+            "secondary-fixed": "#ece1d0",
+            "secondary-container": "#4c4639",
+            "primary": "#D4B26E",
+            "on-background": "#e9e1d9",
+            "on-primary-fixed": "#261900",
+            "on-secondary": "#141211",
+            "secondary": "#B5AC9C",
+            "on-primary-container": "#E2C282",
+            "surface-container-highest": "#38342f",
+            "surface-container-low": "#11100E",
+            "surface-dim": "#16130e",
+            "surface-bright": "#3c3933",
+            "surface-container-high": "#2d2924",
+            "surface-tint": "#e5c27c",
+            "primary-container": "#2C2415",
+            "primary-fixed-dim": "#e5c27c",
+            "on-surface-variant": "#d0c5b4",
+            "inverse-primary": "#755a1f",
+            "tertiary-fixed-dim": "#b7c5f6",
+            "primary-fixed": "#ffdea1",
+            "error": "#EE8A78",
+            "inverse-on-surface": "#33302a",
+            "error-container": "#93000a",
+            "on-secondary-fixed": "#201b11",
+            "inverse-surface": "#e9e1d9",
+            "surface-variant": "#38342f",
+            "on-tertiary-fixed": "#081940",
+            "on-tertiary": "#202f56",
+            "on-surface": "#e9e1d9",
+            "secondary-fixed-dim": "#cfc5b5",
+            "on-error": "#690005",
+            "on-error-container": "#ffdad6",
+            "surface-container-lowest": "#100e09",
+            "on-tertiary-container": "#38466f",
+            "on-primary-fixed-variant": "#5b4308",
+            "on-secondary-container": "#bdb4a4",
+            "on-tertiary-fixed-variant": "#37456e",
+            "tertiary": "#9A9183",
+            "outline": "#2C2824",
+            "background": "#16130e",
+            "surface": "#141211"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "margin": "1rem",
+            "margin-desktop": "2.5rem",
+            "space-2xl": "48px",
+            "space-md": "12px",
+            "gutter": "1.5rem",
+            "space-xs": "4px",
+            "space-xl": "32px",
+            "space-sm": "8px",
+            "space-base": "16px",
+            "gutter-desktop": "2rem",
+            "space-lg": "24px"
+          },
+          "fontFamily": {
+            "code-sm": ["monospace"],
+            "body-lg": ["Instrument Sans", "sans-serif"],
+            "headline-md": ["Fraunces", "serif"],
+            "body-md": ["Instrument Sans", "sans-serif"],
+            "label-sm": ["Instrument Sans", "sans-serif"],
+            "label-md": ["Instrument Sans", "sans-serif"],
+            "display-lg": ["Fraunces", "serif"],
+            "body-sm": ["Instrument Sans", "sans-serif"],
+            "headline-sm": ["Instrument Sans", "sans-serif"],
+            "headline-lg": ["Fraunces", "serif"]
+          },
+          "fontSize": {
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#0C0B0A] text-on-surface font-body-md text-body-md antialiased selection:bg-primary-container selection:text-primary min-h-screen flex">
+<!-- ========================================================================= -->
+<!-- SIDE NAVIGATION (From Shared Components JSON & Hierarchy)                 -->
+<!-- ========================================================================= -->
+<aside class="w-64 h-screen fixed left-0 top-0 flex flex-col justify-between py-6 px-4 bg-surface-container-low border-r border-outline z-30 select-none">
+<!-- Top Brand / Crest Header -->
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-2">
+<div class="w-8 h-8 rounded border border-outline bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-primary tracking-tight">Taskora Private Ops</span>
+<span class="font-code-sm text-code-sm text-secondary">PRJ-0982 Cloud Migration</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1 mt-2">
+<!-- 1. Ledger Overview -->
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm font-body-sm transition-colors duration-150 ease-out" href="#">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+<span>Ledger Overview</span>
+</a>
+<!-- 2. Workstreams -->
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm font-body-sm transition-colors duration-150 ease-out" href="#">
+<span class="material-symbols-outlined text-[18px]">account_tree</span>
+<span>Workstreams</span>
+</a>
+<!-- 3. Compliance & Vault -->
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm font-body-sm transition-colors duration-150 ease-out" href="#">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+<span>Compliance &amp; Vault</span>
+</a>
+<!-- 4. Audit Log -->
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm font-body-sm transition-colors duration-150 ease-out" href="#">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span>Audit Log</span>
+</a>
+<!-- 5. Project Settings (ACTIVE per Intent / Hierarchy) -->
+<a class="flex items-center gap-3 px-3 py-2 text-primary bg-primary-container border-l-2 border-primary font-medium text-body-sm font-body-sm transition-colors duration-150 ease-out" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span>Project Settings</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Footer & Operator Badge -->
+<div class="flex flex-col gap-4 border-t border-outline pt-4">
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm font-body-sm transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">vpn_key</span>
+<span>Security Keys</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-on-surface hover:bg-surface-container text-body-sm font-body-sm transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">shield</span>
+<span>System Status</span>
+</a>
+</div>
+<button class="w-full py-2 px-3 border border-outline hover:border-secondary text-secondary hover:text-on-surface text-body-sm font-body-sm rounded flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Lock Vault</span>
+</button>
+<!-- Operator Identity Card -->
+<div class="flex items-center gap-3 pt-2 px-1">
+<div class="w-8 h-8 rounded bg-surface-container-high border border-outline flex items-center justify-center text-primary font-headline-sm text-headline-sm">
+          MA
+        </div>
+<div class="flex flex-col overflow-hidden">
+<span class="font-body-sm text-body-sm font-medium text-on-surface truncate">Maya Al-Mansoor</span>
+<span class="font-label-sm text-label-sm text-secondary truncate">Principal Partner</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CONTAINER                                                  -->
+<!-- ========================================================================= -->
+<div class="flex-1 ml-64 flex flex-col min-h-screen bg-[#0C0B0A]">
+<!-- TOP NAVIGATION BAR (From Shared Components JSON) -->
+<header class="h-14 fixed top-0 right-0 left-64 z-20 bg-surface-container-low/90 backdrop-blur-md border-b border-outline flex items-center justify-between px-8">
+<!-- Breadcrumb Cluster -->
+<div class="flex items-center gap-2 font-code-sm text-code-sm">
+<span class="text-secondary hover:text-primary transition-colors cursor-pointer">Projects</span>
+<span class="text-secondary/50">/</span>
+<span class="text-secondary hover:text-primary transition-colors cursor-pointer">Cloud Migration Initiative</span>
+<span class="text-secondary/50">/</span>
+<span class="text-primary font-medium">Settings</span>
+</div>
+<!-- Trailing Status Pill & Auxiliary Controls -->
+<div class="flex items-center gap-4">
+<!-- Block Sync Pill -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded bg-surface-container border border-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-code-sm text-[11px] text-secondary">SYNCHRONIZED Block #48,192</span>
+</div>
+<!-- Language Switcher -->
+<div class="font-code-sm text-code-sm text-secondary hover:text-on-surface cursor-pointer px-1 border-r border-outline pr-3">
+          EN / العربية
+        </div>
+<!-- Trailing Action Icons per Shared JSON -->
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 rounded flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="Vault Lock Status">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="Verified Enclave Cert">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-secondary hover:text-on-surface hover:bg-surface-container transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+</button>
+</div>
+<!-- Chief Risk Officer Portrait Avatar Monogram -->
+<div class="w-7 h-7 rounded border border-outline bg-surface-container-high flex items-center justify-center text-primary text-[11px] font-semibold" title="Chief Risk Officer portrait badge">
+          CR
+        </div>
+</div>
+</header>
+<!-- CONTENT CANVAS -->
+<main class="flex-1 mt-14 px-12 py-10 max-w-5xl w-full mx-auto">
+<!-- Page Header Banner -->
+<div class="pb-8">
+<div class="font-code-sm text-code-sm text-primary tracking-wider uppercase mb-1">
+          ENCLAVE VAULT PRJ-0982 · ZURICH · RESTRICTED DISCRETION
+        </div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">
+          Project Settings
+        </h1>
+<p class="font-body-md text-body-md text-secondary mt-2 max-w-2xl leading-relaxed">
+          Configure ledger parameters, access credentials, and institutional authorization policies for the Cloud Migration Initiative enclave.
+        </p>
+</div>
+<!-- Hairline Structural Separator -->
+<div class="w-full h-[1px] bg-outline mb-10"></div>
+<!-- ===================================================================== -->
+<!-- SECTION 1: GENERAL INFORMATION                                        -->
+<!-- ===================================================================== -->
+<section class="mb-14">
+<div class="mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">
+            General Information
+          </h2>
+<p class="font-body-sm text-body-sm text-secondary mt-1">
+            Core parameters and cryptographic metadata for this project workspace.
+          </p>
+</div>
+<div class="bg-surface-container border border-outline rounded p-6 flex flex-col gap-6">
+<!-- Two column grid: Name & Code -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Project Name Field -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-secondary">
+                Project Name
+              </label>
+<input class="w-full bg-surface-container-low border border-outline text-on-surface px-3.5 py-2.5 rounded text-body-md font-body-md focus:border-primary focus:ring-0 focus:outline-none transition-colors" type="text" value="Cloud Migration Initiative"/>
+</div>
+<!-- Project Identifier (Read Only) -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-secondary">
+                Project Identifier / Vault Code
+              </label>
+<div class="flex items-center justify-between w-full bg-surface-container-lowest border border-outline px-3.5 py-2.5 rounded text-body-md font-body-md">
+<span class="font-code-sm text-code-sm text-primary font-medium">PRJ-0982</span>
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-code-sm text-secondary">0x88F...49A</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">lock</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Description Textarea -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-secondary">
+              Description
+            </label>
+<textarea class="w-full bg-surface-container-low border border-outline text-on-surface px-3.5 py-2.5 rounded text-body-md font-body-md focus:border-primary focus:ring-0 focus:outline-none transition-colors resize-none leading-relaxed" rows="3">Multi-region cryptographic enclave migration from Zurich Tier-4 physical infrastructure to sovereign distributed vaults.</textarea>
+</div>
+<!-- Target Settlement Date -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-secondary">
+                Target Settlement Date / Fiduciary Quarter
+              </label>
+<input class="w-full bg-surface-container-low border border-outline text-on-surface px-3.5 py-2.5 rounded text-body-md font-body-md focus:border-primary focus:ring-0 focus:outline-none transition-colors" type="text" value="FY24-Q4 (Nov 14, 2024)"/>
+</div>
+</div>
+<!-- Form Action Cluster (Strictly NO arrows, NO uppercase) -->
+<div class="flex items-center justify-end gap-3 pt-4 border-t border-outline">
+<button class="px-4 py-2 border border-outline hover:border-secondary text-secondary hover:text-on-surface rounded font-body-sm text-body-sm transition-colors" type="button">
+              Discard Revisions
+            </button>
+<button class="px-5 py-2 bg-primary hover:bg-[#c5a25e] text-on-primary font-semibold rounded font-body-sm text-body-sm transition-colors" type="button">
+              Save Changes
+            </button>
+</div>
+</div>
+</section>
+<!-- Hairline Structural Separator -->
+<div class="w-full h-[1px] bg-outline mb-10"></div>
+<!-- ===================================================================== -->
+<!-- SECTION 2: TEAM MANAGEMENT & QUORUM                                   -->
+<!-- ===================================================================== -->
+<section class="mb-14">
+<div class="mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">
+            Team Management
+          </h2>
+<p class="font-body-sm text-body-sm text-secondary mt-1">
+            Authorized multi-signature signers and quorum members allocated to this vault.
+          </p>
+</div>
+<div class="bg-surface-container border border-outline rounded overflow-hidden">
+<!-- Inline Grant Member Bar -->
+<div class="p-4 border-b border-outline bg-surface-container-low flex flex-col sm:flex-row items-center gap-3">
+<div class="flex-1 w-full relative">
+<input class="w-full bg-surface-container border border-outline text-on-surface placeholder:text-secondary/40 px-3.5 py-2 rounded text-body-sm font-body-sm focus:border-primary focus:ring-0 focus:outline-none" placeholder="operator@firm.ch" type="email"/>
+</div>
+<div class="w-full sm:w-48">
+<select class="w-full bg-surface-container border border-outline text-on-surface px-3 py-2 rounded text-body-sm font-body-sm focus:border-primary focus:ring-0 focus:outline-none">
+<option value="signer">Member / Signer</option>
+<option value="auditor">Auditor</option>
+<option value="observer">Observer Node</option>
+</select>
+</div>
+<button class="w-full sm:w-auto px-4 py-2 border border-outline hover:border-secondary text-on-surface rounded font-body-sm text-body-sm whitespace-nowrap transition-colors" type="button">
+              Grant Credentials
+            </button>
+</div>
+<!-- Ledger Table Rows -->
+<div class="divide-y divide-outline">
+<!-- Member 1: Maya Al-Mansoor (Owner / Signer 1/3) -->
+<div class="p-4 flex items-center justify-between hover:bg-[#181614] transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-primary-container border border-primary/30 text-primary flex items-center justify-center font-semibold text-body-sm font-body-sm">
+                  MA
+                </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md text-on-surface font-medium">Maya Al-Mansoor</span>
+<span class="px-2 py-0.5 rounded bg-primary-container text-primary text-[11px] font-label-sm border border-primary/20">
+                      Owner
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">m.al-mansoor@firm.ch</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<div class="font-code-sm text-code-sm text-primary">Signer Quorum 1/3</div>
+<div class="font-label-sm text-label-sm text-secondary">Active now</div>
+</div>
+<div class="w-20 text-right">
+<span class="font-label-sm text-label-sm text-secondary/50 cursor-not-allowed">Protected</span>
+</div>
+</div>
+</div>
+<!-- Member 2: Reza Hakim -->
+<div class="p-4 flex items-center justify-between hover:bg-[#181614] transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-surface-container-high border border-outline text-secondary flex items-center justify-center font-semibold text-body-sm font-body-sm">
+                  RH
+                </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md text-on-surface font-medium">Reza Hakim</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary text-[11px] font-label-sm border border-outline">
+                      Member
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">r.hakim@firm.ch</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<div class="font-code-sm text-code-sm text-secondary">Signer Quorum 2/3</div>
+<div class="font-label-sm text-label-sm text-secondary">Active 42m ago</div>
+</div>
+<div class="w-20 text-right">
+<button class="px-2.5 py-1 border border-outline hover:border-secondary text-secondary hover:text-on-surface rounded text-label-sm font-label-sm transition-colors" type="button">
+                    Remove
+                  </button>
+</div>
+</div>
+</div>
+<!-- Member 3: Karin Lindqvist -->
+<div class="p-4 flex items-center justify-between hover:bg-[#181614] transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-surface-container-high border border-outline text-secondary flex items-center justify-center font-semibold text-body-sm font-body-sm">
+                  KL
+                </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md text-on-surface font-medium">Karin Lindqvist</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary text-[11px] font-label-sm border border-outline">
+                      Member
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">k.lindqvist@firm.ch</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<div class="font-code-sm text-code-sm text-secondary">Signer Quorum 3/3</div>
+<div class="font-label-sm text-label-sm text-secondary">Active 3h ago</div>
+</div>
+<div class="w-20 text-right">
+<button class="px-2.5 py-1 border border-outline hover:border-secondary text-secondary hover:text-on-surface rounded text-label-sm font-label-sm transition-colors" type="button">
+                    Remove
+                  </button>
+</div>
+</div>
+</div>
+<!-- Member 4: Tariq Vance -->
+<div class="p-4 flex items-center justify-between hover:bg-[#181614] transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-surface-container-high border border-outline text-secondary flex items-center justify-center font-semibold text-body-sm font-body-sm">
+                  TV
+                </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body-md text-body-md text-on-surface font-medium">Tariq Vance</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary text-[11px] font-label-sm border border-outline">
+                      Member
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">t.vance@firm.ch</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<div class="font-code-sm text-code-sm text-secondary">Observer Node</div>
+<div class="font-label-sm text-label-sm text-secondary">Active yesterday</div>
+</div>
+<div class="w-20 text-right">
+<button class="px-2.5 py-1 border border-outline hover:border-secondary text-secondary hover:text-on-surface rounded text-label-sm font-label-sm transition-colors" type="button">
+                    Remove
+                  </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Quorum Policy Notice Footer -->
+<div class="px-4 py-3 bg-surface-container-low border-t border-outline flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+<span class="font-code-sm text-code-sm text-secondary">
+              Quorum Requirement: 3 of 5 Multi-Signature authorizations required for state-level ledger commits.
+            </span>
+</div>
+</div>
+</section>
+<!-- Hairline Structural Separator -->
+<div class="w-full h-[1px] bg-outline mb-10"></div>
+<!-- ===================================================================== -->
+<!-- SECTION 3: DANGER ZONE                                                -->
+<!-- ===================================================================== -->
+<section class="mb-16">
+<div class="border border-error/30 bg-[#331915]/15 rounded p-6">
+<div class="flex items-start justify-between gap-6">
+<div class="flex flex-col gap-2 max-w-2xl">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold">
+                  Danger Zone
+                </h3>
+</div>
+<p class="font-body-sm text-body-sm text-secondary leading-relaxed">
+                Irrevocable de-provisioning of this enclave vault. Deleting this project will revoke all signer certificates, decommission local HSM allocations, and seal audit records into the permanent cold archive. This action cannot be reversed.
+              </p>
+</div>
+<div class="shrink-0 self-center">
+<button class="px-4 py-2 border border-error text-error hover:bg-error/10 rounded font-body-sm text-body-sm transition-colors" type="button">
+                Delete this project
+              </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Page Bottom Technical Status Bar -->
+<footer class="pt-6 pb-12 border-t border-outline flex flex-col sm:flex-row items-center justify-between text-secondary font-code-sm text-code-sm gap-4">
+<div>
+          TASKORA PRIVATE ENGINE v4.12 · ZURICH VAULT ENCLAVE · SHA-256 VERIFIED
+        </div>
+<div class="text-secondary/60">
+          STRICTLY CONFIDENTIAL
+        </div>
+</footer>
+</main>
+</div>
+</body></html>

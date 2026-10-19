@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Taskora — Authenticate Access</title>
+<!-- Google Fonts: Fraunces & Instrument Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#4c4639",
+            "tertiary-container": "#a7b5e5",
+            "surface": "#141211",
+            "surface-container-low": "#1e1b16",
+            "error-container": "#93000a",
+            "surface-container-highest": "#26231F",
+            "surface-variant": "#38342f",
+            "surface-container": "#221f1a",
+            "primary-fixed": "#ffdea1",
+            "outline-variant": "#3A352F",
+            "background": "#16130e",
+            "on-error-container": "#ffdad6",
+            "surface-bright": "#3c3933",
+            "secondary-fixed-dim": "#cfc5b5",
+            "on-primary": "#402d00",
+            "on-error": "#690005",
+            "tertiary": "#9A9183",
+            "surface-dim": "#0C0B0A",
+            "surface-container-high": "#1C1A17",
+            "surface-tint": "#e5c27c",
+            "surface-container-lowest": "#100e09",
+            "secondary": "#B5AC9C",
+            "on-tertiary-container": "#38466f",
+            "inverse-primary": "#755a1f",
+            "on-tertiary": "#202f56",
+            "on-background": "#e9e1d9",
+            "on-primary-fixed": "#261900",
+            "error": "#EE8A78",
+            "primary-container": "#d4b26e",
+            "on-secondary-container": "#bdb4a4",
+            "on-secondary-fixed": "#201b11",
+            "primary-fixed-dim": "#e5c27c",
+            "tertiary-fixed": "#dbe1ff",
+            "on-secondary": "#353024",
+            "secondary-fixed": "#ece1d0",
+            "primary": "#D4B26E",
+            "inverse-on-surface": "#33302a",
+            "on-tertiary-fixed": "#081940",
+            "on-primary-container": "#E2C282",
+            "inverse-surface": "#e9e1d9",
+            "on-surface-variant": "#B5AC9C",
+            "tertiary-fixed-dim": "#b7c5f6",
+            "on-primary-fixed-variant": "#5b4308",
+            "on-surface": "#e9e1d9",
+            "outline": "#2C2824",
+            "on-tertiary-fixed-variant": "#37456e",
+            "secondary-container": "#4c4639"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "margin": "1rem",
+            "gutter-desktop": "2rem",
+            "gutter": "1.5rem",
+            "space-2xl": "48px",
+            "space-sm": "8px",
+            "space-lg": "24px",
+            "space-md": "12px",
+            "space-xs": "4px",
+            "space-xl": "32px",
+            "margin-desktop": "2.5rem",
+            "space-base": "16px"
+          },
+          "fontFamily": {
+            "label-sm": ["Instrument Sans"],
+            "headline-lg": ["Fraunces"],
+            "body-lg": ["Instrument Sans"],
+            "headline-md": ["Fraunces"],
+            "display-lg": ["Fraunces"],
+            "body-md": ["Instrument Sans"],
+            "label-md": ["Instrument Sans"],
+            "headline-sm": ["Instrument Sans"],
+            "code-sm": ["monospace"],
+            "body-sm": ["Instrument Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen selection:bg-primary selection:text-on-primary">
+<main class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12">
+<!-- Left Pane: Brand Rail (5 cols on lg) -->
+<section class="lg:col-span-5 bg-surface-dim border-b lg:border-b-0 lg:border-r border-outline p-8 md:p-12 lg:p-16 flex flex-col justify-between relative overflow-hidden">
+<!-- Watermark Accent -->
+<div class="pointer-events-none absolute -right-20 -bottom-20 w-96 h-96 rounded-full border border-outline opacity-20"></div>
+<!-- Top Monogram & Institutional Header -->
+<header class="flex items-center space-x-4">
+<div class="w-10 h-10 border border-primary flex items-center justify-center bg-surface-container-lowest">
+<span class="font-headline-md text-headline-md text-primary leading-none select-none">T</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-on-background font-semibold tracking-tight">Taskora</h1>
+<p class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">Private Operations</p>
+</div>
+</header>
+<!-- Center Editorial Narrative -->
+<div class="my-16 lg:my-0 max-w-md">
+<div class="inline-flex items-center gap-2 mb-6 px-2.5 py-1 bg-surface-container border border-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
+<span class="font-code-sm text-code-sm text-secondary tracking-wider">RESTRICTED DISCRETION</span>
+</div>
+<h2 class="font-display-lg text-display-lg text-on-background font-semibold tracking-tight">
+          Private precision for ambitious teams.
+        </h2>
+<div class="w-12 h-px bg-primary my-6"></div>
+<p class="font-body-md text-body-md text-secondary leading-relaxed">
+          Engineered for sovereign family offices, private capital consortia, and institutional directors requiring cryptographically validated workflows and immutable audit trails.
+        </p>
+<!-- Ledger Specs Grid -->
+<div class="mt-8 grid grid-cols-2 gap-4 pt-6 border-t border-outline">
+<div>
+<span class="font-label-sm text-label-sm text-tertiary uppercase block">Enclave Status</span>
+<span class="font-code-sm text-code-sm text-on-surface">Synchronized</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-tertiary uppercase block">Governance</span>
+<span class="font-code-sm text-code-sm text-on-surface">Zero-Knowledge V2</span>
+</div>
+</div>
+</div>
+<!-- Bottom Metadata Node Info -->
+<footer class="pt-6 border-t border-outline flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-code-sm text-code-sm text-tertiary">
+<div class="flex items-center space-x-2">
+<span class="text-secondary font-medium">Taskora Private Engine v4.12</span>
+</div>
+<div class="flex items-center space-x-4">
+<span>Vault Node 01</span>
+<span class="text-outline">/</span>
+<span>Zurich Enclave</span>
+</div>
+</footer>
+</section>
+<!-- Right Pane: Clean Form Plane (7 cols on lg) -->
+<section class="lg:col-span-7 bg-surface p-8 md:p-12 lg:p-16 flex flex-col justify-between">
+<!-- Top Utility Header -->
+<div class="w-full flex items-center justify-between lg:justify-end pb-8 lg:pb-0">
+<!-- Mobile-only brand badge (mirrors desktop identity) -->
+<div class="lg:hidden flex items-center space-x-2">
+<span class="font-headline-sm text-headline-sm text-primary">Taskora</span>
+<span class="text-outline">/</span>
+<span class="font-label-sm text-label-sm text-secondary">Ledger Auth</span>
+</div>
+<!-- Trailing Utility Bar -->
+<div class="flex items-center space-x-6">
+<!-- Bilingual Language Toggle -->
+<div class="flex items-center border border-outline bg-surface-dim p-0.5 font-label-md text-label-md">
+<span class="px-2.5 py-1 text-primary font-semibold bg-surface-container">EN</span>
+<span class="px-2.5 py-1 text-secondary hover:text-primary transition-colors cursor-pointer">العربية</span>
+</div>
+<!-- Vertical Divider -->
+<div class="h-4 w-px bg-outline hidden sm:block"></div>
+<!-- Theme Status Indicator -->
+<div class="flex items-center space-x-2 px-2.5 py-1 border border-outline bg-surface-dim">
+<span class="material-symbols-outlined text-primary text-sm leading-none" data-icon="dark_mode">dark_mode</span>
+<span class="font-label-sm text-label-sm text-secondary select-none">Active</span>
+</div>
+</div>
+</div>
+<!-- Centered Authentication Form Section -->
+<div class="w-full max-w-[420px] mx-auto my-12 lg:my-auto">
+<!-- Form Header -->
+<div class="mb-8">
+<h3 class="font-headline-lg text-headline-lg text-on-background font-semibold">
+            Sign in to Ledger
+          </h3>
+<p class="font-body-md text-body-md text-secondary mt-2">
+            Enter your institutional credentials to open your workspace.
+          </p>
+</div>
+<!-- Form Elements -->
+<form class="space-y-5" onsubmit="event.preventDefault();">
+<!-- Email Input -->
+<div>
+<label class="block font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-2" for="work-email">
+              Work Email
+            </label>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-dim border border-outline rounded text-on-background placeholder:text-outline-variant font-body-md text-body-md focus:border-primary focus:ring-0 focus:outline-none transition-colors" id="work-email" name="email" placeholder="principal@firm.ch" required="" type="email"/>
+</div>
+</div>
+<!-- Password / Access Key Input -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<label class="font-label-sm text-label-sm text-secondary uppercase tracking-wider" for="access-key">
+                Access Key
+              </label>
+</div>
+<div class="relative">
+<input class="w-full h-11 px-4 bg-surface-dim border border-outline rounded text-on-background placeholder:text-outline-variant font-code-sm text-code-sm focus:border-primary focus:ring-0 focus:outline-none transition-colors" id="access-key" name="password" placeholder="••••••••••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Checkbox Options -->
+<div class="pt-1">
+<label class="flex items-center space-x-3 cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded border-outline bg-surface-dim text-primary focus:ring-0 focus:ring-offset-0 transition-colors" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-secondary">
+                Remember session on this authorized terminal
+              </span>
+</label>
+</div>
+<!-- Primary Action CTA -->
+<div class="pt-2">
+<button class="w-full h-11 bg-primary text-on-primary font-headline-sm text-headline-sm font-semibold rounded flex items-center justify-center transition-colors hover:bg-on-primary-container focus:outline-none" type="submit">
+              Sign in
+            </button>
+</div>
+</form>
+<!-- Workspace Request Link -->
+<div class="mt-8 pt-6 border-t border-outline text-center">
+<p class="font-body-sm text-body-sm text-secondary">
+            New team or institution? 
+            <a class="text-primary hover:text-on-primary-container transition-colors ml-1 font-medium underline underline-offset-4 decoration-outline hover:decoration-primary" href="#request-access">
+              Request workspace access
+            </a>
+</p>
+</div>
+</div>
+<!-- Right Pane Footer Legal & Verification -->
+<footer class="pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-code-sm text-code-sm text-tertiary">
+<p class="text-secondary">
+          Strictly Confidential
+          <span class="text-outline mx-2">/</span>
+          All sessions cryptographically verified
+        </p>
+<a class="text-secondary hover:text-primary transition-colors underline underline-offset-4 decoration-outline" href="#security">
+          Security Protocol
+        </a>
+</footer>
+</section>
+</main>
+</body></html>

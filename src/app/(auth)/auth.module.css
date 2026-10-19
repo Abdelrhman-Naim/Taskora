@@ -1,141 +1,236 @@
-.pageContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+/* ==========================================================================
+   Obsidian Ledger — Authentication Layout & Styles
+   Two-column split layout (Identity Rail + Form Plane), collapsing < 768px.
+   ========================================================================== */
+
+.splitPage {
   min-block-size: 100dvh;
+  inline-size: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
   background-color: var(--bg);
   color: var(--text);
   box-sizing: border-box;
 }
 
-.topBar {
-  inline-size: 100%;
+@media (min-width: 860px) {
+  .splitPage {
+    grid-template-columns: minmax(360px, 480px) 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Left Identity Rail (Persistent Dark Slate / Obsidian)
+   -------------------------------------------------------------------------- */
+
+.identityRail {
+  background-color: var(--sidebar-bg);
+  border-block-end: 1px solid var(--line);
+  padding: var(--sp-6) var(--sp-6);
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  padding-inline: var(--sp-5);
-  block-size: 56px;
-  border-block-end: 1px solid var(--border);
-  background-color: var(--surface);
+  gap: var(--sp-6);
+  position: relative;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
-.brand {
+@media (min-width: 860px) {
+  .identityRail {
+    border-block-end: none;
+    border-inline-end: 1px solid var(--line);
+    padding: var(--sp-8) var(--sp-8);
+    min-block-size: 100dvh;
+  }
+}
+
+.brandHeader {
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
+  gap: var(--sp-3);
 }
 
 .logoMonogram {
-  inline-size: 28px;
-  block-size: 28px;
-  border-radius: var(--radius-sm);
-  background-color: var(--accent);
+  inline-size: 36px;
+  block-size: 36px;
+  border-radius: 6px;
+  background-color: var(--surface);
+  border: 1px solid var(--accent);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--on-accent);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
-.brandName {
+.brandMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandTitle {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--text);
+  color: var(--sidebar-text);
+  margin: 0;
+  line-height: 1.2;
 }
 
-.versionBadge {
-  padding-inline: 6px;
-  padding-block: 2px;
-  border-radius: var(--radius-sm);
-  background-color: var(--surface-2);
-  border: 1px solid var(--border);
+.brandSubtitle {
   font-family: var(--font-body);
-  font-size: var(--fs-0);
-  color: var(--text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0;
 }
 
-.topBarActions {
+.narrativeBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  max-inline-size: 380px;
+}
+
+.discretionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--line);
+  font-size: 0.7rem;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+  color: var(--text-2);
+  align-self: flex-start;
+}
+
+.discretionDot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+.narrativeHeadline {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--sidebar-text);
+  margin: 0;
+}
+
+.champagneRule {
+  inline-size: 48px;
+  block-size: 1px;
+  background-color: var(--accent);
+  margin-block: var(--sp-2);
+}
+
+.narrativeBody {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-2);
+  margin: 0;
+}
+
+.railFooter {
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px solid var(--line);
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--text-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   Right Form Plane (Clean, High-Contrast Surface)
+   -------------------------------------------------------------------------- */
+
+.formPlane {
+  background-color: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--sp-6) var(--sp-5);
+  box-sizing: border-box;
+}
+
+@media (min-width: 860px) {
+  .formPlane {
+    padding: var(--sp-8) var(--sp-8);
+  }
+}
+
+.topBarUtility {
+  inline-size: 100%;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--sp-2);
 }
 
-.mainArea {
+.formContentWrapper {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--sp-4);
+  padding-block: var(--sp-6);
 }
 
 .cardWrapper {
   inline-size: 100%;
-  max-inline-size: 28rem;
+  max-inline-size: 420px;
   background-color: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-1);
-  position: relative;
-  overflow: hidden;
-}
-
-.accentBar {
-  block-size: 3px;
-  inline-size: 100%;
-  background-color: var(--accent);
-}
-
-.cardBody {
   padding: var(--sp-6) var(--sp-6);
+  position: relative;
+  box-sizing: border-box;
 }
 
 .headerBlock {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
   margin-block-end: var(--sp-6);
-}
-
-.headerLogo {
-  inline-size: 44px;
-  block-size: 44px;
-  border-radius: var(--radius-md);
-  background-color: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--on-accent);
-  margin-block-end: var(--sp-3);
+  text-align: start;
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: var(--fs-4);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--text);
-  margin-block-start: 0;
-  margin-block-end: var(--sp-1);
+  margin-block: 0 var(--sp-2);
 }
 
 .subtitle {
-  font-size: var(--fs-1);
-  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.5;
   margin: 0;
-  line-height: var(--lh-body);
 }
 
 .footerRow {
   margin-block-start: var(--sp-6);
   padding-block-start: var(--sp-4);
-  border-block-start: 1px solid var(--border);
+  border-block-start: 1px solid var(--line);
   text-align: center;
-  font-size: var(--fs-1);
-  color: var(--text-muted);
+  font-size: 0.875rem;
+  color: var(--text-2);
 }
 
 .switchLink {
@@ -149,9 +244,10 @@
   text-decoration: underline;
 }
 
-.pageFooter {
-  padding-block: var(--sp-4);
+.securityNote {
+  padding-block-start: var(--sp-4);
   text-align: center;
-  font-size: var(--fs-0);
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  color: var(--text-3);
+  font-family: monospace;
 }

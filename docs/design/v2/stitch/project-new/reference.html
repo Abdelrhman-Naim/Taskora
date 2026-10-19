@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" style="color-scheme: dark;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskora — Initiate New Project (Obsidian Ledger)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0C0B0A;
+      --surface: #141211;
+      --surface-raised: #1C1A17;
+      --surface-overlay: #26231F;
+      --line: #2C2824;
+      --line-strong: #3A352F;
+      --text: #EFE9DD;
+      --text-2: #B5AC9C;
+      --text-3: #9A9183;
+      --accent: #D4B26E;
+      --accent-hover: #E2C282;
+      --on-accent: #1A1408;
+      --sidebar-bg: #11100E;
+      --sidebar-text: #EFE9DD;
+      --sidebar-muted: #9A9183;
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Instrument Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: 264px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--line);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .brand {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      border-radius: 4px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 0.6rem 0.75rem;
+      color: var(--sidebar-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .nav-item.active {
+      color: var(--text);
+      background: rgba(239, 233, 221, 0.04);
+      border-left: 2px solid var(--accent);
+    }
+    .main-plane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      height: 56px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-2);
+      font-size: 0.875rem;
+    }
+    .content-area {
+      flex: 1;
+      padding: 3rem 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .form-panel {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 2.5rem;
+    }
+    .form-header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1.25rem;
+    }
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .form-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 0.5rem;
+    }
+    .input, .textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input:focus, .textarea:focus {
+      border-color: var(--accent);
+    }
+    .textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+    .btn-ghost {
+      color: var(--text-2);
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--on-accent);
+      border: 1px solid var(--accent);
+      padding: 0.65rem 1.5rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">T</span>
+      <span>Taskora</span>
+    </div>
+    <div class="nav-item">Dashboard</div>
+    <div class="nav-item active">New Project</div>
+  </div>
+  <div class="main-plane">
+    <div class="topbar">
+      <div>Projects / Initiate New Enclave</div>
+      <div>EN · Light/Dark</div>
+    </div>
+    <div class="content-area">
+      <div class="form-panel">
+        <div class="form-header">
+          <h1 class="form-title">Initiate New Project</h1>
+          <p class="form-subtitle">Establish a cryptographically provisioned project workspace container.</p>
+        </div>
+        <form>
+          <div class="form-group">
+            <label class="label" for="name">Project Name</label>
+            <input class="input" id="name" type="text" placeholder="e.g. Sovereign Vault Migration" required />
+          </div>
+          <div class="form-group">
+            <label class="label" for="description">Scope Description</label>
+            <textarea class="textarea" id="description" placeholder="Brief statement of scope, protocols, and deliverables..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-ghost">Cancel</button>
+            <button type="submit" class="btn-primary">Create Project</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Taskora — Cloud Migration Initiative</title>
+<!-- Typography -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&amp;family=Instrument+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with strict tokens -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#5b4308",
+            "secondary-fixed": "#ece1d0",
+            "surface-container-high": "#1C1A17",
+            "surface-bright": "#1C1A17",
+            "surface-container-low": "#1e1b16",
+            "on-primary-container": "#5c4409",
+            "surface-dim": "#0C0B0A",
+            "primary": "#D4B26E",
+            "primary-fixed-dim": "#e5c27c",
+            "surface-container": "#221f1a",
+            "on-surface": "#e9e1d9",
+            "on-surface-variant": "#d0c5b4",
+            "on-error-container": "#ffdad6",
+            "surface-variant": "#38342f",
+            "inverse-surface": "#e9e1d9",
+            "on-tertiary-fixed-variant": "#37456e",
+            "tertiary-fixed": "#dbe1ff",
+            "outline-variant": "#3A352F",
+            "tertiary": "#9A9183",
+            "on-primary-fixed": "#261900",
+            "error": "#EE8A78",
+            "background": "#16130e",
+            "primary-container": "#d4b26e",
+            "on-background": "#e9e1d9",
+            "on-tertiary": "#202f56",
+            "error-container": "#93000a",
+            "on-tertiary-container": "#38466f",
+            "surface-container-lowest": "#0C0B0A",
+            "surface": "#141211",
+            "on-tertiary-fixed": "#081940",
+            "inverse-primary": "#755a1f",
+            "on-secondary": "#141211",
+            "on-primary": "#1A1408",
+            "on-secondary-fixed-variant": "#4c4639",
+            "secondary-fixed-dim": "#cfc5b5",
+            "surface-container-highest": "#26231F",
+            "tertiary-fixed-dim": "#b7c5f6",
+            "on-secondary-fixed": "#201b11",
+            "secondary": "#B5AC9C",
+            "on-error": "#690005",
+            "tertiary-container": "#a7b5e5",
+            "secondary-container": "#4c4639",
+            "inverse-on-surface": "#33302a",
+            "primary-fixed": "#ffdea1",
+            "on-secondary-container": "#bdb4a4",
+            "outline": "#2C2824",
+            "surface-tint": "#e5c27c"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-lg": "24px",
+            "margin": "1rem",
+            "space-2xl": "48px",
+            "space-sm": "8px",
+            "space-xl": "32px",
+            "space-base": "16px",
+            "gutter-desktop": "2rem",
+            "gutter": "1.5rem",
+            "space-xs": "4px",
+            "space-md": "12px",
+            "margin-desktop": "2.5rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Instrument Sans"],
+            "code-sm": ["monospace"],
+            "body-sm": ["Instrument Sans"],
+            "body-md": ["Instrument Sans"],
+            "display-lg": ["Fraunces"],
+            "headline-lg": ["Fraunces"],
+            "body-lg": ["Instrument Sans"],
+            "label-md": ["Instrument Sans"],
+            "headline-md": ["Fraunces"],
+            "label-sm": ["Instrument Sans"]
+          },
+          "fontSize": {
+            "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }],
+            "code-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 350, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      display: inline-block;
+      line-height: 1;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined[data-weight="fill"] {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Tabular figures for ledger precision */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0C0B0A;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2C2824;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3A352F;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased font-body-md selection:bg-primary selection:text-on-primary min-h-screen flex">
+<!-- ========================================================================= -->
+<!-- 1. PERSISTENT SIDEBAR NAVIGATION (Shared Component Implementation)      -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[264px] bg-[#11100E] border-r border-outline flex flex-col justify-between z-50 select-none">
+<!-- Top Workspace Brand & Tree -->
+<div class="flex flex-col">
+<!-- Vault Header -->
+<div class="h-14 px-space-base flex items-center justify-between border-b border-outline">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded-none bg-surface-container-high border border-primary/40 flex items-center justify-center text-primary font-headline-md text-label-sm font-semibold tracking-tighter">
+            T
+          </div>
+<div>
+<div class="font-headline-md text-headline-sm font-semibold text-on-surface tracking-tight leading-none">TASKORA</div>
+<div class="font-label-sm text-[9px] tracking-widest uppercase text-tertiary mt-0.5">Private Operations</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-tertiary cursor-pointer hover:text-primary transition-colors duration-150" data-icon="lock">lock</span>
+</div>
+<!-- Navigation Hierarchy -->
+<nav class="pt-space-base pb-space-sm px-space-xs space-y-0.5">
+<!-- Dashboard -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[17px]" data-icon="account_balance">account_balance</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Projects (Expanded with Sub-Tree) -->
+<div>
+<div class="flex items-center justify-between px-space-md py-space-sm text-on-surface font-label-md font-medium">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[17px] text-primary" data-icon="assignment">assignment</span>
+<span>Projects</span>
+</div>
+<span class="material-symbols-outlined text-tertiary text-xs" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Project Sub-items Tree -->
+<div class="mt-0.5 pl-space-md space-y-0.5 border-l border-outline/70 ml-5">
+<!-- Active Project: Cloud Migration Initiative -->
+<a class="flex items-center justify-between px-space-md py-1.5 bg-surface-container-low text-primary border-l-2 border-primary -ml-[1px] font-medium text-body-sm transition-colors duration-150" href="#">
+<span class="truncate">Cloud Migration Initiative</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
+</a>
+<a class="flex items-center px-space-md py-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low/50 text-body-sm transition-colors duration-150" href="#">
+<span class="truncate">Website Redesign</span>
+</a>
+<a class="flex items-center px-space-md py-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low/50 text-body-sm transition-colors duration-150" href="#">
+<span class="truncate">Institutional Security Audit</span>
+</a>
+<a class="flex items-center px-space-md py-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low/50 text-body-sm transition-colors duration-150" href="#">
+<span class="truncate">Private Client Portal</span>
+</a>
+</div>
+</div>
+<!-- Ledger Archive -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[17px]" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Ledger Archive</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[17px]" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm text-secondary hover:bg-surface-container hover:text-on-surface transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[17px]" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Operator Identity Badge -->
+<div class="p-space-base border-t border-outline bg-[#0C0B0A]/60">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-none border border-primary/50 bg-surface-container flex items-center justify-center font-headline-md text-primary font-semibold text-body-sm">
+            M
+          </div>
+<div class="leading-tight">
+<div class="font-headline-sm text-body-md font-medium text-on-surface">Maya Al-Mansoor</div>
+<div class="font-label-sm text-tertiary text-label-sm">Principal Partner</div>
+</div>
+</div>
+<button class="text-tertiary hover:text-primary transition-colors p-1" title="Sign out">
+<span class="material-symbols-outlined text-base" data-icon="logout">logout</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-outline/50 font-code-sm text-[10px] text-tertiary">
+<span>EST. 2021 · 0x88F</span>
+<span class="text-primary/70">PROD-VAULT</span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CANVAS                                                    -->
+<!-- ========================================================================= -->
+<div class="ml-[264px] flex-1 flex flex-col min-w-0 min-h-screen bg-surface-container-lowest">
+<!-- Top App Bar Utility Strip -->
+<header class="h-14 border-b border-outline bg-[#0C0B0A]/85 backdrop-blur-md sticky top-0 z-40 px-space-xl flex items-center justify-between">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 font-label-md text-label-md">
+<span class="text-tertiary hover:text-on-surface cursor-pointer transition-colors">Projects</span>
+<span class="text-outline-variant font-code-sm">/</span>
+<span class="text-on-surface font-medium">Cloud Migration Initiative</span>
+</div>
+<!-- Trailing Status & Controls -->
+<div class="flex items-center gap-space-lg">
+<!-- Cryptographic sync indicator -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-high border border-outline text-tertiary font-code-sm text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="tracking-wide">SYNCHRONIZED Block #48,192</span>
+</div>
+<!-- Language toggle -->
+<button class="font-label-md text-label-sm text-tertiary hover:text-primary transition-colors tracking-wider">
+          EN / العربية
+        </button>
+<!-- Divider -->
+<div class="h-4 w-px bg-outline"></div>
+<!-- Utility Icons -->
+<div class="flex items-center gap-3 text-tertiary">
+<button class="hover:text-on-surface transition-colors" title="Sync Status">
+<span class="material-symbols-outlined text-[19px]" data-icon="sync">sync</span>
+</button>
+<button class="hover:text-on-surface transition-colors" title="Dark Mode Toggle">
+<span class="material-symbols-outlined text-[19px]" data-icon="dark_mode">dark_mode</span>
+</button>
+<div class="w-6 h-6 rounded-none bg-surface-container border border-outline flex items-center justify-center font-headline-md text-label-sm text-primary font-medium" title="User Signature">
+            M
+          </div>
+</div>
+</div>
+</header>
+<!-- Main Content Container (Strict Horizontal & Vertical Rhythm) -->
+<main class="flex-1 flex flex-col px-space-xl py-space-xl max-w-[1520px] w-full mx-auto">
+<!-- ===================================================================== -->
+<!-- 2. PROJECT EDITORIAL HEADER & METRICS                                -->
+<!-- ===================================================================== -->
+<section class="border-b border-outline pb-space-xl">
+<!-- Title & Executive Subtitle -->
+<div class="flex flex-col md:flex-row md:items-start md:justify-between gap-space-lg mb-space-xl">
+<div class="space-y-1.5 max-w-3xl">
+<div class="flex items-center gap-2 text-primary font-code-sm text-label-sm tracking-wider uppercase">
+<span class="material-symbols-outlined text-sm" data-icon="verified_user">verified_user</span>
+<span>Enclave Vault PRJ-0982 · Zurich</span>
+</div>
+<h1 class="font-headline-lg text-3xl md:text-[32px] font-semibold text-[#EFE9DD] tracking-tight leading-tight">
+              Cloud Migration Initiative
+            </h1>
+<p class="font-body-md text-secondary text-body-md max-w-2xl leading-relaxed">
+              Multi-region cryptographic enclave migration from Zurich Tier-4 physical infrastructure to sovereign distributed vaults.
+            </p>
+</div>
+<!-- Affirmative Actions Cluster -->
+<div class="flex items-center gap-space-md self-start shrink-0 pt-1">
+<button class="px-4 py-2 bg-transparent border border-outline hover:bg-surface-container-high text-on-surface font-label-md text-body-sm transition-colors duration-150 flex items-center gap-1.5 rounded-[6px]">
+<span class="material-symbols-outlined text-base text-tertiary" data-icon="settings">settings</span>
+<span>Settings</span>
+</button>
+<button class="px-4 py-2 bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-md text-body-sm font-semibold transition-colors duration-150 flex items-center gap-1.5 rounded-[6px] shadow-sm">
+<span class="material-symbols-outlined text-base font-bold" data-icon="add">add</span>
+<span>New Task</span>
+</button>
+</div>
+</div>
+<!-- Metrics & Fiduciary Oversight Ribbon -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-lg pt-space-lg border-t border-outline/70 bg-surface-container-lowest">
+<!-- Progress Column -->
+<div class="md:col-span-4 flex flex-col justify-between pr-space-lg border-r border-outline/50">
+<div>
+<div class="flex items-baseline justify-between mb-1.5">
+<span class="font-label-md text-[11px] font-medium tracking-wider text-tertiary uppercase">Project Completion</span>
+<span class="font-code-sm text-xs text-primary font-medium tracking-tight">18 of 22 Tasks Reconciled</span>
+</div>
+<div class="flex items-baseline gap-2 mb-2">
+<span class="font-headline-md text-4xl text-primary font-normal tabular-nums leading-none">82%</span>
+<span class="text-tertiary font-body-sm text-xs">execution quota</span>
+</div>
+</div>
+<!-- Hairline Progress Bar -->
+<div class="w-full bg-[#2C2824] h-[3px] rounded-none overflow-hidden">
+<div class="bg-primary h-full" style="width: 82%;"></div>
+</div>
+</div>
+<!-- Protocol Metadata -->
+<div class="md:col-span-5 flex flex-col justify-between px-space-base border-r border-outline/50 space-y-2">
+<div class="grid grid-cols-2 gap-y-3 font-code-sm text-xs">
+<div>
+<span class="block text-tertiary text-[10px] uppercase tracking-wider mb-0.5">Target Settlement</span>
+<span class="text-on-surface font-medium">NOV 14, 2024</span>
+</div>
+<div>
+<span class="block text-tertiary text-[10px] uppercase tracking-wider mb-0.5">Security Protocol</span>
+<span class="text-on-surface font-medium">HSM v4.2 · AIRGAP</span>
+</div>
+<div class="col-span-2">
+<span class="block text-tertiary text-[10px] uppercase tracking-wider mb-0.5">Fiduciary Lead</span>
+<span class="text-on-surface font-medium">MA (Maya Al-Mansoor) · Sovereign Syndicate</span>
+</div>
+</div>
+</div>
+<!-- Member Tokens Stack -->
+<div class="md:col-span-3 flex flex-col justify-between pl-space-base">
+<div>
+<span class="block font-label-md text-[11px] font-medium tracking-wider text-tertiary uppercase mb-2">Authorized Signers</span>
+<div class="flex items-center -space-x-1.5">
+<div class="w-7 h-7 rounded-none border border-outline bg-surface-container flex items-center justify-center font-headline-md text-xs text-primary font-medium z-40" title="Maya Al-Mansoor">
+                  MA
+                </div>
+<div class="w-7 h-7 rounded-none border border-outline bg-[#1A1815] flex items-center justify-center font-headline-md text-xs text-secondary font-medium z-30" title="Rami Hadid">
+                  RH
+                </div>
+<div class="w-7 h-7 rounded-none border border-outline bg-[#201D19] flex items-center justify-center font-headline-md text-xs text-secondary font-medium z-20" title="Karin Lindqvist">
+                  KL
+                </div>
+<div class="w-7 h-7 rounded-none border border-outline bg-surface-container-highest flex items-center justify-center font-code-sm text-[10px] text-tertiary font-medium z-10" title="Additional Keyholders">
+                  +2
+                </div>
+</div>
+</div>
+<div class="text-[11px] font-code-sm text-tertiary pt-1">
+              Quorum: 3 of 5 Multi-Sig
+            </div>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 3. LEDGER FILTER BAR                                                 -->
+<!-- ===================================================================== -->
+<section class="mt-space-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3 border-b border-outline">
+<div class="flex flex-wrap items-center gap-2">
+<!-- Search input -->
+<div class="relative w-64 md:w-72">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-tertiary text-base pointer-events-none" data-icon="search">search</span>
+<input class="w-full h-9 pl-8 pr-3 bg-surface border border-outline text-on-surface text-body-sm placeholder:text-tertiary/70 rounded-none focus:outline-none focus:border-primary transition-colors font-body-sm" placeholder="Search tasks in Cloud Migration..." type="text"/>
+</div>
+<!-- Status Dropdown -->
+<button class="h-9 px-3 bg-surface-container-low border border-outline text-secondary hover:text-on-surface hover:border-outline-variant text-body-sm font-label-md flex items-center gap-2 transition-colors">
+<span>Status: <strong class="text-on-surface font-medium">All (22)</strong></span>
+<span class="material-symbols-outlined text-xs text-tertiary" data-icon="expand_more">expand_more</span>
+</button>
+<!-- Priority Dropdown -->
+<button class="h-9 px-3 bg-surface-container-low border border-outline text-secondary hover:text-on-surface hover:border-outline-variant text-body-sm font-label-md flex items-center gap-2 transition-colors">
+<span>Priority: <strong class="text-on-surface font-medium">All</strong></span>
+<span class="material-symbols-outlined text-xs text-tertiary" data-icon="expand_more">expand_more</span>
+</button>
+<!-- Assignee Dropdown -->
+<button class="h-9 px-3 bg-surface-container-low border border-outline text-secondary hover:text-on-surface hover:border-outline-variant text-body-sm font-label-md flex items-center gap-2 transition-colors">
+<span>Assignee: <strong class="text-on-surface font-medium">All Members</strong></span>
+<span class="material-symbols-outlined text-xs text-tertiary" data-icon="expand_more">expand_more</span>
+</button>
+<!-- Overdue toggle button -->
+<button class="h-9 px-3 bg-[#1C1514] border border-[#522923] text-on-surface text-body-sm font-label-md flex items-center gap-2 hover:bg-[#251A18] transition-colors">
+<span class="w-2 h-2 rounded-full bg-error inline-block"></span>
+<span>Overdue Only <span class="font-code-sm text-xs text-error font-medium">(1)</span></span>
+</button>
+</div>
+<!-- Sort indicator -->
+<div class="flex items-center gap-1.5 text-tertiary font-code-sm text-xs self-end sm:self-center">
+<span class="material-symbols-outlined text-sm" data-icon="swap_vert">swap_vert</span>
+<span>Sorted by Due Date · Ascending</span>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- 4 & 5. HIGH-DENSITY CONTINUOUS FINANCIAL LEDGER TABLE                -->
+<!-- ===================================================================== -->
+<section class="mt-0 flex-1 overflow-x-auto">
+<table class="w-full border-collapse text-left">
+<!-- Table Ledger Head -->
+<thead>
+<tr class="border-b border-outline text-[11px] font-label-md uppercase tracking-wider text-tertiary bg-[#0C0B0A]">
+<th class="py-3 px-3 font-medium w-[44%]">Task Identifier &amp; Title</th>
+<th class="py-3 px-3 font-medium w-[14%]">Status</th>
+<th class="py-3 px-3 font-medium w-[11%]">Priority</th>
+<th class="py-3 px-3 font-medium w-[11%]">Assignee</th>
+<th class="py-3 px-3 font-medium w-[12%]">Due Date</th>
+<th class="py-3 px-3 font-medium w-[8%] text-right">Actions</th>
+</tr>
+</thead>
+<!-- Table Ledger Body -->
+<tbody class="divide-y divide-outline font-body-sm">
+<!-- ENTRY 1 (OVERDUE) -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group bg-error/5">
+<td class="py-3.5 px-3 align-top">
+<div class="flex items-start gap-2.5">
+<span class="font-code-sm text-[11px] text-error mt-0.5">#TSK-108</span>
+<div>
+<div class="font-medium text-on-surface group-hover:text-primary transition-colors flex items-center gap-2">
+<span>Consolidate cryptographic custody audit</span>
+<span class="px-1.5 py-0.2 bg-[#3b1713] text-error border border-[#6b251e] text-[10px] font-code-sm">OVERDUE</span>
+</div>
+<div class="text-tertiary text-xs mt-0.5 font-normal">Mandated by Zurich Advisory Board for node HSM parity.</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 text-error text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span>Overdue</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<span class="px-2 py-0.5 border border-[#5A2520] text-error bg-surface-container-lowest text-[11px] font-code-sm uppercase tracking-wide">
+                  Critical
+                </span>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 border border-outline bg-surface-container-high flex items-center justify-center font-headline-md text-[10px] text-primary">
+                    MA
+                  </div>
+<span class="text-secondary text-xs">M. Al-Mansoor</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="font-code-sm text-xs text-error font-medium">
+                  Oct 22, 2024
+                  <span class="block text-[10px] text-error/80">2d overdue</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1 text-tertiary">
+<button class="p-1 hover:text-primary hover:bg-surface-container transition-colors" title="View Audit Log">
+<span class="material-symbols-outlined text-[17px]" data-icon="history">history</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-surface-container transition-colors" title="Sign off task">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ENTRY 2 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-3.5 px-3 align-top">
+<div class="flex items-start gap-2.5">
+<span class="font-code-sm text-[11px] text-tertiary mt-0.5">#TSK-109</span>
+<div>
+<div class="font-medium text-on-surface group-hover:text-primary transition-colors">
+                      Sign off on Swiss data enclave transfer
+                    </div>
+<div class="text-tertiary text-xs mt-0.5 font-normal">Direct Transfer Protocol v3.1 dry-run execution.</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 text-[#8DB4E8] text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#8DB4E8]"></span>
+<span>In Progress</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<span class="px-2 py-0.5 border border-outline text-[#D4B26E] bg-surface-container-lowest text-[11px] font-code-sm uppercase tracking-wide">
+                  High
+                </span>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 border border-outline bg-surface-container-high flex items-center justify-center font-headline-md text-[10px] text-secondary">
+                    RH
+                  </div>
+<span class="text-secondary text-xs">R. Hadid</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="font-code-sm text-xs text-primary font-medium">
+                  Today, 17:00 CET
+                </div>
+</td>
+<td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1 text-tertiary">
+<button class="p-1 hover:text-primary hover:bg-surface-container transition-colors" title="Sign off task">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 hover:text-on-surface hover:bg-surface-container transition-colors" title="More options">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ENTRY 3 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-3.5 px-3 align-top">
+<div class="flex items-start gap-2.5">
+<span class="font-code-sm text-[11px] text-tertiary mt-0.5">#TSK-110</span>
+<div>
+<div class="font-medium text-on-surface group-hover:text-primary transition-colors">
+                      Zero-knowledge partition key ceremony
+                    </div>
+<div class="text-tertiary text-xs mt-0.5 font-normal">Generation of 4096-bit master institutional entropy seed.</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 text-[#8DB4E8] text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#8DB4E8]"></span>
+<span>In Progress</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<span class="px-2 py-0.5 border border-[#5A2520] text-error bg-surface-container-lowest text-[11px] font-code-sm uppercase tracking-wide">
+                  Critical
+                </span>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 border border-outline bg-surface-container-high flex items-center justify-center font-headline-md text-[10px] text-secondary">
+                    KL
+                  </div>
+<span class="text-secondary text-xs">K. Lindqvist</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="font-code-sm text-xs text-on-surface">
+                  Oct 26, 2024
+                </div>
+</td>
+<td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1 text-tertiary">
+<button class="p-1 hover:text-primary hover:bg-surface-container transition-colors" title="Sign off task">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 hover:text-on-surface hover:bg-surface-container transition-colors" title="More options">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ENTRY 4 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-3.5 px-3 align-top">
+<div class="flex items-start gap-2.5">
+<span class="font-code-sm text-[11px] text-tertiary mt-0.5">#TSK-111</span>
+<div>
+<div class="font-medium text-on-surface group-hover:text-primary transition-colors">
+                      Verify TLS 1.3 hardware acceleration offload
+                    </div>
+<div class="text-tertiary text-xs mt-0.5 font-normal">Benchmark Zurich Primaries node throughput under simulated failover.</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 text-[#B3AC9E] text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#B3AC9E]"></span>
+<span>Todo</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<span class="px-2 py-0.5 border border-outline text-secondary bg-surface-container-lowest text-[11px] font-code-sm uppercase tracking-wide">
+                  Medium
+                </span>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 border border-outline bg-surface-container-high flex items-center justify-center font-headline-md text-[10px] text-secondary">
+                    RH
+                  </div>
+<span class="text-secondary text-xs">R. Hadid</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="font-code-sm text-xs text-on-surface">
+                  Oct 29, 2024
+                </div>
+</td>
+<td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1 text-tertiary">
+<button class="p-1 hover:text-primary hover:bg-surface-container transition-colors" title="Sign off task">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 hover:text-on-surface hover:bg-surface-container transition-colors" title="More options">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ENTRY 5 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-3.5 px-3 align-top">
+<div class="flex items-start gap-2.5">
+<span class="font-code-sm text-[11px] text-tertiary mt-0.5">#TSK-112</span>
+<div>
+<div class="font-medium text-on-surface group-hover:text-primary transition-colors">
+                      Finalize quarterly fiduciary disclosure packet
+                    </div>
+<div class="text-tertiary text-xs mt-0.5 font-normal">Partner review required for sovereign family office syndicate.</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 text-[#8DB4E8] text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#8DB4E8]"></span>
+<span>In Progress</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<span class="px-2 py-0.5 border border-outline text-[#D4B26E] bg-surface-container-lowest text-[11px] font-code-sm uppercase tracking-wide">
+                  High
+                </span>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 border border-outline bg-surface-container-high flex items-center justify-center font-headline-md text-[10px] text-primary">
+                    MA
+                  </div>
+<span class="text-secondary text-xs">M. Al-Mansoor</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="font-code-sm text-xs text-on-surface">
+                  Nov 02, 2024
+                </div>
+</td>
+<td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1 text-tertiary">
+<button class="p-1 hover:text-primary hover:bg-surface-container transition-colors" title="Sign off task">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 hover:text-on-surface hover:bg-surface-container transition-colors" title="More options">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ENTRY 6 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group opacity-85">
+<td class="py-3.5 px-3 align-top">
+<div class="flex items-start gap-2.5">
+<span class="font-code-sm text-[11px] text-tertiary/70 mt-0.5">#TSK-097</span>
+<div>
+<div class="font-medium text-secondary line-through group-hover:text-on-surface transition-colors">
+                      Archive decommissioned Frankfurt HSM nodes
+                    </div>
+<div class="text-tertiary text-xs mt-0.5 font-normal">Physical de-provisioning certificate hash validation.</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 text-[#9CC5A1] text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#9CC5A1]"></span>
+<span>Done</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<span class="px-2 py-0.5 border border-outline text-tertiary bg-surface-container-lowest text-[11px] font-code-sm uppercase tracking-wide">
+                  Low
+                </span>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 border border-outline bg-surface-container-high flex items-center justify-center font-headline-md text-[10px] text-tertiary">
+                    KL
+                  </div>
+<span class="text-tertiary text-xs">K. Lindqvist</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="font-code-sm text-xs text-tertiary">
+                  Oct 18, 2024
+                </div>
+</td>
+<td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1 text-[11px] font-code-sm text-[#9CC5A1]">
+<span class="material-symbols-outlined text-sm text-[#9CC5A1]" data-icon="check">check</span>
+<span>Verified</span>
+</span>
+</td>
+</tr>
+<!-- ENTRY 7 -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group opacity-85">
+<td class="py-3.5 px-3 align-top">
+<div class="flex items-start gap-2.5">
+<span class="font-code-sm text-[11px] text-tertiary/70 mt-0.5">#TSK-095</span>
+<div>
+<div class="font-medium text-secondary line-through group-hover:text-on-surface transition-colors">
+                      Deploy failover quorum contracts to Node 02
+                    </div>
+<div class="text-tertiary text-xs mt-0.5 font-normal">Smart contract multi-sig validation on internal testbed.</div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="inline-flex items-center gap-1.5 text-[#9CC5A1] text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-[#9CC5A1]"></span>
+<span>Done</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<span class="px-2 py-0.5 border border-outline text-[#D4B26E] bg-surface-container-lowest text-[11px] font-code-sm uppercase tracking-wide">
+                  High
+                </span>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 border border-outline bg-surface-container-high flex items-center justify-center font-headline-md text-[10px] text-primary">
+                    MA
+                  </div>
+<span class="text-tertiary text-xs">M. Al-Mansoor</span>
+</div>
+</td>
+<td class="py-3.5 px-3 align-top whitespace-nowrap">
+<div class="font-code-sm text-xs text-tertiary">
+                  Oct 15, 2024
+                </div>
+</td>
+<td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1 text-[11px] font-code-sm text-[#9CC5A1]">
+<span class="material-symbols-outlined text-sm text-[#9CC5A1]" data-icon="check">check</span>
+<span>Verified</span>
+</span>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<!-- ===================================================================== -->
+<!-- 6. FOOTER / AUDIT STATUS STRIP                                       -->
+<!-- ===================================================================== -->
+<footer class="mt-space-2xl pt-space-base border-t border-outline flex flex-col sm:flex-row items-center justify-between gap-3 text-tertiary font-code-sm text-[11px]">
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#9CC5A1]"></span>
+<span>NODE QUORUM: 5/5 ONLINE</span>
+</span>
+<span class="text-outline-variant">·</span>
+<span>LATENCY: 14ms (ZURICH-IX)</span>
+</div>
+<div class="tracking-widest uppercase text-[10px] text-tertiary/80 text-center sm:text-right">
+          TASKORA PRIVATE ENGINE v4.12 · ZURICH VAULT ENCLAVE · SHA-256 VERIFIED · STRICTLY PRIVATE &amp; CONFIDENTIAL
+        </div>
+</footer>
+</main>
+</div>
+</body></html>

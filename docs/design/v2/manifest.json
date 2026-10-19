@@ -2,7 +2,7 @@
   "oldProjectId": "9219100436315328520",
   "newProjectId": "1925018263022126574",
   "designSystemId": "740bfefb8f9e46d4af43ed2ce7b44189",
-  "generationsUsed": 5,
+  "generationsUsed": 13,
   "generationsBudget": 90,
   "pages": {
     "login_smoke": {
@@ -19,6 +19,38 @@
     },
     "dashboard_mobile": {
       "screenId": "730ce2563bc6427f98ffc54810c11cbf",
+      "deviceType": "MOBILE"
+    },
+    "login_desktop": {
+      "screenId": "8fa26e584e844608b9719478762c969c",
+      "deviceType": "DESKTOP"
+    },
+    "login_mobile": {
+      "screenId": "79783bbb363f4a939418fbbe170fe15a",
+      "deviceType": "MOBILE"
+    },
+    "register_desktop": {
+      "screenId": "a9fa83a42c2a4d2d8e1474033fd6be66",
+      "deviceType": "DESKTOP"
+    },
+    "register_mobile": {
+      "screenId": "d31671a401a04dabb4dacc765985c7f5",
+      "deviceType": "MOBILE"
+    },
+    "project_desktop": {
+      "screenId": "4f4278efb6bb4246988e0c39de04fd28",
+      "deviceType": "DESKTOP"
+    },
+    "project_mobile": {
+      "screenId": "9b4da6adf84f412499e835ab39318b93",
+      "deviceType": "MOBILE"
+    },
+    "project_settings_desktop": {
+      "screenId": "a3a41719d3654c8abbb12f297adc215e",
+      "deviceType": "DESKTOP"
+    },
+    "project_settings_mobile": {
+      "screenId": "db2e95604a0e45feb6c7c4be27d8acfd",
       "deviceType": "MOBILE"
     }
   }
