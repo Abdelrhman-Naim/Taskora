@@ -89,7 +89,7 @@ export default function LoginPage() {
       </main>
 
       <footer className={styles.pageFooter}>
-        <span>&copy; {new Date().getFullYear()} Taskora. All rights reserved.</span>
+        <span>&copy; {new Date().getFullYear()} {t('app.name')}. {t('common.copyright')}</span>
       </footer>
     </div>
   );

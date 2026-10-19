@@ -21,6 +21,7 @@ export const en = {
   'common.all': 'All',
   'common.today': 'Today',
   'common.tomorrow': 'Tomorrow',
+  'common.copyright': 'All rights reserved.',
 
   // Navigation
   'nav.dashboard': 'Dashboard',

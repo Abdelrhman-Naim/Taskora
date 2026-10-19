@@ -163,7 +163,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await expect(memberPage).toHaveURL(/\/dashboard/);
 
     // Member sees the project
-    await expect(memberPage.getByText(`Website Redesign ${timestamp}`)).toBeVisible();
+    await expect(memberPage.getByText(`Website Redesign ${timestamp}`).first()).toBeVisible();
 
     // Member visits project and updates assigned task status (TC-10)
     await memberPage.goto(`/projects/${sharedProjectId}`);

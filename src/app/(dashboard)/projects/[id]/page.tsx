@@ -257,6 +257,7 @@ export default function ProjectPage(): React.ReactElement | null {
               variant="primary"
               icon="plus"
               data-testid="project-new-task-btn"
+              aria-label={`+ ${t('task.new.button')}`}
               onClick={() => {
                 setEditingTask(null);
                 setShowCreateForm(true);

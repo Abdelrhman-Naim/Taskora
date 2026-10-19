@@ -185,3 +185,52 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+
+.userSection {
+  margin-block-start: 16px;
+  padding-block-start: 12px;
+  border-block-start: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-inline-size: 0;
+  flex: 1;
+}
+
+.userDisplayName {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--sidebar-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 6px;
+  padding-inline: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--sidebar-text);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all var(--dur-1) var(--ease);
+  flex-shrink: 0;
+}
+
+.logoutBtn:hover {
+  background-color: var(--surface-hover);
+  color: var(--st-overdue-fg);
+  border-color: var(--border);
+}

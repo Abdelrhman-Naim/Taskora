@@ -23,6 +23,7 @@ export const ar: Record<MessageKey, string> = {
   'common.all': 'الكل',
   'common.today': 'اليوم',
   'common.tomorrow': 'غدًا',
+  'common.copyright': 'جميع الحقوق محفوظة.',
 
   // Navigation
   'nav.dashboard': 'لوحة التحكم',

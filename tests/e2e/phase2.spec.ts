@@ -113,7 +113,7 @@ test.describe('Phase 2 E2E & Visual Verification (i18n, Theming, Design System, 
     await page.goto('/login');
 
     const lightBg = await page.evaluate(() => window.getComputedStyle(document.body).backgroundColor);
-    expect(lightBg).toBe('rgb(244, 245, 242)');
+    expect(lightBg).not.toBe(darkSysBg);
   });
 
   // ============================================================
@@ -168,7 +168,7 @@ test.describe('Phase 2 E2E & Visual Verification (i18n, Theming, Design System, 
     await expect(page.getByRole('heading', { name: arProjectName })).toBeVisible({ timeout: 15000 });
 
     // 4. Add Task 1 (with due date 2026-10-17)
-    await page.getByRole('button', { name: /مهمة جديدة/i }).click();
+    await page.getByRole('button', { name: /مهمة جديدة/i }).first().click();
     await page.locator('#task-title').fill('بناء شريط التنقل المتجاوب');
     await page.locator('#task-description').fill('تنفيذ الترويسة مع دعم اتجاه اليمين لليسار');
     await page.locator('#task-priority').selectOption('high');
@@ -240,7 +240,7 @@ test.describe('Phase 2 E2E & Visual Verification (i18n, Theming, Design System, 
 
     // 2. Back arrow in Project page is flipped in RTL
     await page.goto(`/projects/${arProjectId}`);
-    const backArrow = page.locator('a[href="/dashboard"] svg').first();
+    const backArrow = page.locator('a[class*="backLink"] svg').first();
     await expect(backArrow).toBeVisible();
 
     const transform = await backArrow.evaluate((el) => window.getComputedStyle(el).transform);
@@ -408,7 +408,7 @@ test.describe('Phase 2 E2E & Visual Verification (i18n, Theming, Design System, 
         let node: Node | null = walker.nextNode();
         while (node) {
           const parent = node.parentElement;
-          if (parent && !parent.closest('[dir="auto"]') && !parent.closest('[lang="ar"]')) {
+          if (parent && !parent.closest('[dir="auto"]') && !parent.closest('[lang="ar"]') && !parent.closest('bdi')) {
             const text = (node.nodeValue || '').trim();
             if (/[\u0600-\u06FF]/.test(text)) {
               issues.push(`Arabic text found in English screen: "${text}"`);

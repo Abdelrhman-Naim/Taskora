@@ -189,7 +189,11 @@ export default function DashboardPage(): React.ReactElement {
               )}
             </div>
 
-            <Link href="/projects/new" className={styles.newProjectBtn}>
+            <Link
+              href="/projects/new"
+              className={styles.newProjectBtn}
+              aria-label={`+ ${t('dashboard.projects.createButton')}`}
+            >
               <Icon name="plus" size={16} />
               <span>{t('dashboard.projects.createButton')}</span>
             </Link>
@@ -225,7 +229,11 @@ export default function DashboardPage(): React.ReactElement {
             )}
           </div>
 
-          <Link href="/projects/new" className={styles.newProjectBtn}>
+          <Link
+            href="/projects/new"
+            className={styles.newProjectBtn}
+            aria-label={`+ ${t('dashboard.projects.createButton')}`}
+          >
             <Icon name="plus" size={16} />
             <span>{t('dashboard.projects.createButton')}</span>
           </Link>

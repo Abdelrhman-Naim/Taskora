@@ -31,7 +31,7 @@ export function Avatar({ name, size = 'md', className }: AvatarProps): React.Rea
       aria-hidden="true"
       title={name}
     >
-      <bdi>{initials}</bdi>
+      <bdi dir="auto">{initials}</bdi>
     </span>
   );
 }
