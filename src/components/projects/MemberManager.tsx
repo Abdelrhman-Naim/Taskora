@@ -90,11 +90,10 @@ export function MemberManager({
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '8px',
-            backgroundColor: 'var(--surface-2)',
-            border: '1px solid var(--border)',
+            backgroundColor: 'var(--surface)',
+            border: '1px solid var(--line)',
             borderRadius: 'var(--radius-lg)',
-            padding: '12px',
+            overflow: 'hidden',
           }}
         >
           {project.memberIds.map((uid) => {
@@ -109,11 +108,10 @@ export function MemberManager({
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  paddingBlock: '10px',
-                  paddingInline: '14px',
-                  backgroundColor: 'var(--surface)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--border)',
+                  paddingBlock: '12px',
+                  paddingInline: '16px',
+                  backgroundColor: 'transparent',
+                  borderBlockEnd: '1px solid var(--line)',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -124,13 +122,14 @@ export function MemberManager({
                     <span
                       style={{
                         fontSize: '0.6875rem',
-                        fontWeight: 700,
+                        fontWeight: 600,
                         textTransform: 'uppercase',
                         paddingBlock: '2px',
                         paddingInline: '8px',
                         borderRadius: '999px',
                         backgroundColor: 'var(--accent-soft)',
                         color: 'var(--accent-text)',
+                        border: '1px solid var(--line)',
                       }}
                     >
                       {t('member.role.owner')}
@@ -145,13 +144,13 @@ export function MemberManager({
                     disabled={loadingCount}
                     onClick={() => handleInitiateRemove(uid, name)}
                     style={{
-                      paddingBlock: '4px',
+                      paddingBlock: '6px',
                       paddingInline: '12px',
                       fontSize: '0.75rem',
                       fontWeight: 600,
                       backgroundColor: 'transparent',
                       color: 'var(--st-overdue-fg)',
-                      border: '1px solid var(--st-overdue-fg)',
+                      border: '1px solid var(--line)',
                       borderRadius: 'var(--radius-sm)',
                       cursor: loadingCount ? 'not-allowed' : 'pointer',
                     }}
