@@ -4,15 +4,20 @@
   align-items: center;
   gap: 16px;
   padding-inline: 18px;
-  padding-block: 14px;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
+  padding-block: 16px;
+  background-color: transparent;
+  border: none;
+  border-block-end: 1px solid var(--line);
+  border-radius: 0;
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.card:last-child {
+  border-block-end: none;
 }
 
 .card:hover {
-  border-color: var(--control-border);
+  background-color: var(--surface-raised);
 }
 
 .mainCol {
@@ -46,7 +51,7 @@
 
 .desc {
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-2);
   margin: 0;
   line-height: 1.5;
   word-break: break-word;
@@ -57,7 +62,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-2);
   min-inline-size: 0;
 }
 
@@ -74,7 +79,7 @@
   flex-direction: column;
   gap: 4px;
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-2);
 }
 
 .dueDate {
@@ -97,46 +102,27 @@
 
 .statusSelect {
   font-size: 0.8125rem;
-  min-block-size: 32px;
+  min-block-size: 36px;
   padding-inline: 8px;
   padding-block: 4px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
   border: 1px solid var(--control-border);
-  background-color: var(--bg);
   color: var(--text);
-  cursor: pointer;
-  text-align: start;
 }
 
-.statusSelect:focus-visible {
-  border-color: var(--accent);
-  box-shadow: var(--focus-ring);
-  outline: none;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .card {
     grid-template-columns: 1fr;
     gap: 12px;
     padding-inline: 16px;
-    padding-block: 16px;
-  }
-
-  .metaRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    border-block-start: 1px solid var(--border);
-    padding-block-start: 10px;
+    padding-block: 14px;
   }
 
   .actions {
-    inline-size: 100%;
-    justify-content: flex-start;
-    border-block-start: 1px solid var(--border);
-    padding-block-start: 10px;
     margin-inline-start: 0;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }

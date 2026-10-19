@@ -7,7 +7,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-2);
   text-decoration: none;
   margin-block-end: 12px;
   transition: color var(--dur-1) var(--ease);
@@ -33,15 +33,15 @@
 
 .projectTitle {
   font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 600;
   color: var(--text);
   margin: 0;
   line-height: 1.25;
 }
 
 .projectDesc {
-  color: var(--text-muted);
+  color: var(--text-2);
   font-size: 0.9375rem;
   margin-block-start: 8px;
   margin-block-end: 0;
@@ -59,7 +59,7 @@
   padding-block: 14px;
   padding-inline: 18px;
   background-color: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
 }
 
@@ -76,7 +76,9 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-2);
+  font-family: var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .membersRow {
@@ -87,7 +89,7 @@
 
 .membersLabel {
   font-size: 0.8125rem;
-  color: var(--text-muted);
+  color: var(--text-2);
   font-weight: 500;
 }
 
@@ -112,9 +114,9 @@
   inline-size: 28px;
   block-size: 28px;
   border-radius: 50%;
-  background-color: var(--surface-2);
+  background-color: var(--surface-raised);
   border: 2px solid var(--surface);
-  color: var(--text-muted);
+  color: var(--text-2);
   font-size: 0.75rem;
   font-weight: 600;
   margin-inline-start: -8px;
@@ -129,41 +131,24 @@
 
 .brassRule {
   block-size: 1px;
-  background-color: var(--brass);
+  background-color: var(--accent);
   inline-size: 100%;
   margin-block-start: 20px;
-  transform-origin: inline-start;
-  animation: drawRule var(--dur-rule) var(--ease) forwards;
-}
-
-@keyframes drawRule {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .brassRule {
-    animation: none;
-    transform: none;
-  }
+  opacity: 0.4;
 }
 
 .panel {
   margin-block-end: 28px;
   padding: 24px;
   background-color: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
 }
 
 .panelTitle {
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text);
   margin-block-start: 0;
   margin-block-end: 16px;
@@ -179,16 +164,17 @@
 .tasksTitle {
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text);
   margin: 0;
 }
 
 .tasksCount {
   font-size: 0.9375rem;
-  color: var(--text-muted);
+  color: var(--text-2);
   font-weight: 500;
   margin-inline-start: 6px;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .filterWrapper {
@@ -209,13 +195,15 @@
 }
 
 .errorStateTitle {
+  font-family: var(--font-display);
   font-size: 1.375rem;
-  font-weight: 700;
+  font-weight: 600;
+  color: var(--text);
   margin-block-end: 12px;
 }
 
 .errorStateDesc {
-  color: var(--text-muted);
+  color: var(--text-2);
   margin-block-end: 24px;
 }
 

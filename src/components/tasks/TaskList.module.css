@@ -1,5 +1,8 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
