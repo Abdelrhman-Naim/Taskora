@@ -27,7 +27,7 @@ export function ErrorState({
         margin: 'var(--sp-4) 0',
       }}
     >
-      <h3 style={{ fontSize: 'var(--fs-2)', fontWeight: 600, color: 'var(--st-overdue-fg)', marginBottom: 'var(--sp-1)' }}>
+      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-2)', fontWeight: 600, color: 'var(--st-overdue-fg)', marginBottom: 'var(--sp-1)' }}>
         {title}
       </h3>
       <p style={{ fontSize: 'var(--fs-1)', color: 'var(--text-muted)', maxWidth: '420px', marginBottom: onRetry ? 'var(--sp-4)' : '0' }}>
