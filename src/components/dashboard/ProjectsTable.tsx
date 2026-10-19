@@ -84,7 +84,7 @@ export function ProjectsTable({ summaries }: ProjectsTableProps): React.ReactEle
 
   return (
     <div
-      data-testid="projects-table"
+      data-testid="projects-ledger"
       className={styles.panel}
       role="region"
       aria-label={t('dashboard.projects.title')}

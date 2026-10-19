@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import { renderWithProviders } from '../helpers/render';
 import { KpiStrip } from '@/components/dashboard/KpiStrip';
+import { HeroMetric } from '@/components/dashboard/HeroMetric';
 import { NeedsAttention } from '@/components/dashboard/NeedsAttention';
 import { MyTasks } from '@/components/dashboard/MyTasks';
 import { ProjectsTable } from '@/components/dashboard/ProjectsTable';
@@ -130,6 +131,23 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
     const p = mockProjects.find((x) => x.id === id);
     return p ? p.name : 'Unknown';
   };
+
+  describe('HeroMetric', () => {
+    it('renders hero completion numeral with tabular figures and safe 0% on empty tasks', () => {
+      const metrics = computeMetrics(mockTasks, today);
+      const { unmount } = renderWithProviders(<HeroMetric metrics={metrics} />);
+      expect(screen.getByTestId('hero-metric')).toBeInTheDocument();
+      expect(screen.getByText('20%')).toBeInTheDocument();
+      unmount();
+
+      // Empty tasks test: must be 0% and never NaN%
+      const emptyMetrics = computeMetrics([], today);
+      const { unmount: unmountEmpty } = renderWithProviders(<HeroMetric metrics={emptyMetrics} />);
+      expect(screen.getByText('0%')).toBeInTheDocument();
+      expect(screen.queryByText(/nan/i)).not.toBeInTheDocument();
+      unmountEmpty();
+    });
+  });
 
   describe('KpiStrip', () => {
     it('renders 5 continuous KPI cells with consistent metrics matching computeMetrics', () => {
@@ -318,8 +336,12 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       const summaries = summarizeProjects(mockProjects, mockTasks, currentUid, today);
       const recent = recentlyUpdated(mockTasks);
 
+      const { unmount: unmountHero } = renderWithProviders(<HeroMetric metrics={metrics} />);
+      expect(screen.getByTestId('hero-metric')).toBeInTheDocument();
+      unmountHero();
+
       const { unmount: unmountKpi } = renderWithProviders(<KpiStrip metrics={metrics} />);
-      expect(screen.getByTestId('kpi-strip')).toBeInTheDocument();
+      expect(screen.getByTestId('kpi-ledger')).toBeInTheDocument();
       unmountKpi();
 
       const { unmount: unmountAttn } = renderWithProviders(<NeedsAttention items={items} projectName={projectNameMap} />);
@@ -331,7 +353,7 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       unmountTasks();
 
       const { unmount: unmountTable } = renderWithProviders(<ProjectsTable summaries={summaries} />);
-      expect(screen.getByTestId('projects-table')).toBeInTheDocument();
+      expect(screen.getByTestId('projects-ledger')).toBeInTheDocument();
       unmountTable();
 
       const { unmount: unmountRecent } = renderWithProviders(<RecentlyUpdated tasks={recent} projectName={projectNameMap} />);

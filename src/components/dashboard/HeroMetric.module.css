@@ -1,0 +1,69 @@
+.heroMetric {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-1);
+  margin-block-end: 24px;
+}
+
+.mainRow {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.numeral {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.label {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+.rule {
+  block-size: 1px;
+  background-color: var(--accent);
+  margin-block: 16px;
+  opacity: 0.85;
+}
+
+.breakdown {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.breakdownItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breakdownNum {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.overdueItem {
+  color: var(--st-overdue-fg);
+}
+
+.overdueItem .breakdownNum {
+  color: var(--st-overdue-fg);
+}

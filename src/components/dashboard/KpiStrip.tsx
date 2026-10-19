@@ -13,7 +13,7 @@ export function KpiStrip({ metrics }: KpiStripProps): React.ReactElement {
 
   return (
     <div
-      data-testid="kpi-strip"
+      data-testid="kpi-ledger"
       className={styles.kpiStrip}
       role="region"
       aria-label={t('dashboard.kpi.region')}

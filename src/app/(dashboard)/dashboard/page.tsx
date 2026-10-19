@@ -7,6 +7,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { useDashboardData } from '@/components/dashboard/useDashboardData';
 import { KpiStrip } from '@/components/dashboard/KpiStrip';
+import { HeroMetric } from '@/components/dashboard/HeroMetric';
 import { NeedsAttention } from '@/components/dashboard/NeedsAttention';
 import { MyTasks } from '@/components/dashboard/MyTasks';
 import { ProjectsTable } from '@/components/dashboard/ProjectsTable';
@@ -242,7 +243,10 @@ export default function DashboardPage(): React.ReactElement {
         <div className={styles.brassDivider} aria-hidden="true" />
       </div>
 
-      {/* KPI Strip */}
+      {/* Hero Metric Numeral */}
+      <HeroMetric metrics={metrics} />
+
+      {/* KPI Ledger */}
       <KpiStrip metrics={metrics} />
 
       {/* 12-Column Grid: Charts */}

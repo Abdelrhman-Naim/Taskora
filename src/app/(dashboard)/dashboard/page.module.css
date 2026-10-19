@@ -25,8 +25,9 @@
 }
 
 .greeting {
+  font-family: var(--font-display);
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text);
   margin: 0;
   line-height: 1.2;
@@ -34,7 +35,7 @@
 
 .dateDisplay {
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: var(--text-2);
 }
 
 .newProjectBtn {
@@ -44,7 +45,7 @@
   padding: 0.625rem 1.25rem;
   background-color: var(--accent);
   color: var(--on-accent);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
@@ -58,26 +59,8 @@
 .brassDivider {
   inline-size: 100%;
   block-size: 1px;
-  background-color: var(--brass);
+  background-color: var(--line);
   margin-block: 1rem 1.5rem;
-  transform-origin: inline-start;
-  animation: drawRule 400ms var(--ease) forwards;
-}
-
-@keyframes drawRule {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .brassDivider {
-    animation: none;
-    transform: none;
-  }
 }
 
 .grid {

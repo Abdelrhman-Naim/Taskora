@@ -1,21 +1,25 @@
 .panel {
   background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
+  box-shadow: var(--shadow-1);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-block-end: 1rem;
+  margin-block-end: 0.75rem;
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--line);
 }
 
 .title {
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
   color: var(--text);
@@ -28,15 +32,15 @@
   font-size: 0.6875rem;
   font-weight: 600;
   padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-pill);
   background-color: var(--st-overdue-bg);
   color: var(--st-overdue-fg);
+  border: 1px solid var(--st-overdue-fg);
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -47,17 +51,20 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: var(--radius-sm);
-  background-color: var(--surface);
-  border: 1px solid var(--border);
+  padding-block: 0.875rem;
+  padding-inline: 0.5rem;
+  background-color: transparent;
+  border-block-end: 1px solid var(--line);
   text-decoration: none;
   color: inherit;
-  transition: border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.item:last-child {
+  border-block-end: none;
 }
 
 .item:hover {
-  border-color: var(--control-border);
   background-color: var(--surface-hover);
 }
 
@@ -82,7 +89,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-2);
 }
 
 .projectName {
@@ -97,8 +104,8 @@
   gap: 0.25rem;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-pill);
   white-space: nowrap;
 }
 
@@ -109,20 +116,20 @@
 }
 
 .badgeToday {
-  color: var(--chart-todo);
-  background-color: var(--surface);
-  border: 1px solid var(--chart-todo);
+  color: var(--accent);
+  background-color: var(--surface-2);
+  border: 1px solid var(--accent);
 }
 
 .badgeTomorrow {
-  color: var(--text-muted);
-  background-color: var(--surface);
-  border: 1px solid var(--border);
+  color: var(--text-2);
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
 }
 
 .empty {
   padding: 2rem 1rem;
   text-align: center;
-  color: var(--text-muted);
+  color: var(--text-3);
   font-size: 0.875rem;
 }
