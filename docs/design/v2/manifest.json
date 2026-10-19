@@ -1,8 +1,13 @@
 {
   "oldProjectId": "9219100436315328520",
-  "newProjectId": null,
-  "designSystemId": null,
-  "generationsUsed": 0,
+  "newProjectId": "1925018263022126574",
+  "designSystemId": "740bfefb8f9e46d4af43ed2ce7b44189",
+  "generationsUsed": 1,
   "generationsBudget": 90,
-  "pages": {}
+  "pages": {
+    "login_smoke": {
+      "screenId": "649bfaf729b64e9e822c04239ae4896f",
+      "deviceType": "DESKTOP"
+    }
+  }
 }
