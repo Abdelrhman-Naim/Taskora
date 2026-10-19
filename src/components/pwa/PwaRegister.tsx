@@ -1,15 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
 import styles from './PwaRegister.module.css';
 
+function subscribeOnlineStatus(callback: () => void): () => void {
+  window.addEventListener('online', callback);
+  window.addEventListener('offline', callback);
+  return () => {
+    window.removeEventListener('online', callback);
+    window.removeEventListener('offline', callback);
+  };
+}
+
 export function PwaRegister(): React.ReactElement | null {
   const { t } = useI18n();
-  const [isOffline, setIsOffline] = useState(false);
+  const isOffline = useSyncExternalStore(
+    subscribeOnlineStatus,
+    () => !navigator.onLine,
+    () => false
+  );
 
   useEffect(() => {
-    // 1. Service Worker registration in production (P-513)
+    // Service Worker registration in production (P-513)
     if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker
@@ -17,21 +30,6 @@ export function PwaRegister(): React.ReactElement | null {
           .catch((err) => console.warn('PWA service worker registration failed:', err));
       });
     }
-
-    // 2. Online/offline connection monitoring (P-518)
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-
-    if (typeof window !== 'undefined') {
-      setIsOffline(!navigator.onLine);
-      window.addEventListener('online', handleOnline);
-      window.addEventListener('offline', handleOffline);
-    }
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
   }, []);
 
   if (!isOffline) return null;
