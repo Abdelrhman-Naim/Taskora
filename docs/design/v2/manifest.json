@@ -52,6 +52,26 @@
     "project_settings_mobile": {
       "screenId": "db2e95604a0e45feb6c7c4be27d8acfd",
       "deviceType": "MOBILE"
+    },
+    "task_detail": {
+      "path": "docs/design/v2/stitch/task-detail/design-notes.md",
+      "deviceType": "AGNOSTIC"
+    },
+    "board_view": {
+      "path": "docs/design/v2/stitch/board/design-notes.md",
+      "deviceType": "AGNOSTIC"
+    },
+    "calendar_view": {
+      "path": "docs/design/v2/stitch/calendar/design-notes.md",
+      "deviceType": "AGNOSTIC"
+    },
+    "notifications_popover": {
+      "path": "docs/design/v2/stitch/notifications/design-notes.md",
+      "deviceType": "AGNOSTIC"
+    },
+    "activity_panel": {
+      "path": "docs/design/v2/stitch/activity/design-notes.md",
+      "deviceType": "AGNOSTIC"
     }
   }
 }
