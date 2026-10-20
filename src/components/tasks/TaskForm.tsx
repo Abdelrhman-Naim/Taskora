@@ -168,6 +168,8 @@ export function TaskForm({
             <Input
               {...fieldProps}
               type="date"
+              dir="ltr"
+              lang="en-CA"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               disabled={submitting}

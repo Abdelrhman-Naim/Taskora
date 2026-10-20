@@ -20,7 +20,7 @@ export function DashboardStats({
   projects,
   hasProjects,
 }: DashboardStatsProps): React.ReactElement {
-  const { t, formatDueDate } = useI18n();
+  const { t } = useI18n();
 
   if (!hasProjects) {
     return (
@@ -98,7 +98,7 @@ export function DashboardStats({
                     <div className={styles.itemMeta}>
                       <span dir="auto">{projName}</span>
                       <span>&bull;</span>
-                      <span>{t('task.dueOn', { date: formatDueDate(task.dueDate) })}</span>
+                      <span>{t('task.dueOn', { date: task.dueDate ? task.dueDate.replace(/-/g, '/') : '' })}</span>
                     </div>
                   </div>
 

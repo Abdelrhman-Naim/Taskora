@@ -38,3 +38,25 @@
 .input[aria-invalid="true"]:focus-visible {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--st-overdue-fg) 30%, transparent);
 }
+
+.input[type="date"] {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+:global([data-theme="dark"]) .input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.85) sepia(0.2) hue-rotate(15deg);
+}

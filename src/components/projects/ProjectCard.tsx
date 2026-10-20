@@ -10,11 +10,11 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project }: ProjectCardProps): React.ReactElement {
-  const { tp, formatDueDate } = useI18n();
+  const { tp } = useI18n();
   const memberCount = project.memberIds.length;
 
   const updatedDateStr = project.updatedAt
-    ? formatDueDate(new Date(project.updatedAt).toISOString().split('T')[0])
+    ? new Date(project.updatedAt).toISOString().split('T')[0].replace(/-/g, '/')
     : '';
 
   return (

@@ -76,20 +76,38 @@
 
 .dueCol {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
   font-size: 0.8125rem;
-  color: var(--text-2);
 }
 
 .dueDate {
-  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
   font-weight: 500;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  padding-block: 3px;
+  padding-inline: 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body), system-ui, sans-serif;
+  letter-spacing: 0.02em;
 }
 
 .dueOverdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--st-overdue-fg);
   font-weight: 600;
+  background-color: var(--st-overdue-bg);
+  border: 1px solid color-mix(in srgb, var(--st-overdue-fg) 30%, transparent);
+  padding-block: 3px;
+  padding-inline: 8px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body), system-ui, sans-serif;
+  letter-spacing: 0.02em;
 }
 
 .actions {
@@ -133,6 +151,70 @@ html[dir="rtl"] .statusSelect {
   border-color: var(--accent);
   box-shadow: var(--focus-ring);
   outline: none;
+}
+
+.statusMenu {
+  position: fixed;
+  background-color: var(--surface-overlay);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-pop);
+  padding: 6px;
+  min-inline-size: 140px;
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: statusMenuFadeIn var(--dur-1) var(--ease);
+}
+
+@keyframes statusMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.statusMenuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 8px;
+  padding-inline: 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: start;
+  user-select: none;
+  transition: background-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+
+.statusMenuItem:hover {
+  background-color: var(--surface-hover);
+  color: var(--accent);
+}
+
+.statusMenuItemActive {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.statusMenuCheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
 }
 
 @media (max-width: 767px) {
