@@ -99,7 +99,7 @@ test.describe('Documentation Screenshots Capture', () => {
     await page.getByLabel(/description/i).fill('Critical authentication bug in navigation bar');
     await page.locator('#task-priority').selectOption('high');
     await page.locator('#task-assignee').selectOption({ label: 'Sarah Developer' });
-    await page.locator('input[type="date"]').fill('2026-10-16');
+    await page.locator('#task-due-date').fill('2026-10-16');
     await page.getByTestId('save-task-btn').click();
     await page.locator('text=Fix overdue bug').waitFor({ state: 'visible' });
 

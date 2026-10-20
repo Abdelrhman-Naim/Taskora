@@ -8,6 +8,7 @@ import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
+import { DatePicker } from '@/components/ui/DatePicker';
 import { Button } from '@/components/ui/Button';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
@@ -165,11 +166,8 @@ export function TaskForm({
 
         <Field id="task-due-date" label={t('task.field.dueDate')} error={translateError(errors.dueDate)}>
           {(fieldProps) => (
-            <Input
+            <DatePicker
               {...fieldProps}
-              type="date"
-              dir="ltr"
-              lang="en-CA"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
               disabled={submitting}
