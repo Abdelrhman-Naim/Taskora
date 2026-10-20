@@ -25,6 +25,22 @@ service cloud.firestore {
         && request.resource.data.email.lower() == request.auth.token.email.lower()
         && request.resource.data.createdAt == request.time;
       allow update, delete: if false;
+
+      match /notifications/{nid} {
+        allow read, delete: if signedIn() && request.auth.uid == uid;
+        allow update: if signedIn() && request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readAt'])
+          && request.resource.data.readAt == request.time;
+        allow create: if signedIn() && request.auth.uid != uid
+          && request.resource.data.keys().hasOnly(['type','projectId','projectName','taskId','taskTitle','actorId','actorName','createdAt','readAt'])
+          && request.resource.data.type in ['task_assigned','comment_added','member_added']
+          && request.resource.data.actorId == request.auth.uid
+          && request.resource.data.readAt == null && request.resource.data.createdAt == request.time
+          && request.resource.data.projectName is string && request.resource.data.projectName.size() <= 80
+          && (request.resource.data.taskTitle == null || (request.resource.data.taskTitle is string && request.resource.data.taskTitle.size() <= 120))
+          && request.resource.data.actorName is string && request.resource.data.actorName.size() >= 1 && request.resource.data.actorName.size() <= 60
+          && getAfter(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data.memberIds.hasAll([uid, request.auth.uid]);
+      }
     }
 
     match /usersByEmail/{email} {

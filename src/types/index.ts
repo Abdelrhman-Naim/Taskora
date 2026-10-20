@@ -97,4 +97,21 @@ export interface TaskWriteContext {
   actor: Actor;
   task: Task;
   assigneeName?: string | null;
+  projectName?: string;
+}
+
+export const NOTIFICATION_TYPES = ['task_assigned', 'comment_added', 'member_added'] as const;
+export type NotificationType = typeof NOTIFICATION_TYPES[number];
+
+export interface AppNotification {
+  id: string;
+  type: NotificationType;
+  projectId: string;
+  projectName: string;
+  taskId: string | null;
+  taskTitle: string | null;
+  actorId: string;
+  actorName: string;
+  createdAt: Date | null;
+  readAt: Date | null;
 }

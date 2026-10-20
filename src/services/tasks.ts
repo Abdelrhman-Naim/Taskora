@@ -17,6 +17,7 @@ import { toDate } from '@/lib/dates';
 import { AppError, toAppError } from '@/lib/errors';
 import { withWriteGuard } from '@/lib/async';
 import { newActivityRef, activityData } from './activity';
+import { newNotificationRef, notificationData } from './notifications';
 
 export function mapTask(
   snap: DocumentSnapshot | QueryDocumentSnapshot,
@@ -190,6 +191,21 @@ export async function updateTask(
           detail,
         })
       );
+
+      // In-app notification for the newly assigned member
+      if (patch.assigneeId && patch.assigneeId !== ctx.actor.uid) {
+        const notifRef = newNotificationRef(db, patch.assigneeId);
+        batch.set(
+          notifRef,
+          notificationData(ctx.actor, {
+            type: 'task_assigned',
+            projectId,
+            projectName: ctx.projectName || 'Project',
+            taskId,
+            taskTitle: patch.title ?? ctx.task.title,
+          })
+        );
+      }
       await withWriteGuard(() => batch.commit());
     } else {
       await withWriteGuard(() => updateDoc(taskRef, cleanData));

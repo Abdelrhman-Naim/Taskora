@@ -236,6 +236,11 @@ export const en = {
   'activity.member_removed': '{actor} removed {member} from the project',
   'activity.unnamedTask': 'a task',
 
+  // Notifications
+  'notif.task_assigned': '{actor} assigned you to "{task}" in {project}',
+  'notif.comment_added': '{actor} commented on "{task}" in {project}',
+  'notif.member_added': '{actor} added you to project {project}',
+
   // Theme
   'theme.system': 'System theme',
   'theme.light': 'Light theme',

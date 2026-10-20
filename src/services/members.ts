@@ -16,6 +16,7 @@ import { AppError, toAppError } from '@/lib/errors';
 import { withWriteGuard } from '@/lib/async';
 import { Actor } from '@/types';
 import { newActivityRef, activityData } from './activity';
+import { newNotificationRef, notificationData } from './notifications';
 
 export function normalizeEmail(raw: string): string {
   return raw.trim().toLowerCase();
@@ -84,6 +85,20 @@ export async function addMember(
           detail: userRecord.displayName,
         })
       );
+
+      // In-app notification for the newly added member
+      if (userRecord.uid !== ctx.actor.uid) {
+        const notifRef = newNotificationRef(db, userRecord.uid);
+        batch.set(
+          notifRef,
+          notificationData(ctx.actor, {
+            type: 'member_added',
+            projectId,
+            projectName: typeof proj.name === 'string' ? proj.name : 'Project',
+          })
+        );
+      }
+
       await withWriteGuard(() => batch.commit());
     } else {
       await withWriteGuard(() =>

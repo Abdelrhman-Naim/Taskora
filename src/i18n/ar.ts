@@ -238,6 +238,11 @@ export const ar: Record<MessageKey, string> = {
   'activity.member_removed': 'أزال {actor} العضو {member} من المشروع',
   'activity.unnamedTask': 'مهمة',
 
+  // Notifications
+  'notif.task_assigned': 'أسند إليك {actor} المهمة "{task}" في {project}',
+  'notif.comment_added': 'علّق {actor} على "{task}" في {project}',
+  'notif.member_added': 'أضافك {actor} إلى المشروع {project}',
+
   // Theme
   'theme.system': 'مظهر النظام',
   'theme.light': 'المظهر الفاتح',
