@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useCallback } from 'react';
+import { useI18n } from '@/i18n/I18nProvider';
 import styles from './Dialog.module.css';
 
 export interface DialogProps {
@@ -10,6 +11,7 @@ export interface DialogProps {
   children?: React.ReactNode;
   onClose?: () => void;
   triggerRef?: React.RefObject<HTMLElement | null>;
+  size?: 'sm' | 'md' | 'lg';
   // ConfirmDialog compatibility props
   message?: string;
   confirmLabel?: string;
@@ -26,6 +28,7 @@ export function Dialog({
   children,
   onClose,
   triggerRef,
+  size = 'sm',
   message,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
@@ -33,6 +36,7 @@ export function Dialog({
   onConfirm,
   onCancel,
 }: DialogProps): React.ReactElement | null {
+  const { t } = useI18n();
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
@@ -129,12 +133,37 @@ export function Dialog({
         aria-labelledby="dialog-title"
         aria-describedby={descText ? 'dialog-desc' : undefined}
         tabIndex={-1}
-        className={styles.dialog}
+        className={`${styles.dialog} ${styles[`size_${size}`] || styles.size_sm}`}
         data-testid="confirm-dialog"
       >
-        <h2 id="dialog-title" className={styles.title}>
-          {title}
-        </h2>
+        <div className={styles.dialogHeader}>
+          <h2 id="dialog-title" className={styles.title}>
+            {title}
+          </h2>
+          {onClose && (
+            <button
+              type="button"
+              className={styles.closeBtn}
+              onClick={handleClose}
+              aria-label={t('common.close')}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          )}
+        </div>
         {descText && (
           <p id="dialog-desc" className={styles.description}>
             {descText}

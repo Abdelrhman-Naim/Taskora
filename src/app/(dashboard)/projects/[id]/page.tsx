@@ -311,24 +311,30 @@ export default function ProjectPage(): React.ReactElement | null {
         </div>
       )}
 
-      {/* Task Creation Modal / Panel */}
-      {showCreateForm && (
-        <div className={styles.panel}>
-          <h2 className={styles.panelTitle}>{t('task.new.title')}</h2>
-          <TaskForm
-            project={project}
-            currentUserId={currentUid}
-            isOwner={isOwner}
-            onSave={handleCreateTask}
-            onCancel={() => setShowCreateForm(false)}
-          />
-        </div>
-      )}
+      {/* Task Creation Popup Modal */}
+      <Dialog
+        isOpen={showCreateForm}
+        onClose={() => setShowCreateForm(false)}
+        title={t('task.new.title')}
+        size="md"
+      >
+        <TaskForm
+          project={project}
+          currentUserId={currentUid}
+          isOwner={isOwner}
+          onSave={handleCreateTask}
+          onCancel={() => setShowCreateForm(false)}
+        />
+      </Dialog>
 
-      {/* Task Edit Modal / Panel */}
-      {editingTask && (
-        <div className={styles.panel}>
-          <h2 className={styles.panelTitle}>{t('task.edit.title')}</h2>
+      {/* Task Edit Popup Modal */}
+      <Dialog
+        isOpen={Boolean(editingTask)}
+        onClose={() => setEditingTask(null)}
+        title={t('task.edit.title')}
+        size="md"
+      >
+        {editingTask && (
           <TaskForm
             project={project}
             initialTask={editingTask}
@@ -337,8 +343,8 @@ export default function ProjectPage(): React.ReactElement | null {
             onSave={handleUpdateTask}
             onCancel={() => setEditingTask(null)}
           />
-        </div>
-      )}
+        )}
+      </Dialog>
 
       {/* Tasks List */}
       <div>

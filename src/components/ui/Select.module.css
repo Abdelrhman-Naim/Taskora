@@ -1,67 +1,158 @@
-.selectWrapper {
+.wrapper {
   position: relative;
-  inline-size: 100%;
+  display: inline-block;
+  min-inline-size: 130px;
+  max-inline-size: 100%;
 }
 
-.select {
-  display: block;
+.hiddenNativeSelect {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   inline-size: 100%;
-  min-block-size: 42px;
-  text-align: start;
-  padding-inline-start: 14px;
-  padding-inline-end: 38px;
-  padding-block: 8px;
-  font-family: inherit;
+  min-block-size: 38px;
+  padding-block: 7px;
+  padding-inline: 13px;
+  font-family: var(--font-body), system-ui, sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text);
   background-color: var(--surface);
-  border: 1px solid var(--control-border);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-md);
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
+  box-shadow: var(--shadow-pop);
   cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
+  user-select: none;
+  transition: border-color var(--dur-1) var(--ease),
+              box-shadow var(--dur-1) var(--ease),
+              background-color var(--dur-1) var(--ease);
+  box-sizing: border-box;
 }
 
-.select:hover:not(:disabled) {
+.trigger:hover:not(:disabled) {
   border-color: var(--accent);
   background-color: var(--surface-hover);
 }
 
-.select:focus-visible {
+.trigger:focus-visible {
   outline: none;
   border-color: var(--accent);
   box-shadow: var(--focus-ring);
 }
 
-.select option {
-  background-color: var(--surface-overlay);
-  color: var(--text);
-  padding: 12px 14px;
-  font-family: inherit;
-  font-size: 0.875rem;
+.trigger[data-disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-.select:disabled {
-  background-color: var(--surface-hover);
-  color: var(--text-muted);
-  cursor: not-allowed;
-  opacity: 0.7;
+.trigger[data-state="open"] .icon {
+  transform: rotate(180deg);
+}
+
+.valueText {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  text-align: start;
 }
 
 .icon {
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-end: 14px;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--text-3);
-  transition: color var(--dur-1) var(--ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: transform var(--dur-1) var(--ease);
 }
 
-.select:hover ~ .icon,
-.select:focus-visible ~ .icon {
+.content {
+  background-color: var(--surface-overlay);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-pop);
+  padding: 6px;
+  min-inline-size: 140px;
+  max-inline-size: 320px;
+  max-block-size: 280px;
+  z-index: 1500;
+  overflow: hidden;
+  animation: selectFadeIn var(--dur-1) var(--ease);
+}
+
+@keyframes selectFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.viewport {
+  padding: 2px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 8px;
+  padding-inline: 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+
+.item[data-highlighted] {
+  background-color: var(--surface-hover);
   color: var(--accent);
+}
+
+.item[data-state="checked"] {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.item[data-disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.itemText {
+  flex: 1;
+  text-align: start;
+}
+
+.itemIndicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
 }

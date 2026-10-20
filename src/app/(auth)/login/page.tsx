@@ -42,7 +42,7 @@ export default function LoginPage() {
   return (
     <div className={styles.splitPage} data-testid="page-ready">
       {/* Left Pane: Identity Rail */}
-      <aside className={styles.identityRail} data-testid="auth-identity-rail">
+      <aside className={styles.identityRail} data-testid="auth-identity-rail" dir="ltr">
         <header className={styles.brandHeader}>
           <div className={styles.logoMonogram}>T</div>
           <div className={styles.brandMeta}>
