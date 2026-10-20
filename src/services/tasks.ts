@@ -6,15 +6,17 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  writeBatch,
   serverTimestamp,
   DocumentSnapshot,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
-import { Task, TaskInput, TaskPatch, TaskStatus, RECURRENCES, Recurrence } from '@/types';
+import { Task, TaskInput, TaskPatch, TaskStatus, RECURRENCES, Recurrence, Actor, TaskWriteContext } from '@/types';
 import { taskInputSchema, fieldErrors } from '@/lib/validation';
 import { toDate } from '@/lib/dates';
 import { AppError, toAppError } from '@/lib/errors';
 import { withWriteGuard } from '@/lib/async';
+import { newActivityRef, activityData } from './activity';
 
 export function mapTask(
   snap: DocumentSnapshot | QueryDocumentSnapshot,
@@ -70,7 +72,8 @@ export async function createTask(
   db: Firestore,
   projectId: string,
   uid: string,
-  input: TaskInput
+  input: TaskInput,
+  ctx?: { actor: Actor }
 ): Promise<string> {
   const parsed = taskInputSchema.safeParse(input);
   if (!parsed.success) {
@@ -81,22 +84,37 @@ export async function createTask(
 
   try {
     const taskRef = doc(collection(db, 'projects', projectId, 'tasks'));
-    await withWriteGuard(() =>
-      setDoc(taskRef, {
-        title,
-        description,
-        status: 'todo',
-        priority,
-        assigneeId,
-        createdBy: uid,
-        dueDate,
-        checklist: checklist || [],
-        labels: labels || [],
-        recurrence: recurrence || 'none',
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      })
-    );
+    const taskData = {
+      title,
+      description,
+      status: 'todo',
+      priority,
+      assigneeId,
+      createdBy: uid,
+      dueDate,
+      checklist: checklist || [],
+      labels: labels || [],
+      recurrence: recurrence || 'none',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    if (ctx) {
+      const batch = writeBatch(db);
+      batch.set(taskRef, taskData);
+      const actRef = newActivityRef(db, projectId);
+      batch.set(
+        actRef,
+        activityData(ctx.actor, {
+          type: 'task_created',
+          taskId: taskRef.id,
+          taskTitle: title,
+        })
+      );
+      await withWriteGuard(() => batch.commit());
+    } else {
+      await withWriteGuard(() => setDoc(taskRef, taskData));
+    }
 
     return taskRef.id;
   } catch (err) {
@@ -108,7 +126,8 @@ export async function updateTask(
   db: Firestore,
   projectId: string,
   taskId: string,
-  patch: TaskPatch
+  patch: TaskPatch,
+  ctx?: TaskWriteContext
 ): Promise<void> {
   // If editable fields are in patch, validate them
   if (
@@ -151,9 +170,30 @@ export async function updateTask(
     if (patch.labels !== undefined) cleanData.labels = patch.labels;
     if (patch.recurrence !== undefined) cleanData.recurrence = patch.recurrence;
 
-    await withWriteGuard(() =>
-      updateDoc(doc(db, 'projects', projectId, 'tasks', taskId), cleanData)
-    );
+    const taskRef = doc(db, 'projects', projectId, 'tasks', taskId);
+    const assigneeChanged =
+      ctx !== undefined &&
+      patch.assigneeId !== undefined &&
+      patch.assigneeId !== ctx.task.assigneeId;
+
+    if (ctx && assigneeChanged) {
+      const batch = writeBatch(db);
+      batch.update(taskRef, cleanData);
+      const actRef = newActivityRef(db, projectId);
+      const detail = patch.assigneeId === null ? null : (ctx.assigneeName || patch.assigneeId);
+      batch.set(
+        actRef,
+        activityData(ctx.actor, {
+          type: 'task_assigned',
+          taskId,
+          taskTitle: patch.title ?? ctx.task.title,
+          detail,
+        })
+      );
+      await withWriteGuard(() => batch.commit());
+    } else {
+      await withWriteGuard(() => updateDoc(taskRef, cleanData));
+    }
   } catch (err) {
     throw toAppError(err);
   }
@@ -163,15 +203,38 @@ export async function changeTaskStatus(
   db: Firestore,
   projectId: string,
   taskId: string,
-  status: TaskStatus
+  status: TaskStatus,
+  ctx?: TaskWriteContext
 ): Promise<void> {
   try {
-    await withWriteGuard(() =>
-      updateDoc(doc(db, 'projects', projectId, 'tasks', taskId), {
+    const taskRef = doc(db, 'projects', projectId, 'tasks', taskId);
+    const statusChanged = ctx !== undefined && ctx.task.status !== status;
+
+    if (ctx && statusChanged) {
+      const batch = writeBatch(db);
+      batch.update(taskRef, {
         status,
         updatedAt: serverTimestamp(),
-      })
-    );
+      });
+      const actRef = newActivityRef(db, projectId);
+      batch.set(
+        actRef,
+        activityData(ctx.actor, {
+          type: 'task_status_changed',
+          taskId,
+          taskTitle: ctx.task.title,
+          detail: `${ctx.task.status}>${status}`,
+        })
+      );
+      await withWriteGuard(() => batch.commit());
+    } else {
+      await withWriteGuard(() =>
+        updateDoc(taskRef, {
+          status,
+          updatedAt: serverTimestamp(),
+        })
+      );
+    }
   } catch (err) {
     throw toAppError(err);
   }
@@ -180,12 +243,28 @@ export async function changeTaskStatus(
 export async function deleteTask(
   db: Firestore,
   projectId: string,
-  taskId: string
+  taskId: string,
+  ctx?: TaskWriteContext
 ): Promise<void> {
   try {
-    await withWriteGuard(() =>
-      deleteDoc(doc(db, 'projects', projectId, 'tasks', taskId))
-    );
+    const taskRef = doc(db, 'projects', projectId, 'tasks', taskId);
+
+    if (ctx) {
+      const batch = writeBatch(db);
+      batch.delete(taskRef);
+      const actRef = newActivityRef(db, projectId);
+      batch.set(
+        actRef,
+        activityData(ctx.actor, {
+          type: 'task_deleted',
+          taskId,
+          taskTitle: ctx.task.title,
+        })
+      );
+      await withWriteGuard(() => batch.commit());
+    } else {
+      await withWriteGuard(() => deleteDoc(taskRef));
+    }
   } catch (err) {
     throw toAppError(err);
   }

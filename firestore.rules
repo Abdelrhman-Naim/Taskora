@@ -2,8 +2,8 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
-    function isOwner(p)  { return signedIn() && p.ownerId == request.auth.uid; }
-    function isMember(p) { return signedIn() && request.auth.uid in p.memberIds; }
+    function isOwner(p)  { return signedIn() && p != null && ('ownerId' in p) && p.ownerId == request.auth.uid; }
+    function isMember(p) { return signedIn() && p != null && ('memberIds' in p) && request.auth.uid in p.memberIds; }
     function projectData(pid) { return get(/databases/$(database)/documents/projects/$(pid)).data; }
     function validName(v) { return v is string && v.size() >= 3 && v.size() <= 80; }
     function validDesc(v) { return v is string && v.size() <= 1000; }
@@ -83,6 +83,20 @@ service cloud.firestore {
         && request.resource.data.createdAt == resource.data.createdAt
         && (isOwner(proj()) || memberMayUpdate());
       allow delete: if isMember(proj()) && (isOwner(proj()) || resource.data.createdBy == request.auth.uid);
+    }
+
+    match /projects/{pid}/activity/{aid} {
+      allow read: if isMember(projectData(pid));
+      allow create: if isMember(projectData(pid))
+        && request.resource.data.keys().hasOnly(['type','actorId','actorName','taskId','taskTitle','detail','createdAt'])
+        && request.resource.data.type in ['task_created','task_status_changed','task_assigned','task_deleted','comment_added','member_added','member_removed']
+        && request.resource.data.actorId == request.auth.uid
+        && request.resource.data.actorName == projectData(pid).memberNames[request.auth.uid]
+        && (request.resource.data.taskTitle == null || (request.resource.data.taskTitle is string && request.resource.data.taskTitle.size() <= 120))
+        && (request.resource.data.detail == null || (request.resource.data.detail is string && request.resource.data.detail.size() <= 200))
+        && request.resource.data.createdAt == request.time;
+      allow update: if false;
+      allow delete: if isOwner(projectData(pid));
     }
 
     match /{document=**} {

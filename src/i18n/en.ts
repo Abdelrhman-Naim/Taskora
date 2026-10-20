@@ -225,6 +225,17 @@ export const en = {
   'validation.recurrence.invalid': 'Invalid recurrence option',
   'validation.recurrence.needsDueDate': 'Due date is required for recurring tasks',
 
+  // Activity
+  'activity.task_created': '{actor} created task "{task}"',
+  'activity.task_status_changed': '{actor} changed status of "{task}" from {from} to {to}',
+  'activity.task_assigned': '{actor} assigned "{task}" to {assignee}',
+  'activity.task_unassigned': '{actor} unassigned "{task}"',
+  'activity.task_deleted': '{actor} deleted task "{task}"',
+  'activity.comment_added': '{actor} commented on "{task}"',
+  'activity.member_added': '{actor} added {member} to the project',
+  'activity.member_removed': '{actor} removed {member} from the project',
+  'activity.unnamedTask': 'a task',
+
   // Theme
   'theme.system': 'System theme',
   'theme.light': 'Light theme',

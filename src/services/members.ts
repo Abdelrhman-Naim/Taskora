@@ -14,6 +14,8 @@ import {
 import { emailSchema } from '@/lib/validation';
 import { AppError, toAppError } from '@/lib/errors';
 import { withWriteGuard } from '@/lib/async';
+import { Actor } from '@/types';
+import { newActivityRef, activityData } from './activity';
 
 export function normalizeEmail(raw: string): string {
   return raw.trim().toLowerCase();
@@ -40,7 +42,8 @@ export async function findUserByEmail(
 export async function addMember(
   db: Firestore,
   projectId: string,
-  email: string
+  email: string,
+  ctx?: { actor: Actor }
 ): Promise<{ uid: string; displayName: string }> {
   const parsed = emailSchema.safeParse(email);
   if (!parsed.success) {
@@ -66,13 +69,31 @@ export async function addMember(
       throw new AppError('duplicate-member', 'User is already a member of this project');
     }
 
-    await withWriteGuard(() =>
-      updateDoc(projRef, {
+    if (ctx) {
+      const batch = writeBatch(db);
+      batch.update(projRef, {
         memberIds: arrayUnion(userRecord.uid),
         [`memberNames.${userRecord.uid}`]: userRecord.displayName,
         updatedAt: serverTimestamp(),
-      })
-    );
+      });
+      const actRef = newActivityRef(db, projectId);
+      batch.set(
+        actRef,
+        activityData(ctx.actor, {
+          type: 'member_added',
+          detail: userRecord.displayName,
+        })
+      );
+      await withWriteGuard(() => batch.commit());
+    } else {
+      await withWriteGuard(() =>
+        updateDoc(projRef, {
+          memberIds: arrayUnion(userRecord.uid),
+          [`memberNames.${userRecord.uid}`]: userRecord.displayName,
+          updatedAt: serverTimestamp(),
+        })
+      );
+    }
 
     return userRecord;
   } catch (err) {
@@ -98,7 +119,8 @@ export async function countAssignedTasks(
 export async function removeMember(
   db: Firestore,
   projectId: string,
-  uid: string
+  uid: string,
+  ctx?: { actor: Actor }
 ): Promise<{ unassigned: number }> {
   try {
     const projRef = doc(db, 'projects', projectId);
@@ -136,6 +158,18 @@ export async function removeMember(
       [`memberNames.${uid}`]: deleteField(),
       updatedAt: serverTimestamp(),
     });
+
+    if (ctx) {
+      const removedName = (proj.memberNames && proj.memberNames[uid]) || 'Member';
+      const actRef = newActivityRef(db, projectId);
+      batch.set(
+        actRef,
+        activityData(ctx.actor, {
+          type: 'member_removed',
+          detail: removedName,
+        })
+      );
+    }
 
     await withWriteGuard(() => batch.commit());
 

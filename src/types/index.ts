@@ -63,3 +63,38 @@ export interface SessionUser {
   displayName: string;
   email: string;
 }
+
+export const ACTIVITY_TYPES = [
+  'task_created',
+  'task_status_changed',
+  'task_assigned',
+  'task_deleted',
+  'comment_added',
+  'member_added',
+  'member_removed',
+] as const;
+
+export type ActivityType = typeof ACTIVITY_TYPES[number];
+
+export interface Actor {
+  uid: string;
+  displayName: string;
+}
+
+export interface ActivityEntry {
+  id: string;
+  projectId: string;
+  type: ActivityType;
+  actorId: string;
+  actorName: string;
+  taskId: string | null;
+  taskTitle: string | null;
+  detail: string | null;
+  createdAt: Date | null;
+}
+
+export interface TaskWriteContext {
+  actor: Actor;
+  task: Task;
+  assigneeName?: string | null;
+}

@@ -227,6 +227,17 @@ export const ar: Record<MessageKey, string> = {
   'validation.recurrence.invalid': 'خيار التكرار غير صالح',
   'validation.recurrence.needsDueDate': 'تاريخ الاستحقاق مطلوب للمهام المتكررة',
 
+  // Activity
+  'activity.task_created': 'أنشأ {actor} المهمة "{task}"',
+  'activity.task_status_changed': 'غيّر {actor} حالة "{task}" من {from} إلى {to}',
+  'activity.task_assigned': 'أسند {actor} المهمة "{task}" إلى {assignee}',
+  'activity.task_unassigned': 'ألغى {actor} إسناد المهمة "{task}"',
+  'activity.task_deleted': 'حذف {actor} المهمة "{task}"',
+  'activity.comment_added': 'علّق {actor} على "{task}"',
+  'activity.member_added': 'أضاف {actor} العضو {member} إلى المشروع',
+  'activity.member_removed': 'أزال {actor} العضو {member} من المشروع',
+  'activity.unnamedTask': 'مهمة',
+
   // Theme
   'theme.system': 'مظهر النظام',
   'theme.light': 'المظهر الفاتح',

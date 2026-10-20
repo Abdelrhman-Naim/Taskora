@@ -165,6 +165,20 @@ export async function deleteProjectCascade(
       );
     }
 
+    // Delete all activity logs in chunks <= 400
+    const activitySnap = await getDocs(collection(db, 'projects', id, 'activity'));
+    const actDocs = activitySnap.docs;
+    const CHUNK_SIZE = 400;
+
+    for (let i = 0; i < actDocs.length; i += CHUNK_SIZE) {
+      const chunk = actDocs.slice(i, i + CHUNK_SIZE);
+      const batch = writeBatch(db);
+      for (const d of chunk) {
+        batch.delete(d.ref);
+      }
+      await withWriteGuard(() => batch.commit());
+    }
+
     const batch = writeBatch(db);
     batch.delete(doc(db, 'projects', id));
 
