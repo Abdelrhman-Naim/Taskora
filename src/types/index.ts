@@ -1,8 +1,16 @@
 export const TASK_STATUSES = ['todo', 'in_progress', 'done'] as const;
 export const TASK_PRIORITIES = ['low', 'medium', 'high'] as const;
+export const RECURRENCES = ['none', 'daily', 'weekly', 'monthly'] as const;
 
 export type TaskStatus = typeof TASK_STATUSES[number];
 export type TaskPriority = typeof TASK_PRIORITIES[number];
+export type Recurrence = typeof RECURRENCES[number];
+
+export interface ChecklistItem {
+  id: string;
+  text: string;
+  done: boolean;
+}
 
 export interface Project {
   id: string;
@@ -25,6 +33,9 @@ export interface Task {
   assigneeId: string | null;
   createdBy: string;
   dueDate: string | null; /* 'YYYY-MM-DD' */
+  checklist: ChecklistItem[];
+  labels: string[];
+  recurrence: Recurrence;
   createdAt: Date | null;
   updatedAt: Date | null;
 }
@@ -40,6 +51,9 @@ export interface TaskInput {
   priority: TaskPriority;
   assigneeId: string | null;
   dueDate: string | null;
+  checklist?: ChecklistItem[];
+  labels?: string[];
+  recurrence?: Recurrence;
 }
 
 export type TaskPatch = Partial<TaskInput & { status: TaskStatus }>;

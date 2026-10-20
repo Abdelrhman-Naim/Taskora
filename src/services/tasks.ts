@@ -10,7 +10,7 @@ import {
   DocumentSnapshot,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
-import { Task, TaskInput, TaskPatch, TaskStatus } from '@/types';
+import { Task, TaskInput, TaskPatch, TaskStatus, RECURRENCES, Recurrence } from '@/types';
 import { taskInputSchema, fieldErrors } from '@/lib/validation';
 import { toDate } from '@/lib/dates';
 import { AppError, toAppError } from '@/lib/errors';
@@ -35,6 +35,12 @@ export function mapTask(
     assigneeId: data.assigneeId ?? null,
     createdBy: typeof data.createdBy === 'string' ? data.createdBy : '',
     dueDate: data.dueDate ?? null,
+    checklist: Array.isArray(data.checklist) ? data.checklist : [],
+    labels: Array.isArray(data.labels) ? data.labels : [],
+    recurrence:
+      typeof data.recurrence === 'string' && (RECURRENCES as readonly string[]).includes(data.recurrence)
+        ? (data.recurrence as Recurrence)
+        : 'none',
     createdAt: toDate(data.createdAt),
     updatedAt: toDate(data.updatedAt),
   };
@@ -71,7 +77,7 @@ export async function createTask(
     throw new AppError('validation', 'Validation failed', fieldErrors(parsed.error));
   }
 
-  const { title, description, priority, assigneeId, dueDate } = parsed.data;
+  const { title, description, priority, assigneeId, dueDate, checklist, labels, recurrence } = parsed.data;
 
   try {
     const taskRef = doc(collection(db, 'projects', projectId, 'tasks'));
@@ -84,6 +90,9 @@ export async function createTask(
         assigneeId,
         createdBy: uid,
         dueDate,
+        checklist: checklist || [],
+        labels: labels || [],
+        recurrence: recurrence || 'none',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })
@@ -101,14 +110,25 @@ export async function updateTask(
   taskId: string,
   patch: TaskPatch
 ): Promise<void> {
-  // If title or description are in patch, validate them
-  if (patch.title !== undefined || patch.description !== undefined || patch.priority !== undefined || patch.dueDate !== undefined) {
+  // If editable fields are in patch, validate them
+  if (
+    patch.title !== undefined ||
+    patch.description !== undefined ||
+    patch.priority !== undefined ||
+    patch.dueDate !== undefined ||
+    patch.checklist !== undefined ||
+    patch.labels !== undefined ||
+    patch.recurrence !== undefined
+  ) {
     const checkObj = {
       title: patch.title ?? 'Valid Title',
       description: patch.description ?? '',
       priority: patch.priority ?? 'medium',
       assigneeId: patch.assigneeId ?? null,
-      dueDate: patch.dueDate ?? null,
+      dueDate: patch.dueDate !== undefined ? patch.dueDate : (patch.recurrence && patch.recurrence !== 'none' ? '2099-01-01' : null),
+      checklist: patch.checklist,
+      labels: patch.labels,
+      recurrence: patch.recurrence,
     };
     const parsed = taskInputSchema.safeParse(checkObj);
     if (!parsed.success) {
@@ -127,6 +147,9 @@ export async function updateTask(
     if (patch.status !== undefined) cleanData.status = patch.status;
     if (patch.assigneeId !== undefined) cleanData.assigneeId = patch.assigneeId;
     if (patch.dueDate !== undefined) cleanData.dueDate = patch.dueDate;
+    if (patch.checklist !== undefined) cleanData.checklist = patch.checklist;
+    if (patch.labels !== undefined) cleanData.labels = patch.labels;
+    if (patch.recurrence !== undefined) cleanData.recurrence = patch.recurrence;
 
     await withWriteGuard(() =>
       updateDoc(doc(db, 'projects', projectId, 'tasks', taskId), cleanData)

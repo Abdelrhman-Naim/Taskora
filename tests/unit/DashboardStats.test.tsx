@@ -30,6 +30,9 @@ describe('DashboardStats Component', () => {
     assigneeId: null,
     createdBy: 'user-1',
     dueDate: '2026-10-16',
+    checklist: [],
+    labels: [],
+    recurrence: 'none',
     createdAt: new Date(),
     updatedAt: new Date(),
   };

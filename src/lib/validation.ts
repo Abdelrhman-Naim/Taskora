@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TASK_PRIORITIES } from '@/types';
+import { TASK_PRIORITIES, RECURRENCES } from '@/types';
 
 function isValidDateString(val: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(val)) return false;
@@ -44,32 +44,81 @@ export const projectInputSchema = z.object({
     .transform((val) => val ?? ''),
 });
 
-export const taskInputSchema = z.object({
-  title: z
+export const checklistItemSchema = z.object({
+  id: z.string().min(1),
+  text: z
     .string()
     .trim()
-    .min(3, 'validation.title.length')
-    .max(120, 'validation.title.length'),
-  description: z
-    .string()
-    .trim()
-    .max(1000, 'validation.description.length')
-    .default('')
-    .optional()
-    .transform((val) => val ?? ''),
-  priority: z.enum(TASK_PRIORITIES, {
-    message: 'validation.priority.invalid',
-  }),
-  assigneeId: z.string().nullable().optional().default(null),
-  dueDate: z
-    .string()
-    .nullable()
-    .optional()
-    .refine((val) => val === null || val === undefined || isValidDateString(val), {
-      message: 'validation.dueDate.invalid',
-    })
-    .default(null),
+    .min(1, 'validation.checklist.item.length')
+    .max(120, 'validation.checklist.item.length'),
+  done: z.boolean(),
 });
+
+export const taskInputSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(3, 'validation.title.length')
+      .max(120, 'validation.title.length'),
+    description: z
+      .string()
+      .trim()
+      .max(1000, 'validation.description.length')
+      .default('')
+      .optional()
+      .transform((val) => val ?? ''),
+    priority: z.enum(TASK_PRIORITIES, {
+      message: 'validation.priority.invalid',
+    }),
+    assigneeId: z.string().nullable().optional().default(null),
+    dueDate: z
+      .string()
+      .nullable()
+      .optional()
+      .refine((val) => val === null || val === undefined || isValidDateString(val), {
+        message: 'validation.dueDate.invalid',
+      })
+      .default(null),
+    checklist: z
+      .array(checklistItemSchema)
+      .max(20, 'validation.checklist.limit')
+      .optional()
+      .default([]),
+    labels: z
+      .array(
+        z
+          .string()
+          .trim()
+          .min(1, 'validation.label.length')
+          .max(24, 'validation.label.length')
+      )
+      .max(5, 'validation.labels.limit')
+      .refine(
+        (arr) => {
+          const lower = arr.map((s) => s.toLowerCase());
+          return new Set(lower).size === lower.length;
+        },
+        { message: 'validation.labels.duplicate' }
+      )
+      .optional()
+      .default([]),
+    recurrence: z
+      .enum(RECURRENCES, {
+        message: 'validation.recurrence.invalid',
+      })
+      .optional()
+      .default('none'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.recurrence && data.recurrence !== 'none' && !data.dueDate) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['recurrence'],
+        message: 'validation.recurrence.needsDueDate',
+      });
+    }
+  });
 
 export function fieldErrors(err: z.ZodError): Record<string, string> {
   const result: Record<string, string> = {};

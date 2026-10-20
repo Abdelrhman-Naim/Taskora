@@ -217,6 +217,13 @@ export const en = {
   'validation.password.length': 'Password must be at least 6 characters',
   'validation.priority.invalid': 'Priority must be low, medium, or high',
   'validation.dueDate.invalid': 'Due date must be a valid date in YYYY-MM-DD format',
+  'validation.checklist.limit': 'Checklist cannot exceed 20 items',
+  'validation.checklist.item.length': 'Checklist item must be between 1 and 120 characters',
+  'validation.labels.limit': 'Cannot exceed 5 labels',
+  'validation.label.length': 'Label must be between 1 and 24 characters',
+  'validation.labels.duplicate': 'Duplicate labels are not allowed',
+  'validation.recurrence.invalid': 'Invalid recurrence option',
+  'validation.recurrence.needsDueDate': 'Due date is required for recurring tasks',
 
   // Theme
   'theme.system': 'System theme',

@@ -219,6 +219,13 @@ export const ar: Record<MessageKey, string> = {
   'validation.password.length': 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل',
   'validation.priority.invalid': 'يجب تحديد أولوية صالحة',
   'validation.dueDate.invalid': 'تاريخ الاستحقاق غير صالح',
+  'validation.checklist.limit': 'لا يمكن أن تتجاوز قائمة التحقق 20 بنداً',
+  'validation.checklist.item.length': 'يجب أن يكون نص البند بين 1 و 120 حرفاً',
+  'validation.labels.limit': 'لا يمكن إضافة أكثر من 5 وسوم',
+  'validation.label.length': 'يجب أن يكون طول الوسم بين 1 و 24 حرفاً',
+  'validation.labels.duplicate': 'الوسوم المكررة غير مسموح بها',
+  'validation.recurrence.invalid': 'خيار التكرار غير صالح',
+  'validation.recurrence.needsDueDate': 'تاريخ الاستحقاق مطلوب للمهام المتكررة',
 
   // Theme
   'theme.system': 'مظهر النظام',

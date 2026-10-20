@@ -128,6 +128,9 @@ describe('TaskForm Component', () => {
       assigneeId: 'user-assignee',
       createdBy: 'user-creator',
       dueDate: null,
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date(),
       updatedAt: new Date(),
     };

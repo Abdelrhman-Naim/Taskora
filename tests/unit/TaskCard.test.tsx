@@ -22,6 +22,9 @@ describe('TaskCard Permissions Helper (Table-driven)', () => {
     assigneeId: 'user-assignee',
     createdBy: 'user-creator',
     dueDate: '2026-10-30',
+    checklist: [],
+    labels: [],
+    recurrence: 'none',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -69,6 +72,9 @@ describe('TaskCard Component', () => {
     assigneeId: 'user-assignee',
     createdBy: 'user-creator',
     dueDate: '2020-01-01',
+    checklist: [],
+    labels: [],
+    recurrence: 'none',
     createdAt: new Date(),
     updatedAt: new Date(),
   };

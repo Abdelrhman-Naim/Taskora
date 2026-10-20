@@ -53,13 +53,16 @@ service cloud.firestore {
     match /projects/{pid}/tasks/{tid} {
       function proj() { return projectData(pid); }
       function taskShape(t) {
-        return t.keys().hasOnly(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt'])
+        return t.keys().hasOnly(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt','checklist','labels','recurrence'])
           && t.keys().hasAll(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt'])
           && t.title is string && t.title.size() >= 3 && t.title.size() <= 120
           && t.description is string && t.description.size() <= 1000
           && t.status in ['todo','in_progress','done'] && t.priority in ['low','medium','high']
           && (t.assigneeId == null || t.assigneeId in proj().memberIds)
           && (t.dueDate == null || (t.dueDate is string && t.dueDate.matches('^\\d{4}-\\d{2}-\\d{2}$')))
+          && (!('checklist' in t) || (t.checklist is list && t.checklist.size() <= 20))
+          && (!('labels' in t) || (t.labels is list && t.labels.size() <= 5))
+          && (!('recurrence' in t) || t.recurrence in ['none','daily','weekly','monthly'])
           && t.updatedAt == request.time;
       }
       function memberMayUpdate() {

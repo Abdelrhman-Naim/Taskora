@@ -521,4 +521,117 @@ describe('Tasks security rules & permission matrix', () => {
       );
     });
   });
+
+  describe('Extended task schema (checklist, labels, recurrence) (Task 51)', () => {
+    it('denies creating a task with 21 checklist items', async () => {
+      const creator = testEnv.authenticatedContext(MEMBER_A);
+      const items21 = Array.from({ length: 21 }, (_, i) => ({
+        id: `c-${i}`,
+        text: `Item ${i}`,
+        done: false,
+      }));
+      await assertFails(
+        creator.firestore().collection('projects').doc(PID).collection('tasks').doc('t-21-check').set({
+          ...validTask(MEMBER_A),
+          checklist: items21,
+        })
+      );
+    });
+
+    it('denies creating a task with 6 labels', async () => {
+      const creator = testEnv.authenticatedContext(MEMBER_A);
+      await assertFails(
+        creator.firestore().collection('projects').doc(PID).collection('tasks').doc('t-6-labels').set({
+          ...validTask(MEMBER_A),
+          labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+        })
+      );
+    });
+
+    it('denies creating a task with invalid recurrence', async () => {
+      const creator = testEnv.authenticatedContext(MEMBER_A);
+      await assertFails(
+        creator.firestore().collection('projects').doc(PID).collection('tasks').doc('t-invalid-rec').set({
+          ...validTask(MEMBER_A),
+          recurrence: 'yearly',
+        })
+      );
+    });
+
+    it('denies creating a task with unknown field (hasOnly)', async () => {
+      const creator = testEnv.authenticatedContext(MEMBER_A);
+      await assertFails(
+        creator.firestore().collection('projects').doc(PID).collection('tasks').doc('t-unknown').set({
+          ...validTask(MEMBER_A),
+          unknownProp: 'invalid',
+        })
+      );
+    });
+
+    it('allows owner to update title of an old task lacking the 3 fields', async () => {
+      // Seed old task document directly without checklist, labels, recurrence
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        const db = context.firestore();
+        await db.collection('projects').doc(PID).collection('tasks').doc('old-task-1').set({
+          title: 'Old Legacy Task',
+          description: 'Created before Phase 6',
+          status: 'todo',
+          priority: 'medium',
+          assigneeId: MEMBER_B,
+          createdBy: MEMBER_A,
+          dueDate: null,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      });
+
+      const owner = testEnv.authenticatedContext(OWNER);
+      await assertSucceeds(
+        owner.firestore().collection('projects').doc(PID).collection('tasks').doc('old-task-1').update({
+          title: 'Updated Old Legacy Task',
+          updatedAt: serverTimestamp(),
+        })
+      );
+    });
+
+    it('allows assignee to update checklist on a task', async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        const db = context.firestore();
+        await db.collection('projects').doc(PID).collection('tasks').doc('t-phase6-assigned').set(validTask(MEMBER_A, MEMBER_B));
+      });
+      const assignee = testEnv.authenticatedContext(MEMBER_B);
+      await assertSucceeds(
+        assignee.firestore().collection('projects').doc(PID).collection('tasks').doc('t-phase6-assigned').update({
+          checklist: [{ id: '1', text: 'Step 1', done: true }],
+          updatedAt: serverTimestamp(),
+        })
+      );
+    });
+
+    it('denies non-creator non-assignee member from updating checklist', async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        const db = context.firestore();
+        await db.collection('projects').doc(PID).collection('tasks').doc('t-phase6-assigned').set(validTask(MEMBER_A, MEMBER_B));
+      });
+      const other = testEnv.authenticatedContext(MEMBER_C);
+      await assertFails(
+        other.firestore().collection('projects').doc(PID).collection('tasks').doc('t-phase6-assigned').update({
+          checklist: [{ id: '1', text: 'Step 1', done: true }],
+          updatedAt: serverTimestamp(),
+        })
+      );
+    });
+
+    it('allows creating a task with valid checklist, labels, and recurrence', async () => {
+      const creator = testEnv.authenticatedContext(MEMBER_A);
+      await assertSucceeds(
+        creator.firestore().collection('projects').doc(PID).collection('tasks').doc('t-valid-phase6').set({
+          ...validTask(MEMBER_A),
+          checklist: [{ id: '1', text: 'Clean up code', done: false }],
+          labels: ['refactor', 'v2'],
+          recurrence: 'weekly',
+        })
+      );
+    });
+  });
 });

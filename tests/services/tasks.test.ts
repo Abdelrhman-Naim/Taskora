@@ -179,4 +179,58 @@ describe('Tasks Service', () => {
       code: 'permission-denied',
     });
   });
+
+  it('creates task with checklist, labels, and recurrence, and retrieves them as-is (Task 51)', async () => {
+    const { memberA, memberB, projectId } = await setupProjectWithMembers();
+
+    const taskId = await createTask(memberA.db, projectId, memberA.uid, {
+      title: 'Extended Feature Task',
+      description: 'Testing checklist and labels',
+      priority: 'high',
+      assigneeId: memberB.uid,
+      dueDate: '2026-11-15',
+      checklist: [
+        { id: 'c1', text: 'Subtask 1', done: false },
+        { id: 'c2', text: 'Subtask 2', done: true },
+      ],
+      labels: ['frontend', 'pwa'],
+      recurrence: 'weekly',
+    });
+
+    const tasks = await listTasks(memberA.db, projectId);
+    const task = tasks.find((t) => t.id === taskId);
+    expect(task).toBeDefined();
+    expect(task?.checklist).toEqual([
+      { id: 'c1', text: 'Subtask 1', done: false },
+      { id: 'c2', text: 'Subtask 2', done: true },
+    ]);
+    expect(task?.labels).toEqual(['frontend', 'pwa']);
+    expect(task?.recurrence).toBe('weekly');
+  });
+
+  it('normalizes legacy tasks lacking checklist, labels, and recurrence to default empty values (Task 51)', async () => {
+    const { memberA, projectId } = await setupProjectWithMembers();
+
+    // Insert legacy task document directly without the 3 new fields
+    const { serverTimestamp, setDoc } = await import('firebase/firestore');
+    const legacyDocRef = doc(memberA.db, 'projects', projectId, 'tasks', 'legacy-task-xyz');
+    await setDoc(legacyDocRef, {
+      title: 'Legacy Task Without Phase 6 Fields',
+      description: 'Legacy task',
+      status: 'todo',
+      priority: 'low',
+      assigneeId: null,
+      createdBy: memberA.uid,
+      dueDate: null,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    const tasks = await listTasks(memberA.db, projectId);
+    const legacy = tasks.find((t) => t.id === 'legacy-task-xyz');
+    expect(legacy).toBeDefined();
+    expect(legacy?.checklist).toEqual([]);
+    expect(legacy?.labels).toEqual([]);
+    expect(legacy?.recurrence).toBe('none');
+  });
 });

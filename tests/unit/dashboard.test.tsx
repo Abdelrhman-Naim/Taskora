@@ -70,6 +70,9 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       assigneeId: 'user-1',
       createdBy: 'user-1',
       dueDate: '2026-10-15', // 2 days overdue
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date('2026-10-10'),
       updatedAt: new Date('2026-10-17T11:00:00Z'),
     },
@@ -83,6 +86,9 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       assigneeId: 'user-1',
       createdBy: 'user-1',
       dueDate: '2026-10-17', // due today
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date('2026-10-12'),
       updatedAt: new Date('2026-10-17T09:00:00Z'),
     },
@@ -96,6 +102,9 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       assigneeId: 'user-2',
       createdBy: 'user-2',
       dueDate: '2026-10-18', // due tomorrow
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date('2026-10-14'),
       updatedAt: new Date('2026-10-15T12:00:00Z'),
     },
@@ -109,6 +118,9 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       assigneeId: 'user-1',
       createdBy: 'user-1',
       dueDate: '2026-10-14', // was past date, but done so NOT overdue
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date('2026-10-08'),
       updatedAt: new Date('2026-10-14T16:00:00Z'),
     },
@@ -122,6 +134,9 @@ describe('Professional Dashboard Components (Task 26 TDD)', () => {
       assigneeId: 'user-1',
       createdBy: 'user-2',
       dueDate: '2026-10-22', // due within 7 days
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date('2026-10-15'),
       updatedAt: new Date('2026-10-16T08:00:00Z'),
     },

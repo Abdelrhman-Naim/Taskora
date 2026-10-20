@@ -16,6 +16,9 @@ describe('taskFilters library', () => {
       assigneeId: 'user-alice',
       createdBy: 'user-owner',
       dueDate: '2026-10-25',
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -29,6 +32,9 @@ describe('taskFilters library', () => {
       assigneeId: 'user-bob',
       createdBy: 'user-owner',
       dueDate: '2026-10-16', // yesterday -> overdue
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -42,6 +48,9 @@ describe('taskFilters library', () => {
       assigneeId: 'user-alice',
       createdBy: 'user-owner',
       dueDate: '2026-10-30',
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -55,6 +64,9 @@ describe('taskFilters library', () => {
       assigneeId: null, // unassigned
       createdBy: 'user-owner',
       dueDate: '2026-10-10', // past date, but DONE -> NOT overdue
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -68,6 +80,9 @@ describe('taskFilters library', () => {
       assigneeId: null, // unassigned
       createdBy: 'user-owner',
       dueDate: null, // no due date
+      checklist: [],
+      labels: [],
+      recurrence: 'none',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
