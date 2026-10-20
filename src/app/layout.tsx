@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { cookies, headers } from 'next/headers';
-import { Fraunces, Instrument_Sans, Amiri, IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { Cairo } from 'next/font/google';
 import './globals.css';
 import { AuthProviderClient } from '@/components/auth/AuthProviderClient';
 import { parseTheme, THEME_COOKIE } from '@/theme/config';
@@ -10,33 +10,13 @@ import { I18nProvider } from '@/i18n/I18nProvider';
 import { en } from '@/i18n/en';
 import { ar } from '@/i18n/ar';
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--f-fraunces',
-});
-
-const instrumentSans = Instrument_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--f-instrument',
-});
-
-const amiri = Amiri({
+const cairo = Cairo({
   subsets: ['arabic', 'latin'],
   display: 'swap',
-  weight: ['400', '700'],
-  variable: '--f-amiri',
+  variable: '--f-cairo',
 });
 
-const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
-  subsets: ['arabic'],
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-  variable: '--f-ibm-plex-arabic',
-});
-
-const fontClasses = `${fraunces.variable} ${instrumentSans.variable} ${amiri.variable} ${ibmPlexSansArabic.variable}`;
+const fontClasses = `${cairo.variable}`;
 
 import { PwaRegister } from '@/components/pwa/PwaRegister';
 

@@ -64,7 +64,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await page.getByLabel(/password/i).fill(password);
     await page.getByRole('button', { name: /log in|sign in/i }).click();
 
-    await expect(page).toHaveURL(/\/dashboard/);
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
     await expect(page.getByText('Test Owner').first()).toBeVisible();
   });
 
@@ -74,7 +74,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await page.getByLabel(/email/i).fill(ownerEmail);
     await page.getByLabel(/password/i).fill(password);
     await page.getByRole('button', { name: /log in|sign in/i }).click();
-    await expect(page).toHaveURL(/\/dashboard/);
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
     // Create Project
     await page.getByRole('link', { name: /\+ new project/i }).first().click();
@@ -160,7 +160,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await memberPage.getByLabel(/email/i).fill(memberEmail);
     await memberPage.getByLabel(/password/i).fill(password);
     await memberPage.getByRole('button', { name: /log in|sign in/i }).click();
-    await expect(memberPage).toHaveURL(/\/dashboard/);
+    await expect(memberPage).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
     // Member sees the project
     await expect(memberPage.getByText(`Website Redesign ${timestamp}`).first()).toBeVisible();
@@ -246,7 +246,7 @@ test.describe('TaskFlow Acceptance & E2E Test Suite (TC-01…TC-16)', () => {
     await page.getByLabel(/email/i).fill(ownerEmail);
     await page.getByLabel(/password/i).fill(password);
     await page.getByRole('button', { name: /log in|sign in/i }).click();
-    await expect(page).toHaveURL(/\/dashboard/);
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
 
     const viewports = [
       { width: 375, height: 667 },

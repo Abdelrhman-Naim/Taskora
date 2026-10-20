@@ -97,10 +97,10 @@ export default function DesignSystemPage() {
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600 }}>
-                Display Title: Fraunces & Amiri (العنوان والترويسة)
+                Display Title: Cairo (العنوان والترويسة)
               </div>
               <div style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.75 }}>
-                Body Text: Instrument Sans & IBM Plex Sans Arabic (خط القراءة والواجهة النظيف والمريح)
+                Body Text: Cairo (خط القراءة والواجهة النظيف والمريح)
               </div>
               <div className="num" style={{ fontFamily: 'var(--font-display)', fontSize: '2.5rem', color: 'var(--accent)' }}>
                 12,500 · 34 · 98% (Lining & Tabular Numerals)
