@@ -6,31 +6,42 @@
 .select {
   display: block;
   inline-size: 100%;
-  min-block-size: 44px;
+  min-block-size: 42px;
   text-align: start;
-  padding-inline-start: 12px;
-  padding-inline-end: 36px;
+  padding-inline-start: 14px;
+  padding-inline-end: 38px;
   padding-block: 8px;
   font-family: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
   color: var(--text);
   background-color: var(--surface);
   border: 1px solid var(--control-border);
   border-radius: var(--radius-md);
   box-sizing: border-box;
   appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
+  transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease);
 }
 
 .select:hover:not(:disabled) {
-  border-color: var(--control-border);
+  border-color: var(--accent);
+  background-color: var(--surface-hover);
 }
 
 .select:focus-visible {
   outline: none;
   border-color: var(--accent);
   box-shadow: var(--focus-ring);
+}
+
+.select option {
+  background-color: var(--surface-overlay);
+  color: var(--text);
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 0.875rem;
 }
 
 .select:disabled {
@@ -43,8 +54,14 @@
 .icon {
   position: absolute;
   inset-block-start: 50%;
-  inset-inline-end: 12px;
+  inset-inline-end: 14px;
   transform: translateY(-50%);
   pointer-events: none;
-  color: var(--text-muted);
+  color: var(--text-3);
+  transition: color var(--dur-1) var(--ease);
+}
+
+.select:hover ~ .icon,
+.select:focus-visible ~ .icon {
+  color: var(--accent);
 }

@@ -188,8 +188,10 @@
 
 .userSection {
   margin-block-start: 16px;
-  padding-block-start: 12px;
-  border-block-start: 1px solid var(--border);
+  padding: 8px 10px;
+  border: 1px solid var(--sidebar-border);
+  background-color: var(--surface-2);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -206,7 +208,7 @@
 
 .userDisplayName {
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--sidebar-text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -216,21 +218,22 @@
 .logoutBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding-block: 6px;
+  gap: 5px;
+  padding-block: 5px;
   padding-inline: 8px;
   background: transparent;
-  border: 1px solid transparent;
+  border: 1px solid var(--sidebar-border);
   border-radius: var(--radius-sm);
-  color: var(--sidebar-text);
+  color: var(--sidebar-text-2);
   font-size: 0.75rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all var(--dur-1) var(--ease);
   flex-shrink: 0;
 }
 
 .logoutBtn:hover {
-  background-color: var(--surface-hover);
+  background-color: var(--st-overdue-bg);
   color: var(--st-overdue-fg);
-  border-color: var(--border);
+  border-color: var(--st-overdue-fg);
 }

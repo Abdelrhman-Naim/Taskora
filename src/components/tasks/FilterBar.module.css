@@ -35,23 +35,28 @@
   color: var(--text-muted);
 }
 
-.input,
-.select {
-  min-block-size: 40px;
-  padding-inline: 12px;
-  background-color: var(--bg);
+.input {
+  min-block-size: 42px;
+  padding-inline: 14px;
+  padding-block: 8px;
+  background-color: var(--surface);
   color: var(--text);
   border: 1px solid var(--control-border);
   border-radius: var(--radius-md);
   font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
   outline: none;
   text-align: start;
-  transition: border-color var(--dur-1) var(--ease);
+  transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
   inline-size: 100%;
 }
 
-.input:focus-visible,
-.select:focus-visible {
+.input:hover {
+  border-color: var(--accent);
+}
+
+.input:focus-visible {
   border-color: var(--accent);
   box-shadow: var(--focus-ring);
 }

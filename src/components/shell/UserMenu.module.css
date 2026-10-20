@@ -4,24 +4,25 @@
 }
 
 .trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background-color: transparent;
-  border: 1px solid transparent;
+  gap: 10px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
   border-radius: var(--radius-pill);
-  padding-block: 2px;
-  padding-inline: 4px;
+  padding-block: 5px;
+  padding-inline-start: 6px;
+  padding-inline-end: 12px;
   cursor: pointer;
   color: var(--text);
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--dur-1) var(--ease);
 }
 
 .trigger:hover {
   background-color: var(--surface-hover);
-  border-color: var(--border);
+  border-color: var(--accent);
 }
 
 .trigger:focus-visible {
@@ -42,15 +43,25 @@
   }
 }
 
+.chevron {
+  color: var(--text-3);
+  transition: transform var(--dur-1) var(--ease);
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
 .menu {
   position: absolute;
-  inset-block-start: calc(100% + 8px);
+  inset-block-start: calc(100% + 10px);
   inset-inline-end: 0;
-  inline-size: 240px;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
+  inline-size: 260px;
+  background-color: var(--surface-overlay);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
-  padding: 6px;
+  padding: 8px;
   box-shadow: var(--shadow-pop);
   z-index: 1000;
   display: flex;
@@ -61,7 +72,7 @@
 @keyframes menuFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
@@ -69,23 +80,36 @@
   }
 }
 
-.userInfo {
-  padding-block: 8px;
-  padding-inline: 10px;
+.userHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.userHeaderAvatar {
+  order: -1;
+  flex-shrink: 0;
+}
+
+.userInfoText {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  min-inline-size: 0;
+  flex: 1;
 }
 
 .userInfoName {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.9375rem;
+  font-weight: 700;
   color: var(--text);
+  line-height: 1.2;
 }
 
 .userInfoEmail {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-2);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -93,31 +117,31 @@
 
 .divider {
   block-size: 1px;
-  background-color: var(--border);
-  margin-block: 4px;
+  background-color: var(--line);
+  margin-block: 6px;
 }
 
 .item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-block: 8px;
-  padding-inline: 10px;
+  gap: 10px;
+  padding-block: 9px;
+  padding-inline: 12px;
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text);
   background-color: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
   inline-size: 100%;
   text-align: start;
-  transition: background-color var(--dur-1) var(--ease);
+  transition: all var(--dur-1) var(--ease);
 }
 
 .item:hover,
 .item:focus-visible {
-  background-color: var(--surface-hover);
+  background-color: var(--st-overdue-bg);
   color: var(--st-overdue-fg);
   outline: none;
 }

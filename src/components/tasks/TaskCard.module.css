@@ -102,13 +102,37 @@
 
 .statusSelect {
   font-size: 0.8125rem;
-  min-block-size: 36px;
-  padding-inline: 8px;
+  font-family: inherit;
+  font-weight: 600;
+  min-block-size: 34px;
+  padding-inline-start: 10px;
+  padding-inline-end: 26px;
   padding-block: 4px;
-  border-radius: var(--radius-sm);
-  background-color: var(--surface);
-  border: 1px solid var(--control-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
   color: var(--text);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23736B5E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: all var(--dur-1) var(--ease);
+}
+
+html[dir="rtl"] .statusSelect {
+  background-position: left 8px center;
+}
+
+.statusSelect:hover {
+  border-color: var(--accent);
+  background-color: var(--surface-hover);
+}
+
+.statusSelect:focus-visible {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+  outline: none;
 }
 
 @media (max-width: 767px) {

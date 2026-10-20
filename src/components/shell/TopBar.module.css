@@ -2,8 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  block-size: 56px;
-  padding-inline: 20px;
+  min-block-size: 68px;
+  padding-block: 14px;
+  padding-inline: 28px;
   background-color: var(--topbar-bg);
   border-block-end: 1px solid var(--topbar-border);
   position: sticky;

@@ -46,6 +46,13 @@ html[lang="ar"] h6 {
   font-variant-numeric: lining-nums tabular-nums;
 }
 
+select option {
+  background-color: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  padding: 8px 12px;
+}
+
 /* PWA Touch & Mobile Hardening (P-101, P-108, P-110) */
 button,
 a,

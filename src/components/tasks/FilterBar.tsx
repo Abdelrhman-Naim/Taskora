@@ -5,6 +5,7 @@ import { TaskFilters, DEFAULT_FILTERS } from '@/lib/taskFilters';
 import { TaskPriority, TaskStatus } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
+import { Select } from '@/components/ui/Select';
 import { useI18n } from '@/i18n/I18nProvider';
 import styles from './FilterBar.module.css';
 
@@ -74,9 +75,8 @@ export function FilterBar({
         <label htmlFor="filter-status" className={styles.label}>
           {t('task.field.status')}
         </label>
-        <select
+        <Select
           id="filter-status"
-          className={styles.select}
           value={filters.status}
           onChange={handleStatusChange}
         >
@@ -84,7 +84,7 @@ export function FilterBar({
           <option value="todo">{t('task.status.todo')}</option>
           <option value="in_progress">{t('task.status.in_progress')}</option>
           <option value="done">{t('task.status.done')}</option>
-        </select>
+        </Select>
       </div>
 
       {/* Priority Filter */}
@@ -92,9 +92,8 @@ export function FilterBar({
         <label htmlFor="filter-priority" className={styles.label}>
           {t('task.field.priority')}
         </label>
-        <select
+        <Select
           id="filter-priority"
-          className={styles.select}
           value={filters.priority}
           onChange={handlePriorityChange}
         >
@@ -102,7 +101,7 @@ export function FilterBar({
           <option value="low">{t('task.priority.low')}</option>
           <option value="medium">{t('task.priority.medium')}</option>
           <option value="high">{t('task.priority.high')}</option>
-        </select>
+        </Select>
       </div>
 
       {/* Assignee Filter */}
@@ -110,9 +109,8 @@ export function FilterBar({
         <label htmlFor="filter-assignee" className={styles.label}>
           {t('task.field.assignee')}
         </label>
-        <select
+        <Select
           id="filter-assignee"
-          className={styles.select}
           value={filters.assigneeId}
           onChange={handleAssigneeChange}
         >
@@ -123,7 +121,7 @@ export function FilterBar({
               {name}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Overdue Only Checkbox */}

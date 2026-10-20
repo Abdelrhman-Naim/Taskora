@@ -67,18 +67,34 @@ export function UserMenu(): React.ReactElement | null {
         <span className={styles.userName}>
           <bdi>{displayName}</bdi>
         </span>
-        <Icon name="arrow" size={14} />
+        <svg
+          className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
       </button>
 
       {isOpen && (
         <div ref={menuRef} className={styles.menu} role="menu">
-          <div className={styles.userInfo}>
-            <span className={styles.userInfoName}>
-              <bdi>{displayName}</bdi>
-            </span>
-            <span className={styles.userInfoEmail} dir="ltr">
-              {user.email}
-            </span>
+          <div className={styles.userHeader}>
+            <div className={styles.userInfoText}>
+              <span className={styles.userInfoName}>
+                <bdi>{displayName}</bdi>
+              </span>
+              <span className={styles.userInfoEmail} dir="ltr">
+                {user.email}
+              </span>
+            </div>
+            <Avatar name={displayName} size="md" className={styles.userHeaderAvatar} />
           </div>
 
           <div className={styles.divider} aria-hidden="true" />
