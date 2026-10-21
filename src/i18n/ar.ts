@@ -266,6 +266,9 @@ export const ar: Record<MessageKey, string> = {
   'activity.unnamedTask': 'مهمة',
 
   // Notifications
+  'notif.bell': 'الإشعارات',
+  'notif.markAllRead': 'تحديد الكل كمقروء',
+  'notif.empty': 'لا توجد إشعارات',
   'notif.task_assigned': 'أسند إليك {actor} المهمة "{task}" في {project}',
   'notif.comment_added': 'علّق {actor} على "{task}" في {project}',
   'notif.member_added': 'أضافك {actor} إلى المشروع {project}',

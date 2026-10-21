@@ -264,6 +264,9 @@ export const en = {
   'activity.unnamedTask': 'a task',
 
   // Notifications
+  'notif.bell': 'Notifications',
+  'notif.markAllRead': 'Mark all as read',
+  'notif.empty': 'No notifications',
   'notif.task_assigned': '{actor} assigned you to "{task}" in {project}',
   'notif.comment_added': '{actor} commented on "{task}" in {project}',
   'notif.member_added': '{actor} added you to project {project}',

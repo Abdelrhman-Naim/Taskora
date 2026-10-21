@@ -4,6 +4,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { ThemeToggle } from '@/theme/ThemeToggle';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { UserMenu } from './UserMenu';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { Icon } from '@/components/ui/Icon';
 import styles from './TopBar.module.css';
 
@@ -41,6 +42,7 @@ export function TopBar({ onOpenMobileMenu, title }: TopBarProps): React.ReactEle
       </div>
 
       <div className={styles.rightSection}>
+        <NotificationBell />
         <LocaleSwitcher />
         <ThemeToggle />
         <UserMenu />

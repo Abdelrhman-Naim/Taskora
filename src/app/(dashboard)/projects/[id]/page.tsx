@@ -210,7 +210,7 @@ export default function ProjectPage(): React.ReactElement | null {
   if (error) {
     if (error.code === 'not-found') {
       return (
-        <div className={styles.errorStateWrapper}>
+        <div className={styles.errorStateWrapper} role="alert" data-testid="project-not-found">
           <h2 className={styles.errorStateTitle}>
             {t('project.error.notFound')}
           </h2>

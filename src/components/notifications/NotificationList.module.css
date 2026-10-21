@@ -1,0 +1,145 @@
+.popover {
+  position: absolute;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-end: 0;
+  inline-size: 360px;
+  max-inline-size: calc(100vw - 32px);
+  background-color: var(--surface-overlay);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-pop);
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popoverFadeIn var(--dur-1) var(--ease);
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 12px;
+  padding-inline: 16px;
+  border-block-end: 1px solid var(--line);
+}
+
+.title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.markAllBtn {
+  background: transparent;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  padding-block: 4px;
+  padding-inline: 6px;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.markAllBtn:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+}
+
+.markAllBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding-block: 4px;
+  padding-inline: 0;
+  max-block-size: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-block: 10px;
+  padding-inline: 16px;
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color var(--dur-1) var(--ease);
+  cursor: pointer;
+  border-block-end: 1px solid var(--line);
+}
+
+.item:last-child {
+  border-block-end: none;
+}
+
+.item:hover {
+  background-color: var(--surface-hover);
+}
+
+.unreadDot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-pill);
+  background-color: var(--accent);
+  margin-block-start: 6px;
+  flex-shrink: 0;
+}
+
+.readSpacer {
+  inline-size: 6px;
+  block-size: 6px;
+  margin-block-start: 6px;
+  flex-shrink: 0;
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.message {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.time {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.emptyState {
+  padding-block: 24px;
+  padding-inline: 16px;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
