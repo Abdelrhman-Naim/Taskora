@@ -66,6 +66,7 @@ export default function ProjectPage(): React.ReactElement | null {
 
   useHotkeys({
     KeyN: () => {
+      if (!isOwner) return;
       setEditingTask(null);
       setShowCreateForm(true);
     },
@@ -152,7 +153,7 @@ export default function ProjectPage(): React.ReactElement | null {
   });
 
   const handleCreateTask = async (data: TaskInput) => {
-    if (!project || !user) return;
+    if (!project || !user || !isOwner) return;
     const db = getDb();
 
     if (data.multiAssigneeMode === 'individual' && data.selectedMemberIds && data.selectedMemberIds.length > 0) {
@@ -279,20 +280,26 @@ export default function ProjectPage(): React.ReactElement | null {
 
   const currentUid = user?.uid || '';
   const isOwner = Boolean(project && user?.uid === project.ownerId);
-  const viewScope: ViewScope = userSelectedScope ?? (isOwner ? 'all' : 'my_tasks');
+  // Non-owners can NEVER view all tasks; only owners have the choice
+  const viewScope: ViewScope = isOwner ? (userSelectedScope ?? 'all') : 'my_tasks';
 
   const scopedTasks = useMemo(() => {
     if (viewScope === 'all') {
       return tasks;
     }
     return tasks.filter((t) => {
-      if (t.assigneeId === currentUid) return true;
-      if (t.createdBy === currentUid) return true;
-      if (t.checklist && t.checklist.some((c) => c.id === currentUid)) return true;
-      if (!t.assigneeId) return true;
-      return false;
+      // 1. Task assigned to a specific user -> ONLY show if assigned to current user
+      if (t.assigneeId) {
+        return t.assigneeId === currentUid;
+      }
+      // 2. Shared task with checklist items for members
+      if (t.checklist && t.checklist.length > 0) {
+        return t.checklist.some((c) => c.id === currentUid);
+      }
+      // 3. Unassigned task without checklist
+      return isOwner || t.createdBy === currentUid;
     });
-  }, [tasks, viewScope, currentUid]);
+  }, [tasks, viewScope, currentUid, isOwner]);
 
   const filteredTasks = useMemo(() => {
     return filterTasks(scopedTasks, filters, todayString());
@@ -410,18 +417,20 @@ export default function ProjectPage(): React.ReactElement | null {
               </Link>
             )}
 
-            <Button
-              variant="primary"
-              icon="plus"
-              data-testid="project-new-task-btn"
-              aria-label={`+ ${t('task.new.button')}`}
-              onClick={() => {
-                setEditingTask(null);
-                setShowCreateForm(true);
-              }}
-            >
-              {t('task.new.button')}
-            </Button>
+            {isOwner && (
+              <Button
+                variant="primary"
+                icon="plus"
+                data-testid="project-new-task-btn"
+                aria-label={`+ ${t('task.new.button')}`}
+                onClick={() => {
+                  setEditingTask(null);
+                  setShowCreateForm(true);
+                }}
+              >
+                {t('task.new.button')}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -510,37 +519,39 @@ export default function ProjectPage(): React.ReactElement | null {
             <h2 className={styles.tasksTitle}>
               {t('task.list.title')}
               <span className={`${styles.tasksCount} num`}>
-                ({filteredTasks.length}{viewScope === 'my_tasks' && tasks.length !== filteredTasks.length ? ` / ${tasks.length}` : ''})
+                ({filteredTasks.length}{isOwner && viewScope === 'my_tasks' && tasks.length !== filteredTasks.length ? ` / ${tasks.length}` : ''})
               </span>
             </h2>
           </div>
 
-          <div
-            className={styles.scopeSwitcher}
-            role="radiogroup"
-            aria-label={t('task.scope.title')}
-          >
-            <button
-              type="button"
-              role="radio"
-              aria-checked={viewScope === 'my_tasks'}
-              className={`${styles.scopeBtn} ${viewScope === 'my_tasks' ? styles.scopeBtnActive : ''}`}
-              onClick={() => setUserSelectedScope('my_tasks')}
-              data-testid="scope-switch-my-tasks"
+          {isOwner && (
+            <div
+              className={styles.scopeSwitcher}
+              role="radiogroup"
+              aria-label={t('task.scope.title')}
             >
-              👤 {t('task.scope.myTasks')}
-            </button>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={viewScope === 'all'}
-              className={`${styles.scopeBtn} ${viewScope === 'all' ? styles.scopeBtnActive : ''}`}
-              onClick={() => setUserSelectedScope('all')}
-              data-testid="scope-switch-all"
-            >
-              🌐 {t('task.scope.allTasks')}
-            </button>
-          </div>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={viewScope === 'my_tasks'}
+                className={`${styles.scopeBtn} ${viewScope === 'my_tasks' ? styles.scopeBtnActive : ''}`}
+                onClick={() => setUserSelectedScope('my_tasks')}
+                data-testid="scope-switch-my-tasks"
+              >
+                👤 {t('task.scope.myTasks')}
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={viewScope === 'all'}
+                className={`${styles.scopeBtn} ${viewScope === 'all' ? styles.scopeBtnActive : ''}`}
+                onClick={() => setUserSelectedScope('all')}
+                data-testid="scope-switch-all"
+              >
+                🌐 {t('task.scope.allTasks')}
+              </button>
+            </div>
+          )}
         </div>
 
         {tasks.length > 0 && (
@@ -632,10 +643,10 @@ export default function ProjectPage(): React.ReactElement | null {
             }}
             onDelete={(task) => setDeletingTask(task)}
             onStatusChange={handleStatusChange}
-            onNewTask={() => {
+            onNewTask={isOwner ? () => {
               setEditingTask(null);
               setShowCreateForm(true);
-            }}
+            } : undefined}
           />
         )}
       </div>

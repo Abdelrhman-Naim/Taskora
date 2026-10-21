@@ -246,6 +246,8 @@ export function TaskDetailDialog({
             <Checklist
               items={task.checklist || []}
               canEdit={canEdit || Boolean(task.checklist?.some((c) => c.id === currentUserId))}
+              currentUserId={currentUserId}
+              isOwner={isOwner}
               onChange={(updatedItems) => {
                 onTaskChange({ checklist: updatedItems });
               }}

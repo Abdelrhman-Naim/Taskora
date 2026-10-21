@@ -106,4 +106,72 @@ describe('Checklist Component (Task 56)', () => {
       expect(input).toBeDisabled();
     }
   });
+
+  describe('Shared Member Checklist Ownership Restrictions', () => {
+    const memberChecklist: ChecklistItem[] = [
+      { id: 'user-alice-12345678901234567890', text: 'Alice', done: false },
+      { id: 'user-bob-1234567890123456789012', text: 'Bob', done: false },
+    ];
+
+    it('non-owner member can only toggle their own item, not other members', () => {
+      const handleChange = vi.fn();
+      renderWithProviders(
+        <Checklist
+          items={memberChecklist}
+          canEdit={true}
+          currentUserId="user-alice-12345678901234567890"
+          isOwner={false}
+          onChange={handleChange}
+        />
+      );
+
+      const aliceItem = screen.getByTestId('checklist-item-user-alice-12345678901234567890');
+      const aliceCheckbox = aliceItem.querySelector('input[type="checkbox"]')!;
+      expect(aliceCheckbox).not.toBeDisabled();
+
+      const bobItem = screen.getByTestId('checklist-item-user-bob-1234567890123456789012');
+      const bobCheckbox = bobItem.querySelector('input[type="checkbox"]')!;
+      expect(bobCheckbox).toBeDisabled();
+
+      // Alice can click her checkbox
+      fireEvent.click(aliceCheckbox);
+      expect(handleChange).toHaveBeenCalledTimes(1);
+      const updated = handleChange.mock.calls[0][0] as ChecklistItem[];
+      expect(updated[0].done).toBe(true);
+
+      // Non-owner member should NOT see delete buttons or add input
+      expect(screen.queryByTestId('checklist-delete-user-alice-12345678901234567890')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('checklist-delete-user-bob-1234567890123456789012')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('checklist-add-input')).not.toBeInTheDocument();
+    });
+
+    it('owner can toggle any member item and can delete items', () => {
+      const handleChange = vi.fn();
+      renderWithProviders(
+        <Checklist
+          items={memberChecklist}
+          canEdit={true}
+          currentUserId="owner-id"
+          isOwner={true}
+          onChange={handleChange}
+        />
+      );
+
+      const aliceItem = screen.getByTestId('checklist-item-user-alice-12345678901234567890');
+      const aliceCheckbox = aliceItem.querySelector('input[type="checkbox"]')!;
+      expect(aliceCheckbox).not.toBeDisabled();
+
+      const bobItem = screen.getByTestId('checklist-item-user-bob-1234567890123456789012');
+      const bobCheckbox = bobItem.querySelector('input[type="checkbox"]')!;
+      expect(bobCheckbox).not.toBeDisabled();
+
+      // Owner can click Bob's checkbox
+      fireEvent.click(bobCheckbox);
+      expect(handleChange).toHaveBeenCalledTimes(1);
+
+      // Owner CAN see delete buttons and add input
+      expect(screen.getByTestId('checklist-delete-user-alice-12345678901234567890')).toBeInTheDocument();
+      expect(screen.getByTestId('checklist-add-input')).toBeInTheDocument();
+    });
+  });
 });

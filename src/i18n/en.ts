@@ -135,6 +135,7 @@ export const en = {
   'task.checklist.addItem': 'Add item',
   'task.checklist.placeholder': 'Add a step...',
   'task.checklist.empty': 'No checklist items yet',
+  'task.checklist.onlySelf': 'You can only check off your own assigned item',
   'task.field.labels': 'Labels',
   'task.labels.title': 'Labels',
   'task.labels.placeholder': 'Add label (press Enter)...',

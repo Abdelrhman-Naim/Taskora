@@ -137,6 +137,7 @@ export const ar: Record<MessageKey, string> = {
   'task.checklist.addItem': 'إضافة عنصر',
   'task.checklist.placeholder': 'أضف خطوة...',
   'task.checklist.empty': 'لا توجد عناصر في قائمة التحقق حتى الآن',
+  'task.checklist.onlySelf': 'يمكنك فقط تأكيد إنجاز مهمتك الخاصة',
   'task.field.labels': 'الوسوم',
   'task.labels.title': 'الوسوم',
   'task.labels.placeholder': 'أضف وسماً...',
