@@ -5,7 +5,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { Icon } from './Icon';
 import styles from './Badge.module.css';
 
-export type BadgeKind = 'todo' | 'in_progress' | 'done' | 'overdue' | 'low' | 'medium' | 'high';
+export type BadgeKind = 'todo' | 'in_progress' | 'done' | 'overdue' | 'low' | 'medium' | 'high' | 'scheduled';
 
 export interface BadgeProps {
   kind: BadgeKind;
@@ -31,6 +31,11 @@ export function Badge({ kind, className = '' }: BadgeProps): React.ReactElement 
         return {
           text: t('task.status.done'),
           icon: <Icon name="check" size={12} />,
+        };
+      case 'scheduled':
+        return {
+          text: t('task.recurrence.scheduledBadge'),
+          icon: <Icon name="clock" size={12} />,
         };
       case 'overdue':
         return {

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 import { useI18n } from '@/i18n/I18nProvider';
 import { MessageKey } from '@/i18n/en';
-import { isOverdue, todayString } from '@/lib/dates';
+import { isOverdue, todayString, isScheduledTask } from '@/lib/dates';
 import styles from './TaskBoard.module.css';
 
 export interface TaskBoardProps {
@@ -57,6 +57,7 @@ export function TaskBoard({
 }: TaskBoardProps): React.ReactElement {
   const { t } = useI18n();
   const [dragOverCol, setDragOverCol] = useState<TaskStatus | null>(null);
+  const [showScheduled, setShowScheduled] = useState(false);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: Task) => {
     e.dataTransfer.setData('text/plain', task.id);
@@ -91,7 +92,10 @@ export function TaskBoard({
   return (
     <div className={styles.container} data-testid="task-board-view">
       {COLUMNS.map((col) => {
-        const colTasks = tasks.filter((tItem) => tItem.status === col.status);
+        const rawColTasks = tasks.filter((tItem) => tItem.status === col.status);
+        const isTodoCol = col.status === 'todo';
+        const colTasks = isTodoCol ? rawColTasks.filter((t) => !isScheduledTask(t)) : rawColTasks;
+        const scheduledTasks = isTodoCol ? rawColTasks.filter((t) => isScheduledTask(t)) : [];
         const isCurrentDragOver = dragOverCol === col.status;
 
         return (
@@ -217,6 +221,79 @@ export function TaskBoard({
                     </div>
                   );
                 })
+              )}
+              {isTodoCol && scheduledTasks.length > 0 && (
+                <div className={styles.scheduledSection} data-testid="scheduled-tasks-section">
+                  <button
+                    type="button"
+                    className={styles.scheduledToggle}
+                    onClick={() => setShowScheduled((prev) => !prev)}
+                    aria-expanded={showScheduled}
+                  >
+                    <span>
+                      📅 {t('task.recurrence.scheduledTitle')} ({scheduledTasks.length})
+                    </span>
+                    <span style={{ fontSize: '0.75rem' }}>{showScheduled ? '▲' : '▼'}</span>
+                  </button>
+
+                  {showScheduled && (
+                    <div className={styles.scheduledList}>
+                      {scheduledTasks.map((task) => {
+                        const canChange = canChangeStatus(task, currentUserId, isOwner);
+                        return (
+                          <div
+                            key={task.id}
+                            role="button"
+                            tabIndex={0}
+                            draggable={canChange}
+                            aria-disabled={!canChange ? 'true' : undefined}
+                            data-testid={`board-task-card-${task.id}`}
+                            className={`${styles.card} ${styles.scheduledCard}`}
+                            onDragStart={(e) => {
+                              if (canChange) handleDragStart(e, task);
+                            }}
+                            onClick={() => onOpen(task)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                onOpen(task);
+                              }
+                            }}
+                          >
+                            <div className={styles.cardHeader}>
+                              <h4 className={styles.cardTitle}>
+                                <bdi>{task.title}</bdi>
+                              </h4>
+                              <div
+                                data-testid={`board-card-status-${task.id}`}
+                                onClick={(e) => e.stopPropagation()}
+                                onKeyDown={(e) => e.stopPropagation()}
+                              >
+                                <StatusMenu
+                                  task={task}
+                                  canChange={canChange}
+                                  onStatusChange={onStatusChange}
+                                />
+                              </div>
+                            </div>
+
+                            <div className={styles.scheduledBanner}>
+                              <span>⏰</span>
+                              <span>{t('task.recurrence.scheduledBanner', { date: task.dueDate || '' })}</span>
+                            </div>
+
+                            <div className={styles.cardFooter}>
+                              <div className={styles.metaGroup}>
+                                <Badge kind="scheduled" />
+                                <Badge kind={task.priority} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>

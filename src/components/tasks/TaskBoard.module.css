@@ -228,3 +228,60 @@
   padding-inline: 5px;
   border-radius: var(--radius-pill);
 }
+
+.scheduledSection {
+  margin-block-start: 12px;
+  padding-block-start: 12px;
+  border-block-start: 1px dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scheduledToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+  padding-block: 7px;
+  padding-inline: 12px;
+  background-color: var(--surface-hover);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+}
+
+.scheduledToggle:hover {
+  background-color: var(--surface);
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.scheduledList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scheduledCard {
+  opacity: 0.85;
+  border-style: dashed;
+}
+
+.scheduledCard:hover {
+  opacity: 1;
+}
+
+.scheduledBanner {
+  font-size: 0.75rem;
+  color: var(--brand, #6366f1);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 4px;
+}

@@ -5,6 +5,7 @@ import {
   toDate,
   formatDueDate,
   nextDueDate,
+  isScheduledTask,
   APP_TIME_ZONE,
 } from '@/lib/dates';
 
@@ -82,6 +83,62 @@ describe('dates helper', () => {
     it('throws validation error for invalid date', () => {
       expect(() => nextDueDate('2026-02-30', 'daily')).toThrow();
       expect(() => nextDueDate('invalid-date', 'daily')).toThrow();
+    });
+  });
+
+  describe('isScheduledTask', () => {
+    it('returns true for recurring todo task with due date strictly after today', () => {
+      expect(
+        isScheduledTask(
+          { status: 'todo', recurrence: 'monthly', dueDate: '2026-11-30' },
+          '2026-10-21'
+        )
+      ).toBe(true);
+    });
+
+    it('returns false when due date has arrived (dueDate <= today)', () => {
+      expect(
+        isScheduledTask(
+          { status: 'todo', recurrence: 'monthly', dueDate: '2026-10-21' },
+          '2026-10-21'
+        )
+      ).toBe(false);
+      expect(
+        isScheduledTask(
+          { status: 'todo', recurrence: 'monthly', dueDate: '2026-10-15' },
+          '2026-10-21'
+        )
+      ).toBe(false);
+    });
+
+    it('returns false for non-recurring tasks or none recurrence', () => {
+      expect(
+        isScheduledTask(
+          { status: 'todo', recurrence: 'none', dueDate: '2026-11-30' },
+          '2026-10-21'
+        )
+      ).toBe(false);
+      expect(
+        isScheduledTask(
+          { status: 'todo', recurrence: null, dueDate: '2026-11-30' },
+          '2026-10-21'
+        )
+      ).toBe(false);
+    });
+
+    it('returns false for in_progress or done tasks', () => {
+      expect(
+        isScheduledTask(
+          { status: 'in_progress', recurrence: 'monthly', dueDate: '2026-11-30' },
+          '2026-10-21'
+        )
+      ).toBe(false);
+      expect(
+        isScheduledTask(
+          { status: 'done', recurrence: 'monthly', dueDate: '2026-11-30' },
+          '2026-10-21'
+        )
+      ).toBe(false);
     });
   });
 });

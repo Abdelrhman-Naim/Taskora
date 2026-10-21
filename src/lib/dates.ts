@@ -104,6 +104,24 @@ export function formatDueDate(d: string | null): string {
  * Advances by rule ('daily' = +1, 'weekly' = +7, 'monthly' = same day next month clamped to month end).
  * If the calculated date is earlier than today, advances until date >= today (max 366 iterations).
  */
+/**
+ * Checks if a task is a recurring task scheduled for a future date.
+ * A scheduled task is in 'todo' status, has an active recurrence, a due date,
+ * and that due date is strictly in the future (after today).
+ */
+export function isScheduledTask(
+  task: { status: string; recurrence?: string | null; dueDate?: string | null },
+  today = todayString()
+): boolean {
+  return (
+    task.status === 'todo' &&
+    !!task.recurrence &&
+    task.recurrence !== 'none' &&
+    !!task.dueDate &&
+    task.dueDate > today
+  );
+}
+
 export function nextDueDate(
   due: string,
   rule: Exclude<Recurrence, 'none'>,

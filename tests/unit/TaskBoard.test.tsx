@@ -235,4 +235,47 @@ describe('TaskBoard Component (Task 59)', () => {
     expect(screen.getByTestId('board-column-empty-in_progress')).toBeInTheDocument();
     expect(screen.getByTestId('board-column-empty-done')).toBeInTheDocument();
   });
+
+  it('separates future scheduled recurring tasks from active todo column and toggles section', () => {
+    const tasksWithScheduled: Task[] = [
+      {
+        id: 'scheduled-task',
+        projectId: 'proj-1',
+        title: 'Monthly Recurring Building',
+        description: '',
+        status: 'todo',
+        priority: 'medium',
+        assigneeId: 'user-assignee',
+        createdBy: 'user-owner',
+        dueDate: '2099-12-31',
+        checklist: [],
+        labels: [],
+        recurrence: 'monthly',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    renderWithProviders(
+      <TaskBoard
+        tasks={tasksWithScheduled}
+        project={project}
+        currentUserId="user-owner"
+        isOwner={true}
+        onStatusChange={vi.fn()}
+        onOpen={vi.fn()}
+      />
+    );
+
+    // Active todo column is empty because the only task is scheduled in 2099
+    expect(screen.getByTestId('board-column-empty-todo')).toBeInTheDocument();
+
+    // Scheduled section button is displayed
+    const toggleBtn = screen.getByRole('button', { name: /مهام مجدولة مستقبلاً|upcoming scheduled tasks/i });
+    expect(toggleBtn).toBeInTheDocument();
+
+    // Clicking toggle shows the scheduled card
+    fireEvent.click(toggleBtn);
+    expect(screen.getByTestId('board-task-card-scheduled-task')).toBeInTheDocument();
+  });
 });

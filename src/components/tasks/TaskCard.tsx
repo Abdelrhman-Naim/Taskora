@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Task, Project, TaskStatus } from '@/types';
-import { isOverdue, todayString } from '@/lib/dates';
+import { isOverdue, todayString, isScheduledTask } from '@/lib/dates';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 import { IconButton } from '@/components/ui/IconButton';
@@ -82,7 +82,7 @@ export function TaskCard({
           </h3>
           <div className={styles.badges}>
             <span data-testid="task-status-badge">
-              <Badge kind={task.status} />
+              <Badge kind={isScheduledTask(task) ? 'scheduled' : task.status} />
             </span>
             <span data-testid="task-priority-badge">
               <Badge kind={task.priority} />

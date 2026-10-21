@@ -145,6 +145,11 @@ export const en = {
   'task.recurrence.daily': 'Daily',
   'task.recurrence.weekly': 'Weekly',
   'task.recurrence.monthly': 'Monthly',
+  'task.recurrence.scheduledTitle': 'Upcoming Scheduled Tasks',
+  'task.recurrence.scheduledBadge': 'Scheduled',
+  'task.recurrence.scheduledBanner': 'Scheduled recurring task — will drop into To Do automatically on {date}',
+  'task.recurrence.scheduledHint': 'Drops into To Do automatically when due date arrives',
+
   'task.detail.title': 'Task details',
   'task.detail.edit': 'Edit',
   'task.detail.close': 'Close',

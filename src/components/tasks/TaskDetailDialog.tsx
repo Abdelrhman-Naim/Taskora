@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Task, Project, TaskPatch, TaskStatus } from '@/types';
 import { canEditTask, canChangeStatus } from '@/components/tasks/TaskCard';
+import { isScheduledTask } from '@/lib/dates';
 import { StatusMenu } from '@/components/tasks/StatusMenu';
 import { Checklist } from '@/components/tasks/Checklist';
 import { CommentThread } from '@/components/tasks/CommentThread';
@@ -136,6 +137,27 @@ export function TaskDetailDialog({
         </div>
 
         <div className={styles.content}>
+          {isScheduledTask(task) && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                paddingBlock: '8px',
+                paddingInline: '12px',
+                backgroundColor: 'var(--surface-hover)',
+                border: '1px dashed var(--line)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--brand)',
+                fontSize: '0.8125rem',
+                marginBlockEnd: '12px',
+              }}
+            >
+              <span>⏰</span>
+              <span>{t('task.recurrence.scheduledBanner', { date: task.dueDate || '' })}</span>
+            </div>
+          )}
+
           <div className={styles.metaRow}>
             <div
               className={styles.statusWrapper}

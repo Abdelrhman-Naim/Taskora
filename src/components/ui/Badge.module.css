@@ -58,3 +58,10 @@
   display: inline-flex;
   align-items: center;
 }
+
+.scheduled {
+  background-color: var(--surface-hover);
+  color: var(--brand);
+  border-color: var(--line);
+  border-style: dashed;
+}

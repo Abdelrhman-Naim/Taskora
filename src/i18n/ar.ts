@@ -147,6 +147,11 @@ export const ar: Record<MessageKey, string> = {
   'task.recurrence.daily': 'يومياً',
   'task.recurrence.weekly': 'أسبوعياً',
   'task.recurrence.monthly': 'شهرياً',
+  'task.recurrence.scheduledTitle': 'مهام مجدولة مستقبلاً',
+  'task.recurrence.scheduledBadge': 'مجدولة',
+  'task.recurrence.scheduledBanner': 'مهمة متكررة مجدولة — ستنزل تلقائياً في قائمة التنفيذ بتاريخ {date}',
+  'task.recurrence.scheduledHint': 'تنزل في قيد الانتظار تلقائياً عند حلول موعدها',
+
   'task.detail.title': 'تفاصيل المهمة',
   'task.detail.edit': 'تعديل',
   'task.detail.close': 'إغلاق',
