@@ -224,6 +224,7 @@ export const en = {
   'validation.labels.duplicate': 'Duplicate labels are not allowed',
   'validation.recurrence.invalid': 'Invalid recurrence option',
   'validation.recurrence.needsDueDate': 'Due date is required for recurring tasks',
+  'validation.comment.length': 'Comment must be between 1 and 1000 characters',
 
   // Activity
   'activity.task_created': '{actor} created task "{task}"',

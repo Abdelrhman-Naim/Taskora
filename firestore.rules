@@ -99,6 +99,20 @@ service cloud.firestore {
         && request.resource.data.createdAt == resource.data.createdAt
         && (isOwner(proj()) || memberMayUpdate());
       allow delete: if isMember(proj()) && (isOwner(proj()) || resource.data.createdBy == request.auth.uid);
+
+      match /comments/{cid} {
+        allow read: if isMember(projectData(pid));
+        allow create: if isMember(projectData(pid)) && exists(/databases/$(database)/documents/projects/$(pid)/tasks/$(tid))
+          && request.resource.data.keys().hasOnly(['authorId','authorName','text','createdAt'])
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.authorName == projectData(pid).memberNames[request.auth.uid]
+          && request.resource.data.text is string && request.resource.data.text.size() >= 1 && request.resource.data.text.size() <= 1000
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+        allow delete: if isMember(projectData(pid)) && (resource.data.authorId == request.auth.uid
+          || isOwner(projectData(pid))
+          || get(/databases/$(database)/documents/projects/$(pid)/tasks/$(tid)).data.createdBy == request.auth.uid);
+      }
     }
 
     match /projects/{pid}/activity/{aid} {

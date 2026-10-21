@@ -226,6 +226,7 @@ export const ar: Record<MessageKey, string> = {
   'validation.labels.duplicate': 'الوسوم المكررة غير مسموح بها',
   'validation.recurrence.invalid': 'خيار التكرار غير صالح',
   'validation.recurrence.needsDueDate': 'تاريخ الاستحقاق مطلوب للمهام المتكررة',
+  'validation.comment.length': 'يجب أن يكون التعليق بين 1 و1000 حرف',
 
   // Activity
   'activity.task_created': 'أنشأ {actor} المهمة "{task}"',

@@ -263,6 +263,21 @@ export async function deleteTask(
   ctx?: TaskWriteContext
 ): Promise<void> {
   try {
+    // Delete any comments on this task in chunks <= 400
+    const commentsColl = collection(db, 'projects', projectId, 'tasks', taskId, 'comments');
+    const commentsSnap = await getDocs(commentsColl);
+    const commentDocs = commentsSnap.docs;
+    const CHUNK_SIZE = 400;
+
+    for (let i = 0; i < commentDocs.length; i += CHUNK_SIZE) {
+      const chunk = commentDocs.slice(i, i + CHUNK_SIZE);
+      const batch = writeBatch(db);
+      for (const d of chunk) {
+        batch.delete(d.ref);
+      }
+      await withWriteGuard(() => batch.commit());
+    }
+
     const taskRef = doc(db, 'projects', projectId, 'tasks', taskId);
 
     if (ctx) {

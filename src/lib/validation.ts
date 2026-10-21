@@ -54,6 +54,14 @@ export const checklistItemSchema = z.object({
   done: z.boolean(),
 });
 
+export const commentInputSchema = z.object({
+  text: z
+    .string()
+    .trim()
+    .min(1, 'validation.comment.length')
+    .max(1000, 'validation.comment.length'),
+});
+
 export const taskInputSchema = z
   .object({
     title: z

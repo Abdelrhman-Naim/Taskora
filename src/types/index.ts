@@ -115,3 +115,13 @@ export interface AppNotification {
   createdAt: Date | null;
   readAt: Date | null;
 }
+
+export interface TaskComment {
+  id: string;
+  projectId: string;
+  taskId: string;
+  authorId: string;
+  authorName: string;
+  text: string;
+  createdAt: Date | null;
+}
