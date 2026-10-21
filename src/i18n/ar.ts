@@ -149,6 +149,11 @@ export const ar: Record<MessageKey, string> = {
   'task.detail.edit': 'تعديل',
   'task.detail.close': 'إغلاق',
   'task.detail.comments': 'التعليقات',
+  'task.comments.title': 'التعليقات',
+  'task.comments.empty': 'لا توجد تعليقات حتى الآن',
+  'task.comments.placeholder': 'اكتب تعليقاً...',
+  'task.comments.send': 'إرسال',
+  'task.comments.delete': 'حذف التعليق',
   'filter.allLabels': 'جميع الوسوم',
   'filter.labelFilter': 'تصفية حسب الوسم',
 

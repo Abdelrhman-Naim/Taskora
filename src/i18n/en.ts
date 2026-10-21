@@ -147,6 +147,11 @@ export const en = {
   'task.detail.edit': 'Edit',
   'task.detail.close': 'Close',
   'task.detail.comments': 'Comments',
+  'task.comments.title': 'Comments',
+  'task.comments.empty': 'No comments yet',
+  'task.comments.placeholder': 'Write a comment...',
+  'task.comments.send': 'Send',
+  'task.comments.delete': 'Delete comment',
   'filter.allLabels': 'All labels',
   'filter.labelFilter': 'Filter by label',
 

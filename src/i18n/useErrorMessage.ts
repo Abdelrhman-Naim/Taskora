@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useI18n } from './I18nProvider';
 import { AppError } from '@/lib/errors';
 import { MessageKey } from './en';
@@ -9,15 +10,18 @@ import { MessageKey } from './en';
 export function useErrorMessage(): (err: unknown) => string {
   const { t } = useI18n();
 
-  return (err: unknown): string => {
-    if (err instanceof AppError) {
-      const key = `error.${err.code}` as MessageKey;
-      const translated = t(key);
-      if (translated !== key) {
-        return translated;
+  return useCallback(
+    (err: unknown): string => {
+      if (err instanceof AppError) {
+        const key = `error.${err.code}` as MessageKey;
+        const translated = t(key);
+        if (translated !== key) {
+          return translated;
+        }
       }
-    }
 
-    return t('error.unknown');
-  };
+      return t('error.unknown');
+    },
+    [t]
+  );
 }

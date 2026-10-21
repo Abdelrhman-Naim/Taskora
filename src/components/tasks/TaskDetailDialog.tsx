@@ -6,6 +6,7 @@ import { Task, Project, TaskPatch, TaskStatus } from '@/types';
 import { canEditTask, canChangeStatus } from '@/components/tasks/TaskCard';
 import { StatusMenu } from '@/components/tasks/StatusMenu';
 import { Checklist } from '@/components/tasks/Checklist';
+import { CommentThread } from '@/components/tasks/CommentThread';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -226,6 +227,16 @@ export function TaskDetailDialog({
               onChange={(updatedItems) => {
                 onTaskChange({ checklist: updatedItems });
               }}
+            />
+          </div>
+
+          <div className={styles.section}>
+            <CommentThread
+              project={project}
+              task={task}
+              currentUserId={currentUserId}
+              currentUserName={project.memberNames[currentUserId] || 'Member'}
+              isOwner={isOwner}
             />
           </div>
         </div>
