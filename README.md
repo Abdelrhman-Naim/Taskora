@@ -82,13 +82,30 @@ The visual system was generated, frozen, and verified via the **Google Stitch MC
   - **14-Day Timeline (Column Chart):** Workload timeline highlighting today's deadline and alerting on overdue tasks.
 - **Attention Widgets:** "Needs Attention" queue prioritizing overdue and impending tasks, "My Tasks" personalized list, and sortable Projects Ledger table.
 
-### 3. Project & Task Management
-- **Project Detail View:** Progress summary, team member avatars, status filtering, and keyword search.
-- **Task Management Modal:** Modal dialog for creating and updating tasks with validation, priority selection, assignee allocation, and due date picking.
-- **Permission-Aware Controls:** Enforces ownership rules (only creators or project owners can delete tasks; only assignees can mark tasks completed).
-- **Project Settings:** Project metadata updates, owner transfer guards, and atomic member invitation/removal with task reassignment cascades.
+### 3. Project & Task Management (Phase 6 Advanced Collaboration)
+- **Multi-View Project Layouts:**
+  - **List View:** Dense, structured financial ledger row format with inline status menus.
+  - **Board View:** Three-column Kanban (`todo`, `in_progress`, `done`) with HTML5 native drag-and-drop, optimistic status moves, and full touch accessibility via keyboard-accessible `StatusMenu`.
+  - **Calendar View:** Localized month grid (Saturday start for Arabic, Sunday start for English) highlighting due dates, overdue items, overflow dialogs, and undated tasks strips.
+- **Extended Task Capabilities:**
+  - **Checklists:** Up to 20 sub-items with interactive completion checkboxes and progress ratio display (`x/y`).
+  - **Labels:** Up to 5 custom labels per task with dedicated label filtering in `FilterBar`.
+  - **Recurring Tasks:** Automated rule-based recurrence (`daily`, `weekly`, `monthly`) creating the next iteration upon task completion. *(Note: re-opening and completing a task generates another scheduled iteration)*.
+- **Collaborative Task Detail Modal & Comments:**
+  - Comprehensive detail dialog with editable checklist, status transitions, and metadata inspection.
+  - Interactive discussion feed supporting up to 1,000 characters per comment with atomic cascade deletion upon task removal (≤ 400 operations per batch).
+- **In-App Notifications & Activity Stream:**
+  - Real-time notification bell with unread counters (`onSnapshot`), direct project navigation, and atomic write integration.
+  - Chronological project activity feed displaying the latest 50 events with relative day formatting and user bidi isolation.
+- **CSV Data Export:** Localized data export with formula injection guards (neutralizing `=`, `+`, `-`, `@`, `\t`, `\r`), UTF-8 BOM encoding, and CRLF line endings.
+- **Layout-Independent Keyboard Shortcuts:** Global hotkeys mapped by `event.code` (`KeyN`, `Slash`, `Shift+Slash`, `Digit1`, `Digit2`, `Digit3`) ensuring 100% functionality on Arabic, Latin, or alternate keyboard layouts.
 
-### 4. Internationalization & Bidirectional Safety
+### 4. Technical Constraints & Free-Tier (Spark) Architecture
+- **Firebase Spark Plan Strict Conformance:** Zero Cloud Functions and zero Firebase Storage used. All interactions are client-side operations orchestrated via Firebase Modular SDK v13.
+- **Atomic Operations & Batch Quotas:** All multi-document mutations (e.g. status changes generating activity logs and recipient notifications) run atomically in a single `writeBatch` strictly bounded at ≤ 400 operations.
+- **Activity Log Non-Tamper-Proof Notice:** Activity entries are written by authenticated clients in the atomic batch and validated by Firestore rules for actor identity (`actorId == request.auth.uid` and `actorName == project.memberNames[actorId]`). In a serverless client-only Spark architecture without cloud functions, payload details cannot be cryptographically sealed.
+
+### 5. Internationalization & Bidirectional Safety
 - **Bilingual Parity:** English (`en`, LTR) and Arabic (`ar`, RTL) with 100% key parity across translation dictionaries.
 - **Bidirectional Isolation (`<bdi>`):** User-generated text (names, titles, notes) is strictly wrapped in `<bdi dir="auto">` to eliminate bidirectional text spillover.
 - **Latin Numerals:** Consistent Latin numbering (`latn`) across Arabic and English for clear data scanning in tables and KPIs.
@@ -106,11 +123,11 @@ The project enforces continuous code quality via automated static analysis, unit
 
 | Test Suite | Files | Tests Passing | Test Framework / Environment |
 |:---|:---:|:---:|:---|
-| **Unit Tests & Static Integrity** | 32 | **217** | Vitest + React Testing Library + jsdom |
-| **Firestore Security Rules** | 5 | **46** | Vitest + `@firebase/rules-unit-testing` + Local Firestore Emulator |
-| **Service Integration Tests** | 4 | **22** | Vitest + Local Auth & Firestore Emulators |
-| **Playwright E2E & Matrix** | 8 | **53** | Playwright (20 combos: LTR/RTL × Light/Dark × 3 Viewports + Acceptance) |
-| **Total Test Count** | **49 files** | **338 tests** | **100% PASS** |
+| **Unit Tests & Static Integrity** | 47 | **311** | Vitest + React Testing Library + jsdom |
+| **Firestore Security Rules** | 8 | **82** | Vitest + `@firebase/rules-unit-testing` + Local Firestore Emulator |
+| **Service Integration Tests** | 7 | **46** | Vitest + Local Auth & Firestore Emulators |
+| **Total Automated Vitest Suite** | **62 files** | **439 tests** | **100% PASS** |
+| **Playwright E2E & Matrix** | 10 | **55** | Playwright (20 combos: LTR/RTL × Light/Dark × 3 Viewports + Acceptance) |
 
 ### Automated Guards:
 - **`no-legacy-palette.test.ts`**: Fails if any legacy color (`#0d5c5a`, `#13966F`, `#22A67F`), legacy font (`Inter`, `Geist`, `Newsreader`), or legacy naming exists.

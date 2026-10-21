@@ -93,6 +93,17 @@ The Taskora Design System embodies the **Obsidian Ledger** design philosophy: an
 - Pure HTML/CSS relative layouts with zero canvas/SVG coordinate hardcoding, automatically adapting to LTR and RTL.
 - Every chart panel includes a Segmented toggle to switch between visual bars and an accessible `<table>` with identical data.
 
+### Phase 6 Collaboration Components
+- **`Checklist`:** Interactive sub-task management (up to 20 items) with keyboard accessibility, completion ratios, and dynamic additions.
+- **`LabelsInput`:** Tagging primitive (up to 5 labels) supporting comma/Enter insertion, backspace deletion, and case-insensitive deduplication.
+- **`TaskDetailDialog`:** Comprehensive modal surface displaying task metadata, interactive checklist, and embedded comments thread.
+- **`CommentThread`:** Real-time conversational stream for task coordination with author `<bdi>` isolation and permission-checked deletion.
+- **`NotificationBell`:** Header inbox trigger displaying live unread badges (`9+`), aria-live announcements, and deep links to project surfaces.
+- **`TaskBoard`:** Three-column Kanban board implementing HTML5 native drag-and-drop with optimistic mutations and touch/keyboard status menu fallback.
+- **`TaskCalendar`:** Monthly timeline view highlighting due dates, relative day indicators, and overflow date inspection popups.
+- **`ShortcutsDialog`:** Accessible reference modal listing all active keyboard shortcuts.
+- **`ActivityPanel`:** Chronological project audit trail rendering the latest 50 actions with typed icons and localized relative timestamps.
+
 ---
 
 ## 4. Typography & Arabic Text Guidelines
@@ -143,7 +154,7 @@ The Taskora Design System embodies the **Obsidian Ledger** design philosophy: an
 - **NO Arrow Icons (`→`):** Do not append directional arrows to buttons.
 - **NO Command Palette (Cmd + K):** No global omnisearch or quick-switcher.
 - **NO Global Search Bar:** Search is strictly scoped inside project task lists.
-- **NO Notification Bell:** No notification center or alert popovers.
+- **NO Generic Out-of-Scope Bloat:** No external storage attachments, no speculative @mentions without security scoping, no real-time typing indicators or presence dots.
 - **NO Billing / Upgrade Banners:** Taskora is a focused team task manager, not a commercial SaaS tier funnel.
 - **NO Growth Percentages:** No speculative metrics.
 - **NO Detail Inspector Pane:** No third column inspector or tree-view sidebars.
