@@ -28,7 +28,7 @@ test.describe('Task Board E2E (Task 59)', () => {
     await pageOwner.getByLabel(/name/i).fill('Kanban Project');
     await pageOwner.getByLabel(/description/i).fill('Testing board drag and drop');
     await pageOwner.getByRole('button', { name: /create project/i }).click();
-    await expect(pageOwner).toHaveURL(/\/projects\/[a-zA-Z0-9_-]+$/, { timeout: 15000 });
+    await expect(pageOwner).toHaveURL(/\/projects\/(?!new(?:$|[?#]))[a-zA-Z0-9_-]+$/, { timeout: 15000 });
 
     const projectUrl = pageOwner.url();
     const projectId = projectUrl.split('/').pop()!;

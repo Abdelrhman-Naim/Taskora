@@ -101,7 +101,7 @@ export default function LoginPage() {
         </div>
 
         <div className={styles.securityNote}>
-          Strictly Confidential · All sessions cryptographically verified
+          {t('auth.login.securityNote')}
         </div>
       </main>
     </div>

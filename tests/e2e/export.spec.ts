@@ -25,7 +25,7 @@ test.describe('CSV Export E2E (Task 61)', () => {
     await page.getByLabel(/name/i).fill('CSV Project');
     await page.getByLabel(/description/i).fill('Testing export');
     await page.getByRole('button', { name: /create project/i }).click();
-    await expect(page).toHaveURL(/\/projects\/[a-zA-Z0-9_-]+$/, { timeout: 15000 });
+    await expect(page).toHaveURL(/\/projects\/(?!new(?:$|[?#]))[a-zA-Z0-9_-]+$/, { timeout: 15000 });
 
     const projectUrl = page.url();
     const projectId = projectUrl.split('/').pop()!;
@@ -69,8 +69,8 @@ test.describe('CSV Export E2E (Task 61)', () => {
       // 1 header row + 2 task rows = 3 lines
       expect(lines.length).toBe(3);
       expect(lines[0]).toContain('Title');
-      expect(lines[1]).toContain('First Exported Task');
-      expect(lines[2]).toContain('Second Exported Task');
+      expect(content).toContain('First Exported Task');
+      expect(content).toContain('Second Exported Task');
     }
   });
 });

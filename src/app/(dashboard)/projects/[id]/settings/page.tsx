@@ -132,16 +132,24 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
   };
 
   const handleAddMember = async (memberEmail: string) => {
-    if (!id) return;
+    if (!id || !user) return;
     const db = getDb();
-    await addMember(db, id, memberEmail);
+    const actor = {
+      uid: user.uid,
+      displayName: user.displayName || user.email?.split('@')[0] || 'User',
+    };
+    await addMember(db, id, memberEmail, { actor });
     await reloadProject();
   };
 
   const handleRemoveMember = async (uid: string) => {
-    if (!id) return;
+    if (!id || !user) return;
     const db = getDb();
-    await removeMember(db, id, uid);
+    const actor = {
+      uid: user.uid,
+      displayName: user.displayName || user.email?.split('@')[0] || 'User',
+    };
+    await removeMember(db, id, uid, { actor });
     await reloadProject();
   };
 

@@ -111,7 +111,7 @@ export default function RegisterPage() {
         </div>
 
         <div className={styles.securityNote}>
-          Strictly Confidential · All accounts cryptographically provisioned
+          {t('auth.register.securityNote')}
         </div>
       </main>
     </div>

@@ -65,7 +65,10 @@ export function useHotkeys(
 
       // 4. Resolve key combo: check Shift+Code first, then Code
       const combo = e.shiftKey ? `Shift+${e.code}` : e.code;
-      const handler = mapRef.current[combo] || mapRef.current[e.code];
+      const handler =
+        mapRef.current[combo] ||
+        mapRef.current[e.code] ||
+        (e.key === '?' ? mapRef.current['Shift+Slash'] : undefined);
       if (handler) {
         handler(e);
       }

@@ -250,7 +250,6 @@ export function DatePicker({
               setViewMonth(m - 1);
             }
           }}
-          onFocus={handleOpen}
           placeholder={placeholder}
           disabled={disabled}
           aria-invalid={ariaInvalid}

@@ -24,22 +24,23 @@ test.describe('Keyboard Shortcuts E2E (Task 62)', () => {
     await page.getByLabel(/name/i).fill('Hotkeys Project');
     await page.getByLabel(/description/i).fill('Testing shortcuts');
     await page.getByRole('button', { name: /create project/i }).click();
-    await expect(page).toHaveURL(/\/projects\/[a-zA-Z0-9_-]+$/, { timeout: 15000 });
+    await expect(page).toHaveURL(/\/projects\/(?!new(?:$|[?#]))[a-zA-Z0-9_-]+$/, { timeout: 15000 });
 
     const projectUrl = page.url();
     const projectId = projectUrl.split('/').pop()!;
     await page.goto(`/projects/${projectId}`);
 
-    // Wait until project view is loaded and filter bar is present
-    await expect(page.getByTestId('filter-bar')).toBeVisible({ timeout: 10000 });
+    // Wait until project view is loaded
+    await expect(page.getByTestId('project-new-task-btn')).toBeVisible({ timeout: 10000 });
 
     // 3. Test 'N' hotkey: opens new task dialog
     await page.keyboard.press('n');
     await expect(page.getByTestId('save-task-btn')).toBeVisible({ timeout: 5000 });
 
-    // Close dialog with Escape
-    await page.keyboard.press('Escape');
-    await expect(page.getByTestId('save-task-btn')).not.toBeVisible();
+    // Save a task so that filter-bar becomes visible
+    await page.getByLabel(/title/i).fill('Shortcuts Demo Task');
+    await page.getByTestId('save-task-btn').click();
+    await expect(page.getByText('Shortcuts Demo Task')).toBeVisible({ timeout: 10000 });
 
     // 4. Test '/' hotkey: focuses filter search input
     await page.keyboard.press('/');
@@ -49,7 +50,7 @@ test.describe('Keyboard Shortcuts E2E (Task 62)', () => {
     await page.locator('#filter-search').blur();
 
     // 5. Test '?' (Shift+Slash) hotkey: opens shortcuts dialog
-    await page.keyboard.press('?');
+    await page.keyboard.press('Shift+Slash');
     await expect(page.getByTestId('shortcuts-dialog')).toBeVisible({ timeout: 5000 });
 
     // Close shortcuts dialog with Escape

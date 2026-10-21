@@ -42,7 +42,7 @@ test.describe('Task Comments E2E (Task 57)', () => {
     await pageA.getByLabel(/name/i).fill('Comments Project');
     await pageA.getByLabel(/description/i).fill('Testing task comments');
     await pageA.getByRole('button', { name: /create project/i }).click();
-    await expect(pageA).toHaveURL(/\/projects\/[a-zA-Z0-9_-]+$/, { timeout: 15000 });
+    await expect(pageA).toHaveURL(/\/projects\/(?!new(?:$|[?#]))[a-zA-Z0-9_-]+$/, { timeout: 15000 });
 
     const projectUrl = pageA.url();
     const projectId = projectUrl.split('/').pop()!;
