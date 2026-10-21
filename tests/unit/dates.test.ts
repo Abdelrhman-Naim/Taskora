@@ -4,6 +4,7 @@ import {
   isOverdue,
   toDate,
   formatDueDate,
+  nextDueDate,
   APP_TIME_ZONE,
 } from '@/lib/dates';
 
@@ -57,5 +58,30 @@ describe('dates helper', () => {
   it('formats due date nicely', () => {
     expect(formatDueDate(null)).toBe('No due date');
     expect(formatDueDate('2026-10-18')).toBe('Oct 18, 2026');
+  });
+
+  describe('nextDueDate (Task 55)', () => {
+    it('advances daily by 1 day', () => {
+      expect(nextDueDate('2026-10-18', 'daily', '2026-10-18')).toBe('2026-10-19');
+    });
+
+    it('advances weekly by 7 days', () => {
+      expect(nextDueDate('2026-10-18', 'weekly', '2026-10-18')).toBe('2026-10-25');
+    });
+
+    it('advances monthly clamping to the end of the month', () => {
+      expect(nextDueDate('2026-01-31', 'monthly', '2026-01-31')).toBe('2026-02-28');
+      expect(nextDueDate('2028-01-31', 'monthly', '2028-01-31')).toBe('2028-02-29');
+      expect(nextDueDate('2026-12-15', 'monthly', '2026-12-15')).toBe('2027-01-15');
+    });
+
+    it('advances to present if task is completed far past due date', () => {
+      expect(nextDueDate('2026-01-10', 'weekly', '2026-10-18')).toBe('2026-10-24');
+    });
+
+    it('throws validation error for invalid date', () => {
+      expect(() => nextDueDate('2026-02-30', 'daily')).toThrow();
+      expect(() => nextDueDate('invalid-date', 'daily')).toThrow();
+    });
   });
 });

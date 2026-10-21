@@ -1,4 +1,5 @@
-import { Task } from '@/types';
+import { Task, Recurrence } from '@/types';
+import { AppError } from '@/lib/errors';
 
 export const APP_TIME_ZONE = 'Asia/Riyadh';
 
@@ -96,4 +97,71 @@ export function formatDueDate(d: string | null): string {
     year: 'numeric',
     timeZone: 'UTC',
   }).format(date);
+}
+
+/**
+ * Calculates the next due date for recurring tasks.
+ * Advances by rule ('daily' = +1, 'weekly' = +7, 'monthly' = same day next month clamped to month end).
+ * If the calculated date is earlier than today, advances until date >= today (max 366 iterations).
+ */
+export function nextDueDate(
+  due: string,
+  rule: Exclude<Recurrence, 'none'>,
+  today?: string
+): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(due)) {
+    throw new AppError('validation', 'Invalid date format');
+  }
+
+  const [y, m, d] = due.split('-').map(Number);
+  const checkDate = new Date(Date.UTC(y, m - 1, d));
+  if (
+    checkDate.getUTCFullYear() !== y ||
+    checkDate.getUTCMonth() !== m - 1 ||
+    checkDate.getUTCDate() !== d
+  ) {
+    throw new AppError('validation', 'Invalid calendar date');
+  }
+
+  const targetToday = today ?? todayString();
+  const targetDay = d;
+
+  let currentY = y;
+  let currentM = m;
+  let currentD = d;
+
+  function stepOnce(): string {
+    if (rule === 'daily') {
+      const nextDate = new Date(Date.UTC(currentY, currentM - 1, currentD + 1));
+      currentY = nextDate.getUTCFullYear();
+      currentM = nextDate.getUTCMonth() + 1;
+      currentD = nextDate.getUTCDate();
+    } else if (rule === 'weekly') {
+      const nextDate = new Date(Date.UTC(currentY, currentM - 1, currentD + 7));
+      currentY = nextDate.getUTCFullYear();
+      currentM = nextDate.getUTCMonth() + 1;
+      currentD = nextDate.getUTCDate();
+    } else if (rule === 'monthly') {
+      currentM++;
+      if (currentM > 12) {
+        currentM = 1;
+        currentY++;
+      }
+      const daysInMonth = new Date(Date.UTC(currentY, currentM, 0)).getUTCDate();
+      currentD = Math.min(targetDay, daysInMonth);
+    }
+    const nextYStr = String(currentY);
+    const nextMStr = String(currentM).padStart(2, '0');
+    const nextDStr = String(currentD).padStart(2, '0');
+    return `${nextYStr}-${nextMStr}-${nextDStr}`;
+  }
+
+  let result = stepOnce();
+  let iterations = 0;
+  while (result < targetToday && iterations < 366) {
+    result = stepOnce();
+    iterations++;
+  }
+
+  return result;
 }

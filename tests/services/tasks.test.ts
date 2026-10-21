@@ -233,4 +233,105 @@ describe('Tasks Service', () => {
     expect(legacy?.labels).toEqual([]);
     expect(legacy?.recurrence).toBe('none');
   });
+
+  describe('Recurring Tasks (Task 55)', () => {
+    it('spawns a new task on transition to done when recurrence != none and has dueDate', async () => {
+      const { memberA, memberB, projectId } = await setupProjectWithMembers();
+
+      const taskId = await createTask(memberA.db, projectId, memberA.uid, {
+        title: 'Weekly Standup Notes',
+        description: 'Prepare notes',
+        priority: 'high',
+        assigneeId: memberB.uid,
+        dueDate: '2026-10-18',
+        checklist: [
+          { id: 'c1', text: 'Item 1', done: true },
+          { id: 'c2', text: 'Item 2', done: false },
+        ],
+        labels: ['weekly', 'notes'],
+        recurrence: 'weekly',
+      });
+
+      const initialTasks = await listTasks(memberB.db, projectId);
+      const originalTask = initialTasks.find((t) => t.id === taskId)!;
+
+      const actor = { uid: memberB.uid, displayName: 'Bob Assignee' };
+
+      // Complete the task
+      await changeTaskStatus(memberB.db, projectId, taskId, 'done', {
+        actor,
+        task: originalTask,
+      });
+
+      const allTasks = await listTasks(memberB.db, projectId);
+      expect(allTasks.length).toBe(2);
+
+      // The original task is now done
+      const updatedOriginal = allTasks.find((t) => t.id === taskId)!;
+      expect(updatedOriginal.status).toBe('done');
+
+      // The newly spawned task
+      const spawned = allTasks.find((t) => t.id !== taskId)!;
+      expect(spawned.title).toBe('Weekly Standup Notes');
+      expect(spawned.description).toBe('Prepare notes');
+      expect(spawned.priority).toBe('high');
+      expect(spawned.assigneeId).toBe(memberB.uid);
+      expect(spawned.labels).toEqual(['weekly', 'notes']);
+      expect(spawned.recurrence).toBe('weekly');
+      expect(spawned.status).toBe('todo');
+      expect(spawned.createdBy).toBe(memberB.uid);
+      // dueDate should advance by 7 days from 2026-10-18
+      expect(spawned.dueDate).toBe('2026-10-25');
+      // Checklist items reset to done: false and have new IDs
+      expect(spawned.checklist.length).toBe(2);
+      expect(spawned.checklist[0].text).toBe('Item 1');
+      expect(spawned.checklist[0].done).toBe(false);
+      expect(spawned.checklist[0].id).not.toBe('c1');
+      expect(spawned.checklist[1].text).toBe('Item 2');
+      expect(spawned.checklist[1].done).toBe(false);
+      expect(spawned.checklist[1].id).not.toBe('c2');
+    });
+
+    it('does NOT spawn a new task if recurrence is none or dueDate is null or transition is not to done', async () => {
+      const { memberA, projectId } = await setupProjectWithMembers();
+
+      const taskId = await createTask(memberA.db, projectId, memberA.uid, {
+        title: 'Non-recurring task',
+        description: 'Single task',
+        priority: 'low',
+        assigneeId: memberA.uid,
+        dueDate: '2026-10-18',
+        recurrence: 'none',
+      });
+
+      const originalTask = (await listTasks(memberA.db, projectId)).find((t) => t.id === taskId)!;
+      const actor = { uid: memberA.uid, displayName: 'Alice Creator' };
+
+      // Transition todo -> in_progress
+      await changeTaskStatus(memberA.db, projectId, taskId, 'in_progress', {
+        actor,
+        task: originalTask,
+      });
+      let tasks = await listTasks(memberA.db, projectId);
+      expect(tasks.length).toBe(1);
+
+      // Transition in_progress -> done on recurrence: 'none'
+      const inProgTask = tasks.find((t) => t.id === taskId)!;
+      await changeTaskStatus(memberA.db, projectId, taskId, 'done', {
+        actor,
+        task: inProgTask,
+      });
+      tasks = await listTasks(memberA.db, projectId);
+      expect(tasks.length).toBe(1);
+
+      // Transition done -> done
+      const doneTask = tasks.find((t) => t.id === taskId)!;
+      await changeTaskStatus(memberA.db, projectId, taskId, 'done', {
+        actor,
+        task: doneTask,
+      });
+      tasks = await listTasks(memberA.db, projectId);
+      expect(tasks.length).toBe(1);
+    });
+  });
 });

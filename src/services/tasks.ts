@@ -13,7 +13,7 @@ import {
 } from 'firebase/firestore';
 import { Task, TaskInput, TaskPatch, TaskStatus, RECURRENCES, Recurrence, Actor, TaskWriteContext } from '@/types';
 import { taskInputSchema, fieldErrors } from '@/lib/validation';
-import { toDate } from '@/lib/dates';
+import { toDate, nextDueDate } from '@/lib/dates';
 import { AppError, toAppError } from '@/lib/errors';
 import { withWriteGuard } from '@/lib/async';
 import { newActivityRef, activityData } from './activity';
@@ -242,6 +242,48 @@ export async function changeTaskStatus(
           detail: `${ctx.task.status}>${status}`,
         })
       );
+
+      if (
+        status === 'done' &&
+        ctx.task.status !== 'done' &&
+        ctx.task.recurrence &&
+        ctx.task.recurrence !== 'none' &&
+        ctx.task.dueDate
+      ) {
+        const nextDue = nextDueDate(ctx.task.dueDate, ctx.task.recurrence);
+        const newTaskRef = doc(collection(db, 'projects', projectId, 'tasks'));
+        const newChecklist = (ctx.task.checklist || []).map((item, idx) => ({
+          id: `c-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 7)}`,
+          text: item.text,
+          done: false,
+        }));
+
+        batch.set(newTaskRef, {
+          title: ctx.task.title,
+          description: ctx.task.description,
+          status: 'todo',
+          priority: ctx.task.priority,
+          assigneeId: ctx.task.assigneeId,
+          createdBy: ctx.actor.uid,
+          dueDate: nextDue,
+          checklist: newChecklist,
+          labels: ctx.task.labels || [],
+          recurrence: ctx.task.recurrence,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+
+        const newActRef = newActivityRef(db, projectId);
+        batch.set(
+          newActRef,
+          activityData(ctx.actor, {
+            type: 'task_created',
+            taskId: newTaskRef.id,
+            taskTitle: ctx.task.title,
+          })
+        );
+      }
+
       await withWriteGuard(() => batch.commit());
     } else {
       await withWriteGuard(() =>
