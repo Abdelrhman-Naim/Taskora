@@ -1,0 +1,230 @@
+.container {
+  display: flex;
+  gap: 16px;
+  inline-size: 100%;
+  overflow-x: auto;
+  padding-block: 8px;
+  padding-inline: 4px;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow-x: visible;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  min-inline-size: 280px;
+  flex: 1 0 280px;
+  overflow: hidden;
+  transition: border-color var(--dur-1) var(--ease);
+}
+
+@media (min-width: 1024px) {
+  .column {
+    min-inline-size: 0;
+    flex: 1 1 0;
+  }
+}
+
+.columnHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 12px;
+  padding-inline: 16px;
+  border-block-end: 1px solid var(--line);
+  background-color: var(--surface);
+}
+
+.columnHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.statusIndicator {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--radius-pill);
+}
+
+.statusTodo {
+  background-color: var(--st-todo-fg);
+}
+
+.statusInProgress {
+  background-color: var(--st-progress-fg);
+}
+
+.statusDone {
+  background-color: var(--st-done-fg);
+}
+
+.countBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: var(--surface-hover);
+  border: 1px solid var(--line);
+  padding-block: 2px;
+  padding-inline: 8px;
+  border-radius: var(--radius-pill);
+  font-variant-numeric: tabular-nums;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-block: 12px;
+  padding-inline: 12px;
+  flex: 1;
+  min-block-size: 200px;
+  transition: background-color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+
+.dropzoneActive {
+  background-color: var(--surface-hover);
+  outline: 2px dashed var(--accent);
+  outline-offset: -4px;
+  border-radius: var(--radius-md);
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-block-size: 120px;
+  padding-block: 16px;
+  padding-inline: 16px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-style: italic;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  margin-block: 4px;
+}
+
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding-block: 12px;
+  padding-inline: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+  box-shadow: var(--shadow-1);
+  user-select: none;
+}
+
+.card:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-pop);
+  transform: translateY(-1px);
+}
+
+.card:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+.card[aria-disabled="true"] {
+  cursor: default;
+}
+
+.card[aria-disabled="true"]:hover {
+  transform: none;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  word-break: break-word;
+  flex: 1;
+}
+
+.labelsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-block-start: 2px;
+}
+
+.labelChip {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background-color: var(--surface-hover);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  padding-block: 1px;
+  padding-inline: 6px;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-block-start: 6px;
+  border-block-start: 1px solid var(--line);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.metaGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dueDate {
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.overdue {
+  color: var(--st-overdue-fg);
+  font-weight: 600;
+}
+
+.checklistBadge {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: var(--surface-hover);
+  border: 1px solid var(--line);
+  padding-block: 1px;
+  padding-inline: 5px;
+  border-radius: var(--radius-pill);
+}

@@ -331,6 +331,17 @@ export const en = {
   'dashboard.onboarding.step3': 'Assign and track tasks',
   'dashboard.onboarding.step3Desc': 'Set priorities, due dates, and monitor progress.',
   'dashboard.onboarding.cta': 'Create your first project',
+  'view.list': 'List',
+  'view.board': 'Board',
+  'view.calendar': 'Calendar',
+  'view.switcher': 'View switcher',
+  'board.column.todo': 'To do',
+  'board.column.in_progress': 'In Progress',
+  'board.column.done': 'Done',
+  'board.empty.todo': 'No tasks to do',
+  'board.empty.in_progress': 'No tasks in progress',
+  'board.empty.done': 'No completed tasks',
+  'board.dragHint': 'Drag card to change status',
 } as const;
 
 export type MessageKey = keyof typeof en;

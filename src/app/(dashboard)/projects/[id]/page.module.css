@@ -181,6 +181,59 @@
   margin-block-end: 20px;
 }
 
+.viewControlsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-block-end: 20px;
+}
+
+.viewSwitcher {
+  display: inline-flex;
+  align-items: center;
+  padding-block: 3px;
+  padding-inline: 3px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  gap: 2px;
+}
+
+.viewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 6px;
+  padding-inline: 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--dur-1) var(--ease);
+}
+
+.viewBtn:hover:not(.viewBtnActive) {
+  color: var(--text);
+  background-color: var(--surface-hover);
+}
+
+.viewBtnActive {
+  background-color: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: var(--shadow-1);
+}
+
+.viewBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .loadingWrapper {
   display: flex;
   justify-content: center;

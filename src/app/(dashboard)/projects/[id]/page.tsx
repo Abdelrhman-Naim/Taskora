@@ -25,9 +25,11 @@ import { Icon } from '@/components/ui/Icon';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Avatar } from '@/components/ui/Avatar';
 import { TaskList } from '@/components/tasks/TaskList';
+import { TaskBoard } from '@/components/tasks/TaskBoard';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { FilterBar } from '@/components/tasks/FilterBar';
+import { useViewPreference } from '@/hooks/useViewPreference';
 import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
 import { todayString } from '@/lib/dates';
 import { AppError } from '@/lib/errors';
@@ -51,6 +53,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const [activeDetailTask, setActiveDetailTask] = useState<Task | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [filters, setFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
+  const [view, setView] = useViewPreference();
 
   useEffect(() => {
     let ignore = false;
@@ -143,7 +146,17 @@ export default function ProjectPage(): React.ReactElement | null {
 
   const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
     if (!project) return;
+    const oldStatus = task.status;
     setActionError(null);
+
+    // Optimistic status update
+    setTasks((prev) =>
+      prev.map((t) => (t.id === task.id ? { ...t, status: newStatus } : t))
+    );
+    if (activeDetailTask && activeDetailTask.id === task.id) {
+      setActiveDetailTask((prev) => (prev ? { ...prev, status: newStatus } : null));
+    }
+
     try {
       const db = getDb();
       await changeTaskStatus(db, project.id, task.id, newStatus, {
@@ -151,10 +164,14 @@ export default function ProjectPage(): React.ReactElement | null {
         task,
       });
       await reloadTasks();
-      if (activeDetailTask && activeDetailTask.id === task.id) {
-        setActiveDetailTask((prev) => (prev ? { ...prev, status: newStatus } : null));
-      }
     } catch (err) {
+      // Revert optimistic update
+      setTasks((prev) =>
+        prev.map((t) => (t.id === task.id ? { ...t, status: oldStatus } : t))
+      );
+      if (activeDetailTask && activeDetailTask.id === task.id) {
+        setActiveDetailTask((prev) => (prev ? { ...prev, status: oldStatus } : null));
+      }
       setActionError(getErrorMessage(err));
     }
   };
@@ -386,13 +403,52 @@ export default function ProjectPage(): React.ReactElement | null {
         </div>
 
         {tasks.length > 0 && (
-          <div className={styles.filterWrapper}>
-            <FilterBar
-              filters={filters}
-              onChange={setFilters}
-              members={project.memberNames || {}}
-              onReset={() => setFilters(DEFAULT_FILTERS)}
-            />
+          <div className={styles.viewControlsRow}>
+            <div
+              className={styles.viewSwitcher}
+              role="radiogroup"
+              aria-label={t('view.switcher')}
+            >
+              <button
+                type="button"
+                role="radio"
+                aria-checked={view === 'list'}
+                className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`}
+                onClick={() => setView('list')}
+                data-testid="view-switch-list"
+              >
+                {t('view.list')}
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={view === 'board'}
+                className={`${styles.viewBtn} ${view === 'board' ? styles.viewBtnActive : ''}`}
+                onClick={() => setView('board')}
+                data-testid="view-switch-board"
+              >
+                {t('view.board')}
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={view === 'calendar'}
+                className={`${styles.viewBtn} ${view === 'calendar' ? styles.viewBtnActive : ''}`}
+                onClick={() => setView('calendar')}
+                data-testid="view-switch-calendar"
+              >
+                {t('view.calendar')}
+              </button>
+            </div>
+
+            <div className={styles.filterWrapper}>
+              <FilterBar
+                filters={filters}
+                onChange={setFilters}
+                members={project.memberNames || {}}
+                onReset={() => setFilters(DEFAULT_FILTERS)}
+              />
+            </div>
           </div>
         )}
 
@@ -404,6 +460,15 @@ export default function ProjectPage(): React.ReactElement | null {
               label: t('filter.clear'),
               onClick: () => setFilters(DEFAULT_FILTERS),
             }}
+          />
+        ) : view === 'board' ? (
+          <TaskBoard
+            tasks={filteredTasks}
+            project={project}
+            currentUserId={currentUid}
+            isOwner={isOwner}
+            onStatusChange={handleStatusChange}
+            onOpen={(task) => setActiveDetailTask(task)}
           />
         ) : (
           <TaskList
