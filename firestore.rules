@@ -81,22 +81,39 @@ service cloud.firestore {
           && (!('recurrence' in t) || t.recurrence in ['none','daily','weekly','monthly'])
           && t.updatedAt == request.time;
       }
+      function validTaskUpdate(t) {
+        return (!('title' in t) || (t.title is string && t.title.size() >= 3 && t.title.size() <= 120))
+          && (!('description' in t) || (t.description is string && t.description.size() <= 1000))
+          && (!('status' in t) || t.status in ['todo','in_progress','done'])
+          && (!('priority' in t) || t.priority in ['low','medium','high'])
+          && (!('assigneeId' in t) || t.assigneeId == null || t.assigneeId == '' || t.assigneeId in proj().memberIds)
+          && (!('dueDate' in t) || t.dueDate == null || t.dueDate == '' || (t.dueDate is string && t.dueDate.matches('^\\d{4}-\\d{2}-\\d{2}$')))
+          && (!('checklist' in t) || (t.checklist is list && t.checklist.size() <= 20))
+          && (!('labels' in t) || (t.labels is list && t.labels.size() <= 5))
+          && (!('recurrence' in t) || t.recurrence in ['none','daily','weekly','monthly'])
+          && t.updatedAt == request.time;
+      }
       function memberMayUpdate() {
         let r = resource.data;
         let uid = request.auth.uid;
         let changed = request.resource.data.diff(r).affectedKeys();
-        return (r.createdBy == uid || r.assigneeId == uid)
-          && (!changed.hasAny(['status']) || r.assigneeId == uid || (r.assigneeId == null && r.createdBy == uid))
-          && (!changed.hasAny(['assigneeId']) || r.createdBy == uid);
+
+        let isCreator = ('createdBy' in r) && r.createdBy == uid;
+        let isAssignee = ('assigneeId' in r) && r.assigneeId != null && r.assigneeId != '' && r.assigneeId == uid;
+        let isUnassigned = !('assigneeId' in r) || r.assigneeId == null || r.assigneeId == '';
+
+        return (isCreator || isAssignee)
+          && (!changed.hasAny(['status']) || isAssignee || (isUnassigned && isCreator))
+          && (!changed.hasAny(['assigneeId']) || isCreator);
       }
       allow read: if isMember(proj());
       allow create: if isMember(proj()) && taskShape(request.resource.data)
         && request.resource.data.status == 'todo'
         && request.resource.data.createdBy == request.auth.uid
         && request.resource.data.createdAt == request.time;
-      allow update: if isMember(proj()) && taskShape(request.resource.data)
-        && request.resource.data.createdBy == resource.data.createdBy
-        && request.resource.data.createdAt == resource.data.createdAt
+      allow update: if isMember(proj()) && validTaskUpdate(request.resource.data)
+        && (!('createdBy' in resource.data) || request.resource.data.createdBy == resource.data.createdBy)
+        && (!('createdAt' in resource.data) || request.resource.data.createdAt == resource.data.createdAt)
         && (isOwner(proj()) || memberMayUpdate());
       allow delete: if isMember(proj()) && (isOwner(proj()) || resource.data.createdBy == request.auth.uid);
 
@@ -106,14 +123,13 @@ service cloud.firestore {
           && request.resource.data.keys().hasOnly(['authorId','authorName','text','createdAt'])
           && request.resource.data.authorId == request.auth.uid
           && (
-            (!('memberNames' in projectData(pid)) || !(request.auth.uid in projectData(pid).memberNames))
-              ? (request.resource.data.authorName is string && request.resource.data.authorName.size() >= 1 && request.resource.data.authorName.size() <= 80)
-              : (
-                  request.resource.data.authorName == projectData(pid).memberNames[request.auth.uid]
-                  || request.resource.data.authorName == request.auth.token.name
-                  || (request.auth.token.email != null && request.resource.data.authorName == request.auth.token.email)
-                )
+            isOwner(projectData(pid))
+            || (!('memberNames' in projectData(pid)) || !(request.auth.uid in projectData(pid).memberNames))
+            || request.resource.data.authorName == projectData(pid).memberNames[request.auth.uid]
+            || request.resource.data.authorName == request.auth.token.name
+            || (request.auth.token.email != null && request.resource.data.authorName == request.auth.token.email)
           )
+          && request.resource.data.authorName is string && request.resource.data.authorName.size() >= 1 && request.resource.data.authorName.size() <= 80
           && request.resource.data.text is string && request.resource.data.text.size() >= 1 && request.resource.data.text.size() <= 1000
           && request.resource.data.createdAt == request.time;
         allow update: if false;
@@ -130,14 +146,13 @@ service cloud.firestore {
         && request.resource.data.type in ['task_created','task_status_changed','task_assigned','task_deleted','comment_added','member_added','member_removed']
         && request.resource.data.actorId == request.auth.uid
         && (
-          (!('memberNames' in projectData(pid)) || !(request.auth.uid in projectData(pid).memberNames))
-            ? (request.resource.data.actorName is string && request.resource.data.actorName.size() >= 1 && request.resource.data.actorName.size() <= 80)
-            : (
-                request.resource.data.actorName == projectData(pid).memberNames[request.auth.uid]
-                || request.resource.data.actorName == request.auth.token.name
-                || (request.auth.token.email != null && request.resource.data.actorName == request.auth.token.email)
-              )
+          isOwner(projectData(pid))
+          || (!('memberNames' in projectData(pid)) || !(request.auth.uid in projectData(pid).memberNames))
+          || request.resource.data.actorName == projectData(pid).memberNames[request.auth.uid]
+          || request.resource.data.actorName == request.auth.token.name
+          || (request.auth.token.email != null && request.resource.data.actorName == request.auth.token.email)
         )
+        && request.resource.data.actorName is string && request.resource.data.actorName.size() >= 1 && request.resource.data.actorName.size() <= 80
         && (request.resource.data.taskTitle == null || (request.resource.data.taskTitle is string && request.resource.data.taskTitle.size() <= 120))
         && (request.resource.data.detail == null || (request.resource.data.detail is string && request.resource.data.detail.size() <= 200))
         && request.resource.data.createdAt == request.time;

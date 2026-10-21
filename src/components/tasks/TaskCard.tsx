@@ -19,7 +19,7 @@ export function canEditTask(t: Task, uid: string, isOwner: boolean): boolean {
 
 export function canChangeStatus(t: Task, uid: string, isOwner: boolean): boolean {
   if (isOwner) return true;
-  return t.assigneeId === uid || (t.assigneeId === null && t.createdBy === uid);
+  return t.assigneeId === uid || (!t.assigneeId && t.createdBy === uid);
 }
 
 export function canReassign(t: Task, uid: string, isOwner: boolean): boolean {
