@@ -17,6 +17,7 @@ describe('FilterBar Component', () => {
     assigneeId: 'all',
     search: '',
     overdueOnly: false,
+    label: 'all',
   };
 
   it('renders all filter controls with associated accessible labels', () => {
@@ -164,6 +165,7 @@ describe('FilterBar Component', () => {
       assigneeId: 'user-alice',
       search: 'something',
       overdueOnly: true,
+      label: 'all',
     };
 
     renderWithProviders(

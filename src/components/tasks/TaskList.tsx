@@ -14,6 +14,7 @@ interface TaskListProps {
   onDelete: (task: Task) => void;
   onStatusChange: (task: Task, newStatus: TaskStatus) => void;
   onNewTask?: () => void;
+  onOpen?: (task: Task) => void;
 }
 
 export function TaskList({
@@ -25,6 +26,7 @@ export function TaskList({
   onDelete,
   onStatusChange,
   onNewTask,
+  onOpen,
 }: TaskListProps): React.ReactElement {
   const { t } = useI18n();
 
@@ -57,6 +59,7 @@ export function TaskList({
           onEdit={onEdit}
           onDelete={onDelete}
           onStatusChange={onStatusChange}
+          onOpen={onOpen}
         />
       ))}
     </div>

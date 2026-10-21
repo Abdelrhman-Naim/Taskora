@@ -1,0 +1,77 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.chipBox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  min-height: 42px;
+  transition: border-color var(--dur-1) var(--ease);
+}
+
+.chipBox:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.chipText {
+  color: var(--text);
+  font-size: 0.8125rem;
+}
+
+.removeChipBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--dur-1) var(--ease);
+}
+
+.removeChipBtn:hover {
+  color: var(--st-overdue-fg);
+}
+
+.input {
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--text);
+  outline: none;
+  padding: 4px 0;
+}
+
+.errorMessage {
+  font-size: 0.75rem;
+  color: var(--st-overdue-fg);
+  margin: 0;
+}

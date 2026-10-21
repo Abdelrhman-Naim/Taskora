@@ -168,4 +168,31 @@ describe('TaskForm Component', () => {
     expect(screen.getByLabelText(/Assignee/i)).not.toBeDisabled();
     expect(screen.getByLabelText(/Status/i)).toBeDisabled();
   });
+
+  it('displays validation.recurrence.needsDueDate and prevents submission when recurrence is set without a dueDate', async () => {
+    const handleSave = vi.fn();
+    renderWithProviders(
+      <TaskForm
+        project={project}
+        currentUserId="user-owner"
+        isOwner={true}
+        onSave={handleSave}
+        onCancel={vi.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText(/Title/i), { target: { value: 'Recurring Task Title' } });
+    const recurrenceSelect = screen.getByTestId('task-recurrence-select');
+    fireEvent.change(recurrenceSelect, { target: { value: 'weekly' } });
+
+    // Submit without due date
+    const submitBtn = screen.getByTestId('save-task-btn');
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Due date is required for recurring tasks|validation\.recurrence\.needsDueDate/i)).toBeInTheDocument();
+    });
+
+    expect(handleSave).not.toHaveBeenCalled();
+  });
 });

@@ -42,6 +42,47 @@
   word-break: break-word;
 }
 
+.titleClickable {
+  cursor: pointer;
+  transition: color var(--dur-1) var(--ease);
+}
+
+.titleClickable:hover {
+  color: var(--accent);
+}
+
+.labelsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.labelChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.checklistProgress {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+}
+
 .badges {
   display: inline-flex;
   gap: 6px;

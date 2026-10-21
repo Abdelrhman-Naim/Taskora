@@ -261,4 +261,41 @@ describe('TaskCard Component', () => {
     const arTitleEl = screen.getByText('مراجعة الصفحة الرئيسية');
     expect(arTitleEl.getAttribute('dir')).toBe('auto');
   });
+
+  it('renders checklist progress 2/5 and label chips inside bdi (Task 56)', () => {
+    const taskWithExtras: Task = {
+      ...overdueTask,
+      id: 'task-extras',
+      checklist: [
+        { id: 'c1', text: 'Step 1', done: true },
+        { id: 'c2', text: 'Step 2', done: true },
+        { id: 'c3', text: 'Step 3', done: false },
+        { id: 'c4', text: 'Step 4', done: false },
+        { id: 'c5', text: 'Step 5', done: false },
+      ],
+      labels: ['Urgent', 'UI'],
+    };
+
+    renderWithProviders(
+      <TaskCard
+        task={taskWithExtras}
+        project={project}
+        currentUserId="user-owner"
+        isOwner={true}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onStatusChange={() => {}}
+      />,
+      { locale: 'ar' }
+    );
+
+    // Checklist progress 2/5 rendered in Latin numbers
+    expect(screen.getByText('2/5')).toBeInTheDocument();
+
+    // Labels rendered inside bdi
+    const urgentLabel = screen.getByText('Urgent');
+    expect(urgentLabel.tagName.toLowerCase()).toBe('bdi');
+    const uiLabel = screen.getByText('UI');
+    expect(uiLabel.tagName.toLowerCase()).toBe('bdi');
+  });
 });

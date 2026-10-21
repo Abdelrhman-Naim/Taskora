@@ -208,6 +208,7 @@ describe('taskFilters library', () => {
         assigneeId: 'user-alice',
         search: '',
         overdueOnly: false,
+        label: 'all',
       };
       const result = filterTasks(mockTasks, filters, today);
       expect(result).toHaveLength(1);
@@ -232,9 +233,44 @@ describe('taskFilters library', () => {
         assigneeId: 'all',
         search: '',
         overdueOnly: false,
+        label: 'all',
       };
       const result = filterTasks(mockTasks, filters, today);
       expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('Label filtering (Task 56)', () => {
+    const labeledTasks: Task[] = [
+      {
+        ...mockTasks[0],
+        id: 'task-labeled-1',
+        labels: ['Urgent', 'Frontend'],
+      },
+      {
+        ...mockTasks[1],
+        id: 'task-labeled-2',
+        labels: ['backend', 'bug'],
+      },
+    ];
+
+    it('matches label case-insensitively (Urgent matches urgent)', () => {
+      const filters: TaskFilters = {
+        ...DEFAULT_FILTERS,
+        label: 'urgent',
+      };
+      const result = filterTasks(labeledTasks, filters, today);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('task-labeled-1');
+    });
+
+    it('returns all when label is "all"', () => {
+      const filters: TaskFilters = {
+        ...DEFAULT_FILTERS,
+        label: 'all',
+      };
+      const result = filterTasks(labeledTasks, filters, today);
+      expect(result).toHaveLength(2);
     });
   });
 });

@@ -7,6 +7,7 @@ export interface TaskFilters {
   assigneeId: string | 'all' | 'unassigned';
   search: string;
   overdueOnly: boolean;
+  label: string | 'all';
 }
 
 export const DEFAULT_FILTERS: TaskFilters = {
@@ -15,10 +16,11 @@ export const DEFAULT_FILTERS: TaskFilters = {
   assigneeId: 'all',
   search: '',
   overdueOnly: false,
+  label: 'all',
 };
 
 /**
- * Filters tasks based on status, priority, assignee, overdue status, and search query.
+ * Filters tasks based on status, priority, assignee, overdue status, search query, and label.
  * Overdue calculation strictly delegates to isOverdue(task, today) from dates.ts.
  */
 export function filterTasks(
@@ -58,6 +60,15 @@ export function filterTasks(
     // 5. Search filter (case-insensitive substring on title only)
     if (trimmedSearch.length > 0) {
       if (!t.title.toLowerCase().includes(trimmedSearch)) {
+        return false;
+      }
+    }
+
+    // 6. Label filter (case-insensitive match)
+    if (f.label && f.label !== 'all') {
+      const targetLabel = f.label.trim().toLowerCase();
+      const taskLabels = (t.labels || []).map((l) => l.toLowerCase());
+      if (!taskLabels.includes(targetLabel)) {
         return false;
       }
     }

@@ -124,6 +124,28 @@ export function FilterBar({
         </Select>
       </div>
 
+      {/* Label Filter */}
+      <div className={styles.field}>
+        <label htmlFor="filter-label" className={styles.label}>
+          {t('task.field.labels')}
+        </label>
+        <input
+          id="filter-label"
+          type="search"
+          inputMode="search"
+          dir="auto"
+          className={styles.input}
+          placeholder={t('filter.allLabels')}
+          value={filters.label === 'all' ? '' : filters.label}
+          onChange={(e) =>
+            onChange({
+              ...filters,
+              label: e.target.value.trim() ? e.target.value : 'all',
+            })
+          }
+        />
+      </div>
+
       {/* Overdue Only Checkbox */}
       <div className={styles.checkboxContainer}>
         <Checkbox

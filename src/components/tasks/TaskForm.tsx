@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Project, Task, TaskPriority, TaskStatus } from '@/types';
+import { Project, Task, TaskPriority, TaskStatus, Recurrence, ChecklistItem } from '@/types';
 import { taskInputSchema, fieldErrors } from '@/lib/validation';
 import { canChangeStatus, canReassign } from '@/components/tasks/TaskCard';
 import { Field } from '@/components/ui/Field';
@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { DatePicker } from '@/components/ui/DatePicker';
 import { Button } from '@/components/ui/Button';
+import { LabelsInput } from '@/components/tasks/LabelsInput';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { MessageKey } from '@/i18n/en';
@@ -27,6 +28,9 @@ interface TaskFormProps {
     assigneeId: string | null;
     dueDate: string | null;
     status?: TaskStatus;
+    labels?: string[];
+    recurrence?: Recurrence;
+    checklist?: ChecklistItem[];
   }) => Promise<void>;
   onCancel: () => void;
 }
@@ -49,6 +53,8 @@ export function TaskForm({
   const [assigneeId, setAssigneeId] = useState<string | null>(initialTask?.assigneeId ?? null);
   const [dueDate, setDueDate] = useState<string>(initialTask?.dueDate || '');
   const [status, setStatus] = useState<TaskStatus>(initialTask?.status || 'todo');
+  const [labels, setLabels] = useState<string[]>(initialTask?.labels || []);
+  const [recurrence, setRecurrence] = useState<Recurrence>(initialTask?.recurrence || 'none');
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -74,6 +80,9 @@ export function TaskForm({
       priority,
       assigneeId: assigneeId || null,
       dueDate: dueDate.trim() ? dueDate.trim() : null,
+      labels,
+      recurrence,
+      checklist: initialTask?.checklist || [],
     };
 
     const parsed = taskInputSchema.safeParse(formData);
@@ -214,6 +223,37 @@ export function TaskForm({
             )}
           </Field>
         )}
+      </div>
+
+      <div className={styles.row}>
+        <Field id="task-recurrence" label={t('task.field.recurrence')} error={translateError(errors.recurrence)}>
+          {(fieldProps) => (
+            <Select
+              {...fieldProps}
+              value={recurrence}
+              onChange={(e) => setRecurrence(e.target.value as Recurrence)}
+              disabled={submitting}
+              data-testid="task-recurrence-select"
+            >
+              <option value="none">{t('task.recurrence.none')}</option>
+              <option value="daily">{t('task.recurrence.daily')}</option>
+              <option value="weekly">{t('task.recurrence.weekly')}</option>
+              <option value="monthly">{t('task.recurrence.monthly')}</option>
+            </Select>
+          )}
+        </Field>
+      </div>
+
+      <div className={styles.row}>
+        <Field id="task-labels" label={t('task.field.labels')} error={translateError(errors.labels)}>
+          {() => (
+            <LabelsInput
+              value={labels}
+              onChange={setLabels}
+              max={5}
+            />
+          )}
+        </Field>
       </div>
 
       <div className={styles.actions}>

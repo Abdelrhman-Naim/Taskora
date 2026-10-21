@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Project, Task, TaskStatus } from '@/types';
+import { Project, Task, TaskStatus, TaskInput, TaskPatch } from '@/types';
 import { getProject } from '@/services/projects';
 import {
   listTasks,
@@ -26,6 +26,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Avatar } from '@/components/ui/Avatar';
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskForm } from '@/components/tasks/TaskForm';
+import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { FilterBar } from '@/components/tasks/FilterBar';
 import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
 import { todayString } from '@/lib/dates';
@@ -47,6 +48,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
+  const [activeDetailTask, setActiveDetailTask] = useState<Task | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [filters, setFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
 
@@ -115,31 +117,26 @@ export default function ProjectPage(): React.ReactElement | null {
       .finally(() => setLoading(false));
   };
 
-  const handleCreateTask = async (data: {
-    title: string;
-    description: string;
-    priority: Task['priority'];
-    assigneeId: string | null;
-    dueDate: string | null;
-  }) => {
+  const getActor = () => ({
+    uid: user?.uid || '',
+    displayName: user?.displayName || (user?.uid && project?.memberNames[user.uid]) || 'User',
+  });
+
+  const handleCreateTask = async (data: TaskInput) => {
     if (!project || !user) return;
     const db = getDb();
-    await createTask(db, project.id, user.uid, data);
+    await createTask(db, project.id, user.uid, data, { actor: getActor() });
     setShowCreateForm(false);
     await reloadTasks();
   };
 
-  const handleUpdateTask = async (data: {
-    title: string;
-    description: string;
-    priority: Task['priority'];
-    assigneeId: string | null;
-    dueDate: string | null;
-    status?: TaskStatus;
-  }) => {
+  const handleUpdateTask = async (data: TaskPatch) => {
     if (!project || !editingTask) return;
     const db = getDb();
-    await updateTask(db, project.id, editingTask.id, data);
+    await updateTask(db, project.id, editingTask.id, data, {
+      actor: getActor(),
+      task: editingTask,
+    });
     setEditingTask(null);
     await reloadTasks();
   };
@@ -149,10 +146,40 @@ export default function ProjectPage(): React.ReactElement | null {
     setActionError(null);
     try {
       const db = getDb();
-      await changeTaskStatus(db, project.id, task.id, newStatus);
+      await changeTaskStatus(db, project.id, task.id, newStatus, {
+        actor: getActor(),
+        task,
+      });
       await reloadTasks();
+      if (activeDetailTask && activeDetailTask.id === task.id) {
+        setActiveDetailTask((prev) => (prev ? { ...prev, status: newStatus } : null));
+      }
     } catch (err) {
       setActionError(getErrorMessage(err));
+    }
+  };
+
+  const handleDetailTaskChange = async (patch: TaskPatch) => {
+    if (!project || !activeDetailTask) return;
+    setActionError(null);
+    try {
+      const db = getDb();
+      if (patch.status !== undefined && patch.status !== activeDetailTask.status) {
+        await changeTaskStatus(db, project.id, activeDetailTask.id, patch.status, {
+          actor: getActor(),
+          task: activeDetailTask,
+        });
+      } else {
+        await updateTask(db, project.id, activeDetailTask.id, patch, {
+          actor: getActor(),
+          task: activeDetailTask,
+        });
+      }
+      await reloadTasks();
+      setActiveDetailTask((prev) => (prev ? { ...prev, ...patch } : null));
+    } catch (err) {
+      setActionError(getErrorMessage(err));
+      throw err;
     }
   };
 
@@ -161,7 +188,10 @@ export default function ProjectPage(): React.ReactElement | null {
     setActionError(null);
     try {
       const db = getDb();
-      await deleteTask(db, project.id, deletingTask.id);
+      await deleteTask(db, project.id, deletingTask.id, {
+        actor: getActor(),
+        task: deletingTask,
+      });
       setDeletingTask(null);
       await reloadTasks();
     } catch (err) {
@@ -381,6 +411,7 @@ export default function ProjectPage(): React.ReactElement | null {
             project={project}
             currentUserId={currentUid}
             isOwner={isOwner}
+            onOpen={(task) => setActiveDetailTask(task)}
             onEdit={(task) => {
               setShowCreateForm(false);
               setEditingTask(task);
@@ -394,6 +425,22 @@ export default function ProjectPage(): React.ReactElement | null {
           />
         )}
       </div>
+
+      {/* Task Detail Dialog */}
+      {activeDetailTask && (
+        <TaskDetailDialog
+          task={activeDetailTask}
+          project={project}
+          currentUserId={currentUid}
+          isOwner={isOwner}
+          onClose={() => setActiveDetailTask(null)}
+          onEdit={(task) => {
+            setActiveDetailTask(null);
+            setEditingTask(task);
+          }}
+          onTaskChange={handleDetailTaskChange}
+        />
+      )}
 
       {/* Confirm Task Deletion Dialog */}
       {deletingTask && (
