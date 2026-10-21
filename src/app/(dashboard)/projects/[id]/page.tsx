@@ -26,6 +26,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Avatar } from '@/components/ui/Avatar';
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskBoard } from '@/components/tasks/TaskBoard';
+import { TaskCalendar } from '@/components/tasks/TaskCalendar';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { FilterBar } from '@/components/tasks/FilterBar';
@@ -39,7 +40,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const { user } = useAuth();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const getErrorMessage = useErrorMessage();
 
   const [project, setProject] = useState<Project | null>(null);
@@ -468,6 +469,12 @@ export default function ProjectPage(): React.ReactElement | null {
             currentUserId={currentUid}
             isOwner={isOwner}
             onStatusChange={handleStatusChange}
+            onOpen={(task) => setActiveDetailTask(task)}
+          />
+        ) : view === 'calendar' ? (
+          <TaskCalendar
+            tasks={filteredTasks}
+            locale={locale}
             onOpen={(task) => setActiveDetailTask(task)}
           />
         ) : (

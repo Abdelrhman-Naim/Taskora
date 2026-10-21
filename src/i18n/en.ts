@@ -342,6 +342,17 @@ export const en = {
   'board.empty.in_progress': 'No tasks in progress',
   'board.empty.done': 'No completed tasks',
   'board.dragHint': 'Drag card to change status',
+  'calendar.prev': 'Previous month',
+  'calendar.next': 'Next month',
+  'calendar.today': 'Today',
+  'calendar.more.zero': 'No more tasks',
+  'calendar.more.one': '1 more',
+  'calendar.more.two': '2 more',
+  'calendar.more.few': '{count} more',
+  'calendar.more.many': '{count} more',
+  'calendar.more.other': '{count} more',
+  'calendar.noDueDate': 'No due date: {count}',
+  'calendar.overdue': 'Overdue',
 } as const;
 
 export type MessageKey = keyof typeof en;

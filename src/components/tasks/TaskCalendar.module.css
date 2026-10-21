@@ -1,0 +1,243 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  inline-size: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-block: 8px;
+}
+
+.monthDisplay {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+  font-family: var(--font-display);
+}
+
+.navControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--dur-1) var(--ease);
+}
+
+.navBtn:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--line-strong);
+}
+
+.navBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.todayBtn {
+  display: inline-flex;
+  align-items: center;
+  padding-block: 4px;
+  padding-inline: 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--dur-1) var(--ease);
+}
+
+.todayBtn:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--line-strong);
+}
+
+.todayBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.gridWrapper {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+}
+
+.weekdaysHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: var(--surface-2);
+  border-block-end: 1px solid var(--line);
+  text-align: center;
+}
+
+.weekday {
+  padding-block: 10px;
+  padding-inline: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.dayCell {
+  min-block-size: 96px;
+  padding-block: 8px;
+  padding-inline: 8px;
+  border-inline-end: 1px solid var(--line);
+  border-block-end: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: var(--surface);
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.dayCell:nth-child(7n) {
+  border-inline-end: none;
+}
+
+.otherMonth {
+  background-color: var(--surface-2);
+  opacity: 0.55;
+}
+
+.todayCell {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  background-color: var(--surface-hover);
+}
+
+.dayNumber {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-block-end: 2px;
+}
+
+.todayCell .dayNumber {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.taskPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 3px;
+  padding-inline: 6px;
+  background-color: var(--surface-hover);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  color: var(--text);
+  cursor: pointer;
+  text-align: start;
+  transition: all var(--dur-1) var(--ease);
+}
+
+.taskPill:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-1);
+}
+
+.taskPill:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.taskPillOverdue {
+  background-color: var(--st-overdue-bg);
+  border-color: var(--st-overdue-fg);
+  color: var(--st-overdue-fg);
+}
+
+.statusDot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.statusTodo {
+  background-color: var(--st-todo-fg);
+}
+
+.statusInProgress {
+  background-color: var(--st-progress-fg);
+}
+
+.statusDone {
+  background-color: var(--st-done-fg);
+}
+
+.pillTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.morePill {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding-block: 2px;
+  padding-inline: 4px;
+  text-align: start;
+}
+
+.morePill:hover {
+  text-decoration: underline;
+}
+
+.undatedStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 10px;
+  padding-inline: 16px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.undatedPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-block-start: 8px;
+}

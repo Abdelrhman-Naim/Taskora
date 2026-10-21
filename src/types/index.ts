@@ -2,6 +2,8 @@ export const TASK_STATUSES = ['todo', 'in_progress', 'done'] as const;
 export const TASK_PRIORITIES = ['low', 'medium', 'high'] as const;
 export const RECURRENCES = ['none', 'daily', 'weekly', 'monthly'] as const;
 
+export type { Locale } from '@/i18n/config';
+
 export type TaskStatus = typeof TASK_STATUSES[number];
 export type TaskPriority = typeof TASK_PRIORITIES[number];
 export type Recurrence = typeof RECURRENCES[number];
