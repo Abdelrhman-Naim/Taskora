@@ -31,6 +31,8 @@ import { TaskForm } from '@/components/tasks/TaskForm';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { FilterBar } from '@/components/tasks/FilterBar';
 import { useViewPreference } from '@/hooks/useViewPreference';
+import { useHotkeys } from '@/hooks/useHotkeys';
+import { ShortcutsDialog } from '@/components/shell/ShortcutsDialog';
 import { tasksToCsv, csvFilename } from '@/lib/csv';
 import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
 import { todayString } from '@/lib/dates';
@@ -56,6 +58,24 @@ export default function ProjectPage(): React.ReactElement | null {
   const [actionError, setActionError] = useState<string | null>(null);
   const [filters, setFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
   const [view, setView] = useViewPreference();
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  useHotkeys({
+    KeyN: () => {
+      setEditingTask(null);
+      setShowCreateForm(true);
+    },
+    Slash: (e) => {
+      e.preventDefault();
+      document.getElementById('filter-search')?.focus();
+    },
+    'Shift+Slash': () => {
+      setShowShortcuts(true);
+    },
+    Digit1: () => setView('list'),
+    Digit2: () => setView('board'),
+    Digit3: () => setView('calendar'),
+  });
 
   useEffect(() => {
     let ignore = false;
@@ -550,6 +570,13 @@ export default function ProjectPage(): React.ReactElement | null {
           isDangerous={true}
           onConfirm={handleConfirmDelete}
           onCancel={() => setDeletingTask(null)}
+        />
+      )}
+      {/* Keyboard Shortcuts Dialog */}
+      {showShortcuts && (
+        <ShortcutsDialog
+          isOpen={showShortcuts}
+          onClose={() => setShowShortcuts(false)}
         />
       )}
     </div>

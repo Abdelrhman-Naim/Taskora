@@ -366,4 +366,15 @@ export const ar: Record<MessageKey, string> = {
   'csv.col.checklist': 'قائمة التحقق',
   'csv.col.createdAt': 'تاريخ الإنشاء',
   'csv.col.updatedAt': 'تاريخ التحديث',
+
+  // Shortcuts
+  'shortcuts.title': 'اختصارات لوحة المفاتيح',
+  'shortcuts.menuItem': 'اختصارات لوحة المفاتيح',
+  'shortcuts.newTask': 'إنشاء مهمة جديدة',
+  'shortcuts.search': 'تركيز شريط البحث',
+  'shortcuts.showShortcuts': 'عرض اختصارات لوحة المفاتيح',
+  'shortcuts.listView': 'التبديل إلى عرض القائمة',
+  'shortcuts.boardView': 'التبديل إلى عرض اللوحة',
+  'shortcuts.calendarView': 'التبديل إلى عرض التقويم',
+  'shortcuts.closeDialog': 'إغلاق الحوار النشط',
 };

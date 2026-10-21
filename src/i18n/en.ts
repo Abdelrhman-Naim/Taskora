@@ -364,6 +364,17 @@ export const en = {
   'csv.col.checklist': 'Checklist',
   'csv.col.createdAt': 'Created',
   'csv.col.updatedAt': 'Updated',
+
+  // Shortcuts
+  'shortcuts.title': 'Keyboard Shortcuts',
+  'shortcuts.menuItem': 'Keyboard shortcuts',
+  'shortcuts.newTask': 'Create new task',
+  'shortcuts.search': 'Focus search bar',
+  'shortcuts.showShortcuts': 'Show keyboard shortcuts',
+  'shortcuts.listView': 'Switch to List view',
+  'shortcuts.boardView': 'Switch to Board view',
+  'shortcuts.calendarView': 'Switch to Calendar view',
+  'shortcuts.closeDialog': 'Close active dialog',
 } as const;
 
 export type MessageKey = keyof typeof en;
