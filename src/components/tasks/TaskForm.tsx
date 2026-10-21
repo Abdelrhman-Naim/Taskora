@@ -31,6 +31,8 @@ interface TaskFormProps {
     labels?: string[];
     recurrence?: Recurrence;
     checklist?: ChecklistItem[];
+    multiAssigneeMode?: 'single' | 'shared' | 'individual';
+    selectedMemberIds?: string[];
   }) => Promise<void>;
   onCancel: () => void;
 }
@@ -47,6 +49,9 @@ export function TaskForm({
   const getErrorMessage = useErrorMessage();
   const isEditing = Boolean(initialTask);
 
+  const memberEntries = Object.entries(project.memberNames || {});
+  const memberUids = Object.keys(project.memberNames || {});
+
   const [title, setTitle] = useState(initialTask?.title || '');
   const [description, setDescription] = useState(initialTask?.description || '');
   const [priority, setPriority] = useState<TaskPriority>(initialTask?.priority || 'medium');
@@ -55,6 +60,10 @@ export function TaskForm({
   const [status, setStatus] = useState<TaskStatus>(initialTask?.status || 'todo');
   const [labels, setLabels] = useState<string[]>(initialTask?.labels || []);
   const [recurrence, setRecurrence] = useState<Recurrence>(initialTask?.recurrence || 'none');
+
+  // Multi-assignee mode for new tasks
+  const [assignmentMode, setAssignmentMode] = useState<'single' | 'shared' | 'individual'>('single');
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(memberUids);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -74,15 +83,32 @@ export function TaskForm({
     setSaveError(null);
     setErrors({});
 
+    if (!isEditing && assignmentMode !== 'single' && selectedMemberIds.length === 0) {
+      setErrors({ assigneeId: 'validation.assignee.required' });
+      return;
+    }
+
+    let finalChecklist: ChecklistItem[] = initialTask?.checklist || [];
+    let finalAssigneeId: string | null = assigneeId || null;
+
+    if (!isEditing && assignmentMode === 'shared') {
+      finalAssigneeId = null;
+      finalChecklist = selectedMemberIds.map((uid) => ({
+        id: uid,
+        text: project.memberNames[uid] || uid,
+        done: false,
+      }));
+    }
+
     const formData = {
       title,
       description,
       priority,
-      assigneeId: assigneeId || null,
+      assigneeId: finalAssigneeId,
       dueDate: dueDate.trim() ? dueDate.trim() : null,
       labels,
       recurrence,
-      checklist: initialTask?.checklist || [],
+      checklist: finalChecklist,
     };
 
     const parsed = taskInputSchema.safeParse(formData);
@@ -95,6 +121,9 @@ export function TaskForm({
     try {
       await onSave({
         ...parsed.data,
+        multiAssigneeMode: isEditing ? 'single' : assignmentMode,
+        selectedMemberIds: assignmentMode !== 'single' ? selectedMemberIds : undefined,
+        checklist: finalChecklist,
         ...(isEditing ? { status } : {}),
       });
     } catch (err: unknown) {
@@ -187,24 +216,148 @@ export function TaskForm({
       </div>
 
       <div className={styles.row}>
-        <Field id="task-assignee" label={t('task.field.assignee')} error={translateError(errors.assigneeId)}>
-          {(fieldProps) => (
-            <Select
-              {...fieldProps}
-              value={assigneeId || ''}
-              onChange={(e) => setAssigneeId(e.target.value || null)}
-              disabled={submitting || !reassignAllowed}
-              data-testid="task-assignee-select"
+        {!isEditing ? (
+          <div className={styles.modeContainer}>
+            <Field
+              id="task-assignee-mode"
+              label={t('task.assignee.mode')}
+              error={translateError(errors.assigneeId)}
             >
-              <option value="">{t('task.assignee.unassigned')}</option>
-              {Object.entries(project.memberNames).map(([uid, name]) => (
-                <option key={uid} value={uid}>
-                  {name}
-                </option>
-              ))}
-            </Select>
-          )}
-        </Field>
+              {() => (
+                <div
+                  className={styles.modeSelector}
+                  role="radiogroup"
+                  aria-label={t('task.assignee.mode')}
+                >
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={assignmentMode === 'single'}
+                    className={`${styles.modeBtn} ${assignmentMode === 'single' ? styles.modeBtnActive : ''}`}
+                    onClick={() => setAssignmentMode('single')}
+                    disabled={submitting}
+                  >
+                    👤 {t('task.assignee.modeSingle')}
+                  </button>
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={assignmentMode === 'shared'}
+                    className={`${styles.modeBtn} ${assignmentMode === 'shared' ? styles.modeBtnActive : ''}`}
+                    onClick={() => setAssignmentMode('shared')}
+                    disabled={submitting}
+                  >
+                    👥 {t('task.assignee.modeShared')}
+                  </button>
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={assignmentMode === 'individual'}
+                    className={`${styles.modeBtn} ${assignmentMode === 'individual' ? styles.modeBtnActive : ''}`}
+                    onClick={() => setAssignmentMode('individual')}
+                    disabled={submitting}
+                  >
+                    📋 {t('task.assignee.modeIndividual')}
+                  </button>
+                </div>
+              )}
+            </Field>
+
+            {assignmentMode === 'single' ? (
+              <Field
+                id="task-assignee"
+                label={t('task.field.assignee')}
+                error={translateError(errors.assigneeId)}
+              >
+                {(fieldProps) => (
+                  <Select
+                    {...fieldProps}
+                    value={assigneeId || ''}
+                    onChange={(e) => setAssigneeId(e.target.value || null)}
+                    disabled={submitting || !reassignAllowed}
+                    data-testid="task-assignee-select"
+                  >
+                    <option value="">{t('task.assignee.unassigned')}</option>
+                    {memberEntries.map(([uid, name]) => (
+                      <option key={uid} value={uid}>
+                        {name}
+                      </option>
+                    ))}
+                  </Select>
+                )}
+              </Field>
+            ) : (
+              <div className={styles.membersBox}>
+                <div className={styles.membersHeader}>
+                  <span className={styles.membersCount}>
+                    {t('task.assignee.selectedMembers', { count: selectedMemberIds.length })}
+                  </span>
+                  <div className={styles.quickActions}>
+                    <button
+                      type="button"
+                      className={styles.quickBtn}
+                      onClick={() => setSelectedMemberIds(memberUids)}
+                      disabled={submitting}
+                    >
+                      {t('task.assignee.selectAll')}
+                    </button>
+                    <span>·</span>
+                    <button
+                      type="button"
+                      className={styles.quickBtn}
+                      onClick={() => setSelectedMemberIds([])}
+                      disabled={submitting}
+                    >
+                      {t('task.assignee.selectNone')}
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.memberCheckboxList}>
+                  {memberEntries.map(([uid, name]) => {
+                    const isChecked = selectedMemberIds.includes(uid);
+                    return (
+                      <label key={uid} className={styles.memberCheckboxItem}>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          disabled={submitting}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedMemberIds((prev) => [...prev, uid]);
+                            } else {
+                              setSelectedMemberIds((prev) => prev.filter((id) => id !== uid));
+                            }
+                          }}
+                        />
+                        <span className={styles.memberCheckboxName}>{name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Field id="task-assignee" label={t('task.field.assignee')} error={translateError(errors.assigneeId)}>
+            {(fieldProps) => (
+              <Select
+                {...fieldProps}
+                value={assigneeId || ''}
+                onChange={(e) => setAssigneeId(e.target.value || null)}
+                disabled={submitting || !reassignAllowed}
+                data-testid="task-assignee-select"
+              >
+                <option value="">{t('task.assignee.unassigned')}</option>
+                {memberEntries.map(([uid, name]) => (
+                  <option key={uid} value={uid}>
+                    {name}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </Field>
+        )}
 
         {isEditing && (
           <Field id="task-status" label={t('task.field.status')} error={translateError(errors.status)}>

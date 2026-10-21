@@ -151,6 +151,17 @@ export const ar: Record<MessageKey, string> = {
   'task.recurrence.scheduledBadge': 'مجدولة',
   'task.recurrence.scheduledBanner': 'مهمة متكررة مجدولة — ستنزل تلقائياً في قائمة التنفيذ بتاريخ {date}',
   'task.recurrence.scheduledHint': 'تنزل في قيد الانتظار تلقائياً عند حلول موعدها',
+  'task.scope.title': 'نطاق العرض',
+  'task.scope.myTasks': 'مهامي فقط',
+  'task.scope.allTasks': 'جميع المهام',
+  'task.assignee.mode': 'نوع التكليف',
+  'task.assignee.modeSingle': 'عضو واحد',
+  'task.assignee.modeShared': 'مهمة مشتركة (متابعة إنجاز كل عضو)',
+  'task.assignee.modeIndividual': 'نسخة منفصلة لكل عضو',
+  'task.assignee.selectAll': 'تحديد جميع الأعضاء',
+  'task.assignee.selectNone': 'إلغاء التحديد',
+  'task.assignee.selectedMembers': 'الأعضاء المكلّفون ({count})',
+  'task.assignee.sharedProgress': 'إنجاز الأعضاء',
 
   'task.detail.title': 'تفاصيل المهمة',
   'task.detail.edit': 'تعديل',
@@ -260,6 +271,7 @@ export const ar: Record<MessageKey, string> = {
   'validation.recurrence.invalid': 'خيار التكرار غير صالح',
   'validation.recurrence.needsDueDate': 'تاريخ الاستحقاق مطلوب للمهام المتكررة',
   'validation.comment.length': 'يجب أن يكون التعليق بين 1 و1000 حرف',
+  'validation.assignee.required': 'يرجى اختيار عضو واحد على الأقل',
 
   // Activity
   'activity.title': 'سجل نشاط المشروع',

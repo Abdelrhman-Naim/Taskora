@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Project, Task, TaskStatus, TaskInput, TaskPatch } from '@/types';
@@ -61,6 +61,8 @@ export default function ProjectPage(): React.ReactElement | null {
   const [view, setView] = useViewPreference();
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
+  type ViewScope = 'my_tasks' | 'all';
+  const [userSelectedScope, setUserSelectedScope] = useState<ViewScope | null>(null);
 
   useHotkeys({
     KeyN: () => {
@@ -152,7 +154,36 @@ export default function ProjectPage(): React.ReactElement | null {
   const handleCreateTask = async (data: TaskInput) => {
     if (!project || !user) return;
     const db = getDb();
-    await createTask(db, project.id, user.uid, data, { actor: getActor() });
+
+    if (data.multiAssigneeMode === 'individual' && data.selectedMemberIds && data.selectedMemberIds.length > 0) {
+      for (const memberId of data.selectedMemberIds) {
+        await createTask(
+          db,
+          project.id,
+          user.uid,
+          {
+            ...data,
+            assigneeId: memberId,
+          },
+          {
+            actor: getActor(),
+            projectName: project.name,
+          }
+        );
+      }
+    } else {
+      await createTask(
+        db,
+        project.id,
+        user.uid,
+        data,
+        {
+          actor: getActor(),
+          projectName: project.name,
+        }
+      );
+    }
+
     setShowCreateForm(false);
     await reloadTasks();
   };
@@ -163,6 +194,8 @@ export default function ProjectPage(): React.ReactElement | null {
     await updateTask(db, project.id, editingTask.id, data, {
       actor: getActor(),
       task: editingTask,
+      projectName: project.name,
+      assigneeName: data.assigneeId ? project.memberNames[data.assigneeId] : null,
     });
     setEditingTask(null);
     await reloadTasks();
@@ -186,6 +219,7 @@ export default function ProjectPage(): React.ReactElement | null {
       await changeTaskStatus(db, project.id, task.id, newStatus, {
         actor: getActor(),
         task,
+        projectName: project.name,
       });
       await reloadTasks();
     } catch (err) {
@@ -209,11 +243,14 @@ export default function ProjectPage(): React.ReactElement | null {
         await changeTaskStatus(db, project.id, activeDetailTask.id, patch.status, {
           actor: getActor(),
           task: activeDetailTask,
+          projectName: project.name,
         });
       } else {
         await updateTask(db, project.id, activeDetailTask.id, patch, {
           actor: getActor(),
           task: activeDetailTask,
+          projectName: project.name,
+          assigneeName: patch.assigneeId ? project.memberNames[patch.assigneeId] : null,
         });
       }
       await reloadTasks();
@@ -239,6 +276,27 @@ export default function ProjectPage(): React.ReactElement | null {
       setActionError(getErrorMessage(err));
     }
   };
+
+  const currentUid = user?.uid || '';
+  const isOwner = Boolean(project && user?.uid === project.ownerId);
+  const viewScope: ViewScope = userSelectedScope ?? (isOwner ? 'all' : 'my_tasks');
+
+  const scopedTasks = useMemo(() => {
+    if (viewScope === 'all') {
+      return tasks;
+    }
+    return tasks.filter((t) => {
+      if (t.assigneeId === currentUid) return true;
+      if (t.createdBy === currentUid) return true;
+      if (t.checklist && t.checklist.some((c) => c.id === currentUid)) return true;
+      if (!t.assigneeId) return true;
+      return false;
+    });
+  }, [tasks, viewScope, currentUid]);
+
+  const filteredTasks = useMemo(() => {
+    return filterTasks(scopedTasks, filters, todayString());
+  }, [scopedTasks, filters]);
 
   const handleExportCsv = () => {
     if (!project) return;
@@ -301,10 +359,6 @@ export default function ProjectPage(): React.ReactElement | null {
   }
 
   if (!project) return null;
-
-  const isOwner = user?.uid === project.ownerId;
-  const currentUid = user?.uid || '';
-  const filteredTasks = filterTasks(tasks, filters, todayString());
 
   const totalTasks = tasks.length;
   const doneTasks = tasks.filter((t) => t.status === 'done').length;
@@ -452,10 +506,41 @@ export default function ProjectPage(): React.ReactElement | null {
       {/* Tasks List */}
       <div>
         <div className={styles.tasksHeader}>
-          <h2 className={styles.tasksTitle}>
-            {t('task.list.title')}
-            <span className={`${styles.tasksCount} num`}>({tasks.length})</span>
-          </h2>
+          <div className={styles.tasksHeaderLeft}>
+            <h2 className={styles.tasksTitle}>
+              {t('task.list.title')}
+              <span className={`${styles.tasksCount} num`}>
+                ({filteredTasks.length}{viewScope === 'my_tasks' && tasks.length !== filteredTasks.length ? ` / ${tasks.length}` : ''})
+              </span>
+            </h2>
+          </div>
+
+          <div
+            className={styles.scopeSwitcher}
+            role="radiogroup"
+            aria-label={t('task.scope.title')}
+          >
+            <button
+              type="button"
+              role="radio"
+              aria-checked={viewScope === 'my_tasks'}
+              className={`${styles.scopeBtn} ${viewScope === 'my_tasks' ? styles.scopeBtnActive : ''}`}
+              onClick={() => setUserSelectedScope('my_tasks')}
+              data-testid="scope-switch-my-tasks"
+            >
+              👤 {t('task.scope.myTasks')}
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={viewScope === 'all'}
+              className={`${styles.scopeBtn} ${viewScope === 'all' ? styles.scopeBtnActive : ''}`}
+              onClick={() => setUserSelectedScope('all')}
+              data-testid="scope-switch-all"
+            >
+              🌐 {t('task.scope.allTasks')}
+            </button>
+          </div>
         </div>
 
         {tasks.length > 0 && (

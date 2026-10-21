@@ -149,6 +149,17 @@ export const en = {
   'task.recurrence.scheduledBadge': 'Scheduled',
   'task.recurrence.scheduledBanner': 'Scheduled recurring task — will drop into To Do automatically on {date}',
   'task.recurrence.scheduledHint': 'Drops into To Do automatically when due date arrives',
+  'task.scope.title': 'View Scope',
+  'task.scope.myTasks': 'My Tasks',
+  'task.scope.allTasks': 'All Tasks',
+  'task.assignee.mode': 'Assignment Type',
+  'task.assignee.modeSingle': 'Single Member',
+  'task.assignee.modeShared': 'Shared Task (track each member)',
+  'task.assignee.modeIndividual': 'Separate Copy for each member',
+  'task.assignee.selectAll': 'Select All Members',
+  'task.assignee.selectNone': 'Deselect All',
+  'task.assignee.selectedMembers': 'Assigned Members ({count})',
+  'task.assignee.sharedProgress': 'Member Progress',
 
   'task.detail.title': 'Task details',
   'task.detail.edit': 'Edit',
@@ -258,6 +269,7 @@ export const en = {
   'validation.recurrence.invalid': 'Invalid recurrence option',
   'validation.recurrence.needsDueDate': 'Due date is required for recurring tasks',
   'validation.comment.length': 'Comment must be between 1 and 1000 characters',
+  'validation.assignee.required': 'Please select at least one member',
 
   // Activity
   'activity.title': 'Project Activity',

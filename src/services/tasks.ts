@@ -74,7 +74,7 @@ export async function createTask(
   projectId: string,
   uid: string,
   input: TaskInput,
-  ctx?: { actor: Actor }
+  ctx?: { actor: Actor; projectName?: string }
 ): Promise<string> {
   const parsed = taskInputSchema.safeParse(input);
   if (!parsed.success) {
@@ -112,6 +112,41 @@ export async function createTask(
           taskTitle: title,
         })
       );
+
+      // In-app notification if the task is assigned to a member
+      if (assigneeId && assigneeId !== uid) {
+        const notifRef = newNotificationRef(db, assigneeId);
+        batch.set(
+          notifRef,
+          notificationData(ctx.actor, {
+            type: 'task_assigned',
+            projectId,
+            projectName: ctx.projectName || 'Project',
+            taskId: taskRef.id,
+            taskTitle: title,
+          })
+        );
+      }
+
+      // Notify checklist members for shared tasks
+      if (checklist && checklist.length > 0) {
+        for (const item of checklist) {
+          if (item.id && item.id.length >= 20 && item.id !== uid && item.id !== assigneeId) {
+            const notifRef = newNotificationRef(db, item.id);
+            batch.set(
+              notifRef,
+              notificationData(ctx.actor, {
+                type: 'task_assigned',
+                projectId,
+                projectName: ctx.projectName || 'Project',
+                taskId: taskRef.id,
+                taskTitle: title,
+              })
+            );
+          }
+        }
+      }
+
       await withWriteGuard(() => batch.commit());
     } else {
       await withWriteGuard(() => setDoc(taskRef, taskData));

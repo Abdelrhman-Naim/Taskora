@@ -61,7 +61,7 @@
 
 .scheduled {
   background-color: var(--surface-hover);
-  color: var(--brand);
+  color: var(--accent);
   border-color: var(--line);
   border-style: dashed;
 }

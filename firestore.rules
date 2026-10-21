@@ -39,7 +39,10 @@ service cloud.firestore {
           && request.resource.data.projectName is string && request.resource.data.projectName.size() <= 80
           && (request.resource.data.taskTitle == null || (request.resource.data.taskTitle is string && request.resource.data.taskTitle.size() <= 120))
           && request.resource.data.actorName is string && request.resource.data.actorName.size() >= 1 && request.resource.data.actorName.size() <= 80
-          && getAfter(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data.memberIds.hasAll([uid, request.auth.uid]);
+          && (
+            (exists(/databases/$(database)/documents/projects/$(request.resource.data.projectId)) && get(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data.memberIds.hasAll([uid, request.auth.uid]))
+            || (existsAfter(/databases/$(database)/documents/projects/$(request.resource.data.projectId)) && getAfter(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data.memberIds.hasAll([uid, request.auth.uid]))
+          );
       }
     }
 
@@ -102,9 +105,12 @@ service cloud.firestore {
         let isAssignee = ('assigneeId' in r) && r.assigneeId != null && r.assigneeId != '' && r.assigneeId == uid;
         let isUnassigned = !('assigneeId' in r) || r.assigneeId == null || r.assigneeId == '';
 
-        return (isCreator || isAssignee)
-          && (!changed.hasAny(['status']) || isAssignee || (isUnassigned && isCreator))
-          && (!changed.hasAny(['assigneeId']) || isCreator);
+        return changed.hasOnly(['checklist', 'updatedAt'])
+          || (
+            (isCreator || isAssignee)
+            && (!changed.hasAny(['status']) || isAssignee || (isUnassigned && isCreator))
+            && (!changed.hasAny(['assigneeId']) || isCreator)
+          );
       }
       allow read: if isMember(proj());
       allow create: if isMember(proj()) && taskShape(request.resource.data)

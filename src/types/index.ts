@@ -56,6 +56,8 @@ export interface TaskInput {
   checklist?: ChecklistItem[];
   labels?: string[];
   recurrence?: Recurrence;
+  multiAssigneeMode?: 'single' | 'shared' | 'individual';
+  selectedMemberIds?: string[];
 }
 
 export type TaskPatch = Partial<TaskInput & { status: TaskStatus }>;

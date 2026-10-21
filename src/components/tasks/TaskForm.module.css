@@ -29,3 +29,130 @@
   gap: 12px;
   margin-block-start: 8px;
 }
+
+.modeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modeSelector {
+  display: flex;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  gap: 4px;
+}
+
+.modeBtn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--dur-1) var(--ease);
+}
+
+.modeBtn:hover:not(:disabled) {
+  color: var(--text);
+  background-color: var(--surface-hover);
+}
+
+.modeBtnActive {
+  background-color: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-1);
+  font-weight: 600;
+}
+
+.membersBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.membersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.8125rem;
+}
+
+.membersCount {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.quickActions {
+  display: flex;
+  gap: 8px;
+}
+
+.quickBtn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.quickBtn:hover {
+  text-decoration: underline;
+}
+
+.memberCheckboxList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  max-block-size: 160px;
+  overflow-y: auto;
+  padding-inline-end: 4px;
+}
+
+.memberCheckboxItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.memberCheckboxItem:hover {
+  background-color: var(--surface-hover);
+}
+
+.memberCheckboxItem input[type="checkbox"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.memberCheckboxName {
+  font-size: 0.875rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

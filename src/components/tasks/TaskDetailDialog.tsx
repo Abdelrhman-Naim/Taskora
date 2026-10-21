@@ -41,7 +41,7 @@ export function TaskDetailDialog({
 
   const assigneeName = task.assigneeId
     ? project.memberNames[task.assigneeId] || 'Unknown Member'
-    : t('task.assignee.unassigned');
+    : (task.checklist && task.checklist.length > 0 ? t('task.assignee.modeShared') : t('task.assignee.unassigned'));
 
   useEffect(() => {
     previouslyFocusedRef.current = document.activeElement as HTMLElement;
@@ -148,7 +148,7 @@ export function TaskDetailDialog({
                 backgroundColor: 'var(--surface-hover)',
                 border: '1px dashed var(--line)',
                 borderRadius: 'var(--radius-md)',
-                color: 'var(--brand)',
+                color: 'var(--accent)',
                 fontSize: '0.8125rem',
                 marginBlockEnd: '12px',
               }}
@@ -245,7 +245,7 @@ export function TaskDetailDialog({
           <div className={styles.section}>
             <Checklist
               items={task.checklist || []}
-              canEdit={canEdit}
+              canEdit={canEdit || Boolean(task.checklist?.some((c) => c.id === currentUserId))}
               onChange={(updatedItems) => {
                 onTaskChange({ checklist: updatedItems });
               }}
