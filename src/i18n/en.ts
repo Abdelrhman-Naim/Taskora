@@ -253,6 +253,10 @@ export const en = {
   'validation.comment.length': 'Comment must be between 1 and 1000 characters',
 
   // Activity
+  'activity.title': 'Project Activity',
+  'activity.button': 'Activity',
+  'activity.empty': 'No activity recorded yet',
+  'activity.retry': 'Retry',
   'activity.task_created': '{actor} created task "{task}"',
   'activity.task_status_changed': '{actor} changed status of "{task}" from {from} to {to}',
   'activity.task_assigned': '{actor} assigned "{task}" to {assignee}',

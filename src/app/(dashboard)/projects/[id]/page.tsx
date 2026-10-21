@@ -29,6 +29,7 @@ import { TaskBoard } from '@/components/tasks/TaskBoard';
 import { TaskCalendar } from '@/components/tasks/TaskCalendar';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
+import { ActivityPanel } from '@/components/projects/ActivityPanel';
 import { FilterBar } from '@/components/tasks/FilterBar';
 import { useViewPreference } from '@/hooks/useViewPreference';
 import { useHotkeys } from '@/hooks/useHotkeys';
@@ -59,6 +60,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const [filters, setFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
   const [view, setView] = useViewPreference();
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showActivity, setShowActivity] = useState(false);
 
   useHotkeys({
     KeyN: () => {
@@ -328,6 +330,14 @@ export default function ProjectPage(): React.ReactElement | null {
           </div>
 
           <div className={styles.actions}>
+            <Button
+              variant="secondary"
+              data-testid="project-activity-btn"
+              onClick={() => setShowActivity(true)}
+            >
+              {t('activity.button')}
+            </Button>
+
             {tasks.length > 0 && (
               <Button
                 variant="secondary"
@@ -577,6 +587,15 @@ export default function ProjectPage(): React.ReactElement | null {
         <ShortcutsDialog
           isOpen={showShortcuts}
           onClose={() => setShowShortcuts(false)}
+        />
+      )}
+
+      {/* Project Activity Panel */}
+      {showActivity && id && (
+        <ActivityPanel
+          projectId={id}
+          isOpen={showActivity}
+          onClose={() => setShowActivity(false)}
         />
       )}
     </div>

@@ -255,6 +255,10 @@ export const ar: Record<MessageKey, string> = {
   'validation.comment.length': 'يجب أن يكون التعليق بين 1 و1000 حرف',
 
   // Activity
+  'activity.title': 'سجل نشاط المشروع',
+  'activity.button': 'النشاط',
+  'activity.empty': 'لا يوجد نشاط مسجل حتى الآن',
+  'activity.retry': 'إعادة المحاولة',
   'activity.task_created': 'أنشأ {actor} المهمة "{task}"',
   'activity.task_status_changed': 'غيّر {actor} حالة "{task}" من {from} إلى {to}',
   'activity.task_assigned': 'أسند {actor} المهمة "{task}" إلى {assignee}',

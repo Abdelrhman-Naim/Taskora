@@ -1,0 +1,129 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-block-start: var(--sp-2);
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-block: var(--sp-2);
+}
+
+.skeletonItem {
+  block-size: 48px;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-block-size: 60vh;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding-block: var(--sp-3);
+  border-block-end: 1px solid var(--line);
+}
+
+.item:last-child {
+  border-block-end: none;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  margin-block-start: var(--sp-1);
+}
+
+.iconTask {
+  color: var(--accent);
+}
+
+.iconStatus {
+  color: var(--st-progress-fg);
+}
+
+.iconMember {
+  color: var(--text-2);
+}
+
+.iconComment {
+  color: var(--text-3);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.message {
+  margin: 0;
+  font-size: var(--fs-1);
+  line-height: var(--lh-body);
+  color: var(--text);
+  word-break: break-word;
+}
+
+.time {
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+}
+
+.emptyState {
+  padding-block: var(--sp-6);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-1);
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-block: var(--sp-6);
+  color: var(--st-overdue-fg);
+  text-align: center;
+}
+
+.retryBtn {
+  padding-block: var(--sp-2);
+  padding-inline: var(--sp-4);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-1);
+  cursor: pointer;
+}
+
+.retryBtn:hover {
+  background: var(--surface-hover);
+}
