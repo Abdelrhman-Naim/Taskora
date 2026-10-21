@@ -353,6 +353,17 @@ export const en = {
   'calendar.more.other': '{count} more',
   'calendar.noDueDate': 'No due date: {count}',
   'calendar.overdue': 'Overdue',
+  'csv.export': 'Export ({count})',
+  'csv.col.title': 'Title',
+  'csv.col.description': 'Description',
+  'csv.col.status': 'Status',
+  'csv.col.priority': 'Priority',
+  'csv.col.assignee': 'Assignee',
+  'csv.col.dueDate': 'Due Date',
+  'csv.col.labels': 'Labels',
+  'csv.col.checklist': 'Checklist',
+  'csv.col.createdAt': 'Created',
+  'csv.col.updatedAt': 'Updated',
 } as const;
 
 export type MessageKey = keyof typeof en;

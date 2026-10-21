@@ -31,6 +31,7 @@ import { TaskForm } from '@/components/tasks/TaskForm';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { FilterBar } from '@/components/tasks/FilterBar';
 import { useViewPreference } from '@/hooks/useViewPreference';
+import { tasksToCsv, csvFilename } from '@/lib/csv';
 import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
 import { todayString } from '@/lib/dates';
 import { AppError } from '@/lib/errors';
@@ -217,6 +218,20 @@ export default function ProjectPage(): React.ReactElement | null {
     }
   };
 
+  const handleExportCsv = () => {
+    if (!project) return;
+    const csvContent = tasksToCsv(filteredTasks, project, t);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', csvFilename(project.name, todayString()));
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingWrapper}>
@@ -293,6 +308,16 @@ export default function ProjectPage(): React.ReactElement | null {
           </div>
 
           <div className={styles.actions}>
+            {tasks.length > 0 && (
+              <Button
+                variant="secondary"
+                data-testid="project-export-csv-btn"
+                onClick={handleExportCsv}
+              >
+                {t('csv.export', { count: filteredTasks.length })}
+              </Button>
+            )}
+
             {isOwner && (
               <Link href={`/projects/${project.id}/settings`}>
                 <Button variant="secondary" icon="settings" data-testid="project-settings-btn">
