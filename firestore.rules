@@ -38,7 +38,7 @@ service cloud.firestore {
           && request.resource.data.readAt == null && request.resource.data.createdAt == request.time
           && request.resource.data.projectName is string && request.resource.data.projectName.size() <= 80
           && (request.resource.data.taskTitle == null || (request.resource.data.taskTitle is string && request.resource.data.taskTitle.size() <= 120))
-          && request.resource.data.actorName is string && request.resource.data.actorName.size() >= 1 && request.resource.data.actorName.size() <= 60
+          && request.resource.data.actorName is string && request.resource.data.actorName.size() >= 1 && request.resource.data.actorName.size() <= 80
           && getAfter(/databases/$(database)/documents/projects/$(request.resource.data.projectId)).data.memberIds.hasAll([uid, request.auth.uid]);
       }
     }
@@ -69,13 +69,13 @@ service cloud.firestore {
     match /projects/{pid}/tasks/{tid} {
       function proj() { return projectData(pid); }
       function taskShape(t) {
-        return t.keys().hasOnly(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt','checklist','labels','recurrence'])
-          && t.keys().hasAll(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt'])
+        return t.keys().hasOnly(['title','description','status','priority','assigneeId','createdBy','dueDate','createdAt','updatedAt','checklist','labels','recurrence','id'])
+          && t.keys().hasAll(['title','description','status','priority','createdBy','createdAt','updatedAt'])
           && t.title is string && t.title.size() >= 3 && t.title.size() <= 120
           && t.description is string && t.description.size() <= 1000
           && t.status in ['todo','in_progress','done'] && t.priority in ['low','medium','high']
-          && (t.assigneeId == null || t.assigneeId in proj().memberIds)
-          && (t.dueDate == null || (t.dueDate is string && t.dueDate.matches('^\\d{4}-\\d{2}-\\d{2}$')))
+          && (!('assigneeId' in t) || t.assigneeId == null || t.assigneeId == '' || t.assigneeId in proj().memberIds)
+          && (!('dueDate' in t) || t.dueDate == null || t.dueDate == '' || (t.dueDate is string && t.dueDate.matches('^\\d{4}-\\d{2}-\\d{2}$')))
           && (!('checklist' in t) || (t.checklist is list && t.checklist.size() <= 20))
           && (!('labels' in t) || (t.labels is list && t.labels.size() <= 5))
           && (!('recurrence' in t) || t.recurrence in ['none','daily','weekly','monthly'])
@@ -86,7 +86,7 @@ service cloud.firestore {
         let uid = request.auth.uid;
         let changed = request.resource.data.diff(r).affectedKeys();
         return (r.createdBy == uid || r.assigneeId == uid)
-          && (!changed.hasAny(['status']) || r.assigneeId == uid)
+          && (!changed.hasAny(['status']) || r.assigneeId == uid || (r.assigneeId == null && r.createdBy == uid))
           && (!changed.hasAny(['assigneeId']) || r.createdBy == uid);
       }
       allow read: if isMember(proj());
@@ -105,7 +105,15 @@ service cloud.firestore {
         allow create: if isMember(projectData(pid)) && exists(/databases/$(database)/documents/projects/$(pid)/tasks/$(tid))
           && request.resource.data.keys().hasOnly(['authorId','authorName','text','createdAt'])
           && request.resource.data.authorId == request.auth.uid
-          && request.resource.data.authorName == projectData(pid).memberNames[request.auth.uid]
+          && (
+            (!('memberNames' in projectData(pid)) || !(request.auth.uid in projectData(pid).memberNames))
+              ? (request.resource.data.authorName is string && request.resource.data.authorName.size() >= 1 && request.resource.data.authorName.size() <= 80)
+              : (
+                  request.resource.data.authorName == projectData(pid).memberNames[request.auth.uid]
+                  || request.resource.data.authorName == request.auth.token.name
+                  || (request.auth.token.email != null && request.resource.data.authorName == request.auth.token.email)
+                )
+          )
           && request.resource.data.text is string && request.resource.data.text.size() >= 1 && request.resource.data.text.size() <= 1000
           && request.resource.data.createdAt == request.time;
         allow update: if false;
@@ -121,7 +129,15 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['type','actorId','actorName','taskId','taskTitle','detail','createdAt'])
         && request.resource.data.type in ['task_created','task_status_changed','task_assigned','task_deleted','comment_added','member_added','member_removed']
         && request.resource.data.actorId == request.auth.uid
-        && request.resource.data.actorName == projectData(pid).memberNames[request.auth.uid]
+        && (
+          (!('memberNames' in projectData(pid)) || !(request.auth.uid in projectData(pid).memberNames))
+            ? (request.resource.data.actorName is string && request.resource.data.actorName.size() >= 1 && request.resource.data.actorName.size() <= 80)
+            : (
+                request.resource.data.actorName == projectData(pid).memberNames[request.auth.uid]
+                || request.resource.data.actorName == request.auth.token.name
+                || (request.auth.token.email != null && request.resource.data.actorName == request.auth.token.email)
+              )
+        )
         && (request.resource.data.taskTitle == null || (request.resource.data.taskTitle is string && request.resource.data.taskTitle.size() <= 120))
         && (request.resource.data.detail == null || (request.resource.data.detail is string && request.resource.data.detail.size() <= 200))
         && request.resource.data.createdAt == request.time;

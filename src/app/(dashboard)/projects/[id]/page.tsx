@@ -146,7 +146,7 @@ export default function ProjectPage(): React.ReactElement | null {
 
   const getActor = () => ({
     uid: user?.uid || '',
-    displayName: user?.displayName || (user?.uid && project?.memberNames[user.uid]) || 'User',
+    displayName: (user?.uid && project?.memberNames?.[user.uid]) || user?.displayName || user?.email?.split('@')[0] || 'User',
   });
 
   const handleCreateTask = async (data: TaskInput) => {
@@ -459,42 +459,44 @@ export default function ProjectPage(): React.ReactElement | null {
         </div>
 
         {tasks.length > 0 && (
-          <div className={styles.viewControlsRow}>
-            <div
-              className={styles.viewSwitcher}
-              role="radiogroup"
-              aria-label={t('view.switcher')}
-            >
-              <button
-                type="button"
-                role="radio"
-                aria-checked={view === 'list'}
-                className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`}
-                onClick={() => setView('list')}
-                data-testid="view-switch-list"
+          <>
+            <div className={styles.viewControlsRow}>
+              <div
+                className={styles.viewSwitcher}
+                role="radiogroup"
+                aria-label={t('view.switcher')}
               >
-                {t('view.list')}
-              </button>
-              <button
-                type="button"
-                role="radio"
-                aria-checked={view === 'board'}
-                className={`${styles.viewBtn} ${view === 'board' ? styles.viewBtnActive : ''}`}
-                onClick={() => setView('board')}
-                data-testid="view-switch-board"
-              >
-                {t('view.board')}
-              </button>
-              <button
-                type="button"
-                role="radio"
-                aria-checked={view === 'calendar'}
-                className={`${styles.viewBtn} ${view === 'calendar' ? styles.viewBtnActive : ''}`}
-                onClick={() => setView('calendar')}
-                data-testid="view-switch-calendar"
-              >
-                {t('view.calendar')}
-              </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={view === 'list'}
+                  className={`${styles.viewBtn} ${view === 'list' ? styles.viewBtnActive : ''}`}
+                  onClick={() => setView('list')}
+                  data-testid="view-switch-list"
+                >
+                  {t('view.list')}
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={view === 'board'}
+                  className={`${styles.viewBtn} ${view === 'board' ? styles.viewBtnActive : ''}`}
+                  onClick={() => setView('board')}
+                  data-testid="view-switch-board"
+                >
+                  {t('view.board')}
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={view === 'calendar'}
+                  className={`${styles.viewBtn} ${view === 'calendar' ? styles.viewBtnActive : ''}`}
+                  onClick={() => setView('calendar')}
+                  data-testid="view-switch-calendar"
+                >
+                  {t('view.calendar')}
+                </button>
+              </div>
             </div>
 
             <div className={styles.filterWrapper}>
@@ -505,7 +507,7 @@ export default function ProjectPage(): React.ReactElement | null {
                 onReset={() => setFilters(DEFAULT_FILTERS)}
               />
             </div>
-          </div>
+          </>
         )}
 
         {tasks.length > 0 && filteredTasks.length === 0 ? (

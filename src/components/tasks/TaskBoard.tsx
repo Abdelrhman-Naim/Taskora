@@ -83,7 +83,7 @@ export function TaskBoard({
     if (!taskId) return;
 
     const droppedTask = tasks.find((item) => item.id === taskId);
-    if (droppedTask && droppedTask.status !== colStatus) {
+    if (droppedTask && droppedTask.status !== colStatus && canChangeStatus(droppedTask, currentUserId, isOwner)) {
       onStatusChange(droppedTask, colStatus);
     }
   };

@@ -178,16 +178,16 @@
 }
 
 .filterWrapper {
-  margin-block-end: 20px;
+  inline-size: 100%;
+  width: 100%;
+  margin-block-end: 24px;
 }
 
 .viewControlsRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-block-end: 20px;
+  justify-content: flex-start;
+  margin-block-end: 16px;
 }
 
 .viewSwitcher {
