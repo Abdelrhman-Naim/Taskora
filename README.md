@@ -1,6 +1,6 @@
-# Taskora (TaskFlow) — Collaborative Project & Task Management
+# Taskora — Collaborative Project & Task Management
 
-Taskora is an executive-grade, bilingual collaborative project and task management system built with Next.js 16 (Turbopack, App Router), React 19, Firebase Modular SDK (Authentication & Cloud Firestore), and pure CSS Modules with CSS Logical Properties (strictly zero Tailwind CSS in application code).
+Taskora is an executive-grade, bilingual collaborative project and task management system built with Next.js 16 (Turbopack, App Router), React 19, Firebase Modular SDK (Authentication & Cloud Firestore), Tailwind CSS v4 for page-level orchestration, and accessible CSS Modules with CSS Logical Properties for atomic components.
 
 The visual aesthetic and layout architecture are designed under the **"Obsidian Ledger"** design system, created and verified through the **Google Stitch MCP Design Workflow** and evaluated against a **17-point design rubric**, guaranteeing WCAG 2.1 AA accessibility, seamless English/Arabic bidirectional parity, zero horizontal overflow across all viewports (320px–1280px+), and complete dark/light mode consistency.
 
@@ -30,14 +30,14 @@ Detailed before/after comparison and design evolution are documented in [docs/de
 
 ## Design System: Obsidian Ledger
 
-Taskora v2 replaces generic SaaS card templates with an editorial **financial ledger** paradigm:
+Taskora replaces generic SaaS templates with an editorial **financial ledger** paradigm:
 
 ### 1. Architectural Principles
 - **Ledger Rows, Not Card Soup:** Projects and tasks are rendered as continuous ledger sheets separated by architectural hairlines (`#2C2824` in dark, `#DDDAD3` in light), restricting elevated panels to a maximum of two per screen.
 - **Hero Numeral:** A single grand completion percentage metric in high-contrast Fraunces serif underlined with a quiet champagne rule anchors the dashboard.
-- **Strict Accent Rationing:** Champagne (`#D4B26E` dark / `#7A5818` light) is strictly rationed to exactly three touchpoints: the primary action button, the 1px active navigation indicator rule, and single-series chart emphasis.
+- **Strict Accent Rationing:** Champagne (`#D4B26E` dark / `#7A5818` light) is strictly rationed to essential touchpoints: the primary action button, the 1px active navigation indicator rule, and single-series chart emphasis.
 - **Persistent Obsidian Sidebar:** The docked sidebar remains near-black (`#11100E`) across both Dark and Light modes for consistent executive anchoring.
-- **Zero Phantom Features:** No generic command palettes (Cmd+K), simulated notifications, or ungrounded upsell widgets; every control binds directly to Firestore data contracts.
+- **Zero Phantom Features:** No simulated notifications, fake command palettes, or ungrounded upsell widgets; every control binds directly to Firestore data contracts.
 
 ### 2. Typographic Palette
 - **Headings & KPI Figures:** **Fraunces** variable display serif with `font-variant-numeric: lining-nums tabular-nums`.
@@ -54,24 +54,15 @@ Taskora v2 replaces generic SaaS card templates with an editorial **financial le
 | `--line` | `#2C2824` | `#DDDAD3` | Hairline ledger row dividers |
 | `--text` | `#EFE9DD` | `#1B1915` | High-contrast primary reading text |
 | `--accent` | `#D4B26E` | `#7A5818` | Champagne / Bronze focal accent |
+| `--on-accent` | `#1A1408` | `#FFFFFF` | Text on accent buttons (AAA contrast) |
 | `--sidebar-bg` | `#11100E` | `#11100E` | Persistent dark sidebar plane |
 
 ---
 
-## Google Stitch MCP Design Integration
-
-The visual system was generated, frozen, and verified via the **Google Stitch MCP**:
-- **Stitch v2 Project ID**: `1925018263022126574` (`Taskora v2 — Obsidian Ledger`)
-- **Design System Asset**: `assets/740bfefb8f9e46d4af43ed2ce7b44189`
-- **Frozen Visual Assets**: Archived under `docs/design/v2/stitch/` (Desktop PNG, Mobile PNG, and reference HTML for every view: Dashboard, Login, Register, Project, Project Settings, New Project, and UI States).
-- **17-Point Rubric**: Evaluated against `docs/design/RUBRIC.md` including ledger row structure (criterion 16) and display tabular numerals (criterion 17).
-
----
-
-## Key Features
+## Key Features & Capabilities
 
 ### 1. Application Shell & Navigation
-- **Docked Sidebar (Desktop ≥ 1024px):** Fixed navigation with Taskora logo, project counters, and user profile card.
+- **Docked Sidebar (Desktop ≥ 1024px):** Fixed navigation with Taskora monogram, live project counters, and user profile card.
 - **Responsive Drawer (Mobile < 1024px):** Accessible slide-out dialog (`role="dialog"`, `aria-modal="true"`) with backdrop dismissal, focus trap, and `Escape` key handling.
 - **Sticky TopBar:** Context title, Language Switcher, Theme Switcher, and User Profile Menu with avatar and sign-out trigger.
 
@@ -82,38 +73,42 @@ The visual system was generated, frozen, and verified via the **Google Stitch MC
   - **14-Day Timeline (Column Chart):** Workload timeline highlighting today's deadline and alerting on overdue tasks.
 - **Attention Widgets:** "Needs Attention" queue prioritizing overdue and impending tasks, "My Tasks" personalized list, and sortable Projects Ledger table.
 
-### 3. Project & Task Management (Phase 6 Advanced Collaboration)
+### 3. Project & Task Management
 - **Multi-View Project Layouts:**
   - **List View:** Dense, structured financial ledger row format with inline status menus.
   - **Board View:** Three-column Kanban (`todo`, `in_progress`, `done`) with HTML5 native drag-and-drop, optimistic status moves, and full touch accessibility via keyboard-accessible `StatusMenu`.
-  - **Calendar View:** Localized month grid (Saturday start for Arabic, Sunday start for English) highlighting due dates, overdue items, overflow dialogs, and undated tasks strips.
+  - **Calendar View:** Fully responsive month grid (Saturday start for Arabic, Sunday start for English) highlighting due dates, overdue items, overflow dialogs, and undated tasks strips.
 - **Extended Task Capabilities:**
   - **Checklists:** Up to 20 sub-items with interactive completion checkboxes and progress ratio display (`x/y`).
   - **Labels:** Up to 5 custom labels per task with dedicated label filtering in `FilterBar`.
-  - **Recurring Tasks:** Automated rule-based recurrence (`daily`, `weekly`, `monthly`) creating the next iteration upon task completion. *(Note: re-opening and completing a task generates another scheduled iteration)*.
+  - **Recurring Tasks:** Automated rule-based recurrence (`daily`, `weekly`, `monthly`) creating the next iteration upon task completion.
 - **Collaborative Task Detail Modal & Comments:**
-  - Comprehensive detail dialog with editable checklist, status transitions, and metadata inspection.
+  - Comprehensive detail dialog with editable checklist, status transitions, clean accessible close button, and metadata inspection.
   - Interactive discussion feed supporting up to 1,000 characters per comment with atomic cascade deletion upon task removal (≤ 400 operations per batch).
 - **In-App Notifications & Activity Stream:**
   - Real-time notification bell with unread counters (`onSnapshot`), direct project navigation, and atomic write integration.
-  - Chronological project activity feed displaying the latest 50 events with relative day formatting and user bidi isolation.
-- **CSV Data Export:** Localized data export with formula injection guards (neutralizing `=`, `+`, `-`, `@`, `\t`, `\r`), UTF-8 BOM encoding, and CRLF line endings.
-- **Layout-Independent Keyboard Shortcuts:** Global hotkeys mapped by `event.code` (`KeyN`, `Slash`, `Shift+Slash`, `Digit1`, `Digit2`, `Digit3`) ensuring 100% functionality on Arabic, Latin, or alternate keyboard layouts.
+  - Chronological project activity feed displaying the latest 50 events with formatted numeric dates (`yyyy/mm/dd`) and user bidi isolation.
 
-### 4. Technical Constraints & Free-Tier (Spark) Architecture
-- **Firebase Spark Plan Strict Conformance:** Zero Cloud Functions and zero Firebase Storage used. All interactions are client-side operations orchestrated via Firebase Modular SDK v13.
-- **Atomic Operations & Batch Quotas:** All multi-document mutations (e.g. status changes generating activity logs and recipient notifications) run atomically in a single `writeBatch` strictly bounded at ≤ 400 operations.
-- **Activity Log Non-Tamper-Proof Notice:** Activity entries are written by authenticated clients in the atomic batch and validated by Firestore rules for actor identity (`actorId == request.auth.uid` and `actorName == project.memberNames[actorId]`). In a serverless client-only Spark architecture without cloud functions, payload details cannot be cryptographically sealed.
+### 4. Excel (.xlsx) & CSV Data Export
+- **Role-Based Excel Export:** Interactive `.xlsx` export powered by `exceljs` reserved exclusively for the project owner. Team members are prevented from accessing the export button for data sovereignty.
+- **Localized Formatting:** Both Arabic and English column headers, dates, priorities, assignees, and checklist progress indicators.
+- **CSV Fallback & Security:** Standard CSV export with formula injection guards (neutralizing `=`, `+`, `-`, `@`, `\t`, `\r`), UTF-8 BOM encoding, and CRLF line endings.
 
-### 5. Internationalization & Bidirectional Safety
+### 5. Authentication & Account Recovery
+- **Bilingual Identity Rails:** Split-screen authentication layout with localized marketing copy, security badges, and encryption metadata responding to locale direction (`dir="rtl"` / `dir="ltr"`).
+- **Forgot Password Flow:** Built-in self-service password reset modal (`ForgotPasswordModal`) communicating directly with Firebase Auth `sendPasswordResetEmail`, featuring input validation, instant email prefilling, and accessible feedback alerts.
+- **Secure Registration & Login:** Form validation via Zod schemas, user profile initialization in Firestore, and automatic session persistence.
+
+### 6. Internationalization & Bidirectional Safety
 - **Bilingual Parity:** English (`en`, LTR) and Arabic (`ar`, RTL) with 100% key parity across translation dictionaries.
 - **Bidirectional Isolation (`<bdi>`):** User-generated text (names, titles, notes) is strictly wrapped in `<bdi dir="auto">` to eliminate bidirectional text spillover.
 - **Latin Numerals:** Consistent Latin numbering (`latn`) across Arabic and English for clear data scanning in tables and KPIs.
 - **Timezone Safety:** Native `Intl.DateTimeFormat` configured with `Asia/Riyadh` timezone to prevent server/client hydration drift.
 
-### 5. UI Primitives Library (`src/components/ui/`)
-21 hand-crafted, accessible primitives built strictly with CSS Modules and CSS Logical Properties:
-`Avatar`, `Badge`, `Button`, `Card`, `Checkbox`, `ConfirmDialog`, `Dialog`, `EmptyState`, `ErrorState`, `Field`, `Icon`, `IconButton`, `Input`, `LocaleSwitcher`, `ProgressBar`, `Segmented`, `Select`, `Skeleton`, `Spinner`, `Textarea`, `Toast`.
+### 7. Technical Constraints & Free-Tier (Spark) Architecture
+- **Firebase Spark Plan Strict Conformance:** Zero Cloud Functions and zero Firebase Storage used. All interactions are client-side operations orchestrated via Firebase Modular SDK v13.
+- **Atomic Operations & Batch Quotas:** All multi-document mutations run atomically in a single `writeBatch` strictly bounded at ≤ 400 operations.
+- **Activity Log Security:** Activity entries are validated by Firestore rules for actor identity (`actorId == request.auth.uid` and `actorName == project.memberNames[actorId]`).
 
 ---
 
@@ -123,16 +118,17 @@ The project enforces continuous code quality via automated static analysis, unit
 
 | Test Suite | Files | Tests Passing | Test Framework / Environment |
 |:---|:---:|:---:|:---|
-| **Unit Tests & Static Integrity** | 47 | **311** | Vitest + React Testing Library + jsdom |
+| **Unit Tests & Static Integrity** | 49 | **336** | Vitest + React Testing Library + jsdom |
 | **Firestore Security Rules** | 8 | **82** | Vitest + `@firebase/rules-unit-testing` + Local Firestore Emulator |
-| **Service Integration Tests** | 7 | **46** | Vitest + Local Auth & Firestore Emulators |
-| **Total Automated Vitest Suite** | **62 files** | **439 tests** | **100% PASS** |
+| **Service Integration Tests** | 7 | **48** | Vitest + Local Auth & Firestore Emulators |
+| **Total Automated Vitest Suite** | **64 files** | **466 tests** | **100% PASS** |
 | **Playwright E2E & Matrix** | 10 | **55** | Playwright (20 combos: LTR/RTL × Light/Dark × 3 Viewports + Acceptance) |
 
 ### Automated Guards:
-- **`no-legacy-palette.test.ts`**: Fails if any legacy color (`#0d5c5a`, `#13966F`, `#22A67F`), legacy font (`Inter`, `Geist`, `Newsreader`), or legacy naming exists.
-- **`css-integrity.test.ts`**: Verifies every `var(--*)` exists in `tokens.css` and ensures zero hardcoded color literals exist outside `tokens.css`.
+- **`no-legacy-palette.test.ts`**: Fails if any legacy color or obsolete font exists.
+- **`css-integrity.test.ts`**: Verifies every token exists in `tokens.css` and ensures zero hardcoded color literals outside tokens.
 - **`tokens-contrast.test.ts`**: Mathematically computes WCAG 2.1 relative luminance ratios for all tokens in both themes.
+- **`i18n-parity.test.ts`**: Enforces 100% dictionary key synchronization and guards against untranslated Latin text in Arabic locale.
 - **`i18n-hygiene.test.ts`**: Enforces zero untranslated English strings in Arabic attributes, verified `<bdi>` wrapping, and zero decorative symbol prefixes.
 - **`visual.spec.ts`**: Validates zero horizontal overflow on all pages from 375px to 1280px, checks RTL sidebar right-alignment, and runs Axe-core accessibility audits with zero violations.
 
@@ -152,16 +148,16 @@ npm install
 npm run typecheck
 npm run lint
 
-# 3. Unit, Integrity & Safety Tests (217 tests)
+# 3. Unit, Integrity & Safety Tests (336 tests)
 npm run test:unit
 
-# 4. Security Rules Tests (46 tests)
+# 4. Security Rules Tests (82 tests)
 npm run test:rules
 
-# 5. Service Integration Tests (22 tests)
+# 5. Service Integration Tests (48 tests)
 npm run test:services
 
-# 6. Playwright Visual Baselines & E2E Suites (53 tests)
+# 6. Playwright Visual Baselines & E2E Suites
 npm run test:e2e
 
 # 7. Production Build (Next.js Turbopack)
