@@ -1,5 +1,6 @@
 import { Task, Project } from '@/types';
 import { MessageKey } from '@/i18n/en';
+import { formatExportDateTime } from '@/lib/excel';
 
 /**
  * Escapes a cell value for CSV output.
@@ -69,8 +70,8 @@ export function tasksToCsv(
     const assigneeStr = task.assigneeId
       ? project.memberNames[task.assigneeId] || task.assigneeId
       : '';
-    const createdStr = task.createdAt instanceof Date ? task.createdAt.toISOString() : '';
-    const updatedStr = task.updatedAt instanceof Date ? task.updatedAt.toISOString() : '';
+    const createdStr = task.createdAt instanceof Date ? formatExportDateTime(task.createdAt) : '';
+    const updatedStr = task.updatedAt instanceof Date ? formatExportDateTime(task.updatedAt) : '';
 
     return [
       escapeCsvCell(task.title),

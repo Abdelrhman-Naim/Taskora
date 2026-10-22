@@ -35,6 +35,7 @@ import { useViewPreference } from '@/hooks/useViewPreference';
 import { useHotkeys } from '@/hooks/useHotkeys';
 import { ShortcutsDialog } from '@/components/shell/ShortcutsDialog';
 import { tasksToCsv, csvFilename } from '@/lib/csv';
+import { tasksToExcelBlob, excelFilename } from '@/lib/excel';
 import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
 import { todayString } from '@/lib/dates';
 import { AppError } from '@/lib/errors';
@@ -63,6 +64,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const [showActivity, setShowActivity] = useState(false);
   type ViewScope = 'my_tasks' | 'all';
   const [userSelectedScope, setUserSelectedScope] = useState<ViewScope | null>(null);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
   useHotkeys({
     KeyN: () => {
@@ -305,6 +307,26 @@ export default function ProjectPage(): React.ReactElement | null {
     return filterTasks(scopedTasks, filters, todayString());
   }, [scopedTasks, filters]);
 
+  const handleExportExcel = async () => {
+    if (!project || isExportingExcel) return;
+    try {
+      setIsExportingExcel(true);
+      const blob = await tasksToExcelBlob(filteredTasks, project, t, locale);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', excelFilename(project.name, todayString()));
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export Excel:', err);
+    } finally {
+      setIsExportingExcel(false);
+    }
+  };
+
   const handleExportCsv = () => {
     if (!project) return;
     const csvContent = tasksToCsv(filteredTasks, project, t);
@@ -398,6 +420,17 @@ export default function ProjectPage(): React.ReactElement | null {
             >
               {t('activity.button')}
             </Button>
+
+            {tasks.length > 0 && (
+              <Button
+                variant="secondary"
+                data-testid="project-export-excel-btn"
+                onClick={handleExportExcel}
+                loading={isExportingExcel}
+              >
+                {t('excel.export', { count: filteredTasks.length })}
+              </Button>
+            )}
 
             {tasks.length > 0 && (
               <Button
