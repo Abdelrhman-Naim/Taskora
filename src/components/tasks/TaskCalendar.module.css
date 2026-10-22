@@ -77,12 +77,53 @@
   box-shadow: var(--focus-ring);
 }
 
+.scrollHintWrapper {
+  display: none;
+}
+
+.scrollHintText {
+  user-select: none;
+}
+
 .gridWrapper {
   background-color: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  overflow: hidden;
   box-shadow: var(--shadow-1);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.gridWrapper:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.gridWrapper::-webkit-scrollbar {
+  block-size: 6px;
+  inline-size: 6px;
+}
+
+.gridWrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gridWrapper::-webkit-scrollbar-thumb {
+  background-color: var(--line-strong);
+  border-radius: var(--radius-pill);
+}
+
+.gridWrapper::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-muted);
+}
+
+.gridInner {
+  min-inline-size: 700px;
+  inline-size: 100%;
 }
 
 .weekdaysHeader {
@@ -162,6 +203,7 @@
   cursor: pointer;
   text-align: start;
   transition: all var(--dur-1) var(--ease);
+  inline-size: 100%;
 }
 
 .taskPill:hover {
@@ -172,6 +214,10 @@
 .taskPill:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+.taskPill:active {
+  transform: scale(0.98);
 }
 
 .taskPillOverdue {
@@ -240,4 +286,96 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-block-start: 8px;
+}
+
+@media (max-width: 768px) {
+  .scrollHintWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-block: 6px;
+    padding-inline: 12px;
+    background-color: var(--surface-2);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .gridInner {
+    min-inline-size: 660px;
+  }
+
+  .dayCell {
+    min-block-size: 88px;
+    padding-block: 6px;
+    padding-inline: 6px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    gap: 8px;
+  }
+
+  .monthDisplay {
+    font-size: 1rem;
+  }
+
+  .navControls {
+    gap: 6px;
+  }
+
+  .navBtn {
+    inline-size: 36px;
+    block-size: 36px;
+  }
+
+  .todayBtn {
+    padding-block: 6px;
+    padding-inline: 12px;
+    font-size: 0.8125rem;
+    min-block-size: 36px;
+  }
+
+  .taskPill {
+    min-block-size: 24px;
+    padding-block: 4px;
+    font-size: 0.75rem;
+  }
+
+  .morePill {
+    font-size: 0.75rem;
+    padding-block: 3px;
+    min-block-size: 24px;
+  }
+
+  .undatedStrip {
+    padding-block: 8px;
+    padding-inline: 12px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .monthDisplay {
+    text-align: center;
+  }
+
+  .navControls {
+    justify-content: center;
+    inline-size: 100%;
+  }
+
+  .todayBtn {
+    flex: 1;
+    justify-content: center;
+  }
 }

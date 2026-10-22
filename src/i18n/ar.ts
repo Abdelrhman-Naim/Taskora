@@ -371,6 +371,7 @@ export const ar: Record<MessageKey, string> = {
   'calendar.prev': 'الشهر السابق',
   'calendar.next': 'الشهر القادم',
   'calendar.today': 'اليوم',
+  'calendar.scrollHint': 'اسحب أفقياً لتصفح كامل أيام الأسبوع',
   'calendar.more.zero': 'لا توجد مهام إضافية',
   'calendar.more.one': '1 أخرى',
   'calendar.more.two': '2 أخريان',

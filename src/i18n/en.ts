@@ -369,6 +369,7 @@ export const en = {
   'calendar.prev': 'Previous month',
   'calendar.next': 'Next month',
   'calendar.today': 'Today',
+  'calendar.scrollHint': 'Swipe horizontally to view full week',
   'calendar.more.zero': 'No more tasks',
   'calendar.more.one': '1 more',
   'calendar.more.two': '2 more',

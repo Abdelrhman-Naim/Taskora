@@ -109,89 +109,102 @@ export function TaskCalendar({
         </div>
       </div>
 
-      <div className={styles.gridWrapper}>
-        <div className={styles.weekdaysHeader} data-testid="calendar-weekdays">
-          {weekdays.map((dayName, idx) => (
-            <div key={idx} className={styles.weekday}>
-              {dayName}
-            </div>
-          ))}
-        </div>
+      <div className={styles.scrollHintWrapper} aria-hidden="true">
+        <Icon name="chevron" size={12} className={locale === 'ar' ? 'rotate-180' : ''} />
+        <span className={styles.scrollHintText}>{t('calendar.scrollHint')}</span>
+        <Icon name="chevron" size={12} className={locale === 'ar' ? '' : 'rotate-180'} />
+      </div>
 
-        <div className={styles.grid}>
-          {grid.flat().map((dateStr) => {
-            const isCurrentMonth = dateStr.startsWith(currentMonthPrefix);
-            const isCurrentToday = dateStr === today;
-            const dayNum = Number(dateStr.split('-')[2]);
-            const dayTasks = tasksMap[dateStr] || [];
-
-            const visibleTasks = dayTasks.slice(0, 3);
-            const overflowCount = dayTasks.length - 3;
-
-            return (
-              <div
-                key={dateStr}
-                data-testid={`calendar-day-${dateStr}`}
-                aria-current={isCurrentToday ? 'date' : undefined}
-                className={`${styles.dayCell} ${!isCurrentMonth ? styles.otherMonth : ''} ${
-                  isCurrentToday ? styles.todayCell : ''
-                }`}
-              >
-                <span className={styles.dayNumber} dir="ltr">
-                  {dayNum}
-                </span>
-
-                {visibleTasks.map((task) => {
-                  const taskOverdue =
-                    task.status !== 'done' && isOverdue(task, today);
-
-                  return (
-                    <button
-                      key={task.id}
-                      type="button"
-                      data-testid={`calendar-task-pill-${task.id}`}
-                      className={`${styles.taskPill} ${
-                        taskOverdue ? styles.taskPillOverdue : ''
-                      }`}
-                      onClick={() => onOpen(task)}
-                    >
-                      <span
-                        className={`${styles.statusDot} ${
-                          task.status === 'todo'
-                            ? styles.statusTodo
-                            : task.status === 'in_progress'
-                            ? styles.statusInProgress
-                            : styles.statusDone
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <span className={styles.pillTitle}>
-                        <bdi>{task.title}</bdi>
-                      </span>
-                      {taskOverdue && (
-                        <span aria-label={t('calendar.overdue')} title={t('calendar.overdue')}>
-                          !
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-
-                {overflowCount > 0 && (
-                  <button
-                    type="button"
-                    className={styles.morePill}
-                    data-testid={`calendar-more-pill-${dateStr}`}
-                    onClick={() => {
-                      if (visibleTasks[0]) onOpen(visibleTasks[0]);
-                    }}
-                  >
-                    +{tp('calendar.more', overflowCount, { count: overflowCount })}
-                  </button>
-                )}
+      <div
+        className={styles.gridWrapper}
+        tabIndex={0}
+        role="region"
+        aria-label={monthYearLabel}
+      >
+        <div className={styles.gridInner}>
+          <div className={styles.weekdaysHeader} data-testid="calendar-weekdays">
+            {weekdays.map((dayName, idx) => (
+              <div key={idx} className={styles.weekday}>
+                {dayName}
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          <div className={styles.grid}>
+            {grid.flat().map((dateStr) => {
+              const isCurrentMonth = dateStr.startsWith(currentMonthPrefix);
+              const isCurrentToday = dateStr === today;
+              const dayNum = Number(dateStr.split('-')[2]);
+              const dayTasks = tasksMap[dateStr] || [];
+
+              const visibleTasks = dayTasks.slice(0, 3);
+              const overflowCount = dayTasks.length - 3;
+
+              return (
+                <div
+                  key={dateStr}
+                  data-testid={`calendar-day-${dateStr}`}
+                  aria-current={isCurrentToday ? 'date' : undefined}
+                  className={`${styles.dayCell} ${!isCurrentMonth ? styles.otherMonth : ''} ${
+                    isCurrentToday ? styles.todayCell : ''
+                  }`}
+                >
+                  <span className={styles.dayNumber} dir="ltr">
+                    {dayNum}
+                  </span>
+
+                  {visibleTasks.map((task) => {
+                    const taskOverdue =
+                      task.status !== 'done' && isOverdue(task, today);
+
+                    return (
+                      <button
+                        key={task.id}
+                        type="button"
+                        data-testid={`calendar-task-pill-${task.id}`}
+                        className={`${styles.taskPill} ${
+                          taskOverdue ? styles.taskPillOverdue : ''
+                        }`}
+                        onClick={() => onOpen(task)}
+                      >
+                        <span
+                          className={`${styles.statusDot} ${
+                            task.status === 'todo'
+                              ? styles.statusTodo
+                              : task.status === 'in_progress'
+                              ? styles.statusInProgress
+                              : styles.statusDone
+                          }`}
+                          aria-hidden="true"
+                        />
+                        <span className={styles.pillTitle}>
+                          <bdi>{task.title}</bdi>
+                        </span>
+                        {taskOverdue && (
+                          <span aria-label={t('calendar.overdue')} title={t('calendar.overdue')}>
+                            !
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+
+                  {overflowCount > 0 && (
+                    <button
+                      type="button"
+                      className={styles.morePill}
+                      data-testid={`calendar-more-pill-${dateStr}`}
+                      onClick={() => {
+                        if (visibleTasks[0]) onOpen(visibleTasks[0]);
+                      }}
+                    >
+                      +{tp('calendar.more', overflowCount, { count: overflowCount })}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
