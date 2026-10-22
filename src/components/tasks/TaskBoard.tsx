@@ -1,5 +1,8 @@
 'use client';
 
+// ============================================================================
+// ZONE 1: IMPORTS
+// ============================================================================
 import React, { useState } from 'react';
 import { Task, Project, TaskStatus } from '@/types';
 import { canChangeStatus, StatusMenu } from './TaskCard';
@@ -10,15 +13,9 @@ import { MessageKey } from '@/i18n/en';
 import { isOverdue, todayString, isScheduledTask } from '@/lib/dates';
 import styles from './TaskBoard.module.css';
 
-export interface TaskBoardProps {
-  tasks: Task[];
-  project: Project;
-  currentUserId: string;
-  isOwner: boolean;
-  onStatusChange: (task: Task, newStatus: TaskStatus) => void;
-  onOpen: (task: Task) => void;
-}
-
+// ============================================================================
+// ZONE 2: CONFIG & CONSTANTS
+// ============================================================================
 interface ColumnConfig {
   status: TaskStatus;
   labelKey: MessageKey;
@@ -47,6 +44,282 @@ const COLUMNS: ColumnConfig[] = [
   },
 ];
 
+// ============================================================================
+// ZONE 3: TYPES & INTERFACES
+// ============================================================================
+export interface TaskBoardProps {
+  tasks: Task[];
+  project: Project;
+  currentUserId: string;
+  isOwner: boolean;
+  onStatusChange: (task: Task, newStatus: TaskStatus) => void;
+  onOpen: (task: Task) => void;
+}
+
+interface BoardCardProps {
+  task: Task;
+  project: Project;
+  canChange: boolean;
+  isScheduled?: boolean;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
+  onStatusChange: (task: Task, newStatus: TaskStatus) => void;
+  onOpen: (task: Task) => void;
+  scheduledBannerText?: string;
+}
+
+interface BoardColumnProps {
+  config: ColumnConfig;
+  tasks: Task[];
+  scheduledTasks: Task[];
+  project: Project;
+  currentUserId: string;
+  isOwner: boolean;
+  isDragOver: boolean;
+  showScheduled: boolean;
+  onToggleScheduled: () => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
+  onDragOver: (e: React.DragEvent<HTMLDivElement>, status: TaskStatus) => void;
+  onDragLeave: (e: React.DragEvent<HTMLDivElement>) => void;
+  onDrop: (e: React.DragEvent<HTMLDivElement>, status: TaskStatus) => void;
+  onStatusChange: (task: Task, newStatus: TaskStatus) => void;
+  onOpen: (task: Task) => void;
+}
+
+// ============================================================================
+// ZONE 4: HELPERS & HOOKS
+// ============================================================================
+function partitionTasksByColumn(
+  tasks: Task[],
+  status: TaskStatus
+): { activeTasks: Task[]; scheduledTasks: Task[] } {
+  const columnTasks = tasks.filter((t) => t.status === status);
+  if (status !== 'todo') {
+    return { activeTasks: columnTasks, scheduledTasks: [] };
+  }
+  return {
+    activeTasks: columnTasks.filter((t) => !isScheduledTask(t)),
+    scheduledTasks: columnTasks.filter((t) => isScheduledTask(t)),
+  };
+}
+
+// ============================================================================
+// ZONE 5: SUB-COMPONENTS
+// ============================================================================
+function BoardCard({
+  task,
+  project,
+  canChange,
+  isScheduled = false,
+  onDragStart,
+  onStatusChange,
+  onOpen,
+  scheduledBannerText,
+}: BoardCardProps): React.ReactElement {
+  const isTaskOverdue = isOverdue(task, todayString());
+  const checklistTotal = task.checklist ? task.checklist.length : 0;
+  const checklistDone = task.checklist
+    ? task.checklist.filter((c) => c.done).length
+    : 0;
+
+  const assigneeName = task.assigneeId ? project.memberNames[task.assigneeId] : null;
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      draggable={canChange}
+      aria-disabled={!canChange ? 'true' : undefined}
+      data-testid={`board-task-card-${task.id}`}
+      className={`${styles.card} ${isScheduled ? styles.scheduledCard : ''}`}
+      onDragStart={(e) => {
+        if (canChange) onDragStart(e, task);
+      }}
+      onClick={() => onOpen(task)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          onOpen(task);
+        }
+      }}
+    >
+      <div className={styles.cardHeader}>
+        <h4 className={styles.cardTitle}>
+          <bdi>{task.title}</bdi>
+        </h4>
+        <div
+          data-testid={`board-card-status-${task.id}`}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <StatusMenu
+            task={task}
+            canChange={canChange}
+            onStatusChange={onStatusChange}
+          />
+        </div>
+      </div>
+
+      {isScheduled && scheduledBannerText && (
+        <div className={styles.scheduledBanner}>
+          <span>⏰</span>
+          <span>{scheduledBannerText}</span>
+        </div>
+      )}
+
+      {!isScheduled && task.labels && task.labels.length > 0 && (
+        <div className={styles.labelsList}>
+          {task.labels.map((lbl, idx) => (
+            <span key={idx} className={styles.labelChip}>
+              <bdi>{lbl}</bdi>
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className={styles.cardFooter}>
+        <div className={styles.metaGroup}>
+          {isScheduled && <Badge kind="scheduled" />}
+          <Badge kind={task.priority} />
+
+          {!isScheduled && checklistTotal > 0 && (
+            <span className={styles.checklistBadge} dir="ltr">
+              {checklistDone}/{checklistTotal}
+            </span>
+          )}
+
+          {!isScheduled && task.dueDate && (
+            <span
+              className={`${styles.dueDate} ${isTaskOverdue ? styles.overdue : ''}`}
+              dir="ltr"
+            >
+              {task.dueDate}
+            </span>
+          )}
+        </div>
+
+        {!isScheduled && assigneeName && (
+          <Avatar name={assigneeName} size="sm" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BoardColumn({
+  config,
+  tasks,
+  scheduledTasks,
+  project,
+  currentUserId,
+  isOwner,
+  isDragOver,
+  showScheduled,
+  onToggleScheduled,
+  onDragStart,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onStatusChange,
+  onOpen,
+}: BoardColumnProps): React.ReactElement {
+  const { t } = useI18n();
+  const isTodoCol = config.status === 'todo';
+
+  return (
+    <div
+      className={styles.column}
+      data-testid={`board-column-${config.status}`}
+    >
+      {/* Column Header */}
+      <div
+        className={styles.columnHeader}
+        data-testid={`board-column-header-${config.status}`}
+      >
+        <h3 className={styles.columnHeaderTitle}>
+          <span
+            className={`${styles.statusIndicator} ${config.indicatorClass}`}
+            aria-hidden="true"
+          />
+          <span>{t(config.labelKey)}</span>
+        </h3>
+        <span className={styles.countBadge} dir="ltr">
+          {tasks.length}
+        </span>
+      </div>
+
+      {/* Dropzone */}
+      <div
+        className={`${styles.dropzone} ${isDragOver ? styles.dropzoneActive : ''}`}
+        data-testid={`board-column-dropzone-${config.status}`}
+        onDragOver={(e) => onDragOver(e, config.status)}
+        onDragLeave={onDragLeave}
+        onDrop={(e) => onDrop(e, config.status)}
+      >
+        {tasks.length === 0 ? (
+          <div
+            className={styles.emptyState}
+            data-testid={`board-column-empty-${config.status}`}
+          >
+            {t(config.emptyKey)}
+          </div>
+        ) : (
+          tasks.map((task) => (
+            <BoardCard
+              key={task.id}
+              task={task}
+              project={project}
+              canChange={canChangeStatus(task, currentUserId, isOwner)}
+              onDragStart={onDragStart}
+              onStatusChange={onStatusChange}
+              onOpen={onOpen}
+            />
+          ))
+        )}
+
+        {/* Scheduled Tasks Accordion (Todo column only) */}
+        {isTodoCol && scheduledTasks.length > 0 && (
+          <div className={styles.scheduledSection} data-testid="scheduled-tasks-section">
+            <button
+              type="button"
+              className={styles.scheduledToggle}
+              onClick={onToggleScheduled}
+              aria-expanded={showScheduled}
+            >
+              <span>
+                📅 {t('task.recurrence.scheduledTitle')} ({scheduledTasks.length})
+              </span>
+              <span style={{ fontSize: '0.75rem' }}>{showScheduled ? '▲' : '▼'}</span>
+            </button>
+
+            {showScheduled && (
+              <div className={styles.scheduledList}>
+                {scheduledTasks.map((task) => (
+                  <BoardCard
+                    key={task.id}
+                    task={task}
+                    project={project}
+                    isScheduled
+                    canChange={canChangeStatus(task, currentUserId, isOwner)}
+                    onDragStart={onDragStart}
+                    onStatusChange={onStatusChange}
+                    onOpen={onOpen}
+                    scheduledBannerText={t('task.recurrence.scheduledBanner', {
+                      date: task.dueDate || '',
+                    })}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// ZONE 6: MAIN COMPONENT
+// ============================================================================
 export function TaskBoard({
   tasks,
   project,
@@ -55,7 +328,6 @@ export function TaskBoard({
   onStatusChange,
   onOpen,
 }: TaskBoardProps): React.ReactElement {
-  const { t } = useI18n();
   const [dragOverCol, setDragOverCol] = useState<TaskStatus | null>(null);
   const [showScheduled, setShowScheduled] = useState(false);
 
@@ -84,7 +356,11 @@ export function TaskBoard({
     if (!taskId) return;
 
     const droppedTask = tasks.find((item) => item.id === taskId);
-    if (droppedTask && droppedTask.status !== colStatus && canChangeStatus(droppedTask, currentUserId, isOwner)) {
+    if (
+      droppedTask &&
+      droppedTask.status !== colStatus &&
+      canChangeStatus(droppedTask, currentUserId, isOwner)
+    ) {
       onStatusChange(droppedTask, colStatus);
     }
   };
@@ -92,211 +368,27 @@ export function TaskBoard({
   return (
     <div className={styles.container} data-testid="task-board-view">
       {COLUMNS.map((col) => {
-        const rawColTasks = tasks.filter((tItem) => tItem.status === col.status);
-        const isTodoCol = col.status === 'todo';
-        const colTasks = isTodoCol ? rawColTasks.filter((t) => !isScheduledTask(t)) : rawColTasks;
-        const scheduledTasks = isTodoCol ? rawColTasks.filter((t) => isScheduledTask(t)) : [];
-        const isCurrentDragOver = dragOverCol === col.status;
+        const { activeTasks, scheduledTasks } = partitionTasksByColumn(tasks, col.status);
 
         return (
-          <div
+          <BoardColumn
             key={col.status}
-            className={styles.column}
-            data-testid={`board-column-${col.status}`}
-          >
-            <div
-              className={styles.columnHeader}
-              data-testid={`board-column-header-${col.status}`}
-            >
-              <h3 className={styles.columnHeaderTitle}>
-                <span
-                  className={`${styles.statusIndicator} ${col.indicatorClass}`}
-                  aria-hidden="true"
-                />
-                <span>{t(col.labelKey)}</span>
-              </h3>
-              <span className={styles.countBadge} dir="ltr">
-                {colTasks.length}
-              </span>
-            </div>
-
-            <div
-              className={`${styles.dropzone} ${isCurrentDragOver ? styles.dropzoneActive : ''}`}
-              data-testid={`board-column-dropzone-${col.status}`}
-              onDragOver={(e) => handleDragOver(e, col.status)}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, col.status)}
-            >
-              {colTasks.length === 0 ? (
-                <div
-                  className={styles.emptyState}
-                  data-testid={`board-column-empty-${col.status}`}
-                >
-                  {t(col.emptyKey)}
-                </div>
-              ) : (
-                colTasks.map((task) => {
-                  const canChange = canChangeStatus(task, currentUserId, isOwner);
-                  const isTaskOverdue = isOverdue(task, todayString());
-
-                  const checklistTotal = task.checklist ? task.checklist.length : 0;
-                  const checklistDone = task.checklist
-                    ? task.checklist.filter((c) => c.done).length
-                    : 0;
-
-                  return (
-                    <div
-                      key={task.id}
-                      role="button"
-                      tabIndex={0}
-                      draggable={canChange}
-                      aria-disabled={!canChange ? 'true' : undefined}
-                      data-testid={`board-task-card-${task.id}`}
-                      className={styles.card}
-                      onDragStart={(e) => {
-                        if (canChange) handleDragStart(e, task);
-                      }}
-                      onClick={() => onOpen(task)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          onOpen(task);
-                        }
-                      }}
-                    >
-                      <div className={styles.cardHeader}>
-                        <h4 className={styles.cardTitle}>
-                          <bdi>{task.title}</bdi>
-                        </h4>
-                        <div
-                          data-testid={`board-card-status-${task.id}`}
-                          onClick={(e) => e.stopPropagation()}
-                          onKeyDown={(e) => e.stopPropagation()}
-                        >
-                          <StatusMenu
-                            task={task}
-                            canChange={canChange}
-                            onStatusChange={onStatusChange}
-                          />
-                        </div>
-                      </div>
-
-                      {task.labels && task.labels.length > 0 && (
-                        <div className={styles.labelsList}>
-                          {task.labels.map((lbl, idx) => (
-                            <span key={idx} className={styles.labelChip}>
-                              <bdi>{lbl}</bdi>
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className={styles.cardFooter}>
-                        <div className={styles.metaGroup}>
-                          <Badge kind={task.priority} />
-
-                          {checklistTotal > 0 && (
-                            <span className={styles.checklistBadge} dir="ltr">
-                              {checklistDone}/{checklistTotal}
-                            </span>
-                          )}
-
-                          {task.dueDate && (
-                            <span
-                              className={`${styles.dueDate} ${isTaskOverdue ? styles.overdue : ''}`}
-                              dir="ltr"
-                            >
-                              {task.dueDate}
-                            </span>
-                          )}
-                        </div>
-
-                        {task.assigneeId && project.memberNames[task.assigneeId] && (
-                          <Avatar
-                            name={project.memberNames[task.assigneeId]}
-                            size="sm"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-              {isTodoCol && scheduledTasks.length > 0 && (
-                <div className={styles.scheduledSection} data-testid="scheduled-tasks-section">
-                  <button
-                    type="button"
-                    className={styles.scheduledToggle}
-                    onClick={() => setShowScheduled((prev) => !prev)}
-                    aria-expanded={showScheduled}
-                  >
-                    <span>
-                      📅 {t('task.recurrence.scheduledTitle')} ({scheduledTasks.length})
-                    </span>
-                    <span style={{ fontSize: '0.75rem' }}>{showScheduled ? '▲' : '▼'}</span>
-                  </button>
-
-                  {showScheduled && (
-                    <div className={styles.scheduledList}>
-                      {scheduledTasks.map((task) => {
-                        const canChange = canChangeStatus(task, currentUserId, isOwner);
-                        return (
-                          <div
-                            key={task.id}
-                            role="button"
-                            tabIndex={0}
-                            draggable={canChange}
-                            aria-disabled={!canChange ? 'true' : undefined}
-                            data-testid={`board-task-card-${task.id}`}
-                            className={`${styles.card} ${styles.scheduledCard}`}
-                            onDragStart={(e) => {
-                              if (canChange) handleDragStart(e, task);
-                            }}
-                            onClick={() => onOpen(task)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                onOpen(task);
-                              }
-                            }}
-                          >
-                            <div className={styles.cardHeader}>
-                              <h4 className={styles.cardTitle}>
-                                <bdi>{task.title}</bdi>
-                              </h4>
-                              <div
-                                data-testid={`board-card-status-${task.id}`}
-                                onClick={(e) => e.stopPropagation()}
-                                onKeyDown={(e) => e.stopPropagation()}
-                              >
-                                <StatusMenu
-                                  task={task}
-                                  canChange={canChange}
-                                  onStatusChange={onStatusChange}
-                                />
-                              </div>
-                            </div>
-
-                            <div className={styles.scheduledBanner}>
-                              <span>⏰</span>
-                              <span>{t('task.recurrence.scheduledBanner', { date: task.dueDate || '' })}</span>
-                            </div>
-
-                            <div className={styles.cardFooter}>
-                              <div className={styles.metaGroup}>
-                                <Badge kind="scheduled" />
-                                <Badge kind={task.priority} />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+            config={col}
+            tasks={activeTasks}
+            scheduledTasks={scheduledTasks}
+            project={project}
+            currentUserId={currentUserId}
+            isOwner={isOwner}
+            isDragOver={dragOverCol === col.status}
+            showScheduled={showScheduled}
+            onToggleScheduled={() => setShowScheduled((prev) => !prev)}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onStatusChange={onStatusChange}
+            onOpen={onOpen}
+          />
         );
       })}
     </div>

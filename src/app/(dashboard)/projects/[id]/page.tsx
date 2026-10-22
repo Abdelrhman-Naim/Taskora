@@ -1,8 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+// ============================================================================
+// 1. IMPORTS
+// ============================================================================
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+
+// Types & Services
 import { Project, Task, TaskStatus, TaskInput, TaskPatch } from '@/types';
 import { getProject } from '@/services/projects';
 import {
@@ -13,9 +18,19 @@ import {
   deleteTask,
 } from '@/services/tasks';
 import { getDb } from '@/lib/firebase';
+import { AppError } from '@/lib/errors';
+import { todayString } from '@/lib/dates';
+import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
+import { tasksToExcelBlob, excelFilename } from '@/lib/excel';
+
+// Hooks & i18n
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
+import { useViewPreference } from '@/hooks/useViewPreference';
+import { useHotkeys } from '@/hooks/useHotkeys';
+
+// UI Components
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -24,6 +39,9 @@ import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Avatar } from '@/components/ui/Avatar';
+import { ShortcutsDialog } from '@/components/shell/ShortcutsDialog';
+
+// Task Views & Modals
 import { TaskList } from '@/components/tasks/TaskList';
 import { TaskBoard } from '@/components/tasks/TaskBoard';
 import { TaskCalendar } from '@/components/tasks/TaskCalendar';
@@ -31,40 +49,182 @@ import { TaskForm } from '@/components/tasks/TaskForm';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { ActivityPanel } from '@/components/projects/ActivityPanel';
 import { FilterBar } from '@/components/tasks/FilterBar';
-import { useViewPreference } from '@/hooks/useViewPreference';
-import { useHotkeys } from '@/hooks/useHotkeys';
-import { ShortcutsDialog } from '@/components/shell/ShortcutsDialog';
-import { tasksToExcelBlob, excelFilename } from '@/lib/excel';
-import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
-import { todayString } from '@/lib/dates';
-import { AppError } from '@/lib/errors';
+
 import styles from './page.module.css';
 
+// ============================================================================
+// 2. CONFIGURATION & CONSTANTS (EASY EDIT ZONE)
+// ============================================================================
+const MAX_STACKED_AVATARS = 5;
+const SEARCH_INPUT_ID = 'filter-search';
+
+// ============================================================================
+// 3. TYPES & INTERFACES
+// ============================================================================
+type ViewScope = 'my_tasks' | 'all';
+
+interface ActorInfo {
+  uid: string;
+  displayName: string;
+}
+
+// ============================================================================
+// 4. HELPER FUNCTIONS
+// ============================================================================
+function computeActor(user: { uid: string; displayName?: string | null; email?: string | null } | null, project: Project | null): ActorInfo {
+  const uid = user?.uid || '';
+  const displayName =
+    (uid && project?.memberNames?.[uid]) ||
+    user?.displayName ||
+    user?.email?.split('@')[0] ||
+    'User';
+  return { uid, displayName };
+}
+
+function filterScopedTasks(tasks: Task[], scope: ViewScope, currentUid: string, isOwner: boolean): Task[] {
+  if (scope === 'all') {
+    return tasks;
+  }
+  return tasks.filter((task) => {
+    // 1. Task assigned directly to current user
+    if (task.assigneeId) {
+      return task.assigneeId === currentUid;
+    }
+    // 2. Shared checklist task containing current user
+    if (task.checklist && task.checklist.length > 0) {
+      return task.checklist.some((item) => item.id === currentUid);
+    }
+    // 3. Unassigned tasks (visible to project owner or creator)
+    return isOwner || task.createdBy === currentUid;
+  });
+}
+
+// ============================================================================
+// 5. SUB-COMPONENTS
+// ============================================================================
+interface TasksViewRendererProps {
+  tasks: Task[];
+  filteredTasks: Task[];
+  view: 'list' | 'board' | 'calendar';
+  project: Project;
+  currentUserId: string;
+  isOwner: boolean;
+  locale: string;
+  onClearFilters: () => void;
+  onOpenTask: (task: Task) => void;
+  onEditTask: (task: Task) => void;
+  onDeleteTask: (task: Task) => void;
+  onStatusChange: (task: Task, newStatus: TaskStatus) => void;
+  onNewTask?: () => void;
+  t: (key: any) => string;
+}
+
+function TasksViewRenderer({
+  tasks,
+  filteredTasks,
+  view,
+  project,
+  currentUserId,
+  isOwner,
+  locale,
+  onClearFilters,
+  onOpenTask,
+  onEditTask,
+  onDeleteTask,
+  onStatusChange,
+  onNewTask,
+  t,
+}: TasksViewRendererProps): React.ReactElement {
+  if (tasks.length > 0 && filteredTasks.length === 0) {
+    return (
+      <EmptyState
+        title={t('task.empty.title')}
+        message={t('task.empty.description')}
+        action={{
+          label: t('filter.clear'),
+          onClick: onClearFilters,
+        }}
+      />
+    );
+  }
+
+  if (view === 'board') {
+    return (
+      <TaskBoard
+        tasks={filteredTasks}
+        project={project}
+        currentUserId={currentUserId}
+        isOwner={isOwner}
+        onStatusChange={onStatusChange}
+        onOpen={onOpenTask}
+      />
+    );
+  }
+
+  if (view === 'calendar') {
+    return (
+      <TaskCalendar
+        tasks={filteredTasks}
+        locale={locale as any}
+        onOpen={onOpenTask}
+      />
+    );
+  }
+
+  return (
+    <TaskList
+      tasks={filteredTasks}
+      project={project}
+      currentUserId={currentUserId}
+      isOwner={isOwner}
+      onOpen={onOpenTask}
+      onEdit={onEditTask}
+      onDelete={onDeleteTask}
+      onStatusChange={onStatusChange}
+      onNewTask={onNewTask}
+    />
+  );
+}
+
+// ============================================================================
+// 6. MAIN COMPONENT
+// ============================================================================
 export default function ProjectPage(): React.ReactElement | null {
   const params = useParams<{ id: string }>();
-  const id = params?.id;
+  const projectId = params?.id;
   const { user } = useAuth();
   const { t, locale } = useI18n();
   const getErrorMessage = useErrorMessage();
 
+  // Core Data State
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<AppError | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
+  // View Preferences & Filters
+  const [view, setView] = useViewPreference();
+  const [filters, setFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
+  const [userSelectedScope, setUserSelectedScope] = useState<ViewScope | null>(null);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
+
+  // Modal / Dialog States
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const [activeDetailTask, setActiveDetailTask] = useState<Task | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<TaskFilters>(DEFAULT_FILTERS);
-  const [view, setView] = useViewPreference();
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
-  type ViewScope = 'my_tasks' | 'all';
-  const [userSelectedScope, setUserSelectedScope] = useState<ViewScope | null>(null);
-  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
+  // User and Ownership Context
+  const currentUid = user?.uid || '';
+  const isOwner = Boolean(project && user?.uid === project.ownerId);
+  const viewScope: ViewScope = isOwner ? (userSelectedScope ?? 'all') : 'my_tasks';
+
+  const actor = useMemo(() => computeActor(user, project), [user, project]);
+
+  // Keyboard Shortcuts Hook
   useHotkeys({
     KeyN: () => {
       if (!isOwner) return;
@@ -73,7 +233,7 @@ export default function ProjectPage(): React.ReactElement | null {
     },
     Slash: (e) => {
       e.preventDefault();
-      document.getElementById('filter-search')?.focus();
+      document.getElementById(SEARCH_INPUT_ID)?.focus();
     },
     'Shift+Slash': () => {
       setShowShortcuts(true);
@@ -83,20 +243,51 @@ export default function ProjectPage(): React.ReactElement | null {
     Digit3: () => setView('calendar'),
   });
 
+  // --- Data Loading ---
+  const reloadTasks = useCallback(async () => {
+    if (!projectId) return;
+    try {
+      const db = getDb();
+      const list = await listTasks(db, projectId);
+      setTasks(list);
+    } catch (err) {
+      setActionError(getErrorMessage(err));
+    }
+  }, [projectId, getErrorMessage]);
+
+  const loadProjectAndTasks = useCallback(async (isInitial = false) => {
+    if (!projectId) return;
+    if (!isInitial) setLoading(true);
+    setError(null);
+    try {
+      const db = getDb();
+      const [proj, taskList] = await Promise.all([
+        getProject(db, projectId),
+        listTasks(db, projectId),
+      ]);
+      setProject(proj);
+      setTasks(taskList);
+    } catch (err) {
+      if (err instanceof AppError) {
+        setError(err);
+      } else {
+        setError(new AppError('unknown', 'Failed to load project'));
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [projectId]);
+
   useEffect(() => {
     let ignore = false;
     async function load() {
-      if (!id) return;
+      if (!projectId) return;
       try {
         const db = getDb();
-        const proj = await getProject(db, id);
-        if (!ignore) {
-          setProject(proj);
-        }
-        const taskList = await listTasks(db, id);
-        if (!ignore) {
-          setTasks(taskList);
-        }
+        const proj = await getProject(db, projectId);
+        if (!ignore) setProject(proj);
+        const taskList = await listTasks(db, projectId);
+        if (!ignore) setTasks(taskList);
       } catch (err) {
         if (!ignore) {
           if (err instanceof AppError) {
@@ -106,71 +297,47 @@ export default function ProjectPage(): React.ReactElement | null {
           }
         }
       } finally {
-        if (!ignore) {
-          setLoading(false);
-        }
+        if (!ignore) setLoading(false);
       }
     }
     load();
     return () => {
       ignore = true;
     };
-  }, [id]);
+  }, [projectId]);
 
-  const reloadTasks = async () => {
-    if (!id) return;
-    try {
-      const db = getDb();
-      const list = await listTasks(db, id);
-      setTasks(list);
-    } catch (err) {
-      setActionError(getErrorMessage(err));
-    }
-  };
+  // --- Derived State ---
+  const scopedTasks = useMemo(
+    () => filterScopedTasks(tasks, viewScope, currentUid, isOwner),
+    [tasks, viewScope, currentUid, isOwner]
+  );
 
-  const handleRetry = () => {
-    setLoading(true);
-    setError(null);
-    if (!id) return;
-    const db = getDb();
-    Promise.all([getProject(db, id), listTasks(db, id)])
-      .then(([proj, taskList]) => {
-        setProject(proj);
-        setTasks(taskList);
-      })
-      .catch((err) => {
-        if (err instanceof AppError) {
-          setError(err);
-        } else {
-          setError(new AppError('unknown', 'Failed to load project'));
-        }
-      })
-      .finally(() => setLoading(false));
-  };
+  const filteredTasks = useMemo(
+    () => filterTasks(scopedTasks, filters, todayString()),
+    [scopedTasks, filters]
+  );
 
-  const getActor = () => ({
-    uid: user?.uid || '',
-    displayName: (user?.uid && project?.memberNames?.[user.uid]) || user?.displayName || user?.email?.split('@')[0] || 'User',
-  });
+  const progressMetrics = useMemo(() => {
+    const total = tasks.length;
+    const done = tasks.filter((t) => t.status === 'done').length;
+    const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+    return { total, done, percent };
+  }, [tasks]);
 
+  // --- Task Action Handlers ---
   const handleCreateTask = async (data: TaskInput) => {
     if (!project || !user || !isOwner) return;
     const db = getDb();
 
+    // Individual tasks mode: create one task per selected member
     if (data.multiAssigneeMode === 'individual' && data.selectedMemberIds && data.selectedMemberIds.length > 0) {
       for (const memberId of data.selectedMemberIds) {
         await createTask(
           db,
           project.id,
           user.uid,
-          {
-            ...data,
-            assigneeId: memberId,
-          },
-          {
-            actor: getActor(),
-            projectName: project.name,
-          }
+          { ...data, assigneeId: memberId },
+          { actor, projectName: project.name }
         );
       }
     } else {
@@ -179,10 +346,7 @@ export default function ProjectPage(): React.ReactElement | null {
         project.id,
         user.uid,
         data,
-        {
-          actor: getActor(),
-          projectName: project.name,
-        }
+        { actor, projectName: project.name }
       );
     }
 
@@ -194,7 +358,7 @@ export default function ProjectPage(): React.ReactElement | null {
     if (!project || !editingTask) return;
     const db = getDb();
     await updateTask(db, project.id, editingTask.id, data, {
-      actor: getActor(),
+      actor,
       task: editingTask,
       projectName: project.name,
       assigneeName: data.assigneeId ? project.memberNames[data.assigneeId] : null,
@@ -219,7 +383,7 @@ export default function ProjectPage(): React.ReactElement | null {
     try {
       const db = getDb();
       await changeTaskStatus(db, project.id, task.id, newStatus, {
-        actor: getActor(),
+        actor,
         task,
         projectName: project.name,
       });
@@ -243,13 +407,13 @@ export default function ProjectPage(): React.ReactElement | null {
       const db = getDb();
       if (patch.status !== undefined && patch.status !== activeDetailTask.status) {
         await changeTaskStatus(db, project.id, activeDetailTask.id, patch.status, {
-          actor: getActor(),
+          actor,
           task: activeDetailTask,
           projectName: project.name,
         });
       } else {
         await updateTask(db, project.id, activeDetailTask.id, patch, {
-          actor: getActor(),
+          actor,
           task: activeDetailTask,
           projectName: project.name,
           assigneeName: patch.assigneeId ? project.memberNames[patch.assigneeId] : null,
@@ -269,7 +433,7 @@ export default function ProjectPage(): React.ReactElement | null {
     try {
       const db = getDb();
       await deleteTask(db, project.id, deletingTask.id, {
-        actor: getActor(),
+        actor,
         task: deletingTask,
       });
       setDeletingTask(null);
@@ -278,33 +442,6 @@ export default function ProjectPage(): React.ReactElement | null {
       setActionError(getErrorMessage(err));
     }
   };
-
-  const currentUid = user?.uid || '';
-  const isOwner = Boolean(project && user?.uid === project.ownerId);
-  // Non-owners can NEVER view all tasks; only owners have the choice
-  const viewScope: ViewScope = isOwner ? (userSelectedScope ?? 'all') : 'my_tasks';
-
-  const scopedTasks = useMemo(() => {
-    if (viewScope === 'all') {
-      return tasks;
-    }
-    return tasks.filter((t) => {
-      // 1. Task assigned to a specific user -> ONLY show if assigned to current user
-      if (t.assigneeId) {
-        return t.assigneeId === currentUid;
-      }
-      // 2. Shared task with checklist items for members
-      if (t.checklist && t.checklist.length > 0) {
-        return t.checklist.some((c) => c.id === currentUid);
-      }
-      // 3. Unassigned task without checklist
-      return isOwner || t.createdBy === currentUid;
-    });
-  }, [tasks, viewScope, currentUid, isOwner]);
-
-  const filteredTasks = useMemo(() => {
-    return filterTasks(scopedTasks, filters, todayString());
-  }, [scopedTasks, filters]);
 
   const handleExportExcel = async () => {
     if (!project || isExportingExcel) return;
@@ -326,7 +463,7 @@ export default function ProjectPage(): React.ReactElement | null {
     }
   };
 
-
+  // --- Guard Clauses: Loading & Error States ---
   if (loading) {
     return (
       <div className={styles.loadingWrapper}>
@@ -368,19 +505,16 @@ export default function ProjectPage(): React.ReactElement | null {
       <ErrorState
         title={t('error.unexpected')}
         message={getErrorMessage(error)}
-        onRetry={handleRetry}
+        onRetry={() => loadProjectAndTasks(false)}
       />
     );
   }
 
   if (!project) return null;
 
-  const totalTasks = tasks.length;
-  const doneTasks = tasks.filter((t) => t.status === 'done').length;
-  const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
-
   return (
     <div data-testid="page-ready">
+      {/* Project Top Header */}
       <div className={styles.header} data-testid="project-header">
         <Link href="/dashboard" className={styles.backLink}>
           <Icon name="arrow" size={16} />
@@ -448,11 +582,13 @@ export default function ProjectPage(): React.ReactElement | null {
           <div className={styles.progressSummary} data-testid="project-metrics">
             <div className={styles.progressLabelRow}>
               <span>{t('dashboard.table.progress')}</span>
-              <strong className="num">{progress}% ({doneTasks}/{totalTasks})</strong>
+              <strong className="num">
+                {progressMetrics.percent}% ({progressMetrics.done}/{progressMetrics.total})
+              </strong>
             </div>
             <ProgressBar
-              value={doneTasks}
-              max={totalTasks}
+              value={progressMetrics.done}
+              max={progressMetrics.total}
               label={t('dashboard.table.progress')}
             />
           </div>
@@ -460,7 +596,7 @@ export default function ProjectPage(): React.ReactElement | null {
           <div className={styles.membersRow} data-testid="project-members">
             <span className={styles.membersLabel}>{t('dashboard.table.members')}:</span>
             <div className={styles.avatarStack}>
-              {project.memberIds.slice(0, 5).map((uid) => (
+              {project.memberIds.slice(0, MAX_STACKED_AVATARS).map((uid) => (
                 <Avatar
                   key={uid}
                   name={project.memberNames[uid] || 'Member'}
@@ -468,9 +604,12 @@ export default function ProjectPage(): React.ReactElement | null {
                   className={styles.stackedAvatar}
                 />
               ))}
-              {project.memberIds.length > 5 && (
-                <span className={styles.moreMembers} aria-label={`${project.memberIds.length - 5} more`}>
-                  +{project.memberIds.length - 5}
+              {project.memberIds.length > MAX_STACKED_AVATARS && (
+                <span
+                  className={styles.moreMembers}
+                  aria-label={`${project.memberIds.length - MAX_STACKED_AVATARS} more`}
+                >
+                  +{project.memberIds.length - MAX_STACKED_AVATARS}
                 </span>
               )}
             </div>
@@ -521,14 +660,18 @@ export default function ProjectPage(): React.ReactElement | null {
         )}
       </Dialog>
 
-      {/* Tasks List */}
+      {/* Tasks Section & Controls */}
       <div>
         <div className={styles.tasksHeader}>
           <div className={styles.tasksHeaderLeft}>
             <h2 className={styles.tasksTitle}>
               {t('task.list.title')}
               <span className={`${styles.tasksCount} num`}>
-                ({filteredTasks.length}{isOwner && viewScope === 'my_tasks' && tasks.length !== filteredTasks.length ? ` / ${tasks.length}` : ''})
+                ({filteredTasks.length}
+                {isOwner && viewScope === 'my_tasks' && tasks.length !== filteredTasks.length
+                  ? ` / ${tasks.length}`
+                  : ''}
+                )
               </span>
             </h2>
           </div>
@@ -615,52 +758,31 @@ export default function ProjectPage(): React.ReactElement | null {
           </>
         )}
 
-        {tasks.length > 0 && filteredTasks.length === 0 ? (
-          <EmptyState
-            title={t('task.empty.title')}
-            message={t('task.empty.description')}
-            action={{
-              label: t('filter.clear'),
-              onClick: () => setFilters(DEFAULT_FILTERS),
-            }}
-          />
-        ) : view === 'board' ? (
-          <TaskBoard
-            tasks={filteredTasks}
-            project={project}
-            currentUserId={currentUid}
-            isOwner={isOwner}
-            onStatusChange={handleStatusChange}
-            onOpen={(task) => setActiveDetailTask(task)}
-          />
-        ) : view === 'calendar' ? (
-          <TaskCalendar
-            tasks={filteredTasks}
-            locale={locale}
-            onOpen={(task) => setActiveDetailTask(task)}
-          />
-        ) : (
-          <TaskList
-            tasks={filteredTasks}
-            project={project}
-            currentUserId={currentUid}
-            isOwner={isOwner}
-            onOpen={(task) => setActiveDetailTask(task)}
-            onEdit={(task) => {
-              setShowCreateForm(false);
-              setEditingTask(task);
-            }}
-            onDelete={(task) => setDeletingTask(task)}
-            onStatusChange={handleStatusChange}
-            onNewTask={isOwner ? () => {
-              setEditingTask(null);
-              setShowCreateForm(true);
-            } : undefined}
-          />
-        )}
+        <TasksViewRenderer
+          tasks={tasks}
+          filteredTasks={filteredTasks}
+          view={view}
+          project={project}
+          currentUserId={currentUid}
+          isOwner={isOwner}
+          locale={locale}
+          onClearFilters={() => setFilters(DEFAULT_FILTERS)}
+          onOpenTask={(task) => setActiveDetailTask(task)}
+          onEditTask={(task) => {
+            setShowCreateForm(false);
+            setEditingTask(task);
+          }}
+          onDeleteTask={(task) => setDeletingTask(task)}
+          onStatusChange={handleStatusChange}
+          onNewTask={isOwner ? () => {
+            setEditingTask(null);
+            setShowCreateForm(true);
+          } : undefined}
+          t={t}
+        />
       </div>
 
-      {/* Task Detail Dialog */}
+      {/* Task Detail Modal */}
       {activeDetailTask && (
         <TaskDetailDialog
           task={activeDetailTask}
@@ -676,7 +798,7 @@ export default function ProjectPage(): React.ReactElement | null {
         />
       )}
 
-      {/* Confirm Task Deletion Dialog */}
+      {/* Confirm Task Deletion Modal */}
       {deletingTask && (
         <Dialog
           isOpen={true}
@@ -689,7 +811,8 @@ export default function ProjectPage(): React.ReactElement | null {
           onCancel={() => setDeletingTask(null)}
         />
       )}
-      {/* Keyboard Shortcuts Dialog */}
+
+      {/* Keyboard Shortcuts Modal */}
       {showShortcuts && (
         <ShortcutsDialog
           isOpen={showShortcuts}
@@ -698,9 +821,9 @@ export default function ProjectPage(): React.ReactElement | null {
       )}
 
       {/* Project Activity Panel */}
-      {showActivity && id && (
+      {showActivity && projectId && (
         <ActivityPanel
-          projectId={id}
+          projectId={projectId}
           isOpen={showActivity}
           onClose={() => setShowActivity(false)}
         />

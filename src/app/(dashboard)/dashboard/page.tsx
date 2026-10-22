@@ -1,5 +1,8 @@
 'use client';
 
+// ============================================================================
+// ZONE 1: IMPORTS
+// ============================================================================
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
@@ -31,6 +34,99 @@ import {
 import { todayString, APP_TIME_ZONE } from '@/lib/dates';
 import styles from './page.module.css';
 
+// ============================================================================
+// ZONE 2: CONFIG & CONSTANTS
+// ============================================================================
+const MAX_TOP_PROJECTS = 6;
+const MAX_TIMELINE_DAYS = 14;
+const MAX_ATTENTION_ITEMS = 6;
+const MAX_MY_TASKS = 6;
+const MAX_RECENT_TASKS = 8;
+
+// ============================================================================
+// ZONE 3: TYPES & INTERFACES
+// ============================================================================
+interface DashboardHeaderProps {
+  displayName: string;
+  isMorning: boolean;
+  fullDateFormatted: string;
+  createButtonLabel: string;
+  morningGreetingPrefix: string;
+  eveningGreetingPrefix: string;
+}
+
+// ============================================================================
+// ZONE 4: HELPERS & HOOKS
+// ============================================================================
+function checkIsMorningRiyadh(): boolean {
+  try {
+    const hourStr = new Intl.DateTimeFormat('en-US', {
+      timeZone: APP_TIME_ZONE,
+      hour: 'numeric',
+      hourCycle: 'h23',
+    }).format(new Date());
+    const hour = parseInt(hourStr, 10);
+    return hour >= 5 && hour < 12;
+  } catch {
+    return true;
+  }
+}
+
+function formatDashboardFullDate(locale: string): string {
+  try {
+    return new Intl.DateTimeFormat(`${locale}-u-nu-latn-ca-gregory`, {
+      timeZone: APP_TIME_ZONE,
+      dateStyle: 'full',
+    }).format(new Date());
+  } catch {
+    return '';
+  }
+}
+
+// ============================================================================
+// ZONE 5: SUB-COMPONENTS
+// ============================================================================
+function DashboardHeader({
+  displayName,
+  isMorning,
+  fullDateFormatted,
+  createButtonLabel,
+  morningGreetingPrefix,
+  eveningGreetingPrefix,
+}: DashboardHeaderProps): React.ReactElement {
+  const greetingPrefix = isMorning ? morningGreetingPrefix : eveningGreetingPrefix;
+
+  return (
+    <div className={styles.header}>
+      <div className={styles.topRow}>
+        <div className={styles.greetingArea}>
+          <h1 className={styles.greeting}>
+            {greetingPrefix},{' '}
+            <bdi>{displayName}</bdi>
+          </h1>
+          {fullDateFormatted && (
+            <span className={styles.dateDisplay}>{fullDateFormatted}</span>
+          )}
+        </div>
+
+        <Link
+          href="/projects/new"
+          className={styles.newProjectBtn}
+          aria-label={`+ ${createButtonLabel}`}
+        >
+          <Icon name="plus" size={16} />
+          <span>{createButtonLabel}</span>
+        </Link>
+      </div>
+
+      <div className={styles.brassDivider} aria-hidden="true" />
+    </div>
+  );
+}
+
+// ============================================================================
+// ZONE 6: MAIN COMPONENT
+// ============================================================================
 export default function DashboardPage(): React.ReactElement {
   const { user } = useAuth();
   const { t, locale } = useI18n();
@@ -38,32 +134,8 @@ export default function DashboardPage(): React.ReactElement {
   const { projects, tasks, loading, error, reload } = useDashboardData();
 
   const today = useMemo(() => todayString(), []);
-
-  // Riyadh-based hour for greeting
-  const isMorning = useMemo(() => {
-    try {
-      const hourStr = new Intl.DateTimeFormat('en-US', {
-        timeZone: APP_TIME_ZONE,
-        hour: 'numeric',
-        hourCycle: 'h23',
-      }).format(new Date());
-      const hour = parseInt(hourStr, 10);
-      return hour >= 5 && hour < 12;
-    } catch {
-      return true;
-    }
-  }, []);
-
-  const fullDateFormatted = useMemo(() => {
-    try {
-      return new Intl.DateTimeFormat(`${locale}-u-nu-latn-ca-gregory`, {
-        timeZone: APP_TIME_ZONE,
-        dateStyle: 'full',
-      }).format(new Date());
-    } catch {
-      return '';
-    }
-  }, [locale]);
+  const isMorning = useMemo(() => checkIsMorningRiyadh(), []);
+  const fullDateFormatted = useMemo(() => formatDashboardFullDate(locale), [locale]);
 
   const projectNameMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -80,11 +152,11 @@ export default function DashboardPage(): React.ReactElement {
     [projects, tasks, user, today]
   );
 
-  const topProjects = useMemo(() => topProjectsByOpen(summaries, 6), [summaries]);
-  const timeline = useMemo(() => dueTimeline(tasks, today, 14), [tasks, today]);
-  const attentionItems = useMemo(() => needsAttention(tasks, today, 6), [tasks, today]);
-  const userTasks = useMemo(() => myTasks(tasks, user?.uid || '', today, 6), [tasks, user, today]);
-  const recentTasks = useMemo(() => recentlyUpdated(tasks, 8), [tasks]);
+  const topProjects = useMemo(() => topProjectsByOpen(summaries, MAX_TOP_PROJECTS), [summaries]);
+  const timeline = useMemo(() => dueTimeline(tasks, today, MAX_TIMELINE_DAYS), [tasks, today]);
+  const attentionItems = useMemo(() => needsAttention(tasks, today, MAX_ATTENTION_ITEMS), [tasks, today]);
+  const userTasks = useMemo(() => myTasks(tasks, user?.uid || '', today, MAX_MY_TASKS), [tasks, user, today]);
+  const recentTasks = useMemo(() => recentlyUpdated(tasks, MAX_RECENT_TASKS), [tasks]);
 
   // Chart configs
   const series = useMemo(
@@ -164,6 +236,7 @@ export default function DashboardPage(): React.ReactElement {
     [timeline, t]
   );
 
+  // Early return guards
   if (loading) {
     return <DashboardSkeleton />;
   }
@@ -173,34 +246,25 @@ export default function DashboardPage(): React.ReactElement {
   }
 
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
+  const morningGreetingPrefix = t('dashboard.greetingMorning', { name: '' }).replace(/,\s*$/, '');
+  const eveningGreetingPrefix = t('dashboard.greetingEvening', { name: '' }).replace(/,\s*$/, '');
+  const createButtonLabel = t('dashboard.projects.createButton');
+
+  const headerElement = (
+    <DashboardHeader
+      displayName={displayName}
+      isMorning={isMorning}
+      fullDateFormatted={fullDateFormatted}
+      createButtonLabel={createButtonLabel}
+      morningGreetingPrefix={morningGreetingPrefix}
+      eveningGreetingPrefix={eveningGreetingPrefix}
+    />
+  );
 
   if (projects.length === 0) {
     return (
       <div className={styles.container} data-testid="page-ready">
-        <div className={styles.header}>
-          <div className={styles.topRow}>
-            <div className={styles.greetingArea}>
-              <h1 className={styles.greeting}>
-                {isMorning
-                  ? t('dashboard.greetingMorning', { name: displayName })
-                  : t('dashboard.greetingEvening', { name: displayName })}
-              </h1>
-              {fullDateFormatted && (
-                <span className={styles.dateDisplay}>{fullDateFormatted}</span>
-              )}
-            </div>
-
-            <Link
-              href="/projects/new"
-              className={styles.newProjectBtn}
-              aria-label={`+ ${t('dashboard.projects.createButton')}`}
-            >
-              <Icon name="plus" size={16} />
-              <span>{t('dashboard.projects.createButton')}</span>
-            </Link>
-          </div>
-          <div className={styles.brassDivider} aria-hidden="true" />
-        </div>
+        {headerElement}
         <OnboardingEmpty />
       </div>
     );
@@ -208,40 +272,7 @@ export default function DashboardPage(): React.ReactElement {
 
   return (
     <div className={styles.container} data-testid="page-ready">
-      {/* Top Header */}
-      <div className={styles.header}>
-        <div className={styles.topRow}>
-          <div className={styles.greetingArea}>
-            <h1 className={styles.greeting}>
-              {isMorning ? (
-                <>
-                  {t('dashboard.greetingMorning', { name: '' }).replace(/,\s*$/, '')},{' '}
-                  <bdi>{displayName}</bdi>
-                </>
-              ) : (
-                <>
-                  {t('dashboard.greetingEvening', { name: '' }).replace(/,\s*$/, '')},{' '}
-                  <bdi>{displayName}</bdi>
-                </>
-              )}
-            </h1>
-            {fullDateFormatted && (
-              <span className={styles.dateDisplay}>{fullDateFormatted}</span>
-            )}
-          </div>
-
-          <Link
-            href="/projects/new"
-            className={styles.newProjectBtn}
-            aria-label={`+ ${t('dashboard.projects.createButton')}`}
-          >
-            <Icon name="plus" size={16} />
-            <span>{t('dashboard.projects.createButton')}</span>
-          </Link>
-        </div>
-
-        <div className={styles.brassDivider} aria-hidden="true" />
-      </div>
+      {headerElement}
 
       {/* Hero Metric Numeral */}
       <HeroMetric metrics={metrics} />
@@ -249,7 +280,7 @@ export default function DashboardPage(): React.ReactElement {
       {/* KPI Ledger */}
       <KpiStrip metrics={metrics} />
 
-      {/* 12-Column Grid: Charts */}
+      {/* 12-Column Grid: Charts & Panels */}
       <div className={styles.grid}>
         <div className={styles.col7} data-testid="chart-tasks-by-project">
           <ChartPanel
