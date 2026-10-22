@@ -122,30 +122,50 @@
 }
 
 .gridInner {
-  min-inline-size: 700px;
+  display: flex;
+  flex-direction: column;
   inline-size: 100%;
+  min-inline-size: 700px;
+  box-sizing: border-box;
 }
 
 .weekdaysHeader {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   background-color: var(--surface-2);
   border-block-end: 1px solid var(--line);
   text-align: center;
+  inline-size: 100%;
+  box-sizing: border-box;
 }
 
 .weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding-block: 10px;
   padding-inline: 4px;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
+  border-inline-end: 1px solid var(--line);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.weekday:nth-child(7n) {
+  border-inline-end: none;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  inline-size: 100%;
+  box-sizing: border-box;
 }
 
 .dayCell {
@@ -159,6 +179,9 @@
   gap: 4px;
   background-color: var(--surface);
   transition: background-color var(--dur-1) var(--ease);
+  min-inline-size: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .dayCell:nth-child(7n) {
@@ -182,6 +205,7 @@
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   margin-block-end: 2px;
+  text-align: start;
 }
 
 .todayCell .dayNumber {
@@ -204,6 +228,10 @@
   text-align: start;
   transition: all var(--dur-1) var(--ease);
   inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .taskPill:hover {
@@ -250,6 +278,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
+  min-inline-size: 0;
 }
 
 .morePill {
@@ -262,6 +291,10 @@
   padding-block: 2px;
   padding-inline: 4px;
   text-align: start;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .morePill:hover {
@@ -304,13 +337,19 @@
   }
 
   .gridInner {
-    min-inline-size: 660px;
+    min-inline-size: 700px;
   }
 
   .dayCell {
     min-block-size: 88px;
     padding-block: 6px;
     padding-inline: 6px;
+  }
+
+  .weekday {
+    padding-block: 8px;
+    padding-inline: 4px;
+    font-size: 0.75rem;
   }
 }
 
