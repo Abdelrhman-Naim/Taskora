@@ -32,7 +32,6 @@ import {
   recentlyUpdated,
 } from '@/lib/dashboardMetrics';
 import { todayString, APP_TIME_ZONE } from '@/lib/dates';
-import styles from './page.module.css';
 
 // ============================================================================
 // ZONE 2: CONFIG & CONSTANTS
@@ -97,21 +96,21 @@ function DashboardHeader({
   const greetingPrefix = isMorning ? morningGreetingPrefix : eveningGreetingPrefix;
 
   return (
-    <div className={styles.header}>
-      <div className={styles.topRow}>
-        <div className={styles.greetingArea}>
-          <h1 className={styles.greeting}>
+    <div className="mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center flex-wrap gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-[family-name:var(--font-display)] text-2xl md:text-3xl font-semibold text-text m-0 leading-tight">
             {greetingPrefix},{' '}
             <bdi>{displayName}</bdi>
           </h1>
           {fullDateFormatted && (
-            <span className={styles.dateDisplay}>{fullDateFormatted}</span>
+            <span className="text-sm text-text-2">{fullDateFormatted}</span>
           )}
         </div>
 
         <Link
           href="/projects/new"
-          className={styles.newProjectBtn}
+          className="inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-accent text-on-accent rounded-md text-sm font-semibold no-underline hover:opacity-90 transition-opacity"
           aria-label={`+ ${createButtonLabel}`}
         >
           <Icon name="plus" size={16} />
@@ -119,7 +118,7 @@ function DashboardHeader({
         </Link>
       </div>
 
-      <div className={styles.brassDivider} aria-hidden="true" />
+      <div className="w-full h-px bg-line my-4" aria-hidden="true" />
     </div>
   );
 }
@@ -263,7 +262,7 @@ export default function DashboardPage(): React.ReactElement {
 
   if (projects.length === 0) {
     return (
-      <div className={styles.container} data-testid="page-ready">
+      <div className="flex flex-col w-full max-w-[80rem] mx-auto" data-testid="page-ready">
         {headerElement}
         <OnboardingEmpty />
       </div>
@@ -271,7 +270,7 @@ export default function DashboardPage(): React.ReactElement {
   }
 
   return (
-    <div className={styles.container} data-testid="page-ready">
+    <div className="flex flex-col w-full max-w-[80rem] mx-auto" data-testid="page-ready">
       {headerElement}
 
       {/* Hero Metric Numeral */}
@@ -281,8 +280,8 @@ export default function DashboardPage(): React.ReactElement {
       <KpiStrip metrics={metrics} />
 
       {/* 12-Column Grid: Charts & Panels */}
-      <div className={styles.grid}>
-        <div className={styles.col7} data-testid="chart-tasks-by-project">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        <div className="lg:col-span-7" data-testid="chart-tasks-by-project">
           <ChartPanel
             title={t('dashboard.projectsDistribution')}
             legend={series}
@@ -296,7 +295,7 @@ export default function DashboardPage(): React.ReactElement {
           </ChartPanel>
         </div>
 
-        <div className={styles.col5} data-testid="chart-due-timeline">
+        <div className="lg:col-span-5" data-testid="chart-due-timeline">
           <ChartPanel
             title={t('dashboard.dueTimeline')}
             table={columnTable}
@@ -310,21 +309,21 @@ export default function DashboardPage(): React.ReactElement {
         </div>
 
         {/* Attention & My Tasks */}
-        <div className={styles.col6}>
+        <div className="lg:col-span-6">
           <NeedsAttention items={attentionItems} projectName={projectNameMap} />
         </div>
 
-        <div className={styles.col6}>
+        <div className="lg:col-span-6">
           <MyTasks tasks={userTasks} projectName={projectNameMap} />
         </div>
 
         {/* Projects Table */}
-        <div className={styles.col12}>
+        <div className="lg:col-span-12">
           <ProjectsTable summaries={summaries} />
         </div>
 
         {/* Recently Updated */}
-        <div className={styles.col12}>
+        <div className="lg:col-span-12">
           <RecentlyUpdated tasks={recentTasks} projectName={projectNameMap} />
         </div>
       </div>

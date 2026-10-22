@@ -23,12 +23,11 @@ import { StackedBars } from '@/components/charts/StackedBars';
 import { ColumnChart } from '@/components/charts/ColumnChart';
 import { HBars } from '@/components/charts/HBars';
 import { ChartPanel } from '@/components/charts/ChartPanel';
-import styles from './page.module.css';
 
 function ToastShowcase() {
   const toast = useToast();
   return (
-    <div className={styles.componentRow}>
+    <div className="flex items-center flex-wrap gap-4 mb-4">
       <Button
         variant="secondary"
         onClick={() => toast.show('success', 'Changes saved successfully!')}
@@ -62,38 +61,38 @@ export default function DesignSystemPage() {
 
   return (
     <ToastProvider>
-      <main className={styles.page}>
-        <header className={styles.header}>
+      <main className="max-w-[1100px] mx-auto px-6 py-12">
+        <header className="flex items-center justify-between flex-wrap gap-4 mb-8 border-b border-border pb-6">
           <div>
-            <h1 className={styles.title}>{t('app.name')} Design System</h1>
-            <p className={styles.subtitle}>
+            <h1 className="font-[family-name:var(--font-display)] text-4xl font-bold m-0 text-text">{t('app.name')} Design System</h1>
+            <p className="text-text-muted text-base mt-1.5 mb-0">
               Obsidian Ledger tokens, primitives, typography and RTL layout verification
             </p>
           </div>
-          <div className={styles.controls}>
+          <div className="flex items-center gap-3">
             <LocaleSwitcher />
             <ThemeToggle />
           </div>
         </header>
 
         {/* Colors */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Colors & Contrast</h2>
-          <div className={styles.grid}>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Colors & Contrast</h2>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
             {colors.map((c) => (
-              <div key={c.name} className={styles.colorSwatch}>
-                <div className={styles.swatchPreview} style={{ backgroundColor: c.varName }} />
-                <span className={styles.swatchName}>{c.name}</span>
-                <span className={styles.swatchRole}>{c.role}</span>
-                <span className={styles.swatchContrast}>{c.contrast}</span>
+              <div key={c.name} className="p-4 rounded-md border border-border flex flex-col gap-2">
+                <div className="h-12 rounded-sm border border-border" style={{ backgroundColor: c.varName }} />
+                <span className="font-semibold text-[0.9375rem]">{c.name}</span>
+                <span className="text-xs text-text-muted">{c.role}</span>
+                <span className="text-xs text-accent font-semibold">{c.contrast}</span>
               </div>
             ))}
           </div>
         </section>
 
         {/* Typography */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Typography</h2>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Typography</h2>
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 600 }}>
@@ -110,21 +109,21 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Buttons */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Buttons & Actions</h2>
-          <div className={styles.componentRow}>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Buttons & Actions</h2>
+          <div className="flex items-center flex-wrap gap-4 mb-4">
             <Button variant="primary" icon="plus">Primary Button</Button>
             <Button variant="secondary">Secondary Button</Button>
             <Button variant="ghost">Ghost Button</Button>
             <Button variant="danger" icon="trash">Danger Button</Button>
           </div>
-          <div className={styles.componentRow}>
+          <div className="flex items-center flex-wrap gap-4 mb-4">
             <Button variant="primary" size="sm">Small Primary</Button>
             <Button variant="secondary" size="sm">Small Secondary</Button>
             <Button variant="primary" loading>Loading State</Button>
             <Button variant="primary" disabled>Disabled State</Button>
           </div>
-          <div className={styles.componentRow}>
+          <div className="flex items-center flex-wrap gap-4 mb-4">
             <IconButton icon="plus" label="Add task" variant="secondary" />
             <IconButton icon="edit" label="Edit item" variant="ghost" />
             <IconButton icon="trash" label="Delete item" variant="danger" />
@@ -133,9 +132,9 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Badges */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Badges & Statuses</h2>
-          <div className={styles.componentRow}>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Badges & Statuses</h2>
+          <div className="flex items-center flex-wrap gap-4 mb-4">
             <Badge kind="todo" />
             <Badge kind="in_progress" />
             <Badge kind="done" />
@@ -147,8 +146,8 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Progress Bar */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Progress Bar</h2>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Progress Bar</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <ProgressBar value={25} max={100} label="25% complete" />
             <ProgressBar value={60} max={100} label="60% complete" />
@@ -157,9 +156,9 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Segmented */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Segmented Control</h2>
-          <div className={styles.componentRow}>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Segmented Control</h2>
+          <div className="flex items-center flex-wrap gap-4 mb-4">
             <Segmented
               label="View selection"
               value={segmentedVal}
@@ -174,9 +173,9 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Form Controls */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Form Controls</h2>
-          <div className={styles.formGrid}>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Form Controls</h2>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5">
             <Field id="ds-input-normal" label="Project name" hint="3 to 80 characters">
               {(fieldProps) => <Input {...fieldProps} placeholder="e.g. Website Redesign" />}
             </Field>
@@ -206,9 +205,9 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Modal Dialog & Toasts */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Dialog & Toasts</h2>
-          <div className={styles.componentRow}>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Dialog & Toasts</h2>
+          <div className="flex items-center flex-wrap gap-4 mb-4">
             <Button
               ref={dialogTriggerRef}
               variant="secondary"
@@ -234,8 +233,8 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Skeleton */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Skeleton Loaders</h2>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Skeleton Loaders</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <Skeleton width="40%" height="24px" />
             <Skeleton width="100%" height="16px" />
@@ -244,9 +243,9 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Avatars */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Avatars (Bilingual & Initials)</h2>
-          <div className={styles.componentRow}>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Avatars (Bilingual & Initials)</h2>
+          <div className="flex items-center flex-wrap gap-4 mb-4">
             <Avatar name="Sara Ali" size="md" />
             <Avatar name="Sara Ali" size="sm" />
             <Avatar name="أحمد محمد" size="md" />
@@ -256,8 +255,8 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Charts */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Accessible Charts (HTML/CSS)</h2>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Accessible Charts (HTML/CSS)</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <ChartPanel
               title="Tasks by Project"
@@ -343,17 +342,17 @@ export default function DesignSystemPage() {
         </section>
 
         {/* Application Shell */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Application Shell (Sidebar & TopBar)</h2>
+        <section className="mb-12">
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold mt-0 mb-4 text-text border-b border-border pb-2">Application Shell (Sidebar & TopBar)</h2>
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6 }}>
                 The application shell provides responsive navigation: a persistent desktop sidebar (264px–280px) on wide viewports, a focus-trapped sliding drawer on mobile (≤1024px), a top bar featuring Section Title, Language Switcher, Theme Toggle, and a keyboard-navigable User Profile Menu.
               </p>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-                <span className={styles.swatchRole} style={{ margin: 0 }}>Sidebar Width: 264px – 280px</span>
-                <span className={styles.swatchRole} style={{ margin: 0 }}>Breakpoint: 1024px</span>
-                <span className={styles.swatchRole} style={{ margin: 0 }}>Max Content Width: 80rem</span>
+                <span className="text-xs text-text-muted" style={{ margin: 0 }}>Sidebar Width: 264px – 280px</span>
+                <span className="text-xs text-text-muted" style={{ margin: 0 }}>Breakpoint: 1024px</span>
+                <span className="text-xs text-text-muted" style={{ margin: 0 }}>Max Content Width: 80rem</span>
               </div>
             </div>
           </Card>

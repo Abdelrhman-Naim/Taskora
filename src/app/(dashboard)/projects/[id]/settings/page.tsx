@@ -18,7 +18,6 @@ import { Icon } from '@/components/ui/Icon';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { AppError } from '@/lib/errors';
-import styles from './page.module.css';
 
 export default function ProjectSettingsPage(): React.ReactElement | null {
   const params = useParams<{ id: string }>();
@@ -161,7 +160,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
 
   if (loading) {
     return (
-      <div className={styles.loadingWrapper}>
+      <div className="flex items-center justify-center p-12 min-h-[300px]">
         <Spinner size={36} label={t('common.loading')} />
       </div>
     );
@@ -179,29 +178,29 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
 
   return (
     <div data-testid="page-ready">
-      <div className={styles.header} data-testid="project-settings-header">
+      <div className="mb-7" data-testid="project-settings-header">
         <Link
           href={`/projects/${project.id}`}
-          className={styles.backLink}
+          className="inline-flex items-center gap-1.5 text-xs text-text-2 no-underline mb-3 hover:text-text transition-colors"
         >
           <Icon name="arrow" size={16} />
           <span>{t('common.back')}</span>: <span><bdi>{project.name}</bdi></span>
         </Link>
-        <h1 className={styles.title}>
+        <h1 className="font-[family-name:var(--font-display)] text-2xl md:text-3xl font-semibold m-0 text-text tracking-tight">
           {t('project.edit.title')}
         </h1>
-        <div className={styles.brassRule} aria-hidden="true" />
+        <div className="h-px bg-accent w-full mt-4 opacity-40" aria-hidden="true" />
       </div>
 
       {deleteError && (
-        <div role="alert" className={styles.deleteErrorAlert}>
+        <div role="alert" className="py-3 px-4 bg-st-overdue-bg border border-st-overdue-fg text-st-overdue-fg rounded-md text-sm font-medium mb-4">
           {deleteError}
         </div>
       )}
 
       {/* General Settings */}
-      <div className={styles.card}>
-        <h2 className={styles.cardTitle}>
+      <div className="bg-surface p-6 rounded-lg border border-line mb-8">
+        <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold mt-0 mb-4 text-text">
           {t('project.edit.title')}
         </h2>
         <ProjectForm
@@ -212,7 +211,7 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
       </div>
 
       {/* Members Management */}
-      <div className={styles.card}>
+      <div className="bg-surface p-6 rounded-lg border border-line mb-8">
         <MemberManager
           project={project}
           onAddMember={handleAddMember}
@@ -222,11 +221,11 @@ export default function ProjectSettingsPage(): React.ReactElement | null {
       </div>
 
       {/* Danger Zone */}
-      <div className={styles.dangerCard} data-testid="danger-zone">
-        <h2 className={styles.dangerTitle}>
+      <div className="bg-surface p-6 rounded-lg border border-line relative" data-testid="danger-zone">
+        <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold mt-0 mb-2 text-st-overdue-fg">
           {t('project.settings.dangerZone')}
         </h2>
-        <p className={styles.dangerDesc}>
+        <p className="text-text-2 text-sm mt-0 mb-5 leading-relaxed max-w-xl">
           {t('project.settings.deleteWarning')}
         </p>
         <Button
