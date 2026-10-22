@@ -55,4 +55,22 @@ describe('Auth Pages — Obsidian Ledger Layout', () => {
     expect(emailInput).toBeDefined();
     expect(submitBtn).toBeDefined();
   });
+
+  it('renders identity rail with Arabic text and dir="rtl" when locale is ar', () => {
+    renderWithProviders(<LoginPage />, { locale: 'ar' });
+
+    const rail = screen.getByTestId('auth-identity-rail');
+    expect(rail.getAttribute('dir')).toBe('rtl');
+    expect(screen.getByText('دقة واحترافية متقدمة لفرق العمل الطموحة.')).toBeDefined();
+    expect(screen.getByText('خصوصية وأمان مقيّد')).toBeDefined();
+  });
+
+  it('RegisterPage renders identity rail with Arabic text and dir="rtl" when locale is ar', () => {
+    renderWithProviders(<RegisterPage />, { locale: 'ar' });
+
+    const rail = screen.getByTestId('auth-identity-rail');
+    expect(rail.getAttribute('dir')).toBe('rtl');
+    expect(screen.getByText('تنظيم مهام احترافي وموثوق لفرق العمل المتميزة.')).toBeDefined();
+    expect(screen.getByText('تهيئة بيئة العمل')).toBeDefined();
+  });
 });

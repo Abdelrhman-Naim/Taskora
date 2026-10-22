@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, connectAuthEmulator, signOut } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator, doc, getDoc } from 'firebase/firestore';
-import { registerUser, loginUser, logoutUser, ensureUserProfile } from '@/services/auth';
+import { registerUser, loginUser, logoutUser, ensureUserProfile, resetPassword } from '@/services/auth';
 import { clearEmulators } from '../helpers/emulatorApp';
 
 describe('Auth Service', () => {
@@ -125,5 +125,21 @@ describe('Auth Service', () => {
     expect(auth.currentUser).not.toBeNull();
     await logoutUser(auth);
     expect(auth.currentUser).toBeNull();
+  });
+
+  it('sends password reset email successfully', async () => {
+    await registerUser(auth, db, {
+      name: 'Reset Test',
+      email: 'resettest@example.test',
+      password: 'Password123!',
+    });
+
+    await expect(resetPassword(auth, 'resettest@example.test')).resolves.not.toThrow();
+  });
+
+  it('rejects resetPassword with validation AppError when email is empty', async () => {
+    await expect(resetPassword(auth, '   ')).rejects.toMatchObject({
+      code: 'validation',
+    });
   });
 });

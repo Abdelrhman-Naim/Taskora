@@ -9,14 +9,16 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { registerSchema, emailSchema, fieldErrors } from '@/lib/validation';
 import { AppError } from '@/lib/errors';
+import { ForgotPasswordModal } from './ForgotPasswordModal';
 import styles from './AuthForm.module.css';
 
 interface AuthFormProps {
   mode: 'login' | 'register';
   onSubmit: (data: { name?: string; email: string; password: string }) => Promise<void>;
+  onForgotPassword?: () => void;
 }
 
-export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement {
+export function AuthForm({ mode, onSubmit, onForgotPassword }: AuthFormProps): React.ReactElement {
   const { t } = useI18n();
   const getErrorMessage = useErrorMessage();
   const [name, setName] = useState('');
@@ -25,6 +27,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [forgotModalOpen, setForgotModalOpen] = useState(false);
 
   const translateError = (errKeyOrMsg: string | undefined): string | undefined => {
     if (!errKeyOrMsg) return undefined;
@@ -77,12 +80,13 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className={styles.form}>
-      {generalError && (
-        <div role="alert" className={styles.alert}>
-          {generalError}
-        </div>
-      )}
+    <>
+      <form onSubmit={handleSubmit} noValidate className={styles.form}>
+        {generalError && (
+          <div role="alert" className={styles.alert}>
+            {generalError}
+          </div>
+        )}
 
       {mode === 'register' && (
         <Field
@@ -154,6 +158,25 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
         )}
       </Field>
 
+      {mode === 'login' && (
+        <div className="flex justify-end -mt-2">
+          <button
+            type="button"
+            onClick={() => {
+              if (onForgotPassword) {
+                onForgotPassword();
+              } else {
+                setForgotModalOpen(true);
+              }
+            }}
+            className="text-xs text-accent hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
+            data-testid="forgot-password-link"
+          >
+            {t('auth.login.forgotPassword')}
+          </button>
+        </div>
+      )}
+
       <Button
         type="submit"
         variant="primary"
@@ -170,5 +193,14 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps): React.ReactElement 
           : t('auth.login.button')}
       </Button>
     </form>
+
+    {mode === 'login' && (
+      <ForgotPasswordModal
+        isOpen={forgotModalOpen}
+        onClose={() => setForgotModalOpen(false)}
+        defaultEmail={email}
+      />
+    )}
+  </>
   );
 }

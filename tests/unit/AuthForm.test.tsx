@@ -4,6 +4,16 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '../helpers/render';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { AppError } from '@/lib/errors';
+import * as authService from '@/services/auth';
+
+vi.mock('@/services/auth', () => ({
+  resetPassword: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('@/lib/firebase', () => ({
+  getAuthInstance: vi.fn(() => ({})),
+  getDb: vi.fn(() => ({})),
+}));
 
 describe('AuthForm Component', () => {
   it('renders all required form fields with associated labels and data-testids', () => {
@@ -102,6 +112,39 @@ describe('AuthForm Component', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/account with this email already exists/i)).toBeDefined();
+    });
+  });
+
+  it('renders forgot password trigger in login mode and opens modal', async () => {
+    renderWithProviders(<AuthForm mode="login" onSubmit={vi.fn()} />);
+
+    const forgotTrigger = screen.getByTestId('forgot-password-link');
+    expect(forgotTrigger).toBeDefined();
+
+    fireEvent.click(forgotTrigger);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-email-input')).toBeDefined();
+      expect(screen.getByTestId('reset-submit-btn')).toBeDefined();
+    });
+  });
+
+  it('submitting forgot password modal sends reset email', async () => {
+    renderWithProviders(<AuthForm mode="login" onSubmit={vi.fn()} />);
+
+    fireEvent.click(screen.getByTestId('forgot-password-link'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-email-input')).toBeDefined();
+    });
+
+    const resetEmailInput = screen.getByTestId('reset-email-input');
+    fireEvent.change(resetEmailInput, { target: { value: 'user@example.com' } });
+    fireEvent.click(screen.getByTestId('reset-submit-btn'));
+
+    await waitFor(() => {
+      expect(authService.resetPassword).toHaveBeenCalledWith(expect.anything(), 'user@example.com');
+      expect(screen.getByTestId('reset-success-message')).toBeDefined();
     });
   });
 });

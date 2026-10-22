@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import {
   Firestore,
@@ -136,6 +137,19 @@ export async function loginUser(
 export async function logoutUser(auth: Auth): Promise<void> {
   try {
     await signOut(auth);
+  } catch (err) {
+    throw toAppError(err);
+  }
+}
+
+export async function resetPassword(auth: Auth, email: string): Promise<void> {
+  const trimmedEmail = email.trim();
+  if (!trimmedEmail) {
+    throw new AppError('validation', 'Email is required', { email: 'Email is required' });
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, trimmedEmail);
   } catch (err) {
     throw toAppError(err);
   }

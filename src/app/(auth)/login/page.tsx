@@ -14,7 +14,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 
 export default function LoginPage() {
   const { user, loading } = useAuth();
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
   const router = useRouter();
 
   useEffect(() => {
@@ -41,32 +41,32 @@ export default function LoginPage() {
   return (
     <div className="min-h-[100dvh] w-full grid grid-cols-1 md:grid-cols-[minmax(360px,480px)_1fr] bg-bg text-text box-border" data-testid="page-ready">
       {/* Left Pane: Identity Rail */}
-      <aside className="hidden md:flex bg-sidebar-bg border-e border-sidebar-border p-8 flex-col justify-between gap-6 relative overflow-hidden min-h-[100dvh] box-border" data-testid="auth-identity-rail" dir="ltr">
+      <aside className="hidden md:flex bg-sidebar-bg border-e border-sidebar-border p-8 flex-col justify-between gap-6 relative overflow-hidden min-h-[100dvh] box-border" data-testid="auth-identity-rail" dir={dir}>
         <header className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-md bg-surface border border-accent text-accent flex items-center justify-center font-[family-name:var(--font-display)] text-lg font-bold shrink-0">T</div>
           <div className="flex flex-col">
             <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight text-sidebar-text m-0 leading-tight">Taskora</h1>
-            <span className="font-[family-name:var(--font-body)] text-[0.7rem] tracking-wider uppercase text-sidebar-text-3 m-0">Private Operations</span>
+            <span className="font-[family-name:var(--font-body)] text-[0.7rem] tracking-wider uppercase text-sidebar-text-3 m-0">{t('auth.rail.tagline')}</span>
           </div>
         </header>
 
         <div className="flex flex-col gap-4 max-w-[380px]">
           <div className="inline-flex items-center gap-2 py-1 px-2.5 rounded-full bg-surface-sunken border border-line text-[0.6875rem] font-semibold tracking-widest text-text-3 uppercase w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            <span>RESTRICTED DISCRETION</span>
+            <span>{t('auth.login.rail.badge')}</span>
           </div>
           <h2 className="font-[family-name:var(--font-display)] text-2xl font-semibold text-sidebar-text m-0 leading-snug">
-            Private precision for ambitious teams.
+            {t('auth.login.rail.title')}
           </h2>
           <div className="w-full h-px bg-accent opacity-40 my-2" />
           <p className="text-sidebar-text-2 text-sm leading-relaxed m-0">
-            Engineered for sovereign family offices, private capital consortia, and institutional directors requiring cryptographically validated workflows.
+            {t('auth.login.rail.description')}
           </p>
         </div>
 
         <footer className="flex items-center justify-between text-xs text-sidebar-text-3 font-mono pt-4 border-t border-sidebar-border/40">
-          <span>Vault Node 01 // SHA-256</span>
-          <span>v2.5</span>
+          <span>{t('auth.login.rail.footerNode')}</span>
+          <span>{t('auth.login.rail.footerStatus')}</span>
         </footer>
       </aside>
 
@@ -83,7 +83,7 @@ export default function LoginPage() {
               <div className="w-9 h-9 rounded-md bg-surface border border-accent text-accent flex items-center justify-center font-[family-name:var(--font-display)] text-lg font-bold shrink-0">T</div>
               <div className="flex flex-col">
                 <span className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight text-sidebar-text m-0 leading-tight">Taskora</span>
-                <span className="font-[family-name:var(--font-body)] text-[0.7rem] tracking-wider uppercase text-sidebar-text-3 m-0">Private Operations</span>
+                <span className="font-[family-name:var(--font-body)] text-[0.7rem] tracking-wider uppercase text-sidebar-text-3 m-0">{t('auth.rail.tagline')}</span>
               </div>
             </div>
             <div className="mb-6 text-start">

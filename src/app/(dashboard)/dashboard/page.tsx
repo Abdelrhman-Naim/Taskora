@@ -111,6 +111,7 @@ function DashboardHeader({
         <Link
           href="/projects/new"
           className="inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-accent text-on-accent rounded-md text-sm font-semibold no-underline hover:opacity-90 transition-opacity"
+          style={{ color: 'var(--on-accent)' }}
           aria-label={`+ ${createButtonLabel}`}
         >
           <Icon name="plus" size={16} />

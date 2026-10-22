@@ -6,8 +6,14 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-hover: var(--surface-hover);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-border: var(--border);
+  --color-control-border: var(--control-border);
   --color-text: var(--text);
   --color-text-2: var(--text-2);
   --color-text-3: var(--text-3);
@@ -15,7 +21,31 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-on-accent: var(--on-accent);
   --color-brass: var(--brass);
+  --color-brass-text: var(--brass-text);
+  --color-focus: var(--focus);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-2: var(--sidebar-text-2);
+  --color-sidebar-text-3: var(--sidebar-text-3);
+  --color-sidebar-active-bg: var(--sidebar-active-bg);
+  --color-sidebar-active-text: var(--sidebar-active-text);
+  --color-topbar-bg: var(--topbar-bg);
+  --color-topbar-border: var(--topbar-border);
+  --color-st-todo-fg: var(--st-todo-fg);
+  --color-st-todo-bg: var(--st-todo-bg);
+  --color-st-progress-fg: var(--st-progress-fg);
+  --color-st-progress-bg: var(--st-progress-bg);
+  --color-st-done-fg: var(--st-done-fg);
+  --color-st-done-bg: var(--st-done-bg);
+  --color-st-overdue-fg: var(--st-overdue-fg);
+  --color-st-overdue-bg: var(--st-overdue-bg);
+  --color-pr-low-fg: var(--pr-low-fg);
+  --color-pr-medium-fg: var(--pr-medium-fg);
+  --color-pr-high-fg: var(--pr-high-fg);
 }
 
 * {
