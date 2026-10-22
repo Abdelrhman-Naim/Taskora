@@ -34,7 +34,6 @@ import { FilterBar } from '@/components/tasks/FilterBar';
 import { useViewPreference } from '@/hooks/useViewPreference';
 import { useHotkeys } from '@/hooks/useHotkeys';
 import { ShortcutsDialog } from '@/components/shell/ShortcutsDialog';
-import { tasksToCsv, csvFilename } from '@/lib/csv';
 import { tasksToExcelBlob, excelFilename } from '@/lib/excel';
 import { TaskFilters, DEFAULT_FILTERS, filterTasks } from '@/lib/taskFilters';
 import { todayString } from '@/lib/dates';
@@ -327,19 +326,6 @@ export default function ProjectPage(): React.ReactElement | null {
     }
   };
 
-  const handleExportCsv = () => {
-    if (!project) return;
-    const csvContent = tasksToCsv(filteredTasks, project, t);
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', csvFilename(project.name, todayString()));
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
 
   if (loading) {
     return (
@@ -421,7 +407,7 @@ export default function ProjectPage(): React.ReactElement | null {
               {t('activity.button')}
             </Button>
 
-            {tasks.length > 0 && (
+            {isOwner && tasks.length > 0 && (
               <Button
                 variant="secondary"
                 data-testid="project-export-excel-btn"
@@ -429,16 +415,6 @@ export default function ProjectPage(): React.ReactElement | null {
                 loading={isExportingExcel}
               >
                 {t('excel.export', { count: filteredTasks.length })}
-              </Button>
-            )}
-
-            {tasks.length > 0 && (
-              <Button
-                variant="secondary"
-                data-testid="project-export-csv-btn"
-                onClick={handleExportCsv}
-              >
-                {t('csv.export', { count: filteredTasks.length })}
               </Button>
             )}
 
