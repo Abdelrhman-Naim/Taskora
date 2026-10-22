@@ -72,21 +72,29 @@
 }
 
 .closeBtn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 6px;
-  border-radius: var(--radius-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  background-color: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  cursor: pointer;
   transition: all var(--dur-1) var(--ease);
 }
 
 .closeBtn:hover {
   background-color: var(--surface-hover);
   color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.closeBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .content {
