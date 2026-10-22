@@ -88,3 +88,11 @@
   text-align: end;
   font-variant-numeric: tabular-nums;
 }
+
+@media (max-width: 480px) {
+  .labelCol {
+    inline-size: 90px;
+    min-inline-size: 70px;
+    font-size: 0.75rem;
+  }
+}

@@ -37,3 +37,15 @@
   outline: 2px solid var(--focus);
   outline-offset: 1px;
 }
+
+@media (max-width: 640px) {
+  .toggle {
+    padding: 1px;
+    gap: 1px;
+  }
+
+  .option {
+    inline-size: 28px;
+    block-size: 28px;
+  }
+}

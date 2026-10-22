@@ -10,6 +10,8 @@ html, body {
   overflow-x: hidden;
   overflow-wrap: anywhere;
   word-break: break-word;
+  min-height: 100dvh;
+  -webkit-text-size-adjust: 100%;
 }
 
 img, table {

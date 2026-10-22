@@ -37,9 +37,19 @@
   white-space: nowrap;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .userName {
-    display: none;
+    display: none !important;
+  }
+
+  .chevron {
+    display: none !important;
+  }
+
+  .trigger {
+    padding-block: 3px !important;
+    padding-inline: 3px !important;
+    gap: 0 !important;
   }
 }
 

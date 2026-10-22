@@ -80,6 +80,13 @@ export default function LoginPage() {
 
         <div className={styles.formContentWrapper}>
           <div className={styles.cardWrapper} data-testid="auth-card">
+            <div className={styles.mobileBrandHeader}>
+              <div className={styles.logoMonogram}>T</div>
+              <div className={styles.brandMeta}>
+                <span className={styles.brandTitle}>Taskora</span>
+                <span className={styles.brandSubtitle}>Private Operations</span>
+              </div>
+            </div>
             <div className={styles.headerBlock}>
               <h2 className={styles.title}>{t('auth.login.title')}</h2>
               <p className={styles.subtitle}>{t('auth.login.subtitle')}</p>

@@ -3,6 +3,9 @@
   flex-direction: column;
   inline-size: 100%;
   gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-block-end: 4px;
 }
 
 .empty {
@@ -99,4 +102,13 @@
 .highlightLabel {
   color: var(--text);
   font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .chartArea {
+    min-inline-size: 460px;
+  }
+  .axisLabels {
+    min-inline-size: 460px;
+  }
 }

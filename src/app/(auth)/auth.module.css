@@ -251,3 +251,46 @@
   color: var(--text-3);
   font-family: monospace;
 }
+
+
+.mobileBrandHeader {
+  display: none;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-block-end: var(--sp-4);
+}
+
+@media (max-width: 859px) {
+  .identityRail {
+    display: none !important;
+  }
+
+  .formPlane {
+    padding: var(--sp-4) var(--sp-3);
+    min-block-size: 100dvh;
+  }
+
+  .formContentWrapper {
+    padding-block: var(--sp-4);
+  }
+
+  .cardWrapper {
+    max-inline-size: 440px;
+    padding: var(--sp-5) var(--sp-4);
+  }
+
+  .mobileBrandHeader {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardWrapper {
+    padding: var(--sp-4) var(--sp-3);
+    border-radius: var(--radius-md);
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}

@@ -72,3 +72,11 @@
 .content {
   inline-size: 100%;
 }
+
+@media (max-width: 640px) {
+  .panel {
+    padding-block: 16px;
+    padding-inline: 14px;
+    gap: 12px;
+  }
+}

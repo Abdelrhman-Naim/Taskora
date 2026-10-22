@@ -322,3 +322,78 @@
   font-size: 0.875rem;
   margin-block-end: 20px;
 }
+
+
+@media (max-width: 640px) {
+  .topRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .titleContainer {
+    min-inline-size: 0;
+  }
+
+  .projectTitle {
+    font-size: 1.5rem;
+  }
+
+  .actions {
+    inline-size: 100%;
+    justify-content: stretch;
+  }
+
+  .actions > * {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-block-size: 40px;
+  }
+
+  .summaryRow {
+    flex-direction: column;
+    align-items: stretch;
+    padding-inline: 12px;
+    padding-block: 12px;
+    gap: 12px;
+  }
+
+  .progressSummary {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  .tasksHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .tasksHeaderLeft {
+    justify-content: space-between;
+  }
+
+  .scopeSwitcher {
+    inline-size: 100%;
+    display: flex;
+  }
+
+  .scopeBtn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .viewControlsRow {
+    justify-content: stretch;
+  }
+
+  .viewSwitcher {
+    inline-size: 100%;
+    display: flex;
+  }
+
+  .viewBtn {
+    flex: 1;
+    justify-content: center;
+  }
+}

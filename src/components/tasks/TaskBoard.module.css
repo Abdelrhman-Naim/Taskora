@@ -5,6 +5,8 @@
   overflow-x: auto;
   padding-block: 8px;
   padding-inline: 4px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 1024px) {
@@ -12,6 +14,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     overflow-x: visible;
+    scroll-snap-type: none;
   }
 }
 
@@ -25,12 +28,21 @@
   flex: 1 0 280px;
   overflow: hidden;
   transition: border-color var(--dur-1) var(--ease);
+  scroll-snap-align: start;
 }
 
 @media (min-width: 1024px) {
   .column {
     min-inline-size: 0;
     flex: 1 1 0;
+  }
+}
+
+
+@media (max-width: 640px) {
+  .column {
+    min-inline-size: 260px;
+    flex: 0 0 85vw;
   }
 }
 

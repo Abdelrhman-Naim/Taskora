@@ -20,18 +20,17 @@ const fontClasses = `${cairo.variable}`;
 
 import { PwaRegister } from '@/components/pwa/PwaRegister';
 
-export async function generateViewport(): Promise<Viewport> {
-  return {
-    width: 'device-width',
-    initialScale: 1,
-    viewportFit: 'cover',
-    colorScheme: 'light dark',
-    themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#F4F4F2' },
-      { media: '(prefers-color-scheme: dark)', color: '#0C0B0A' },
-    ],
-  };
-}
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F4F4F2' },
+    { media: '(prefers-color-scheme: dark)', color: '#0C0B0A' },
+  ],
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();

@@ -67,3 +67,34 @@
 .overdueItem .breakdownNum {
   color: var(--st-overdue-fg);
 }
+
+@media (max-width: 640px) {
+  .heroMetric {
+    padding: 16px 14px;
+    margin-block-end: 16px;
+  }
+
+  .mainRow {
+    gap: 8px;
+  }
+
+  .numeral {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+
+  .label {
+    font-size: 1rem;
+  }
+
+  .rule {
+    margin-block: 12px;
+  }
+
+  .breakdown {
+    gap: 12px;
+  }
+
+  .breakdownItem {
+    font-size: 0.8125rem;
+  }
+}

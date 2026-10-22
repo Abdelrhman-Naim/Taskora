@@ -19,7 +19,7 @@
 .drawer {
   background-color: var(--surface);
   inline-size: 280px;
-  max-inline-size: 85vw;
+  max-inline-size: calc(100vw - 48px);
   block-size: 100vh;
   box-shadow: var(--shadow-pop);
   display: flex;
@@ -83,4 +83,15 @@
 .content {
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.content :global([data-testid="app-sidebar"]) {
+  inline-size: 100% !important;
+  block-size: auto !important;
+  min-block-size: 100% !important;
+  position: static !important;
+  border-inline-end: none !important;
+  background-color: transparent !important;
 }

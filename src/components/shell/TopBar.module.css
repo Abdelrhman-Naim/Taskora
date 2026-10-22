@@ -11,24 +11,30 @@
   inset-block-start: 0;
   z-index: 50;
   inline-size: 100%;
+  box-sizing: border-box;
 }
 
 .leftSection {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-inline-size: 0;
+  flex-shrink: 1;
 }
 
 .mobileMenuBtn {
   display: none;
   align-items: center;
   justify-content: center;
+  inline-size: 36px;
+  block-size: 36px;
   padding: 6px;
   background: transparent;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
   cursor: pointer;
+  flex-shrink: 0;
   transition: all var(--dur-1) var(--ease);
 }
 
@@ -51,10 +57,46 @@
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-inline-size: 0;
 }
 
 .rightSection {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .topBar {
+    min-block-size: 56px;
+    padding-block: 8px;
+    padding-inline: 14px;
+  }
+
+  .leftSection {
+    gap: 8px;
+  }
+
+  .rightSection {
+    gap: 6px;
+  }
+
+  .pageTitle {
+    max-inline-size: 140px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .topBar {
+    padding-inline: 8px;
+  }
+
+  .pageTitle {
+    display: none;
+  }
 }
