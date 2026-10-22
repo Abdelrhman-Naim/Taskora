@@ -127,4 +127,19 @@ describe('ActivityPanel (Task 63)', () => {
       expect(screen.getByTestId('activity-item-act-1')).toBeInTheDocument();
     });
   });
+
+  it('renders numerical activity timestamp with clock icon instead of relative words', async () => {
+    vi.mocked(listActivity).mockResolvedValue([mockEntries[0]]);
+
+    renderWithI18n(<ActivityPanel projectId="proj-1" />, 'ar');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('activity-item-act-1')).toBeInTheDocument();
+    });
+
+    // Check that numerical timestamp exists (e.g. 2026-10-20 ...)
+    expect(screen.getByText(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}/)).toBeInTheDocument();
+    // Ensure relative overdue words are NOT rendered
+    expect(screen.queryByText(/متأخرة/)).not.toBeInTheDocument();
+  });
 });

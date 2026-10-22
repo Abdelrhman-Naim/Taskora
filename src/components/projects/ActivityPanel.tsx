@@ -7,8 +7,7 @@ import { getDb } from '@/lib/firebase';
 import { Dialog } from '@/components/ui/Dialog';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
-import { toDateString, todayString } from '@/lib/dates';
-import { formatRelativeDay } from '@/i18n/format';
+import { formatDateTime } from '@/lib/dates';
 import { MessageKey } from '@/i18n/en';
 import styles from './ActivityPanel.module.css';
 
@@ -192,15 +191,7 @@ export function ActivityPanel({
       ) : (
         <ul className={styles.list} data-testid="activity-list">
           {entries.map((entry) => {
-            const dateStr = entry.createdAt ? toDateString(entry.createdAt) : null;
-            const relTime = dateStr
-              ? formatRelativeDay(
-                  dateStr,
-                  todayString(),
-                  (k) => t(k as MessageKey),
-                  (k, count) => tp(k, count)
-                )
-              : '';
+            const timeStr = formatDateTime(entry.createdAt);
 
             return (
               <li
@@ -213,7 +204,26 @@ export function ActivityPanel({
                   <p className={styles.message} dir="auto">
                     {renderActivityContent(entry, t)}
                   </p>
-                  {relTime && <span className={styles.time}>{relTime}</span>}
+                  {timeStr && (
+                    <span className={styles.time} dir="ltr">
+                      <svg
+                        className={styles.timeIcon}
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                      <span className="num">{timeStr}</span>
+                    </span>
+                  )}
                 </div>
               </li>
             );

@@ -78,7 +78,27 @@ export function toDate(v: unknown): Date | null {
   if (v instanceof Date) {
     return isNaN(v.getTime()) ? null : v;
   }
+  if (typeof v === 'string' || typeof v === 'number') {
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? null : d;
+  }
   return null;
+}
+
+/**
+ * Formats a Date, Firestore Timestamp, or string into numerical representation:
+ * 'YYYY-MM-DD HH:mm'. Returns empty string if invalid or null.
+ */
+export function formatDateTime(v: unknown): string {
+  const d = toDate(v);
+  if (!d) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const y = d.getFullYear();
+  const m = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+  return `${y}-${m}-${day} ${hours}:${minutes}`;
 }
 
 /**
