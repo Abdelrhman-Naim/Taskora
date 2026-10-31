@@ -47,6 +47,7 @@ import { TaskBoard } from '@/components/tasks/TaskBoard';
 import { TaskCalendar } from '@/components/tasks/TaskCalendar';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { MagicQuickAddBar } from '@/components/ai/MagicQuickAddBar';
+import { RiskRadarModal } from '@/components/ai/RiskRadarModal';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { ActivityPanel } from '@/components/projects/ActivityPanel';
 import { FilterBar } from '@/components/tasks/FilterBar';
@@ -212,6 +213,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const [activeDetailTask, setActiveDetailTask] = useState<Task | null>(null);
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const [showActivity, setShowActivity] = useState(false);
+  const [showRiskRadar, setShowRiskRadar] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
@@ -581,6 +583,16 @@ export default function ProjectPage(): React.ReactElement | null {
             >
               {t('activity.button')}
             </Button>
+
+            {isOwner && (
+              <Button
+                variant="secondary"
+                data-testid="project-risk-radar-btn"
+                onClick={() => setShowRiskRadar(true)}
+              >
+                📊 {locale === 'ar' ? 'رادار المخاطر الذكي' : 'AI Risk Radar'}
+              </Button>
+            )}
 
             {isOwner && tasks.length > 0 && (
               <Button
