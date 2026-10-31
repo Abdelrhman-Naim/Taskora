@@ -3,7 +3,7 @@
 // ============================================================================
 // ZONE 1: IMPORTS
 // ============================================================================
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -15,6 +15,7 @@ import { NeedsAttention } from '@/components/dashboard/NeedsAttention';
 import { MyTasks } from '@/components/dashboard/MyTasks';
 import { ProjectsTable } from '@/components/dashboard/ProjectsTable';
 import { TeamMembersCard } from '@/components/dashboard/TeamMembersCard';
+import { AIProjectArchitectModal } from '@/components/ai/AIProjectArchitectModal';
 import { RecentlyUpdated } from '@/components/dashboard/RecentlyUpdated';
 import { OnboardingEmpty } from '@/components/dashboard/OnboardingEmpty';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
@@ -53,6 +54,7 @@ interface DashboardHeaderProps {
   createButtonLabel: string;
   morningGreetingPrefix: string;
   eveningGreetingPrefix: string;
+  onOpenAIArchitect?: () => void;
 }
 
 // ============================================================================
@@ -93,6 +95,7 @@ function DashboardHeader({
   createButtonLabel,
   morningGreetingPrefix,
   eveningGreetingPrefix,
+  onOpenAIArchitect,
 }: DashboardHeaderProps): React.ReactElement {
   const greetingPrefix = isMorning ? morningGreetingPrefix : eveningGreetingPrefix;
 
@@ -109,15 +112,27 @@ function DashboardHeader({
           )}
         </div>
 
-        <Link
-          href="/projects/new"
-          className="inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-accent text-on-accent rounded-md text-sm font-semibold no-underline hover:opacity-90 transition-opacity"
-          style={{ color: 'var(--on-accent)' }}
-          aria-label={`+ ${createButtonLabel}`}
-        >
-          <Icon name="plus" size={16} />
-          <span>{createButtonLabel}</span>
-        </Link>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            type="button"
+            onClick={onOpenAIArchitect}
+            data-testid="open-ai-architect-btn"
+            className="inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-accent/15 text-accent border border-accent/30 rounded-md text-sm font-semibold hover:bg-accent/25 transition-colors cursor-pointer"
+          >
+            <span>✨</span>
+            <span>مشروع ذكي بالـ AI</span>
+          </button>
+
+          <Link
+            href="/projects/new"
+            className="inline-flex items-center justify-center gap-2 py-2.5 px-5 bg-accent text-on-accent rounded-md text-sm font-semibold no-underline hover:opacity-90 transition-opacity"
+            style={{ color: 'var(--on-accent)' }}
+            aria-label={`+ ${createButtonLabel}`}
+          >
+            <Icon name="plus" size={16} />
+            <span>{createButtonLabel}</span>
+          </Link>
+        </div>
       </div>
 
       <div className="w-full h-px bg-line my-4" aria-hidden="true" />
@@ -133,6 +148,23 @@ export default function DashboardPage(): React.ReactElement {
   const { t, locale } = useI18n();
   const getErrorMessage = useErrorMessage();
   const { projects, tasks, loading, error, reload } = useDashboardData();
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+
+  const allMembers = useMemo(() => {
+    const list: Array<{ uid: string; displayName: string; jobTitle: string }> = [];
+    const seen = new Set<string>();
+    for (const p of projects) {
+      if (p.memberProfiles) {
+        for (const prof of p.memberProfiles) {
+          if (!seen.has(prof.uid)) {
+            seen.add(prof.uid);
+            list.push({ uid: prof.uid, displayName: prof.displayName, jobTitle: prof.jobTitle });
+          }
+        }
+      }
+    }
+    return list;
+  }, [projects]);
 
   const today = useMemo(() => todayString(), []);
   const isMorning = useMemo(() => checkIsMorningRiyadh(), []);
@@ -259,6 +291,7 @@ export default function DashboardPage(): React.ReactElement {
       createButtonLabel={createButtonLabel}
       morningGreetingPrefix={morningGreetingPrefix}
       eveningGreetingPrefix={eveningGreetingPrefix}
+      onOpenAIArchitect={() => setIsAIModalOpen(true)}
     />
   );
 
@@ -338,6 +371,16 @@ export default function DashboardPage(): React.ReactElement {
           <RecentlyUpdated tasks={recentTasks} projectName={projectNameMap} />
         </div>
       </div>
+
+      <AIProjectArchitectModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        members={allMembers}
+        onProjectCreated={(id) => {
+          reload();
+          window.location.href = `/projects/${id}`;
+        }}
+      />
     </div>
   );
 }
