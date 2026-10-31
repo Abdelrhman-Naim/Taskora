@@ -46,6 +46,7 @@ import { TaskList } from '@/components/tasks/TaskList';
 import { TaskBoard } from '@/components/tasks/TaskBoard';
 import { TaskCalendar } from '@/components/tasks/TaskCalendar';
 import { TaskForm } from '@/components/tasks/TaskForm';
+import { MagicQuickAddBar } from '@/components/ai/MagicQuickAddBar';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { ActivityPanel } from '@/components/projects/ActivityPanel';
 import { FilterBar } from '@/components/tasks/FilterBar';
@@ -218,6 +219,22 @@ export default function ProjectPage(): React.ReactElement | null {
   // Derived Values
   const currentUid = user?.uid || '';
   const isOwner = Boolean(project && user && project.ownerId === user.uid);
+
+  const projectMembersContext = useMemo(() => {
+    if (!project) return [];
+    if (project.memberProfiles && project.memberProfiles.length > 0) {
+      return project.memberProfiles.map((p) => ({
+        uid: p.uid,
+        displayName: p.displayName,
+        jobTitle: p.jobTitle,
+      }));
+    }
+    return project.memberIds.map((uid) => ({
+      uid,
+      displayName: project.memberNames[uid] || 'Member',
+      jobTitle: uid === project.ownerId ? 'Project Manager' : 'Team Member',
+    }));
+  }, [project]);
   const viewScope: ViewScope = userSelectedScope !== null ? userSelectedScope : (isOwner ? 'all' : 'my_tasks');
   const actor = useMemo(() => computeActor(user, project), [user, project]);
 
@@ -683,6 +700,15 @@ export default function ProjectPage(): React.ReactElement | null {
           />
         )}
       </Dialog>
+
+      {/* AI Magic Quick-Add Command Bar */}
+      <div className="mb-5">
+        <MagicQuickAddBar
+          projectId={project.id}
+          members={projectMembersContext}
+          onTaskCreated={() => loadProjectAndTasks(false)}
+        />
+      </div>
 
       {/* Tasks Section & Controls */}
       <div>
