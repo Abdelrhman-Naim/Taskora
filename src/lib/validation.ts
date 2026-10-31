@@ -138,3 +138,12 @@ export function fieldErrors(err: z.ZodError): Record<string, string> {
   }
   return result;
 }
+
+export const projectMemberProfileSchema = z.object({
+  uid: z.string().trim().min(1, 'validation.member.uidRequired'),
+  email: emailSchema,
+  displayName: z.string().trim().min(1, 'validation.member.nameRequired'),
+  jobTitle: z.string().trim().min(1, 'validation.member.jobTitleRequired').max(80),
+  role: z.enum(['owner', 'member']),
+  addedAt: z.string().optional().default(() => new Date().toISOString()),
+});

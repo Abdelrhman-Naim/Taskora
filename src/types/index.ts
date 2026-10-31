@@ -14,6 +14,15 @@ export interface ChecklistItem {
   done: boolean;
 }
 
+export interface ProjectMemberProfile {
+  uid: string;
+  email: string;
+  displayName: string;
+  jobTitle: string;
+  role: 'owner' | 'member';
+  addedAt: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -21,6 +30,7 @@ export interface Project {
   ownerId: string;
   memberIds: string[];
   memberNames: Record<string, string>;
+  memberProfiles?: ProjectMemberProfile[];
   createdAt: Date | null;
   updatedAt: Date | null;
 }
