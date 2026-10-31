@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { mapProject, addProjectMemberProfile, updateProjectMemberRole } from '@/services/projects';
+import { describe, it, expect } from 'vitest';
+import { mapProject, addProjectMemberProfile } from '@/services/projects';
 import { ProjectMemberProfile } from '@/types';
 import { AppError } from '@/lib/errors';
 import { DocumentSnapshot, Firestore } from 'firebase/firestore';

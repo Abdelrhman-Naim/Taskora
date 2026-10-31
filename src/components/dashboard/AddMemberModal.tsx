@@ -139,9 +139,8 @@ export function AddMemberModal({
       await addProjectMemberProfile(db, form.projectId, profile);
       onMemberAdded?.();
       onClose();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to add member';
-      setErrorMessage(msg);
+    } catch {
+      setErrorMessage(locale === 'ar' ? 'حدث خطأ أثناء إضافة العضو' : 'Failed to add member');
     } finally {
       setIsSubmitting(false);
     }
@@ -159,7 +158,7 @@ export function AddMemberModal({
             type="button"
             onClick={onClose}
             className="text-text-2 hover:text-text transition-colors"
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             <Icon name="x" size={18} />
           </button>
@@ -214,7 +213,7 @@ export function AddMemberModal({
               required
               value={form.email}
               onChange={(e) => updateField('email', e.target.value)}
-              placeholder="colleague@example.com"
+              placeholder={t('member.emailPlaceholder')}
               className={MODAL_STYLES.input}
             />
           </div>

@@ -4,7 +4,7 @@
 // ZONE 1: IMPORTS
 // ============================================================================
 import React, { useState, useMemo } from 'react';
-import { Project, ProjectMemberProfile } from '@/types';
+import { Project } from '@/types';
 import { useI18n } from '@/i18n/I18nProvider';
 import { Icon } from '@/components/ui/Icon';
 import { AddMemberModal } from './AddMemberModal';
@@ -119,10 +119,9 @@ function MemberItemRow({ member }: { member: FlattenedMember }) {
 // ============================================================================
 export function TeamMembersCard({
   projects,
-  currentUserId,
   onMemberAdded,
 }: TeamMembersCardProps): React.ReactElement {
-  const { t, locale } = useI18n();
+  const { locale } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Derived state of team members

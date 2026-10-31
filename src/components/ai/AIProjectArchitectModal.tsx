@@ -3,7 +3,7 @@
 // ============================================================================
 // ZONE 1: IMPORTS
 // ============================================================================
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
@@ -165,15 +165,10 @@ export function AIProjectArchitectModal({
   const [tasks, setTasks] = useState<SelectableGeneratedTask[]>([]);
 
   // Speech Recognition hook
-  const { isListening, transcript, isSupported, startListening, stopListening, resetTranscript } =
-    useSpeechRecognition();
-
-  // Sync voice transcript to prompt
-  useEffect(() => {
-    if (transcript) {
-      setPrompt(transcript);
-    }
-  }, [transcript]);
+  const { isListening, isSupported, startListening, stopListening, resetTranscript } =
+    useSpeechRecognition({
+      onTranscript: (spoken) => setPrompt(spoken),
+    });
 
   if (!isOpen) return null;
 
@@ -222,9 +217,8 @@ export function AIProjectArchitectModal({
       const data: GeneratedProject = await res.json();
       setGeneratedProject(data);
       setTasks(data.tasks.map((t) => ({ ...t, selected: true })));
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error generating project';
-      setErrorMessage(msg);
+    } catch {
+      setErrorMessage(isAr ? 'حدث خطأ أثناء تفكيك وتوليد خطة المشروع' : 'Error generating project breakdown');
     } finally {
       setIsGenerating(false);
     }
@@ -307,9 +301,8 @@ export function AIProjectArchitectModal({
 
       onProjectCreated(newProjectId);
       onClose();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to save project';
-      setErrorMessage(msg);
+    } catch {
+      setErrorMessage(isAr ? 'حدث خطأ أثناء حفظ المشروع والمهام' : 'Failed to save project and tasks');
     } finally {
       setIsSaving(false);
     }
@@ -340,7 +333,7 @@ export function AIProjectArchitectModal({
             type="button"
             onClick={onClose}
             className="text-text-2 hover:text-text transition-colors p-1"
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             <Icon name="x" size={20} />
           </button>

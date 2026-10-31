@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { MemberContext } from '@/lib/ai/gemini';
 
 const riskRadarRequestSchema = z.object({
   projectName: z.string().default('Project'),

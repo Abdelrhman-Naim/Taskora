@@ -110,6 +110,7 @@ export async function POST(req: NextRequest) {
 
     const promptText = `You are Taskora Natural Language Task Parser.
 Extract a structured task from the user's quick command.
+Target language: ${locale}
 
 USER COMMAND:
 "${prompt}"

@@ -37,6 +37,10 @@ type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
 // ============================================================================
 // ZONE 3: TYPES & INTERFACES
 // ============================================================================
+export interface UseSpeechRecognitionOptions {
+  onTranscript?: (transcript: string) => void;
+}
+
 export interface UseSpeechRecognitionReturn {
   isListening: boolean;
   transcript: string;
@@ -62,18 +66,22 @@ function getSpeechRecognitionClass(): SpeechRecognitionConstructor | null {
 // ============================================================================
 // ZONE 6: MAIN HOOK COMPONENT
 // ============================================================================
-export function useSpeechRecognition(): UseSpeechRecognitionReturn {
+export function useSpeechRecognition(
+  options?: UseSpeechRecognitionOptions
+): UseSpeechRecognitionReturn {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [isSupported, setIsSupported] = useState(false);
+  const [isSupported] = useState<boolean>(() => {
+    return getSpeechRecognitionClass() !== null;
+  });
   const [error, setError] = useState<string | null>(null);
 
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const optionsRef = useRef(options);
 
   useEffect(() => {
-    const RecognitionClass = getSpeechRecognitionClass();
-    setIsSupported(!!RecognitionClass);
-  }, []);
+    optionsRef.current = options;
+  }, [options]);
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current && isListening) {
@@ -120,7 +128,9 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
             }
           }
           if (fullTranscript.trim()) {
-            setTranscript(fullTranscript.trim());
+            const trimmed = fullTranscript.trim();
+            setTranscript(trimmed);
+            optionsRef.current?.onTranscript?.(trimmed);
           }
         };
 

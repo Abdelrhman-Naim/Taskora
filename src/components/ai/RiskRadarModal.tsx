@@ -119,7 +119,7 @@ export function RiskRadarModal({
   tasks,
   members,
 }: RiskRadarModalProps): React.ReactElement | null {
-  const { locale } = useI18n();
+  const { t, locale } = useI18n();
   const isAr = locale === 'ar';
 
   const [isLoading, setIsLoading] = useState(false);
@@ -202,7 +202,7 @@ export function RiskRadarModal({
             type="button"
             onClick={onClose}
             className="text-text-2 hover:text-text transition-colors p-1"
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             <Icon name="x" size={20} />
           </button>

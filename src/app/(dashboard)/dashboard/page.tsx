@@ -5,6 +5,7 @@
 // ============================================================================
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
@@ -144,6 +145,7 @@ function DashboardHeader({
 // ZONE 6: MAIN COMPONENT
 // ============================================================================
 export default function DashboardPage(): React.ReactElement {
+  const router = useRouter();
   const { user } = useAuth();
   const { t, locale } = useI18n();
   const getErrorMessage = useErrorMessage();
@@ -378,7 +380,7 @@ export default function DashboardPage(): React.ReactElement {
         members={allMembers}
         onProjectCreated={(id) => {
           reload();
-          window.location.href = `/projects/${id}`;
+          router.push(`/projects/${id}`);
         }}
       />
     </div>

@@ -3,7 +3,7 @@
 // ============================================================================
 // ZONE 1: IMPORTS
 // ============================================================================
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
@@ -58,14 +58,10 @@ export function MagicQuickAddBar({
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const { isListening, transcript, isSupported, startListening, stopListening, resetTranscript } =
-    useSpeechRecognition();
-
-  useEffect(() => {
-    if (transcript) {
-      setPrompt(transcript);
-    }
-  }, [transcript]);
+  const { isListening, isSupported, startListening, stopListening, resetTranscript } =
+    useSpeechRecognition({
+      onTranscript: (spoken) => setPrompt(spoken),
+    });
 
   function handleToggleMic() {
     if (!isSupported) {

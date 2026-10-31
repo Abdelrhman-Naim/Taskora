@@ -3,7 +3,6 @@ import {
   buildGeminiProjectPrompt,
   parseGeminiProjectResponse,
   fallbackProjectGenerator,
-  GeneratedTask,
 } from '@/lib/ai/gemini';
 
 describe('Gemini Project Generator logic', () => {

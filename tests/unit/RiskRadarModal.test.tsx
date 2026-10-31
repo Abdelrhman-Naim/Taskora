@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { RiskRadarModal } from '@/components/ai/RiskRadarModal';
 import { renderWithProviders } from '../helpers/render';

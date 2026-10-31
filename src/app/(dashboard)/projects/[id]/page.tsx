@@ -8,7 +8,16 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
 // Types & Services
-import { Project, Task, TaskStatus, TaskInput, TaskPatch } from '@/types';
+import {
+  Project,
+  Task,
+  TaskStatus,
+  TaskInput,
+  TaskPatch,
+  TaskPriority,
+  Recurrence,
+  ChecklistItem,
+} from '@/types';
 import { getProject } from '@/services/projects';
 import {
   listTasks,
@@ -25,7 +34,7 @@ import { tasksToExcelBlob, excelFilename } from '@/lib/excel';
 
 // Hooks & i18n
 import { useAuth } from '@/hooks/useAuth';
-import { useI18n } from '@/i18n/I18nProvider';
+import { useI18n, I18nContextValue } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { useViewPreference } from '@/hooks/useViewPreference';
 import { useHotkeys } from '@/hooks/useHotkeys';
@@ -116,7 +125,7 @@ interface TasksViewRendererProps {
   onDeleteTask: (task: Task) => void;
   onStatusChange: (task: Task, newStatus: TaskStatus) => void;
   onNewTask?: () => void;
-  t: (key: any) => string;
+  t: I18nContextValue['t'];
 }
 
 function TasksViewRenderer({
@@ -165,7 +174,7 @@ function TasksViewRenderer({
     return (
       <TaskCalendar
         tasks={filteredTasks}
-        locale={locale as any}
+        locale={locale as 'ar' | 'en'}
         onOpen={onOpenTask}
       />
     );
@@ -286,8 +295,38 @@ export default function ProjectPage(): React.ReactElement | null {
   );
 
   useEffect(() => {
-    loadProjectAndTasks(true);
-  }, [loadProjectAndTasks]);
+    let ignore = false;
+    async function initFetch() {
+      if (!projectId) return;
+      try {
+        const db = getDb();
+        const [proj, taskList] = await Promise.all([
+          getProject(db, projectId),
+          listTasks(db, projectId),
+        ]);
+        if (!ignore) {
+          setProject(proj);
+          setTasks(taskList);
+        }
+      } catch (err: unknown) {
+        if (!ignore) {
+          if (err instanceof AppError) {
+            setError(err);
+          } else {
+            setError(new AppError('unknown', 'Failed to load project details'));
+          }
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+    initFetch();
+    return () => {
+      ignore = true;
+    };
+  }, [projectId]);
 
   const reloadTasks = useCallback(async () => {
     if (!projectId) return;
@@ -325,13 +364,13 @@ export default function ProjectPage(): React.ReactElement | null {
   const handleCreateTask = async (data: {
     title: string;
     description: string;
-    priority: any;
+    priority: TaskPriority;
     assigneeId: string | null;
     dueDate: string | null;
     status?: TaskStatus;
     labels?: string[];
-    recurrence?: any;
-    checklist?: any[];
+    recurrence?: Recurrence;
+    checklist?: ChecklistItem[];
     multiAssigneeMode?: 'single' | 'shared' | 'individual';
     selectedMemberIds?: string[];
   }) => {
@@ -387,13 +426,13 @@ export default function ProjectPage(): React.ReactElement | null {
   const handleUpdateTask = async (data: {
     title: string;
     description: string;
-    priority: any;
+    priority: TaskPriority;
     assigneeId: string | null;
     dueDate: string | null;
     status?: TaskStatus;
     labels?: string[];
-    recurrence?: any;
-    checklist?: any[];
+    recurrence?: Recurrence;
+    checklist?: ChecklistItem[];
   }) => {
     if (!project || !editingTask) return;
     setActionError(null);
@@ -888,6 +927,17 @@ export default function ProjectPage(): React.ReactElement | null {
           projectId={projectId}
           isOpen={showActivity}
           onClose={() => setShowActivity(false)}
+        />
+      )}
+
+      {/* AI Risk Radar Modal */}
+      {project && (
+        <RiskRadarModal
+          isOpen={showRiskRadar}
+          onClose={() => setShowRiskRadar(false)}
+          projectName={project.name}
+          tasks={tasks}
+          members={projectMembersContext}
         />
       )}
     </div>
