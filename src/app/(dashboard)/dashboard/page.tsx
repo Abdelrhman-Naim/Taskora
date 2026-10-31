@@ -14,6 +14,7 @@ import { HeroMetric } from '@/components/dashboard/HeroMetric';
 import { NeedsAttention } from '@/components/dashboard/NeedsAttention';
 import { MyTasks } from '@/components/dashboard/MyTasks';
 import { ProjectsTable } from '@/components/dashboard/ProjectsTable';
+import { TeamMembersCard } from '@/components/dashboard/TeamMembersCard';
 import { RecentlyUpdated } from '@/components/dashboard/RecentlyUpdated';
 import { OnboardingEmpty } from '@/components/dashboard/OnboardingEmpty';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
@@ -316,6 +317,15 @@ export default function DashboardPage(): React.ReactElement {
 
         <div className="lg:col-span-6">
           <MyTasks tasks={userTasks} projectName={projectNameMap} />
+        </div>
+
+        {/* Team Members & Job Titles */}
+        <div className="lg:col-span-12">
+          <TeamMembersCard
+            projects={projects}
+            currentUserId={user?.uid || ''}
+            onMemberAdded={reload}
+          />
         </div>
 
         {/* Projects Table */}
