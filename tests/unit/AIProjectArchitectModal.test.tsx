@@ -68,4 +68,48 @@ describe('AIProjectArchitectModal Component', () => {
       expect(screen.getByText('UI/UX Designer')).toBeInTheDocument();
     });
   });
+  it('allows toggling API key settings and saves key to localStorage', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        projectName: 'AI App',
+        projectDescription: 'Description',
+        tasks: [],
+      }),
+    } as unknown as Response);
+    global.fetch = fetchSpy;
+
+    renderWithProviders(
+      <AIProjectArchitectModal
+        isOpen={true}
+        onClose={vi.fn()}
+        members={mockMembers}
+        onProjectCreated={vi.fn()}
+      />
+    );
+
+    const toggleBtn = screen.getByTestId('ai-settings-toggle');
+    fireEvent.click(toggleBtn);
+
+    const keyInput = screen.getByTestId('ai-api-key-input');
+    expect(keyInput).toBeInTheDocument();
+
+    fireEvent.change(keyInput, { target: { value: 'custom-gemini-key-123' } });
+    expect(localStorage.getItem('taskora_gemini_api_key')).toBe('custom-gemini-key-123');
+
+    const promptInput = screen.getByTestId('ai-prompt-input');
+    fireEvent.change(promptInput, { target: { value: 'مشروع تجريبي' } });
+
+    const generateBtn = screen.getByTestId('ai-generate-btn');
+    fireEvent.click(generateBtn);
+
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalledWith(
+        '/api/ai/generate-project',
+        expect.objectContaining({
+          body: expect.stringContaining('"apiKey":"custom-gemini-key-123"'),
+        })
+      );
+    });
+  });
 });

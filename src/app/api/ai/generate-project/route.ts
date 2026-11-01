@@ -5,6 +5,7 @@ import { generateProjectWithGemini } from '@/lib/ai/gemini';
 const requestSchema = z.object({
   prompt: z.string().trim().min(2, 'Prompt must be at least 2 characters'),
   locale: z.enum(['ar', 'en']).optional().default('ar'),
+  apiKey: z.string().trim().optional(),
   members: z
     .array(
       z.object({
@@ -29,8 +30,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { prompt, locale, members } = parsed.data;
-    const generated = await generateProjectWithGemini(prompt, locale, members);
+    const { prompt, locale, members, apiKey } = parsed.data;
+    const generated = await generateProjectWithGemini(prompt, locale, members, apiKey);
 
     return NextResponse.json(generated);
   } catch (error: unknown) {

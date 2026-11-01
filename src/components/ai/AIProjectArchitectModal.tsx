@@ -161,6 +161,25 @@ export function AIProjectArchitectModal({
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
+  const [apiKey, setApiKey] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('taskora_gemini_api_key') || '';
+    }
+    return '';
+  });
+
+  const handleApiKeyChange = (val: string) => {
+    setApiKey(val);
+    if (typeof window !== 'undefined') {
+      if (val.trim()) {
+        localStorage.setItem('taskora_gemini_api_key', val.trim());
+      } else {
+        localStorage.removeItem('taskora_gemini_api_key');
+      }
+    }
+  };
+
   const [generatedProject, setGeneratedProject] = useState<GeneratedProject | null>(null);
   const [tasks, setTasks] = useState<SelectableGeneratedTask[]>([]);
 
@@ -207,6 +226,7 @@ export function AIProjectArchitectModal({
           prompt: prompt.trim(),
           locale: isAr ? 'ar' : 'en',
           members,
+          apiKey: apiKey.trim() || undefined,
         }),
       });
 
@@ -329,14 +349,28 @@ export function AIProjectArchitectModal({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-text-2 hover:text-text transition-colors p-1"
-            aria-label={t('common.close')}
-          >
-            <Icon name="x" size={20} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowApiKeyInput((prev) => !prev)}
+              data-testid="ai-settings-toggle"
+              className="text-xs text-text-3 hover:text-accent flex items-center gap-1.5 transition-colors px-2.5 py-1 rounded-lg border border-line bg-surface hover:border-accent"
+              title={isAr ? 'إعدادات مفتاح Gemini API' : 'Gemini API Key Settings'}
+            >
+              <Icon name="settings" size={13} />
+              <span>{isAr ? 'مفتاح API' : 'API Key'}</span>
+              {apiKey ? <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> : null}
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-text-2 hover:text-text transition-colors p-1"
+              aria-label={t('common.close')}
+            >
+              <Icon name="x" size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Body */}
@@ -344,6 +378,46 @@ export function AIProjectArchitectModal({
           {errorMessage && (
             <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 text-xs">
               {errorMessage}
+            </div>
+          )}
+
+          {/* API Key settings panel */}
+          {showApiKeyInput && (
+            <div className="p-3 bg-surface border border-line rounded-xl flex flex-col gap-2 text-xs">
+              <div className="flex items-center justify-between">
+                <label className="font-semibold text-text flex items-center gap-1.5">
+                  <Icon name="settings" size={14} className="text-accent" />
+                  <span>{isAr ? 'مفتاح Google Gemini API:' : 'Google Gemini API Key:'}</span>
+                </label>
+                <span className="text-[11px] text-text-3">
+                  {isAr ? 'يُحفظ بأمان في متصفحك' : 'Saved locally in browser'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => handleApiKeyChange(e.target.value)}
+                  data-testid="ai-api-key-input"
+                  placeholder={isAr ? 'أدخل المفتاح هنا...' : 'Enter API key...'}
+                  className="flex-1 rounded-lg border border-line bg-bg px-3 py-1.5 text-xs text-text placeholder:text-text-3 focus:outline-none focus:border-accent"
+                />
+                {apiKey && (
+                  <button
+                    type="button"
+                    onClick={() => handleApiKeyChange('')}
+                    className="text-text-3 hover:text-red-500 text-xs px-2 py-1 rounded border border-line/50 hover:border-red-500/50"
+                    title={isAr ? 'مسح المفتاح' : 'Clear key'}
+                  >
+                    {isAr ? 'مسح' : 'Clear'}
+                  </button>
+                )}
+              </div>
+              <p className="text-[11px] text-text-3 m-0">
+                {isAr
+                  ? 'إذا تركته فارغاً، سيستخدم النظام المفتاح من ملف البيئة (.env.local) أو المحلل الذكي المدمج.'
+                  : 'If empty, the server uses GEMINI_API_KEY from the environment or the built-in smart engine.'}
+              </p>
             </div>
           )}
 
