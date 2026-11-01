@@ -40,7 +40,7 @@ describe('useSpeechRecognition hook', () => {
       set onend(cb: () => void) {
         onEndCallback = cb;
       }
-      set onerror(cb: (err: unknown) => void) {
+      set onerror(_cb: (err: unknown) => void) {
         // no-op
       }
     }
@@ -68,6 +68,47 @@ describe('useSpeechRecognition hook', () => {
 
     expect(result.current.transcript).toBe('تطوير تطبيق متجر إلكتروني');
 
+    act(() => {
+      result.current.stopListening();
+    });
+
+    expect(result.current.isListening).toBe(false);
+  });
+
+  it('keeps listening and auto-resumes when browser triggers onend prematurely', () => {
+    let onEndCallback: (() => void) | null = null;
+    const startMock = vi.fn();
+    const stopMock = vi.fn();
+
+    class MockSpeechRecognition {
+      start = startMock;
+      stop = stopMock;
+      set onresult(_cb: unknown) {}
+      set onend(cb: () => void) {
+        onEndCallback = cb;
+      }
+      set onerror(_cb: unknown) {}
+    }
+
+    (window as unknown as Record<string, unknown>).SpeechRecognition = MockSpeechRecognition;
+
+    const { result } = renderHook(() => useSpeechRecognition());
+    act(() => {
+      result.current.startListening('ar-SA');
+    });
+
+    expect(startMock).toHaveBeenCalledTimes(1);
+
+    // Simulate browser pause onend without user stop
+    act(() => {
+      onEndCallback?.();
+    });
+
+    // Auto-resume should trigger start again!
+    expect(startMock).toHaveBeenCalledTimes(2);
+    expect(result.current.isListening).toBe(true);
+
+    // User explicitly stops
     act(() => {
       result.current.stopListening();
     });

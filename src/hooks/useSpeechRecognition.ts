@@ -78,21 +78,32 @@ export function useSpeechRecognition(
 
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const optionsRef = useRef(options);
+  const isIntentionallyListeningRef = useRef(false);
+  const committedTextRef = useRef('');
+  const activeSessionTextRef = useRef('');
+  const currentLangRef = useRef(DEFAULT_LANGUAGE);
 
   useEffect(() => {
     optionsRef.current = options;
   }, [options]);
 
   const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
+    isIntentionallyListeningRef.current = false;
+    if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
       } catch {
         // Recognition already stopped
       }
-      setIsListening(false);
     }
-  }, [isListening]);
+    if (activeSessionTextRef.current) {
+      committedTextRef.current = (
+        committedTextRef.current + ' ' + activeSessionTextRef.current
+      ).trim();
+      activeSessionTextRef.current = '';
+    }
+    setIsListening(false);
+  }, []);
 
   const startListening = useCallback(
     (lang: string = DEFAULT_LANGUAGE) => {
@@ -103,6 +114,8 @@ export function useSpeechRecognition(
       }
 
       setError(null);
+      currentLangRef.current = lang;
+      isIntentionallyListeningRef.current = true;
 
       try {
         if (recognitionRef.current) {
@@ -119,18 +132,22 @@ export function useSpeechRecognition(
         instance.lang = lang;
 
         instance.onresult = (event: SpeechRecognitionEvent) => {
-          let fullTranscript = '';
+          let sessionTranscript = '';
           const results = event.results;
           for (let i = 0; i < Object.keys(results).length; i++) {
             const item = results[i]?.[0];
             if (item?.transcript) {
-              fullTranscript += item.transcript + ' ';
+              sessionTranscript += item.transcript + ' ';
             }
           }
-          if (fullTranscript.trim()) {
-            const trimmed = fullTranscript.trim();
-            setTranscript(trimmed);
-            optionsRef.current?.onTranscript?.(trimmed);
+          activeSessionTextRef.current = sessionTranscript.trim();
+          const combined = (
+            committedTextRef.current + ' ' + activeSessionTextRef.current
+          ).trim();
+
+          if (combined) {
+            setTranscript(combined);
+            optionsRef.current?.onTranscript?.(combined);
           }
         };
 
@@ -138,10 +155,38 @@ export function useSpeechRecognition(
           if (event.error !== 'no-speech') {
             setError(event.error);
           }
-          setIsListening(false);
         };
 
         instance.onend = () => {
+          // If chunk ended, commit current chunk text
+          if (activeSessionTextRef.current) {
+            committedTextRef.current = (
+              committedTextRef.current + ' ' + activeSessionTextRef.current
+            ).trim();
+            activeSessionTextRef.current = '';
+          }
+
+          // Auto-Resume / Keep-Alive:
+          // Keep listening until the user explicitly calls stopListening()!
+          if (isIntentionallyListeningRef.current) {
+            try {
+              instance.start();
+              return;
+            } catch {
+              setTimeout(() => {
+                if (isIntentionallyListeningRef.current) {
+                  try {
+                    instance.start();
+                  } catch {
+                    setIsListening(false);
+                    isIntentionallyListeningRef.current = false;
+                  }
+                }
+              }, 200);
+              return;
+            }
+          }
+
           setIsListening(false);
         };
 
@@ -152,12 +197,15 @@ export function useSpeechRecognition(
         const message = err instanceof Error ? err.message : 'Failed to start recording';
         setError(message);
         setIsListening(false);
+        isIntentionallyListeningRef.current = false;
       }
     },
     []
   );
 
   const resetTranscript = useCallback(() => {
+    committedTextRef.current = '';
+    activeSessionTextRef.current = '';
     setTranscript('');
     setError(null);
   }, []);
@@ -165,6 +213,7 @@ export function useSpeechRecognition(
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      isIntentionallyListeningRef.current = false;
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
