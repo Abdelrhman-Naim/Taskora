@@ -8,11 +8,12 @@ service cloud.firestore {
     function validName(v) { return v is string && v.size() >= 3 && v.size() <= 80; }
     function validDesc(v) { return v is string && v.size() <= 1000; }
     function projectShape(d) {
-      return d.keys().hasOnly(['name', 'description', 'ownerId', 'memberIds', 'memberNames', 'createdAt', 'updatedAt'])
+      return d.keys().hasOnly(['name', 'description', 'ownerId', 'memberIds', 'memberNames', 'memberProfiles', 'createdAt', 'updatedAt'])
         && d.keys().hasAll(['name', 'description', 'ownerId', 'memberIds', 'memberNames', 'createdAt', 'updatedAt'])
         && validName(d.name) && validDesc(d.description)
         && d.memberIds is list && d.memberIds.size() <= 50 && d.memberIds.hasAll([d.ownerId])
         && d.memberNames is map && d.memberNames.keys().toSet() == d.memberIds.toSet()
+        && (!('memberProfiles' in d) || (d.memberProfiles is list && d.memberProfiles.size() <= 50))
         && d.updatedAt == request.time;
     }
 

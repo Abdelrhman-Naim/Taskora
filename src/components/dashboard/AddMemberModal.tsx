@@ -3,11 +3,12 @@
 // ============================================================================
 // ZONE 1: IMPORTS
 // ============================================================================
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Project, ProjectMemberProfile } from '@/types';
 import { addProjectMemberProfile } from '@/services/projects';
 import { getDb } from '@/lib/firebase';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { Icon } from '@/components/ui/Icon';
 
 // ============================================================================
@@ -60,7 +61,6 @@ interface MemberFormData {
 // ZONE 4: HELPER FUNCTIONS
 // ============================================================================
 function generateMemberUid(email: string): string {
-  // Client-side fallback UID based on email hash/prefix until auth sync
   const sanitized = email.toLowerCase().replace(/[^a-z0-9]/g, '_');
   return `uid_${sanitized}_${Date.now().toString(36)}`;
 }
@@ -95,6 +95,7 @@ export function AddMemberModal({
   onMemberAdded,
 }: AddMemberModalProps): React.ReactElement | null {
   const { t, locale } = useI18n();
+  const getErrorMessage = useErrorMessage();
 
   const [form, setForm] = useState<MemberFormData>({
     projectId: projects[0]?.id || '',
@@ -105,10 +106,40 @@ export function AddMemberModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const selectedProject = useMemo(
+    () => projects.find((p) => p.id === form.projectId) || projects[0],
+    [projects, form.projectId]
+  );
+
+  const existingProjectMembers = useMemo(() => {
+    if (!selectedProject || !selectedProject.memberNames) return [];
+    return Object.entries(selectedProject.memberNames).map(([uid, name]) => {
+      const profile = selectedProject.memberProfiles?.find((p) => p.uid === uid);
+      return {
+        uid,
+        name,
+        email: profile?.email || '',
+        jobTitle: profile?.jobTitle || '',
+      };
+    });
+  }, [selectedProject]);
+
   if (!isOpen) return null;
 
   function updateField<K extends keyof MemberFormData>(field: K, value: MemberFormData[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function handleSelectExistingMember(uid: string) {
+    if (!uid) return;
+    const member = existingProjectMembers.find((m) => m.uid === uid);
+    if (!member) return;
+    setForm((prev) => ({
+      ...prev,
+      displayName: member.name,
+      email: member.email,
+      jobTitle: member.jobTitle || prev.jobTitle,
+    }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -139,8 +170,8 @@ export function AddMemberModal({
       await addProjectMemberProfile(db, form.projectId, profile);
       onMemberAdded?.();
       onClose();
-    } catch {
-      setErrorMessage(locale === 'ar' ? 'حدث خطأ أثناء إضافة العضو' : 'Failed to add member');
+    } catch (err: unknown) {
+      setErrorMessage(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -184,6 +215,28 @@ export function AddMemberModal({
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {existingProjectMembers.length > 0 && (
+            <div>
+              <label className={MODAL_STYLES.label}>
+                {locale === 'ar' ? 'اختيار من أعضاء المشروع الحاليين (اختياري)' : 'Pick Existing Member (Optional)'}
+              </label>
+              <select
+                defaultValue=""
+                onChange={(e) => handleSelectExistingMember(e.target.value)}
+                className={MODAL_STYLES.select}
+              >
+                <option value="">
+                  {locale === 'ar' ? '-- أو اكتب بيانات عضو جديد بالأسفل --' : '-- Or fill a new member below --'}
+                </option>
+                {existingProjectMembers.map((m) => (
+                  <option key={m.uid} value={m.uid}>
+                    {m.name} {m.email ? `(${m.email})` : ''} {m.jobTitle ? `— ${m.jobTitle}` : ''}
                   </option>
                 ))}
               </select>

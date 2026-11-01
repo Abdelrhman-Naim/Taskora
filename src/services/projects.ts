@@ -17,6 +17,7 @@ import { projectInputSchema, projectMemberProfileSchema } from '@/lib/validation
 import { AppError, toAppError } from '@/lib/errors';
 import { withWriteGuard } from '@/lib/async';
 import { toDate } from '@/lib/dates';
+import { findUserByEmail } from './members';
 
 export function mapProject(snap: DocumentSnapshot): Project {
   const data = snap.data();
@@ -195,7 +196,7 @@ export async function addProjectMemberProfile(
   db: Firestore,
   projectId: string,
   profile: ProjectMemberProfile
-): Promise<void> {
+): Promise<ProjectMemberProfile> {
   const parsed = projectMemberProfileSchema.safeParse(profile);
   if (!parsed.success) {
     throw new AppError('validation', 'Invalid member profile details', {
@@ -214,21 +215,40 @@ export async function addProjectMemberProfile(
       throw new AppError('not-found', 'Project not found');
     }
     const currentData = snap.data();
+
+    let userRecord = null;
+    try {
+      userRecord = await findUserByEmail(db, validProfile.email);
+    } catch {
+      // ignore
+    }
+
+    const resolvedUid = userRecord?.uid || validProfile.uid;
+    const resolvedName = validProfile.displayName || userRecord?.displayName || 'Member';
+    const resolvedRole = currentData.ownerId === resolvedUid ? 'owner' : (validProfile.role || 'member');
+
+    const finalProfile: ProjectMemberProfile = {
+      ...validProfile,
+      uid: resolvedUid,
+      displayName: resolvedName,
+      role: resolvedRole,
+    };
+
     const existingProfiles: ProjectMemberProfile[] = Array.isArray(currentData.memberProfiles)
       ? currentData.memberProfiles
       : [];
 
     const filtered = existingProfiles.filter(
-      (p) => p.uid !== validProfile.uid && p.email !== validProfile.email
+      (p) => p.uid !== finalProfile.uid && p.email !== finalProfile.email
     );
-    const updatedProfiles = [...filtered, validProfile];
+    const updatedProfiles = [...filtered, finalProfile];
 
     const currentMemberIds: string[] = Array.isArray(currentData.memberIds)
       ? currentData.memberIds
       : [];
-    const updatedMemberIds = currentMemberIds.includes(validProfile.uid)
+    const updatedMemberIds = currentMemberIds.includes(finalProfile.uid)
       ? currentMemberIds
-      : [...currentMemberIds, validProfile.uid];
+      : [...currentMemberIds, finalProfile.uid];
 
     const currentMemberNames: Record<string, string> =
       typeof currentData.memberNames === 'object' && currentData.memberNames !== null
@@ -236,7 +256,7 @@ export async function addProjectMemberProfile(
         : {};
     const updatedMemberNames = {
       ...currentMemberNames,
-      [validProfile.uid]: validProfile.displayName,
+      [finalProfile.uid]: finalProfile.displayName,
     };
 
     await withWriteGuard(() =>
@@ -247,6 +267,8 @@ export async function addProjectMemberProfile(
         updatedAt: serverTimestamp(),
       })
     );
+
+    return finalProfile;
   } catch (err) {
     if (err instanceof AppError) throw err;
     throw toAppError(err);
