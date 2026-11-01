@@ -29,6 +29,159 @@ export interface ParsedTaskResult {
   checklist: string[];
 }
 
+/**
+ * Generates phonetic Arabic and Latin variations for user display names.
+ * Crucial for Arabic speech-to-text where English names are transcribed phonetically:
+ * "Member" -> "منبر" (via Arabic Tajweed/phonetic Iqlab ن+ب = mb), "ممبر", "ميمبر", "مبر".
+ * "Owner"  -> "اونر", "أونر", "اونير".
+ */
+export function getPhoneticArabicVariants(name: string): string[] {
+  const lower = name.toLowerCase().trim();
+  const variants = new Set<string>();
+  variants.add(lower);
+
+  // Common demo & role names
+  if (lower.includes('member')) {
+    variants.add('منبر');
+    variants.add('ممبر');
+    variants.add('ميمبر');
+    variants.add('مبر');
+  }
+  if (lower.includes('owner')) {
+    variants.add('اونر');
+    variants.add('أونر');
+    variants.add('اونير');
+  }
+  if (lower.includes('user')) {
+    variants.add('يوزر');
+    variants.add('يوزير');
+  }
+  if (lower.includes('admin')) {
+    variants.add('ادمن');
+    variants.add('أدمن');
+  }
+  if (lower.includes('manager')) {
+    variants.add('مانجر');
+    variants.add('منجر');
+  }
+  if (lower.includes('developer') || lower.includes('dev')) {
+    variants.add('ديفلوبر');
+    variants.add('دفلبر');
+    variants.add('مطور');
+  }
+  if (lower.includes('designer')) {
+    variants.add('ديزاينر');
+    variants.add('مصمم');
+  }
+  if (lower.includes('tester') || lower.includes('qa')) {
+    variants.add('تيستر');
+    variants.add('تستر');
+    variants.add('كيو ايه');
+    variants.add('فاحص');
+  }
+
+  // Common Arabic & English Names
+  if (lower.includes('ahmed') || lower.includes('ahmad')) {
+    variants.add('أحمد');
+    variants.add('احمد');
+  }
+  if (lower.includes('sarah') || lower.includes('sara')) {
+    variants.add('سارة');
+    variants.add('ساره');
+  }
+  if (lower.includes('mohamed') || lower.includes('mohammed') || lower.includes('muhammad')) {
+    variants.add('محمد');
+  }
+  if (lower.includes('tariq') || lower.includes('tareq')) {
+    variants.add('طارق');
+  }
+  if (lower.includes('hassan') || lower.includes('hasan')) {
+    variants.add('حسن');
+  }
+  if (lower.includes('ali')) {
+    variants.add('علي');
+  }
+  if (lower.includes('omar')) {
+    variants.add('عمر');
+  }
+  if (lower.includes('khaled') || lower.includes('khalid')) {
+    variants.add('خالد');
+  }
+  if (lower.includes('dana')) {
+    variants.add('دانا');
+  }
+  if (lower.includes('john')) {
+    variants.add('جون');
+  }
+  if (lower.includes('alex')) {
+    variants.add('اليكس');
+    variants.add('أليكس');
+  }
+
+  // Combined full names
+  if (lower === 'member user') {
+    variants.add('منبر يوزر');
+    variants.add('ممبر يوزر');
+    variants.add('ميمبر يوزر');
+    variants.add('مبر يوزر');
+  }
+  if (lower === 'owner user') {
+    variants.add('اونر يوزر');
+    variants.add('أونر يوزر');
+    variants.add('اونير يوزر');
+  }
+
+  return Array.from(variants);
+}
+
+/**
+ * Scores a member against a candidate target string.
+ * Prevents generic collisions like "User" matching "Member User" when "Owner User" was meant.
+ */
+export function scoreMemberMatch(
+  member: MemberContext,
+  rawTarget: string,
+  normalizedTarget: string
+): number {
+  const disp = member.displayName.toLowerCase().trim();
+  const variants = getPhoneticArabicVariants(member.displayName);
+  const targetLower = rawTarget.toLowerCase().trim();
+  const normLower = normalizedTarget.toLowerCase().trim();
+
+  // 1. Exact full display name or exact full variant match -> highest priority
+  if (normLower === disp || targetLower === disp) return 100;
+  for (const v of variants) {
+    if (targetLower === v || normLower === v) return 95;
+  }
+
+  // 2. Starts with / Substring of full display name
+  if (normLower.includes(disp) || targetLower.includes(disp)) return 80;
+  for (const v of variants) {
+    if (targetLower.includes(v) || normLower.includes(v)) {
+      // Full two-word transliteration (e.g. "منبر يوزر" or "اونر يوزر")
+      if (v.includes(' ')) return 75;
+      // Single generic words like "user" get very low score
+      if (v === 'يوزر' || v === 'user') return 15;
+      return 60;
+    }
+  }
+
+  // 3. Significant Name Parts (e.g. "Ahmed", "Sarah", "Member", "Owner")
+  const parts = disp.split(/\s+/).filter((p) => p.length >= 3 && p !== 'user');
+  for (const part of parts) {
+    if (normLower.includes(part) || targetLower.includes(part)) {
+      return 50;
+    }
+  }
+
+  // 4. Fallback on any generic part (including "user")
+  if (disp.split(/\s+/).some((p) => normLower.includes(p) || targetLower.includes(p))) {
+    return 10;
+  }
+
+  return 0;
+}
+
 export function parseQuickTaskFallback(
   prompt: string,
   members: MemberContext[]
@@ -93,33 +246,78 @@ export function parseQuickTaskFallback(
   // 3. Assignee matching
   let assigneeId: string | null = null;
 
-  // Step A: Explicit Name & Transliteration matching (e.g. "لممبر يوزر" -> "Member User")
+  // Step A: Phonetic Transliterations & Speech-to-Text replacements
   const transliterations: Record<string, string> = {
+    'منبر يوزر': 'member user',
     'ممبر يوزر': 'member user',
+    'ميمبر يوزر': 'member user',
+    'مبر يوزر': 'member user',
+    'منبر': 'member',
     'ممبر': 'member',
+    'ميمبر': 'member',
+    'مبر': 'member',
     'اونر يوزر': 'owner user',
+    'أونر يوزر': 'owner user',
+    'اونير يوزر': 'owner user',
     'اونر': 'owner',
+    'أونر': 'owner',
+    'اونير': 'owner',
   };
 
   let normalizedPrompt = lower;
   for (const [ar, en] of Object.entries(transliterations)) {
-    normalizedPrompt = normalizedPrompt.replace(new RegExp(`(ل|لل)?${ar}`, 'gi'), en);
+    normalizedPrompt = normalizedPrompt.replace(new RegExp(`(?:لـ|للـ|ل)?${ar}`, 'gi'), en);
   }
 
-  for (const m of members) {
-    const disp = m.displayName.toLowerCase();
-    const parts = disp.split(' ').filter((p) => p.length >= 3);
+  // Step A1: Explicit Assignee Extraction from phrasing:
+  // e.g. "المكلف به منبر يوزر", "المكلف هو اونر يوزر", "المسند إليه Member User", "assigned to John"
+  const assigneePrefixRegex =
+    /(?:الـ|ال)?\s*(?:المكلف\s+به|المكلف\s+بها|المكلف\s+هو|المكلف|المسند\s+إليه|المسند\s+له|المسؤول\s+عنه|المسؤول\s+عنها|مسؤولية|إسناد\s+إلى|اسناد\s+الى|تكليف|بواسطة|assigned\s+to|assign\s+to|assignee\s*:?)\s*:?\s*([^,.\n]+)/i;
 
-    const directMatch =
-      disp && (lower.includes(disp) || normalizedPrompt.includes(disp));
-    const partsMatch = parts.some(
-      (part) => lower.includes(part) || normalizedPrompt.includes(part)
-    );
-    const emailMatch = m.uid && lower.includes(m.uid.toLowerCase());
+  const explicitMatch = lower.match(assigneePrefixRegex);
+  if (explicitMatch) {
+    const rawTarget = explicitMatch[1].trim();
+    // Strip trailing date or priority words that might have been captured after the name
+    const stopWordsRegex =
+      /\s*(?:(ب)?(?:اولويه|أولوية|أولويه|اولوية)|التسليم|موعد|تسليم|السبت|الأحد|الاحد|الاثنين|الإثنين|الثلاثاء|الأربعاء|الاربعاء|الخميس|الجمعة|الجمعه|غداً|غدا|بكرة|بعد\s*بكرة|بعد\s*يومين|high|medium|low|tomorrow|next).*/i;
+    const target = rawTarget.replace(stopWordsRegex, '').trim();
 
-    if (directMatch || partsMatch || emailMatch) {
-      assigneeId = m.uid;
-      break;
+    let normalizedTarget = target;
+    for (const [ar, en] of Object.entries(transliterations)) {
+      normalizedTarget = normalizedTarget.replace(new RegExp(`(?:لـ|للـ|ل)?${ar}`, 'gi'), en);
+    }
+
+    let bestScore = 0;
+    let bestMember: MemberContext | null = null;
+
+    for (const m of members) {
+      const score = scoreMemberMatch(m, target, normalizedTarget);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMember = m;
+      }
+    }
+
+    if (bestMember && bestScore >= 40) {
+      assigneeId = bestMember.uid;
+    }
+  }
+
+  // Step A2: Check for member names or transliterations anywhere in prompt
+  if (!assigneeId) {
+    let bestScore = 0;
+    let bestMember: MemberContext | null = null;
+
+    for (const m of members) {
+      const score = scoreMemberMatch(m, lower, normalizedPrompt);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMember = m;
+      }
+    }
+
+    if (bestMember && bestScore >= 40) {
+      assigneeId = bestMember.uid;
     }
   }
 
@@ -185,20 +383,45 @@ export function parseQuickTaskFallback(
   // 4. Clean Task Title Extraction
   let cleanTitle = prompt;
 
-  cleanTitle = cleanTitle.replace(/\s*(ب)?اولويه\s*(عاليه|عالية|قصوى|متوسطة|متوسطه|منخفضة|منخفضه)/gi, '');
+  // A. Priority stripping
+  cleanTitle = cleanTitle.replace(/\s*(ب)?(اولويه|أولوية|أولويه|اولوية)\s*(عاليه|عالية|قصوى|متوسطة|متوسطه|منخفضة|منخفضه)/gi, '');
   cleanTitle = cleanTitle.replace(/\s*(high|medium|low)\s*priority/gi, '');
-  cleanTitle = cleanTitle.replace(/\s*(التسليم|موعد|تسليم)?\s*(السبت|الأحد|الاحد|الاثنين|الإثنين|الثلاثاء|الأربعاء|الاربعاء|الخميس|الجمعة|الجمعه|غداً|غدا|بكرة)\s*(الجاي|القادم)?/gi, '');
-  cleanTitle = cleanTitle.replace(/\s*(tomorrow|next\s+week|after\s+tomorrow)/gi, '');
-  cleanTitle = cleanTitle.replace(/\s*(لـ|للـ|ل)?(ممبر\s+يوزر|اونر\s+يوزر|المصمم|المطور|الـ\s*qa|backend|frontend)/gi, '');
 
+  // B. Due date stripping
+  cleanTitle = cleanTitle.replace(/\s*(التسليم|موعد|تسليم)?\s*(السبت|الأحد|الاحد|الاثنين|الإثنين|الثلاثاء|الأربعاء|الاربعاء|الخميس|الجمعة|الجمعه|غداً|غدا|بكرة)\s*(الجاي|القادم)?/gi, '');
+  cleanTitle = cleanTitle.replace(/\s*(بعد بكرة|بعد يومين|نهاية الأسبوع|نهاية الاسبوع|الأسبوع الجاي|الاسبوع الجاي|الاسبوع القادم|الأسبوع القادم)/gi, '');
+  cleanTitle = cleanTitle.replace(/\s*بعد\s*[٠-٩\d]+\s*(أيام|ايام|يوم)/gi, '');
+  cleanTitle = cleanTitle.replace(/\s*(tomorrow|next\s+week|after\s+tomorrow|weekend)/gi, '');
+
+  // C. Explicit Assignee phrases stripping (e.g. "المكلف به منبر يوزر", "الـ المكلف به منبر يوزر", etc.)
+  cleanTitle = cleanTitle.replace(
+    /(?:الـ|ال)?\s*(?:المكلف\s+به|المكلف\s+بها|المكلف\s+هو|المكلف|المسند\s+إليه|المسند\s+له|المسؤول\s+عنه|المسؤول\s+عنها|مسؤولية|إسناد\s+إلى|اسناد\s+الى|تكليف|بواسطة|assigned\s+to|assign\s+to|assignee\s*:?)\s*:?\s*(?:منبر\s*يوزر|ممبر\s*يوزر|ميمبر\s*يوزر|مبر\s*يوزر|اونر\s*يوزر|أونر\s*يوزر|منبر|ممبر|ميمبر|مبر|اونر|أونر|\S+(?:\s+\S+)?)/gi,
+    ''
+  );
+
+  // Strip transliterated names & known role mentions
+  cleanTitle = cleanTitle.replace(
+    /\s*(لـ|للـ|ل)?(منبر\s*يوزر|ممبر\s*يوزر|ميمبر\s*يوزر|مبر\s*يوزر|اونر\s*يوزر|أونر\s*يوزر|منبر|ممبر|ميمبر|مبر|اونر|أونر|المصمم|المطور|الـ\s*qa|backend|frontend)/gi,
+    ''
+  );
+
+  // Strip any member display names and their phonetic variants
   for (const m of members) {
     if (m.displayName) {
       cleanTitle = cleanTitle.replace(new RegExp(`\\s*(لـ|للـ|ل|for)?\\s*${m.displayName}`, 'gi'), '');
+      const variants = getPhoneticArabicVariants(m.displayName);
+      for (const v of variants) {
+        cleanTitle = cleanTitle.replace(new RegExp(`\\s*(لـ|للـ|ل|for)?\\s*${v}`, 'gi'), '');
+      }
     }
   }
 
+  // D. Command fillers & trailing punctuation
   cleanTitle = cleanTitle.replace(/^\s*(بدي\s+اعمل|مهمه|مهمة|قم\s+بعمل|يرجى\s+عمل|اضافة\s+مهمة|إضافة\s+مهمة)\s*/gi, '');
   cleanTitle = cleanTitle.replace(/\s*(مهمه|مهمة)\s*/gi, ' ');
+  // Clean dangling prefixes like "الـ" or "-" or ":" at the end
+  cleanTitle = cleanTitle.replace(/[\s\-_:،,]+(الـ|ال)?$/gi, '');
+  cleanTitle = cleanTitle.replace(/^[\s\-_:،,]+/gi, '');
   cleanTitle = cleanTitle.replace(/\s{2,}/g, ' ').trim();
 
   if (!cleanTitle || cleanTitle.length < 3) {
@@ -254,12 +477,17 @@ TEAM ROSTER & ROLES:
 ${membersPrompt || 'No members provided.'}
 
 INSTRUCTIONS:
-1. Title: extract a clean, concise, actionable task title (e.g. from "تحليل مشروع مهمه لممبر يوزر اولويه عاليه التسليم السبت الجاي", output "تحليل متطلبات وهندسة المشروع"). Never include priority words, dates, or assignee names in the title!
+1. Title: extract a clean, concise, actionable task title (e.g. from "تحليل مشروع الخميس القادم الاولويه عاليه المكلف به منبر يوزر", output "تحليل مشروع"). Never include priority words, dates, or assignee phrasing ("المكلف به", "منبر يوزر") in the title!
 2. Priority: "low" | "medium" | "high".
 3. Due date: estimate date string YYYY-MM-DD if mentioned (today is ${new Date().toISOString().slice(0, 10)}), else null.
 4. Assignee:
-   - If a person's name or transliterated name is mentioned (e.g. "لممبر يوزر" -> "Member User"), pick that member UID.
-   - If NO person is named, analyze the task requirements and pick the member UID whose job role (or roles) is the most suitable match!
+   - CRITICAL ARABIC TRANSLITERATION RULES:
+     * When user speaks or dictates in Arabic speech-to-text, English names are transcribed phonetically:
+       - "منبر يوزر" / "منبر" / "ممبر يوزر" / "ممبر" / "ميمبر" = "Member User"
+       - "اونر يوزر" / "أونر يوزر" / "اونر" / "أونر" = "Owner User"
+     * Match explicit assignee phrases such as "المكلف به [اسم]", "المكلف بها [اسم]", "المكلف [اسم]", "المسند إليه [اسم]", "لـ [اسم]", "assigned to [name]", etc.
+     * Pick that member's UID!
+   - If NO specific person is named or inferred, analyze the task domain/requirements and pick the member UID whose job role (or roles) is the most suitable match!
    - If none matches, return null.
 5. Checklist: array of 0-3 quick sub-steps if mentioned.
 
