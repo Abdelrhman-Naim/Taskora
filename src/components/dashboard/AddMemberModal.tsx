@@ -28,16 +28,16 @@ export const JOB_TITLE_PRESETS = [
 
 const MODAL_STYLES = {
   backdrop: 'fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm',
-  container: 'w-full max-w-lg rounded-xl border border-line bg-surface p-6 shadow-2xl flex flex-col gap-4 text-text',
+  container: 'w-full max-w-lg rounded-xl border border-line bg-surface p-5 sm:p-6 shadow-2xl flex flex-col gap-4 text-text max-h-[92vh] overflow-y-auto',
   header: 'flex items-center justify-between border-b border-line pb-3',
-  title: 'text-lg font-semibold text-text flex items-center gap-2',
+  title: 'text-base sm:text-lg font-semibold text-text flex items-center gap-2',
   label: 'text-xs font-semibold uppercase tracking-wider text-text-2 mb-1 block',
-  input: 'w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-text placeholder:text-text-3 focus:border-accent focus:outline-none',
-  select: 'w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-text focus:border-accent focus:outline-none',
-  presetButton: 'text-xs px-2.5 py-1 rounded-full border border-line bg-surface hover:border-accent hover:text-accent transition-colors',
-  footer: 'flex items-center justify-end gap-3 pt-3 border-t border-line mt-2',
-  cancelBtn: 'px-4 py-2 text-sm font-medium text-text-2 hover:text-text transition-colors',
-  submitBtn: 'px-5 py-2 text-sm font-semibold rounded-lg bg-accent text-on-accent hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2',
+  input: 'w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-text placeholder:text-text-3 focus:border-accent focus:outline-none min-h-[42px]',
+  select: 'w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm text-text focus:border-accent focus:outline-none min-h-[42px]',
+  presetButton: 'text-xs px-2.5 py-1.5 rounded-full border border-line bg-surface hover:border-accent hover:text-accent transition-colors min-h-[32px] flex items-center',
+  footer: 'flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-3 border-t border-line mt-2',
+  cancelBtn: 'px-4 py-2 text-sm font-medium text-text-2 hover:text-text transition-colors min-h-[44px] flex items-center justify-center rounded-lg hover:bg-surface',
+  submitBtn: 'px-5 py-2 text-sm font-semibold rounded-lg bg-accent text-on-accent hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2 min-h-[44px]',
 };
 
 // ============================================================================
@@ -47,6 +47,7 @@ export interface AddMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
   projects: Project[];
+  defaultProjectId?: string;
   onMemberAdded?: () => void;
 }
 
@@ -62,7 +63,7 @@ interface MemberFormData {
 // ============================================================================
 function generateMemberUid(email: string): string {
   const sanitized = email.toLowerCase().replace(/[^a-z0-9]/g, '_');
-  return `uid_${sanitized}_${Date.now().toString(36)}`;
+  return `uid_${sanitized}`;
 }
 
 // ============================================================================
@@ -92,23 +93,26 @@ export function AddMemberModal({
   isOpen,
   onClose,
   projects,
+  defaultProjectId,
   onMemberAdded,
 }: AddMemberModalProps): React.ReactElement | null {
   const { t, locale } = useI18n();
   const getErrorMessage = useErrorMessage();
 
-  const [form, setForm] = useState<MemberFormData>({
-    projectId: projects[0]?.id || '',
+  const [form, setForm] = useState<MemberFormData>(() => ({
+    projectId: defaultProjectId || projects[0]?.id || '',
     email: '',
     displayName: '',
     jobTitle: 'Frontend Developer',
-  });
+  }));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const effectiveProjectId = form.projectId || defaultProjectId || projects[0]?.id || '';
+
   const selectedProject = useMemo(
-    () => projects.find((p) => p.id === form.projectId) || projects[0],
-    [projects, form.projectId]
+    () => projects.find((p) => p.id === effectiveProjectId) || projects[0],
+    [projects, effectiveProjectId]
   );
 
   const existingProjectMembers = useMemo(() => {
@@ -144,7 +148,7 @@ export function AddMemberModal({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.projectId) {
+    if (!effectiveProjectId) {
       setErrorMessage(locale === 'ar' ? 'يرجى اختيار المشروع' : 'Please select a project');
       return;
     }
@@ -167,7 +171,7 @@ export function AddMemberModal({
         addedAt: new Date().toISOString(),
       };
 
-      await addProjectMemberProfile(db, form.projectId, profile);
+      await addProjectMemberProfile(db, effectiveProjectId, profile);
       onMemberAdded?.();
       onClose();
     } catch (err: unknown) {
@@ -208,7 +212,7 @@ export function AddMemberModal({
                 {locale === 'ar' ? 'المشروع' : 'Project'}
               </label>
               <select
-                value={form.projectId}
+                value={effectiveProjectId}
                 onChange={(e) => updateField('projectId', e.target.value)}
                 className={MODAL_STYLES.select}
               >

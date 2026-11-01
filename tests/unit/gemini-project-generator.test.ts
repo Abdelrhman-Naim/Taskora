@@ -69,4 +69,23 @@ describe('Gemini Project Generator logic', () => {
     const designerTask = generated.tasks.find((t) => t.assignedMemberUid === 'u1');
     expect(designerTask).toBeDefined();
   });
+
+  it('fallbackProjectGenerator accurately detects website security & link testing ideas and generates 9 specialized tasks', () => {
+    const generated = fallbackProjectGenerator(
+      'بدي اعمل منصة بتعمل تست للمواقع من خلال الرابط وسكيورتي',
+      'ar',
+      mockMembers
+    );
+
+    expect(generated.projectName).toContain('أمان وأداء المواقع');
+    expect(generated.tasks.length).toBe(9);
+
+    // Verify critical specialized security & crawler tasks
+    const titles = generated.tasks.map((t) => t.title);
+    expect(titles.some((t) => t.includes('محرك الزحف'))).toBe(true);
+    expect(titles.some((t) => t.includes('SSL/TLS'))).toBe(true);
+    expect(titles.some((t) => t.includes('كاشف ثغرات الويب'))).toBe(true);
+    expect(titles.some((t) => t.includes('لوحة تقارير الفحص'))).toBe(true);
+    expect(titles.some((t) => t.includes('تصدير التقارير'))).toBe(true);
+  });
 });

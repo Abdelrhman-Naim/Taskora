@@ -57,6 +57,7 @@ import { TaskCalendar } from '@/components/tasks/TaskCalendar';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { MagicQuickAddBar } from '@/components/ai/MagicQuickAddBar';
 import { RiskRadarModal } from '@/components/ai/RiskRadarModal';
+import { AddMemberModal } from '@/components/dashboard/AddMemberModal';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { ActivityPanel } from '@/components/projects/ActivityPanel';
 import { FilterBar } from '@/components/tasks/FilterBar';
@@ -64,7 +65,6 @@ import { FilterBar } from '@/components/tasks/FilterBar';
 // ============================================================================
 // 2. CONFIGURATION & CONSTANTS (EASY EDIT ZONE)
 // ============================================================================
-const MAX_STACKED_AVATARS = 5;
 const SEARCH_INPUT_ID = 'filter-search';
 
 // ============================================================================
@@ -223,6 +223,7 @@ export default function ProjectPage(): React.ReactElement | null {
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const [showActivity, setShowActivity] = useState(false);
   const [showRiskRadar, setShowRiskRadar] = useState(false);
+  const [showAddMember, setShowAddMember] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
@@ -685,26 +686,36 @@ export default function ProjectPage(): React.ReactElement | null {
             />
           </div>
 
-          <div className="flex items-center gap-2.5" data-testid="project-members">
-            <span className="text-xs text-text-2 font-medium">{t('dashboard.table.members')}:</span>
-            <div className="inline-flex items-center">
-              {project.memberIds.slice(0, MAX_STACKED_AVATARS).map((uid) => (
-                <Avatar
-                  key={uid}
-                  name={project.memberNames[uid] || 'Member'}
-                  size="sm"
-                  className="border-2 border-surface -ms-2 first:ms-0"
-                />
-              ))}
-              {project.memberIds.length > MAX_STACKED_AVATARS && (
-                <span
-                  className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-surface-raised border-2 border-surface text-text-2 text-xs font-semibold -ms-2"
-                  aria-label={`${project.memberIds.length - MAX_STACKED_AVATARS} more`}
-                >
-                  +{project.memberIds.length - MAX_STACKED_AVATARS}
-                </span>
-              )}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-line/40 w-full" data-testid="project-members">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-text-2 font-medium">{locale === 'ar' ? 'أعضاء المشروع:' : 'Project Team:'}</span>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {projectMembersContext.map((m) => (
+                  <span
+                    key={m.uid}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-surface border border-line text-text"
+                  >
+                    <Avatar name={m.displayName} size="sm" className="w-5 h-5 text-[10px]" />
+                    <span className="font-medium text-xs">{m.displayName}</span>
+                    <span className="text-[10px] text-accent bg-accent/10 px-1.5 py-0.5 rounded font-medium border border-accent/20">
+                      {m.jobTitle}
+                    </span>
+                  </span>
+                ))}
+              </div>
             </div>
+
+            {isOwner && (
+              <button
+                type="button"
+                onClick={() => setShowAddMember(true)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface border border-line text-text-2 hover:border-accent hover:text-accent transition-colors shrink-0"
+                data-testid="add-project-member-btn"
+              >
+                <Icon name="plus" size={13} />
+                <span>{locale === 'ar' ? 'إضافة عضو لهذا المشروع' : 'Add Member to Project'}</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -938,6 +949,17 @@ export default function ProjectPage(): React.ReactElement | null {
           projectName={project.name}
           tasks={tasks}
           members={projectMembersContext}
+        />
+      )}
+
+      {/* Add Project Member Modal */}
+      {showAddMember && project && (
+        <AddMemberModal
+          isOpen={showAddMember}
+          onClose={() => setShowAddMember(false)}
+          projects={[project]}
+          defaultProjectId={project.id}
+          onMemberAdded={() => loadProjectAndTasks(false)}
         />
       )}
     </div>

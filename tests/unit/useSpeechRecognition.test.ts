@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
+import { useSpeechRecognition, mergeSpeechTranscripts } from '@/hooks/useSpeechRecognition';
 
 describe('useSpeechRecognition hook', () => {
   const originalSpeechRecognition = (window as unknown as Record<string, unknown>).SpeechRecognition;
@@ -114,5 +114,35 @@ describe('useSpeechRecognition hook', () => {
     });
 
     expect(result.current.isListening).toBe(false);
+  });
+
+  describe('mergeSpeechTranscripts (Mobile Duplication Prevention)', () => {
+    it('returns new session text when committed text is empty', () => {
+      expect(mergeSpeechTranscripts('', 'مساء الخير')).toBe('مساء الخير');
+    });
+
+    it('returns committed text when new session text is empty or duplicate', () => {
+      expect(mergeSpeechTranscripts('مساء الخير', '')).toBe('مساء الخير');
+      expect(mergeSpeechTranscripts('مساء الخير', 'مساء الخير')).toBe('مساء الخير');
+    });
+
+    it('prevents duplication when Android Chrome re-emits cumulative transcript', () => {
+      // In mobile Chrome, after a pause, the second chunk often contains the previous sentence plus new words
+      const committed = 'بدي اعمل موقع فحص';
+      const session = 'بدي اعمل موقع فحص سكيورتي للمواقع';
+      expect(mergeSpeechTranscripts(committed, session)).toBe('بدي اعمل موقع فحص سكيورتي للمواقع');
+    });
+
+    it('merges overlapping word boundaries without repeating words', () => {
+      const committed = 'بدي اعمل موقع فحص سكيورتي';
+      const session = 'سكيورتي للمواقع من خلال الرابط';
+      expect(mergeSpeechTranscripts(committed, session)).toBe('بدي اعمل موقع فحص سكيورتي للمواقع من خلال الرابط');
+    });
+
+    it('merges distinct non-overlapping phrases with a clean space', () => {
+      const committed = 'المرحلة الأولى';
+      const session = 'المرحلة الثانية';
+      expect(mergeSpeechTranscripts(committed, session)).toBe('المرحلة الأولى المرحلة الثانية');
+    });
   });
 });

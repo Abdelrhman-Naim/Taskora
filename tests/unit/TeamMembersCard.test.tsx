@@ -63,4 +63,41 @@ describe('TeamMembersCard Component', () => {
 
     expect(screen.getByTestId('add-member-modal')).toBeInTheDocument();
   });
+
+  it('deduplicates members across multiple projects into a single account card', () => {
+    const multiProjects: Project[] = [
+      ...mockProjects,
+      {
+        id: 'proj-2',
+        name: 'Mobile App',
+        description: 'Second project',
+        ownerId: 'owner-uid',
+        memberIds: ['owner-uid', 'member-1'],
+        memberNames: {
+          'owner-uid': 'Alice Owner',
+          'member-1': 'Bob Designer',
+        },
+        memberProfiles: [
+          {
+            uid: 'member-1',
+            email: 'bob@test.com',
+            displayName: 'Bob Designer',
+            jobTitle: 'UI/UX Designer',
+            role: 'member',
+            addedAt: '2026-10-31T00:00:00.000Z',
+          },
+        ],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    renderWithProviders(
+      <TeamMembersCard projects={multiProjects} currentUserId="owner-uid" />
+    );
+
+    // Bob Designer must appear exactly once in the list despite being in 2 projects
+    const bobElements = screen.getAllByText('Bob Designer');
+    expect(bobElements).toHaveLength(1);
+  });
 });

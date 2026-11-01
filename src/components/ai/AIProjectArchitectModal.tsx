@@ -332,43 +332,43 @@ export function AIProjectArchitectModal({
     <div className={MODAL_STYLES.backdrop} data-testid="ai-architect-modal">
       <div className={MODAL_STYLES.container} role="dialog" aria-modal="true">
         {/* Header */}
-        <div className={MODAL_STYLES.header}>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center font-bold">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line pb-3 sm:pb-4 gap-2.5 shrink-0">
+          <div className="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
+            <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center font-bold shrink-0 mt-0.5 sm:mt-0">
               ✨
             </div>
-            <div>
-              <h2 className={MODAL_STYLES.title}>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-base sm:text-lg font-bold text-text truncate m-0">
                 <span>{isAr ? 'مهندس المشاريع الذكي بالذكاء الاصطناعي' : 'AI Project & Task Architect'}</span>
               </h2>
-              <span className="text-xs text-text-3">
+              <p className="text-[11px] sm:text-xs text-text-3 m-0 line-clamp-1 sm:line-clamp-none">
                 {isAr
-                  ? 'تفكيك فكرة المشروع بالصوت وتوزيع المهام تلقائياً على الأعضاء حسب المسمى الوظيفي'
+                  ? 'تفكيك فكرة المشروع وتوزيع المهام وفق المسميات الوظيفية'
                   : 'Voice-decompose your project and auto-assign tasks based on member job roles'}
-              </span>
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2 shrink-0 self-end sm:self-auto">
             <button
               type="button"
               onClick={() => setShowApiKeyInput((prev) => !prev)}
               data-testid="ai-settings-toggle"
-              className="text-xs text-text-3 hover:text-accent flex items-center gap-1.5 transition-colors px-2.5 py-1 rounded-lg border border-line bg-surface hover:border-accent"
+              className="text-xs text-text-3 hover:text-accent flex items-center gap-1.5 transition-colors px-2.5 py-1.5 rounded-lg border border-line bg-surface hover:border-accent shrink-0 whitespace-nowrap min-h-[36px]"
               title={isAr ? 'إعدادات مفتاح Gemini API' : 'Gemini API Key Settings'}
             >
               <Icon name="settings" size={13} />
-              <span>{isAr ? 'مفتاح API' : 'API Key'}</span>
-              {apiKey ? <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> : null}
+              <span className="whitespace-nowrap">{isAr ? 'مفتاح API' : 'API Key'}</span>
+              {apiKey ? <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" /> : null}
             </button>
 
             <button
               type="button"
               onClick={onClose}
-              className="text-text-2 hover:text-text transition-colors p-1"
+              className="text-text-2 hover:text-text transition-colors p-1.5 shrink-0 rounded-lg hover:bg-surface min-h-[36px] min-w-[36px] flex items-center justify-center"
               aria-label={t('common.close')}
             >
-              <Icon name="x" size={20} />
+              <Icon name="x" size={18} />
             </button>
           </div>
         </div>
@@ -528,11 +528,11 @@ export function AIProjectArchitectModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-line shrink-0">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between pt-4 border-t border-line gap-2.5 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm text-text-2 hover:text-text transition-colors"
+            className="px-4 py-2 text-sm text-text-2 hover:text-text transition-colors text-center min-h-[40px] rounded-lg hover:bg-surface sm:w-auto w-full"
           >
             {t('common.cancel')}
           </button>
@@ -542,7 +542,7 @@ export function AIProjectArchitectModal({
               type="button"
               disabled={isSaving || tasks.filter((t) => t.selected).length === 0}
               onClick={handleConfirmAndCreate}
-              className="px-6 py-2.5 rounded-lg bg-accent text-on-accent text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center gap-2"
+              className="px-6 py-2.5 rounded-lg bg-accent text-on-accent text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:w-auto w-full whitespace-nowrap"
             >
               {isSaving ? (
                 <span>{isAr ? 'جاري حفظ المشروع والمهام...' : 'Saving project...'}</span>
