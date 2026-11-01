@@ -10,6 +10,7 @@ import { getDb } from '@/lib/firebase';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { Icon } from '@/components/ui/Icon';
+import { Select } from '@/components/ui/Select';
 
 // ============================================================================
 // ZONE 2: CONFIG & PRESETS (EASY EDIT ZONE)
@@ -69,19 +70,33 @@ function generateMemberUid(email: string): string {
 // ============================================================================
 // ZONE 5: SUB-COMPONENTS
 // ============================================================================
-function PresetPills({ onSelect }: { onSelect: (title: string) => void }) {
+function PresetPills({
+  selectedRoles,
+  onToggle,
+}: {
+  selectedRoles: string[];
+  onToggle: (title: string) => void;
+}) {
   return (
-    <div className="flex flex-wrap gap-1.5 mt-1.5">
-      {JOB_TITLE_PRESETS.map((title) => (
-        <button
-          key={title}
-          type="button"
-          onClick={() => onSelect(title)}
-          className={MODAL_STYLES.presetButton}
-        >
-          {title}
-        </button>
-      ))}
+    <div className="flex flex-wrap gap-1.5 mt-2">
+      {JOB_TITLE_PRESETS.map((title) => {
+        const isSelected = selectedRoles.includes(title);
+        return (
+          <button
+            key={title}
+            type="button"
+            onClick={() => onToggle(title)}
+            className={`${MODAL_STYLES.presetButton} ${
+              isSelected
+                ? 'border-accent bg-accent/15 text-accent font-semibold shadow-sm'
+                : 'text-text-2 hover:border-line-hover'
+            }`}
+          >
+            {isSelected ? <span>✓ </span> : null}
+            <span>{title}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -105,6 +120,8 @@ export function AddMemberModal({
     displayName: '',
     jobTitle: 'Frontend Developer',
   }));
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['Frontend Developer']);
+  const [customRoleInput, setCustomRoleInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -134,15 +151,44 @@ export function AddMemberModal({
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
+  function handleToggleRole(role: string) {
+    setSelectedRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+    );
+  }
+
+  function handleAddCustomRole() {
+    const trimmed = customRoleInput.trim();
+    if (!trimmed) return;
+    if (!selectedRoles.includes(trimmed)) {
+      setSelectedRoles((prev) => [...prev, trimmed]);
+    }
+    setCustomRoleInput('');
+  }
+
+  function handleRemoveRole(role: string) {
+    setSelectedRoles((prev) => prev.filter((r) => r !== role));
+  }
+
   function handleSelectExistingMember(uid: string) {
     if (!uid) return;
     const member = existingProjectMembers.find((m) => m.uid === uid);
     if (!member) return;
+
+    if (member.jobTitle) {
+      const parsedRoles = member.jobTitle
+        .split(/[,،/]/)
+        .map((r) => r.trim())
+        .filter(Boolean);
+      if (parsedRoles.length > 0) {
+        setSelectedRoles(parsedRoles);
+      }
+    }
+
     setForm((prev) => ({
       ...prev,
       displayName: member.name,
       email: member.email,
-      jobTitle: member.jobTitle || prev.jobTitle,
     }));
   }
 
@@ -152,8 +198,9 @@ export function AddMemberModal({
       setErrorMessage(locale === 'ar' ? 'يرجى اختيار المشروع' : 'Please select a project');
       return;
     }
-    if (!form.email || !form.displayName || !form.jobTitle) {
-      setErrorMessage(locale === 'ar' ? 'يرجى تعبئة جميع الحقول' : 'Please fill all fields');
+    const joinedRoles = selectedRoles.join(', ').trim();
+    if (!form.email || !form.displayName || !joinedRoles) {
+      setErrorMessage(locale === 'ar' ? 'يرجى تعبئة جميع الحقول واختيار مسمى وظيفي واحد على الأقل' : 'Please fill all fields and select at least one role');
       return;
     }
 
@@ -166,7 +213,8 @@ export function AddMemberModal({
         uid: generateMemberUid(form.email),
         email: form.email.trim().toLowerCase(),
         displayName: form.displayName.trim(),
-        jobTitle: form.jobTitle.trim(),
+        jobTitle: joinedRoles,
+        jobTitles: selectedRoles,
         role: 'member',
         addedAt: new Date().toISOString(),
       };
@@ -211,17 +259,17 @@ export function AddMemberModal({
               <label className={MODAL_STYLES.label}>
                 {locale === 'ar' ? 'المشروع' : 'Project'}
               </label>
-              <select
+              <Select
                 value={effectiveProjectId}
                 onChange={(e) => updateField('projectId', e.target.value)}
-                className={MODAL_STYLES.select}
+                className="w-full"
               >
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
 
@@ -230,10 +278,10 @@ export function AddMemberModal({
               <label className={MODAL_STYLES.label}>
                 {locale === 'ar' ? 'اختيار من أعضاء المشروع الحاليين (اختياري)' : 'Pick Existing Member (Optional)'}
               </label>
-              <select
+              <Select
                 defaultValue=""
                 onChange={(e) => handleSelectExistingMember(e.target.value)}
-                className={MODAL_STYLES.select}
+                className="w-full"
               >
                 <option value="">
                   {locale === 'ar' ? '-- أو اكتب بيانات عضو جديد بالأسفل --' : '-- Or fill a new member below --'}
@@ -243,7 +291,7 @@ export function AddMemberModal({
                     {m.name} {m.email ? `(${m.email})` : ''} {m.jobTitle ? `— ${m.jobTitle}` : ''}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
 
@@ -276,18 +324,70 @@ export function AddMemberModal({
           </div>
 
           <div>
-            <label className={MODAL_STYLES.label}>
-              {locale === 'ar' ? 'المسمى الوظيفي (يستخدمه الـ AI لتوزيع المهام)' : 'Job Title (Used by AI for task assignments)'}
-            </label>
-            <input
-              type="text"
-              required
-              value={form.jobTitle}
-              onChange={(e) => updateField('jobTitle', e.target.value)}
-              placeholder={locale === 'ar' ? 'مثال: UI/UX Designer' : 'e.g. UI/UX Designer'}
-              className={MODAL_STYLES.input}
+            <div className="flex items-center justify-between mb-1">
+              <label className={MODAL_STYLES.label}>
+                {locale === 'ar' ? 'المسميات الوظيفية (يستخدمها الـ AI لتوزيع المهام)' : 'Job Titles (Used by AI for task assignments)'}
+              </label>
+              <span className="text-[11px] text-text-3">
+                {locale === 'ar' ? 'يمكنك اختيار أكثر من مسمى' : 'Multiple roles allowed'}
+              </span>
+            </div>
+
+            {/* Active selected roles tags */}
+            <div className="flex flex-wrap gap-1.5 p-2 rounded-lg border border-line bg-bg min-h-[42px] items-center mb-2">
+              {selectedRoles.length === 0 ? (
+                <span className="text-xs text-text-3 italic">
+                  {locale === 'ar' ? 'اختر من المسميات المقترحة بالأسفل أو أضف مسمى جديداً...' : 'Select from presets below or add a role...'}
+                </span>
+              ) : (
+                selectedRoles.map((role) => (
+                  <span
+                    key={role}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-accent/15 text-accent border border-accent/30"
+                  >
+                    <span>{role}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveRole(role)}
+                      className="hover:text-red-400 font-bold leading-none p-0.5 rounded-full hover:bg-surface transition-colors cursor-pointer"
+                      aria-label={locale === 'ar' ? `حذف ${role}` : `Remove ${role}`}
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))
+              )}
+            </div>
+
+            {/* Custom role input */}
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={customRoleInput}
+                onChange={(e) => setCustomRoleInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddCustomRole();
+                  }
+                }}
+                placeholder={locale === 'ar' ? 'اكتب مسمى وظيفي إضافي مخصص...' : 'Add custom job title...'}
+                className="flex-1 rounded-lg border border-line bg-bg px-3 py-2 text-xs text-text placeholder:text-text-3 focus:border-accent focus:outline-none min-h-[38px]"
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomRole}
+                className="px-3 py-2 text-xs font-semibold rounded-lg bg-surface border border-line hover:border-accent hover:text-accent whitespace-nowrap min-h-[38px] transition-colors cursor-pointer"
+              >
+                {locale === 'ar' ? '+ إضافة' : '+ Add'}
+              </button>
+            </div>
+
+            {/* Preset pills with toggle */}
+            <PresetPills
+              selectedRoles={selectedRoles}
+              onToggle={handleToggleRole}
             />
-            <PresetPills onSelect={(title) => updateField('jobTitle', title)} />
           </div>
 
           <div className={MODAL_STYLES.footer}>

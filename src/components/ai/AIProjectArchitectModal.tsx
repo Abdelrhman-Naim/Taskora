@@ -12,6 +12,7 @@ import { createProject, addProjectMemberProfile } from '@/services/projects';
 import { createTask } from '@/services/tasks';
 import { getDb } from '@/lib/firebase';
 import { Icon } from '@/components/ui/Icon';
+import { Select } from '@/components/ui/Select';
 
 // ============================================================================
 // ZONE 2: CONFIG & STYLES (EASY EDIT ZONE)
@@ -104,10 +105,10 @@ function TaskPreviewRow({
           <span className={priorityClass}>{task.priority.toUpperCase()}</span>
 
           {members.length > 0 && (
-            <select
+            <Select
               value={task.assignedMemberUid || ''}
               onChange={(e) => onUpdateRole(index, e.target.value)}
-              className="text-xs rounded-md border border-line bg-surface px-2 py-1 text-text focus:outline-none"
+              className="text-xs min-w-[140px]"
             >
               <option value="">Unassigned</option>
               {members.map((m) => (
@@ -115,7 +116,7 @@ function TaskPreviewRow({
                   {m.displayName} ({m.jobTitle})
                 </option>
               ))}
-            </select>
+            </Select>
           )}
 
           {task.assignedMemberRole && (

@@ -17,6 +17,10 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
+const EMPTY_VALUE_SENTINEL = '__EMPTY_SELECT_VALUE__';
+const encodeRadixVal = (val: string) => (val === '' ? EMPTY_VALUE_SENTINEL : val);
+const decodeRadixVal = (val: string) => (val === EMPTY_VALUE_SENTINEL ? '' : val);
+
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   id?: string;
   className?: string;
@@ -99,8 +103,10 @@ export function Select({
     }
   };
 
+  const isFullWidth = className.includes('w-full') || className.includes('block');
+
   return (
-    <div className={`${styles.wrapper} ${className}`.trim()}>
+    <div className={`${styles.wrapper} ${className}`.trim()} data-full-width={isFullWidth}>
       {/* Synchronized accessible native select for test frameworks and form submissions */}
       <select
         ref={nativeSelectRef}
@@ -123,8 +129,8 @@ export function Select({
 
       {/* Luxury Radix UI Select Trigger and Overlay */}
       <RadixSelect.Root
-        value={activeValue}
-        onValueChange={handleRadixChange}
+        value={encodeRadixVal(activeValue)}
+        onValueChange={(val) => handleRadixChange(decodeRadixVal(val))}
         disabled={disabled}
         dir={dir}
       >
@@ -163,7 +169,7 @@ export function Select({
               {options.map((opt) => (
                 <RadixSelect.Item
                   key={opt.value}
-                  value={opt.value}
+                  value={encodeRadixVal(opt.value)}
                   disabled={opt.disabled}
                   className={styles.item}
                 >

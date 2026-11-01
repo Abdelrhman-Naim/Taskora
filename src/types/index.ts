@@ -19,6 +19,7 @@ export interface ProjectMemberProfile {
   email: string;
   displayName: string;
   jobTitle: string;
+  jobTitles?: string[];
   role: 'owner' | 'member';
   addedAt: string;
 }

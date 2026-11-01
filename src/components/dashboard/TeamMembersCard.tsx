@@ -37,6 +37,7 @@ export interface TeamMemberAccount {
   displayName: string;
   email: string;
   jobTitle: string;
+  jobTitles?: string[];
   role: 'owner' | 'member';
   projects: Array<{ id: string; name: string }>;
 }
@@ -60,6 +61,9 @@ export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
           if (prof.jobTitle && prof.jobTitle !== 'Team Member') {
             existing.jobTitle = prof.jobTitle;
           }
+          if (prof.jobTitles && prof.jobTitles.length > 0) {
+            existing.jobTitles = prof.jobTitles;
+          }
           if (prof.role === 'owner') {
             existing.role = 'owner';
           }
@@ -69,6 +73,7 @@ export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
             displayName: prof.displayName,
             email: prof.email,
             jobTitle: prof.jobTitle || 'Team Member',
+            jobTitles: prof.jobTitles,
             role: prof.role,
             projects: [{ id: proj.id, name: proj.name }],
           });
@@ -138,7 +143,16 @@ function MemberItemRow({ member, isAr }: { member: TeamMemberAccount; isAr: bool
       </div>
 
       <div className="flex items-center gap-2 flex-wrap shrink-0">
-        <span className={CARD_STYLES.jobBadge}>{member.jobTitle}</span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {(member.jobTitles && member.jobTitles.length > 0
+            ? member.jobTitles
+            : member.jobTitle.split(/[,،;\n]+/).map((t: string) => t.trim()).filter(Boolean)
+          ).map((role: string) => (
+              <span key={role} className={CARD_STYLES.jobBadge}>
+                {role}
+              </span>
+            ))}
+        </div>
         <span
           className="text-xs text-text-3 bg-surface px-2 py-0.5 rounded border border-line/60"
           title={member.projects.map((p) => p.name).join(', ')}

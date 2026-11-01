@@ -5,6 +5,12 @@
   max-inline-size: 100%;
 }
 
+.wrapper[data-full-width="true"] {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 100%;
+}
+
 .hiddenNativeSelect {
   position: absolute;
   inline-size: 1px;
@@ -88,8 +94,8 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-pop);
   padding: 6px;
-  min-inline-size: 140px;
-  max-inline-size: 320px;
+  min-inline-size: var(--radix-select-trigger-width, 140px);
+  max-inline-size: max(var(--radix-select-trigger-width, 360px), 360px);
   max-block-size: 280px;
   z-index: 1500;
   overflow: hidden;

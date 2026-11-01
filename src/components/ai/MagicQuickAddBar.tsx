@@ -83,6 +83,11 @@ export function MagicQuickAddBar({
     setSuccessMessage(null);
 
     try {
+      const storedApiKey =
+        typeof window !== 'undefined'
+          ? window.localStorage.getItem('taskora_gemini_api_key') || undefined
+          : undefined;
+
       const res = await fetch('/api/ai/quick-task', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,6 +95,7 @@ export function MagicQuickAddBar({
           prompt: prompt.trim(),
           locale: isAr ? 'ar' : 'en',
           members,
+          apiKey: storedApiKey,
         }),
       });
 

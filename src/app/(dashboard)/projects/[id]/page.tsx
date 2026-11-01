@@ -8,6 +8,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
 // Types & Services
+import { MemberContext } from '@/lib/ai/gemini';
 import {
   Project,
   Task,
@@ -232,13 +233,14 @@ export default function ProjectPage(): React.ReactElement | null {
   const currentUid = user?.uid || '';
   const isOwner = Boolean(project && user && project.ownerId === user.uid);
 
-  const projectMembersContext = useMemo(() => {
+  const projectMembersContext: MemberContext[] = useMemo(() => {
     if (!project) return [];
     if (project.memberProfiles && project.memberProfiles.length > 0) {
       return project.memberProfiles.map((p) => ({
         uid: p.uid,
         displayName: p.displayName,
         jobTitle: p.jobTitle,
+        jobTitles: p.jobTitles,
       }));
     }
     return project.memberIds.map((uid) => ({
@@ -697,9 +699,17 @@ export default function ProjectPage(): React.ReactElement | null {
                   >
                     <Avatar name={m.displayName} size="sm" className="w-5 h-5 text-[10px]" />
                     <span className="font-medium text-xs">{m.displayName}</span>
-                    <span className="text-[10px] text-accent bg-accent/10 px-1.5 py-0.5 rounded font-medium border border-accent/20">
-                      {m.jobTitle}
-                    </span>
+                    {(m.jobTitles && m.jobTitles.length > 0
+                      ? m.jobTitles
+                      : m.jobTitle.split(/[,،;\n]+/).map((t: string) => t.trim()).filter(Boolean)
+                    ).map((role: string) => (
+                        <span
+                          key={role}
+                          className="text-[10px] text-accent bg-accent/10 px-1.5 py-0.5 rounded font-medium border border-accent/20"
+                        >
+                          {role}
+                        </span>
+                      ))}
                   </span>
                 ))}
               </div>

@@ -19,6 +19,7 @@ export interface MemberContext {
   uid: string;
   displayName: string;
   jobTitle: string;
+  jobTitles?: string[];
 }
 
 export interface GeneratedTask {
