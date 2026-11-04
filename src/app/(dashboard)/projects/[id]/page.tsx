@@ -62,6 +62,15 @@ import { AddMemberModal } from '@/components/dashboard/AddMemberModal';
 import { TaskDetailDialog } from '@/components/tasks/TaskDetailDialog';
 import { ActivityPanel } from '@/components/projects/ActivityPanel';
 import { FilterBar } from '@/components/tasks/FilterBar';
+import { useWebRTC } from '@/hooks/useWebRTC';
+import { HuddleParticipant } from '@/types/chat';
+import {
+  joinHuddleSession,
+  leaveHuddleSession,
+  subscribeToHuddle,
+} from '@/services/huddle';
+import { ProjectChatDrawer } from '@/components/chat/ProjectChatDrawer';
+import { ProjectHuddleDock } from '@/components/chat/ProjectHuddleDock';
 
 // ============================================================================
 // 2. CONFIGURATION & CONSTANTS (EASY EDIT ZONE)
@@ -229,6 +238,23 @@ export default function ProjectPage(): React.ReactElement | null {
   const [actionError, setActionError] = useState<string | null>(null);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
 
+  // Chat & Huddle State
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isHuddleOpen, setIsHuddleOpen] = useState(false);
+  const [huddleParticipants, setHuddleParticipants] = useState<HuddleParticipant[]>([]);
+
+  const {
+    localStream,
+    remoteStreams,
+    isAudioEnabled,
+    isVideoEnabled,
+    isScreenSharing,
+    toggleAudio,
+    toggleVideo,
+    toggleScreenShare,
+    endCall,
+  } = useWebRTC();
+
   // Derived Values
   const currentUid = user?.uid || '';
   const isOwner = Boolean(project && user && project.ownerId === user.uid);
@@ -343,6 +369,63 @@ export default function ProjectPage(): React.ReactElement | null {
       }
     }
   }, [projectId, getErrorMessage]);
+
+  // Huddle Subscription
+  useEffect(() => {
+    if (!project?.id) return;
+    try {
+      const db = getDb();
+      const unsubscribe = subscribeToHuddle(db, project.id, (session) => {
+        if (session && session.participants) {
+          setHuddleParticipants(Object.values(session.participants));
+        } else {
+          setHuddleParticipants([]);
+        }
+      });
+      return () => {
+        unsubscribe();
+      };
+    } catch (e) {
+      console.error('Error subscribing to huddle:', e);
+    }
+  }, [project?.id]);
+
+  const handleJoinHuddle = useCallback(async () => {
+    if (!project || !user) return;
+    setIsHuddleOpen(true);
+    try {
+      const db = getDb();
+      const memberRole =
+        project.memberProfiles?.find((p) => p.uid === user.uid)?.jobTitle ||
+        (isOwner ? 'Project Manager' : 'Team Member');
+      await joinHuddleSession(db, project.id, {
+        uid: user.uid,
+        displayName: actor.displayName,
+        role: memberRole,
+        audioEnabled: isAudioEnabled,
+        videoEnabled: isVideoEnabled,
+        screenSharing: isScreenSharing,
+        isAudioEnabled,
+        isVideoEnabled,
+        isScreenSharing,
+        joinedAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('Failed to join huddle:', err);
+    }
+  }, [project, user, actor.displayName, isOwner, isAudioEnabled, isVideoEnabled, isScreenSharing]);
+
+  const handleLeaveHuddle = useCallback(async () => {
+    if (!project || !user) return;
+    setIsHuddleOpen(false);
+    endCall();
+    try {
+      const db = getDb();
+      await leaveHuddleSession(db, project.id, user.uid);
+    } catch (err) {
+      console.error('Failed to leave huddle:', err);
+    }
+  }, [project, user, endCall]);
 
   // Keyboard Shortcuts
   useHotkeys({
@@ -620,6 +703,20 @@ export default function ProjectPage(): React.ReactElement | null {
           <div className="flex gap-2.5 items-center flex-wrap w-full sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-initial [&>*]:justify-center [&>*]:min-h-[40px] sm:[&>*]:min-h-0">
             <Button
               variant="secondary"
+              data-testid="project-room-btn"
+              onClick={() => setIsChatOpen(true)}
+              className="relative flex items-center gap-1.5"
+            >
+              <span>💬 {t('chat.button')}</span>
+              {huddleParticipants.length > 0 && (
+                <span className="ms-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-accent text-on-accent animate-pulse">
+                  📞 {huddleParticipants.length}
+                </span>
+              )}
+            </Button>
+
+            <Button
+              variant="secondary"
               data-testid="project-activity-btn"
               onClick={() => setShowActivity(true)}
             >
@@ -715,17 +812,32 @@ export default function ProjectPage(): React.ReactElement | null {
               </div>
             </div>
 
-            {isOwner && (
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 type="button"
-                onClick={() => setShowAddMember(true)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface border border-line text-text-2 hover:border-accent hover:text-accent transition-colors shrink-0"
-                data-testid="add-project-member-btn"
+                onClick={() => setIsChatOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface border border-line text-text-2 hover:border-accent hover:text-accent transition-colors shrink-0"
+                data-testid="open-team-room-btn"
               >
-                <Icon name="plus" size={13} />
-                <span>{locale === 'ar' ? 'إضافة عضو لهذا المشروع' : 'Add Member to Project'}</span>
+                <Icon name="message" size={13} />
+                <span>{locale === 'ar' ? 'غرفة محادثة واجتماع الفريق' : 'Team Room & Huddle'}</span>
+                {huddleParticipants.length > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-accent animate-ping" />
+                )}
               </button>
-            )}
+
+              {isOwner && (
+                <button
+                  type="button"
+                  onClick={() => setShowAddMember(true)}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface border border-line text-text-2 hover:border-accent hover:text-accent transition-colors shrink-0"
+                  data-testid="add-project-member-btn"
+                >
+                  <Icon name="plus" size={13} />
+                  <span>{locale === 'ar' ? 'إضافة عضو لهذا المشروع' : 'Add Member to Project'}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -970,6 +1082,43 @@ export default function ProjectPage(): React.ReactElement | null {
           projects={[project]}
           defaultProjectId={project.id}
           onMemberAdded={() => loadProjectAndTasks(false)}
+        />
+      )}
+
+      {/* Project Chat Drawer */}
+      {project && user && (
+        <ProjectChatDrawer
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          project={project}
+          currentUserId={user.uid}
+          currentUserName={actor.displayName}
+          currentUserRole={isOwner ? 'owner' : 'member'}
+          isOwner={isOwner}
+          tasks={tasks}
+          onJoinHuddle={handleJoinHuddle}
+          isHuddleActive={huddleParticipants.length > 0}
+          huddleParticipantCount={huddleParticipants.length}
+        />
+      )}
+
+      {/* Project Live Huddle Dock */}
+      {project && user && (
+        <ProjectHuddleDock
+          isOpen={isHuddleOpen}
+          projectName={project.name}
+          currentUserId={user.uid}
+          participants={huddleParticipants}
+          isAudioEnabled={isAudioEnabled}
+          isVideoEnabled={isVideoEnabled}
+          isScreenSharing={isScreenSharing}
+          localStream={localStream}
+          remoteStreams={remoteStreams}
+          onToggleAudio={toggleAudio}
+          onToggleVideo={toggleVideo}
+          onToggleScreenShare={toggleScreenShare}
+          onLeave={handleLeaveHuddle}
+          onToggleChat={() => setIsChatOpen((prev) => !prev)}
         />
       )}
     </div>
