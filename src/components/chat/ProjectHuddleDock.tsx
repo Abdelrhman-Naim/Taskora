@@ -63,8 +63,12 @@ function VideoFeed({ stream, isMuted = false }: VideoFeedProps): React.ReactElem
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+    const video = videoRef.current;
+    if (video && stream) {
+      video.srcObject = stream;
+      video.play().catch(() => {
+        // Silently handled: browser autoplay policy
+      });
     }
   }, [stream]);
 
@@ -106,13 +110,18 @@ export function ProjectHuddleDock({
 
   if (!isOpen) return null;
 
-  const screenSharingParticipant = participants.find((p) => p.screenSharing || p.isScreenSharing);
+  const safeParticipants = useMemo(() => {
+    if (!Array.isArray(participants)) return [];
+    return participants.filter((p): p is HuddleParticipant => Boolean(p && typeof p === 'object' && p.uid));
+  }, [participants]);
+
+  const screenSharingParticipant = safeParticipants.find((p) => p.screenSharing || p.isScreenSharing);
   const isAnyScreenSharing = Boolean(screenSharingParticipant) || isScreenSharing;
 
   // Ensure current user is always included in the participants list
   const effectiveParticipants = useMemo(() => {
-    if (participants.some((p) => p.uid === currentUserId)) {
-      return participants;
+    if (safeParticipants.some((p) => p.uid === currentUserId)) {
+      return safeParticipants;
     }
     const selfParticipant: HuddleParticipant = {
       uid: currentUserId,
@@ -126,8 +135,8 @@ export function ProjectHuddleDock({
       isScreenSharing,
       joinedAt: new Date().toISOString(),
     };
-    return [selfParticipant, ...participants];
-  }, [participants, currentUserId, isAudioEnabled, isVideoEnabled, isScreenSharing, isAr]);
+    return [selfParticipant, ...safeParticipants];
+  }, [safeParticipants, currentUserId, isAudioEnabled, isVideoEnabled, isScreenSharing, isAr]);
 
   // Render PiP Bar
   if (isMinimized) {
@@ -265,6 +274,7 @@ export function ProjectHuddleDock({
               const hasAudio = isSelf ? isAudioEnabled : Boolean(participant.audioEnabled ?? participant.isAudioEnabled);
               const participantStream = isSelf ? localStream : remoteStreams[participant.uid];
               const isParticipantSharing = Boolean(participant.screenSharing || participant.isScreenSharing);
+              const displayName = participant.displayName || (isSelf ? (isAr ? 'أنت' : 'You') : (isAr ? 'مشارك' : 'Participant'));
 
               return (
                 <div
@@ -281,12 +291,12 @@ export function ProjectHuddleDock({
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center">
                       <Avatar
-                        name={participant.displayName}
+                        name={displayName}
                         size="md"
                         className="w-14 h-14 mb-3 border-2 border-accent/40 shadow-lg text-sm"
                       />
                       <span className="text-sm font-semibold text-text truncate max-w-[180px]">
-                        {participant.displayName} {isSelf && (isAr ? '(أنت)' : '(You)')}
+                        {displayName} {isSelf && (isAr ? '(أنت)' : '(You)')}
                       </span>
                       {participant.role && (
                         <span className="text-[11px] text-text-3 truncate max-w-[160px] mt-0.5">
@@ -298,7 +308,7 @@ export function ProjectHuddleDock({
 
                   {/* Status Overlay Badges */}
                   <div className="absolute bottom-2.5 inset-inline-start-2.5 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[11px] text-white">
-                    <span className="truncate max-w-[120px] font-medium">{participant.displayName}</span>
+                    <span className="truncate max-w-[120px] font-medium">{displayName}</span>
                     <Icon
                       name={hasAudio ? 'mic' : 'mic-off'}
                       size={13}

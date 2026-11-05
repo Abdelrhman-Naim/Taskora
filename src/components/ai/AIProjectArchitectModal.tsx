@@ -444,7 +444,7 @@ export function AIProjectArchitectModal({
                     : 'Start voice dictation'
                 }
               >
-                <span className="text-sm">🎙️</span>
+                <Icon name="mic" size={16} />
               </button>
             </div>
 
@@ -487,12 +487,12 @@ export function AIProjectArchitectModal({
             >
               {isGenerating ? (
                 <>
-                  <span className="animate-spin text-sm">⏳</span>
+                  <Icon name="clock" size={16} className="animate-spin text-accent" />
                   <span>{isAr ? 'الذكاء الاصطناعي يحلل ويوزع المهام...' : 'AI is decomposing & assigning...'}</span>
                 </>
               ) : (
                 <>
-                  <span>✨</span>
+                  <Icon name="sparkles" size={16} />
                   <span>{isAr ? 'تفكيك وتوليد خطة المشروع' : 'Generate Project Breakdown'}</span>
                 </>
               )}

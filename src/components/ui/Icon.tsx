@@ -11,6 +11,7 @@ export type IconName =
   | 'trash'
   | 'edit'
   | 'users'
+  | 'user'
   | 'settings'
   | 'logout'
   | 'sun'
@@ -28,10 +29,18 @@ export type IconName =
   | 'mic-off'
   | 'video'
   | 'video-off'
+  | 'phone'
   | 'phone-off'
   | 'maximize'
   | 'minimize'
-  | 'message';
+  | 'message'
+  | 'send'
+  | 'pin'
+  | 'zap'
+  | 'calendar'
+  | 'clipboard'
+  | 'sparkles'
+  | 'chart';
 
 export interface IconProps {
   name: IconName;
@@ -48,7 +57,7 @@ export function Icon({
   className = '',
   barsCount = 3,
 }: IconProps): React.ReactElement {
-  const isDirectional = name === 'chevron' || name === 'arrow' || name === 'logout';
+  const isDirectional = name === 'chevron' || name === 'arrow' || name === 'logout' || name === 'send';
   const combinedClass = `${styles.icon} ${isDirectional ? styles.dirIcon : ''} ${className}`.trim();
 
   const renderPath = () => {
@@ -239,6 +248,10 @@ export function Icon({
             <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m4 0h5a2 2 0 0 1 2 2v3.34l1 1L23 7v10" />
           </>
         );
+      case 'phone':
+        return (
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+        );
       case 'phone-off':
         return (
           <>
@@ -266,6 +279,63 @@ export function Icon({
         );
       case 'message':
         return <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />;
+      case 'send':
+        return (
+          <>
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </>
+        );
+      case 'pin':
+        return (
+          <>
+            <line x1="12" y1="17" x2="12" y2="22" />
+            <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.77V5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5.77a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z" />
+          </>
+        );
+      case 'zap':
+        return <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />;
+      case 'user':
+        return (
+          <>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </>
+        );
+      case 'calendar':
+        return (
+          <>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </>
+        );
+      case 'clipboard':
+        return (
+          <>
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+          </>
+        );
+      case 'sparkles':
+        return (
+          <>
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+            <path d="M5 3v4" />
+            <path d="M19 17v4" />
+            <path d="M3 5h4" />
+            <path d="M17 19h4" />
+          </>
+        );
+      case 'chart':
+        return (
+          <>
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </>
+        );
       default:
         return null;
     }

@@ -8,6 +8,7 @@ import { Task, Project, TaskStatus } from '@/types';
 import { canChangeStatus, StatusMenu } from './TaskCard';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
+import { Icon } from '@/components/ui/Icon';
 import { useI18n } from '@/i18n/I18nProvider';
 import { MessageKey } from '@/i18n/en';
 import { isOverdue, todayString, isScheduledTask } from '@/lib/dates';
@@ -286,7 +287,7 @@ function BoardColumn({
               aria-expanded={showScheduled}
             >
               <span>
-                📅 {t('task.recurrence.scheduledTitle')} ({scheduledTasks.length})
+                <Icon name="calendar" size={14} className="me-1 text-text-3" /> {t('task.recurrence.scheduledTitle')} ({scheduledTasks.length})
               </span>
               <span style={{ fontSize: '0.75rem' }}>{showScheduled ? '▲' : '▼'}</span>
             </button>

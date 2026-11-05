@@ -48,8 +48,8 @@ export interface HuddleSession {
   id: string; // 'active-huddle'
   projectId: string;
   active: boolean;
-  startedBy: string;
-  startedByName: string;
+  startedBy?: string;
+  startedByName?: string;
   participants: Record<string, HuddleParticipant>;
   updatedAt: string;
 }

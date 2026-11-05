@@ -243,6 +243,15 @@ export default function ProjectPage(): React.ReactElement | null {
   const [isHuddleOpen, setIsHuddleOpen] = useState(false);
   const [huddleParticipants, setHuddleParticipants] = useState<HuddleParticipant[]>([]);
 
+  const webRtcOptions = useMemo(
+    () => ({
+      projectId: project?.id,
+      myUid: user?.uid,
+      db: typeof window !== 'undefined' ? getDb() : null,
+    }),
+    [project?.id, user?.uid]
+  );
+
   const {
     localStream,
     screenStream,
@@ -255,7 +264,7 @@ export default function ProjectPage(): React.ReactElement | null {
     toggleVideo,
     toggleScreenShare,
     endCall,
-  } = useWebRTC();
+  } = useWebRTC(webRtcOptions);
 
   // Derived Values
   const currentUid = user?.uid || '';
@@ -396,8 +405,12 @@ export default function ProjectPage(): React.ReactElement | null {
     if (!project || !user) return;
     setIsHuddleOpen(true);
     try {
-      // Start microphone media immediately upon joining call
-      await startMedia({ audio: true, video: false });
+      // Start microphone media immediately upon joining call (safely guarded)
+      try {
+        await startMedia({ audio: true, video: false });
+      } catch (mediaErr) {
+        console.warn('Microphone permission or device unavailable:', mediaErr);
+      }
 
       const db = getDb();
       const memberRole =
@@ -712,10 +725,12 @@ export default function ProjectPage(): React.ReactElement | null {
               onClick={() => setIsChatOpen(true)}
               className="relative flex items-center gap-1.5"
             >
-              <span>💬 {t('chat.button')}</span>
+              <Icon name="message" size={16} />
+              <span>{t('chat.button')}</span>
               {huddleParticipants.length > 0 && (
-                <span className="ms-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-accent text-on-accent animate-pulse">
-                  📞 {huddleParticipants.length}
+                <span className="ms-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-accent text-on-accent animate-pulse inline-flex items-center gap-1">
+                  <Icon name="phone" size={10} />
+                  <span>{huddleParticipants.length}</span>
                 </span>
               )}
             </Button>
@@ -733,8 +748,10 @@ export default function ProjectPage(): React.ReactElement | null {
                 variant="secondary"
                 data-testid="project-risk-radar-btn"
                 onClick={() => setShowRiskRadar(true)}
+                className="inline-flex items-center gap-1.5"
               >
-                📊 {locale === 'ar' ? 'رادار المخاطر الذكي' : 'AI Risk Radar'}
+                <Icon name="chart" size={15} />
+                <span>{locale === 'ar' ? 'رادار المخاطر الذكي' : 'AI Risk Radar'}</span>
               </Button>
             )}
 
@@ -929,7 +946,8 @@ export default function ProjectPage(): React.ReactElement | null {
                 onClick={() => setUserSelectedScope('my_tasks')}
                 data-testid="scope-switch-my-tasks"
               >
-                👤 {t('task.scope.myTasks')}
+                <Icon name="user" size={13} />
+                <span>{t('task.scope.myTasks')}</span>
               </button>
               <button
                 type="button"
@@ -939,7 +957,8 @@ export default function ProjectPage(): React.ReactElement | null {
                 onClick={() => setUserSelectedScope('all')}
                 data-testid="scope-switch-all"
               >
-                🌐 {t('task.scope.allTasks')}
+                <Icon name="globe" size={13} />
+                <span>{t('task.scope.allTasks')}</span>
               </button>
             </div>
           )}

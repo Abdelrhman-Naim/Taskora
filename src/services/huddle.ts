@@ -51,6 +51,11 @@ export async function joinHuddleSession(
   const huddleRef = docFn(db, 'projects', projectId, 'huddles', HUDDLE_DOC_ID);
   const now = nowFn().toISOString();
 
+  const participantData = {
+    ...participant,
+    joinedAt: now,
+  };
+
   await setDocFn(
     huddleRef,
     {
@@ -58,10 +63,10 @@ export async function joinHuddleSession(
       projectId,
       active: true,
       updatedAt: now,
-      [`participants.${participant.uid}`]: {
-        ...participant,
-        joinedAt: now,
+      participants: {
+        [participant.uid]: participantData,
       },
+      [`participants.${participant.uid}`]: participantData,
     },
     { merge: true }
   );
@@ -79,6 +84,7 @@ export async function updateMediaState(
 ): Promise<void> {
   const docFn = injections.docFn || doc;
   const updateDocFn = injections.updateDocFn || updateDoc;
+  const setDocFn = injections.setDocFn || setDoc;
 
   const huddleRef = docFn(db, 'projects', projectId, 'huddles', HUDDLE_DOC_ID);
   const updatePayload: Record<string, unknown> = {};
@@ -93,7 +99,23 @@ export async function updateMediaState(
     updatePayload[`participants.${uid}.screenSharing`] = patch.screenSharing;
   }
 
-  await updateDocFn(huddleRef, updatePayload);
+  if (injections.updateDocFn) {
+    await updateDocFn(huddleRef, updatePayload);
+  } else {
+    try {
+      await updateDocFn(huddleRef, updatePayload);
+    } catch {
+      await setDocFn(
+        huddleRef,
+        {
+          participants: {
+            [uid]: patch,
+          },
+        },
+        { merge: true }
+      );
+    }
+  }
 }
 
 /**
@@ -111,9 +133,13 @@ export async function leaveHuddleSession(
 
   const huddleRef = docFn(db, 'projects', projectId, 'huddles', HUDDLE_DOC_ID);
 
-  await updateDocFn(huddleRef, {
-    [`participants.${uid}`]: deleteFieldFn(),
-  });
+  try {
+    await updateDocFn(huddleRef, {
+      [`participants.${uid}`]: deleteFieldFn(),
+    });
+  } catch (e) {
+    console.warn('leaveHuddleSession notice:', e);
+  }
 }
 
 /**
@@ -130,13 +156,77 @@ export function subscribeToHuddle(
   return onSnapshot(
     huddleRef,
     (snapshot) => {
-      if (!snapshot.exists()) {
-        onUpdate(null);
-        return;
+      try {
+        if (!snapshot.exists()) {
+          onUpdate(null);
+          return;
+        }
+        const rawData = snapshot.data() as Record<string, any>;
+        if (!rawData) {
+          onUpdate(null);
+          return;
+        }
+
+        const participantsMap: Record<string, HuddleParticipant> = {};
+
+        // Parse nested participants map
+        if (rawData.participants && typeof rawData.participants === 'object') {
+          Object.entries(rawData.participants).forEach(([uid, p]) => {
+            if (p && typeof p === 'object') {
+              participantsMap[uid] = {
+                uid,
+                displayName: (p as any).displayName || 'Participant',
+                role: (p as any).role || 'Team Member',
+                joinedAt: (p as any).joinedAt || new Date().toISOString(),
+                audioEnabled: Boolean((p as any).audioEnabled ?? (p as any).isAudioEnabled),
+                videoEnabled: Boolean((p as any).videoEnabled ?? (p as any).isVideoEnabled),
+                screenSharing: Boolean((p as any).screenSharing ?? (p as any).isScreenSharing),
+                isAudioEnabled: Boolean((p as any).audioEnabled ?? (p as any).isAudioEnabled),
+                isVideoEnabled: Boolean((p as any).videoEnabled ?? (p as any).isVideoEnabled),
+                isScreenSharing: Boolean((p as any).screenSharing ?? (p as any).isScreenSharing),
+              };
+            }
+          });
+        }
+
+        // Support backward-compatible flat dot-notation keys
+        Object.entries(rawData).forEach(([key, val]) => {
+          if (key.startsWith('participants.') && val && typeof val === 'object') {
+            const uid = key.replace('participants.', '');
+            if (!participantsMap[uid]) {
+              participantsMap[uid] = {
+                uid,
+                displayName: (val as any).displayName || 'Participant',
+                role: (val as any).role || 'Team Member',
+                joinedAt: (val as any).joinedAt || new Date().toISOString(),
+                audioEnabled: Boolean((val as any).audioEnabled ?? (val as any).isAudioEnabled),
+                videoEnabled: Boolean((val as any).videoEnabled ?? (val as any).isVideoEnabled),
+                screenSharing: Boolean((val as any).screenSharing ?? (val as any).isScreenSharing),
+                isAudioEnabled: Boolean((val as any).audioEnabled ?? (val as any).isAudioEnabled),
+                isVideoEnabled: Boolean((val as any).videoEnabled ?? (val as any).isVideoEnabled),
+                isScreenSharing: Boolean((val as any).screenSharing ?? (val as any).isScreenSharing),
+              };
+            }
+          }
+        });
+
+        const session: HuddleSession = {
+          id: HUDDLE_DOC_ID,
+          projectId,
+          active: Boolean(rawData.active),
+          startedBy: rawData.startedBy || '',
+          startedByName: rawData.startedByName || '',
+          updatedAt: rawData.updatedAt || new Date().toISOString(),
+          participants: participantsMap,
+        };
+
+        onUpdate(session);
+      } catch (err: unknown) {
+        console.warn('subscribeToHuddle processing error:', err);
       }
-      onUpdate(snapshot.data() as HuddleSession);
     },
     (err) => {
+      console.warn('subscribeToHuddle snapshot error:', err);
       onError?.(err);
     }
   );

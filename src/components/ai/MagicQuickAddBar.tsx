@@ -140,15 +140,16 @@ export function MagicQuickAddBar({
     <div className={BAR_STYLES.container} data-testid="magic-quick-add-bar">
       <div className={BAR_STYLES.headerRow}>
         <div className="flex items-center gap-1.5 font-medium text-text">
-          <span>⚡</span>
+          <Icon name="zap" size={14} className="text-accent" />
           <span>
             {isAr ? 'الإدخال السريع الذكي (بالصوت أو النص)' : 'Magic Quick-Add (Voice & Natural Language)'}
           </span>
         </div>
 
         {successMessage && (
-          <span className="text-xs text-emerald-500 font-medium animate-fade-in">
-            ✓ {successMessage}
+          <span className="text-xs text-emerald-500 font-medium animate-fade-in inline-flex items-center gap-1">
+            <Icon name="check" size={13} />
+            <span>{successMessage}</span>
           </span>
         )}
       </div>
@@ -161,7 +162,7 @@ export function MagicQuickAddBar({
           className={isListening ? BAR_STYLES.micBtnListening : BAR_STYLES.micBtnIdle}
           title={isListening ? 'Stop listening' : 'Dictate with voice'}
         >
-          <span className="text-xs">🎙️</span>
+          <Icon name="mic" size={15} />
         </button>
 
         <input

@@ -2,12 +2,13 @@ import React from 'react';
 import styles from './Avatar.module.css';
 
 export interface AvatarProps {
-  name: string;
+  name?: string | null;
   size?: 'sm' | 'md';
   className?: string;
 }
 
-export function getInitials(name: string): string {
+export function getInitials(name?: string | null): string {
+  if (!name || typeof name !== 'string') return '?';
   const trimmed = name.trim();
   if (!trimmed) return '?';
   const parts = trimmed.split(/\s+/).filter(Boolean);
@@ -21,7 +22,8 @@ export function getInitials(name: string): string {
 }
 
 export function Avatar({ name, size = 'md', className }: AvatarProps): React.ReactElement {
-  const initials = getInitials(name);
+  const safeName = typeof name === 'string' ? name : '';
+  const initials = getInitials(safeName);
   const sizeClass = size === 'sm' ? styles.sm : styles.md;
   const classes = [styles.avatar, sizeClass, className].filter(Boolean).join(' ');
 
@@ -29,7 +31,7 @@ export function Avatar({ name, size = 'md', className }: AvatarProps): React.Rea
     <span
       className={classes}
       aria-hidden="true"
-      title={name}
+      title={safeName}
     >
       <bdi dir="auto">{initials}</bdi>
     </span>

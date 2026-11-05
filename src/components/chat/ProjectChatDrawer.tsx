@@ -3,7 +3,7 @@
 // ============================================================================
 // 1. IMPORTS
 // ============================================================================
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useErrorMessage } from '@/i18n/useErrorMessage';
 import { getDb } from '@/lib/firebase';
@@ -26,18 +26,18 @@ import { MessageToTaskModal } from './MessageToTaskModal';
 // ============================================================================
 const DRAWER_STYLES = {
   backdrop: 'fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity',
-  container: 'fixed inset-y-0 inset-inline-end-0 w-full sm:w-[460px] bg-surface border-inline-start border-line shadow-2xl z-50 flex flex-col text-text animate-slide-in',
+  container: 'fixed inset-y-0 inset-inline-end-0 w-full sm:w-[460px] max-w-full bg-surface border-inline-start border-line shadow-2xl z-50 flex flex-col text-text animate-slide-in overflow-hidden',
   header: 'flex items-center justify-between p-4 border-b border-line bg-surface shrink-0',
   huddleBanner: 'flex items-center justify-between px-4 py-2.5 bg-accent/10 border-b border-accent/20 text-xs shrink-0',
   tabBar: 'flex items-center gap-1 p-2 border-b border-line bg-bg/50 shrink-0',
-  tabBtnActive: 'flex-1 py-2 px-3 text-xs font-semibold rounded-md bg-accent text-on-accent transition-colors text-center cursor-pointer min-h-[38px]',
-  tabBtnInactive: 'flex-1 py-2 px-3 text-xs font-medium rounded-md text-text-2 hover:bg-surface hover:text-text transition-colors text-center cursor-pointer min-h-[38px]',
+  tabBtnActive: 'flex-1 py-2 px-3 text-xs font-semibold rounded-md bg-accent text-on-accent transition-colors text-center cursor-pointer min-h-[38px] flex items-center justify-center gap-1.5',
+  tabBtnInactive: 'flex-1 py-2 px-3 text-xs font-medium rounded-md text-text-2 hover:bg-surface hover:text-text transition-colors text-center cursor-pointer min-h-[38px] flex items-center justify-center gap-1.5',
   messagesContainer: 'flex-1 overflow-y-auto p-4 space-y-3.5',
-  inputArea: 'p-3 border-t border-line bg-surface shrink-0 flex flex-col gap-2',
-  inputRow: 'flex items-center gap-2',
-  textInput: 'flex-1 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-text placeholder:text-text-3 focus:border-accent focus:outline-none transition-colors min-h-[44px]',
-  sendBtn: 'px-4 py-2 rounded-lg bg-accent text-on-accent text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity min-h-[44px] cursor-pointer flex items-center gap-1.5',
-  actionPill: 'inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded-md border border-line hover:border-accent hover:text-accent transition-colors bg-bg cursor-pointer',
+  inputArea: 'p-3 border-t border-line bg-surface shrink-0 flex flex-col gap-2 w-full max-w-full box-border',
+  inputRow: 'flex items-center gap-2 w-full min-w-0',
+  textInput: 'flex-1 min-w-0 rounded-lg border border-line bg-bg px-3 py-2 text-sm text-text placeholder:text-text-3 focus:border-accent focus:outline-none transition-colors min-h-[44px]',
+  sendBtn: 'shrink-0 px-4 py-2 rounded-lg bg-accent text-on-accent text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-opacity min-h-[44px] cursor-pointer flex items-center gap-1.5 justify-center',
+  actionPill: 'inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded-md border border-line hover:border-accent hover:text-accent transition-colors bg-bg cursor-pointer',
 };
 
 // ============================================================================
@@ -82,11 +82,19 @@ export function ProjectChatDrawer({
   const [inputText, setInputText] = useState('');
   const [selectedTaskMention, setSelectedTaskMention] = useState<TaskMention | null>(null);
   const [showTaskPicker, setShowTaskPicker] = useState(false);
+  const [taskSearch, setTaskSearch] = useState('');
   const [convertingMessage, setConvertingMessage] = useState<ChatMessage | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Filter tasks for task mention picker
+  const filteredTasksForMention = useMemo(() => {
+    if (!taskSearch.trim()) return tasks;
+    const q = taskSearch.toLowerCase().trim();
+    return tasks.filter((t) => t.title.toLowerCase().includes(q));
+  }, [tasks, taskSearch]);
 
   // Members eligible for DMs (all members except current user)
   const availableMembers = (project.memberProfiles && project.memberProfiles.length > 0)
@@ -198,8 +206,10 @@ export function ProjectChatDrawer({
       >
         {/* Header */}
         <div className={DRAWER_STYLES.header}>
-          <div className="flex items-center gap-2">
-            <span className="text-lg">💬</span>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-lg bg-accent/15 text-accent flex items-center justify-center">
+              <Icon name="message" size={18} />
+            </span>
             <div className="flex flex-col">
               <h3 className="text-sm font-semibold text-text m-0">
                 {isAr ? 'غرفة محادثات المشروع' : 'Project Chat & Hub'}
@@ -214,7 +224,7 @@ export function ProjectChatDrawer({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-md hover:bg-surface-hover text-text-2 hover:text-text cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center"
+              className="p-2 rounded-md hover:bg-surface-hover text-text-2 hover:text-text cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center transition-colors"
               aria-label={isAr ? 'إغلاق' : 'Close'}
             >
               <Icon name="x" size={16} />
@@ -239,7 +249,7 @@ export function ProjectChatDrawer({
             data-testid="drawer-join-huddle-btn"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent text-on-accent font-semibold text-xs hover:opacity-90 transition-opacity cursor-pointer min-h-[36px]"
           >
-            <span>📞</span>
+            <Icon name="phone" size={13} />
             <span>{isHuddleActive ? (isAr ? 'انضم للمكالمة' : 'Join Call') : (isAr ? 'بدء مكالمة' : 'Start Call')}</span>
           </button>
         </div>
@@ -252,7 +262,8 @@ export function ProjectChatDrawer({
             onClick={() => setActiveTab('general')}
             className={activeTab === 'general' ? DRAWER_STYLES.tabBtnActive : DRAWER_STYLES.tabBtnInactive}
           >
-            <span>🌐 {isAr ? 'عامة المشروع' : 'General'}</span>
+            <Icon name="globe" size={14} />
+            <span>{isAr ? 'عامة المشروع' : 'General'}</span>
           </button>
 
           <button
@@ -261,7 +272,8 @@ export function ProjectChatDrawer({
             onClick={() => setActiveTab('dm')}
             className={activeTab === 'dm' ? DRAWER_STYLES.tabBtnActive : DRAWER_STYLES.tabBtnInactive}
           >
-            <span>💬 {isAr ? 'محادثة خاصة (DM)' : 'Direct Messages'}</span>
+            <Icon name="message" size={14} />
+            <span>{isAr ? 'محادثة خاصة (DM)' : 'Direct Messages'}</span>
           </button>
         </div>
 
@@ -294,7 +306,9 @@ export function ProjectChatDrawer({
         <div className={DRAWER_STYLES.messagesContainer}>
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-48 text-center text-text-3 gap-2">
-              <span className="text-3xl">💬</span>
+              <span className="p-3 rounded-full bg-surface border border-line text-text-3">
+                <Icon name="message" size={32} />
+              </span>
               <p className="text-xs">
                 {isAr
                   ? 'لا توجد رسائل بعد. ابدأ النقاش أو نسّق مع فريقك!'
@@ -340,7 +354,7 @@ export function ProjectChatDrawer({
                     {msg.taskMention && (
                       <div className="mt-2 pt-2 border-t border-line/40 flex items-center justify-between gap-2 text-xs">
                         <div className="flex items-center gap-1.5 font-medium truncate">
-                          <span>📌</span>
+                          <Icon name="pin" size={13} className="text-accent shrink-0" />
                           <span className="truncate">{msg.taskMention.taskTitle}</span>
                         </div>
                         <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-surface border border-line shrink-0">
@@ -358,7 +372,7 @@ export function ProjectChatDrawer({
                       className="text-[10px] text-text-3 hover:text-accent transition-colors flex items-center gap-1 cursor-pointer"
                       title={isAr ? 'تحويل لمهمة' : 'Convert to Task'}
                     >
-                      <span>⚡</span>
+                      <Icon name="zap" size={11} className="text-accent shrink-0" />
                       <span>{isAr ? 'تحويل لمهمة' : 'To Task'}</span>
                     </button>
                   </div>
@@ -371,41 +385,105 @@ export function ProjectChatDrawer({
 
         {/* Selected Task Mention Pill Preview */}
         {selectedTaskMention && (
-          <div className="px-3 py-1.5 bg-accent/10 border-t border-accent/20 flex items-center justify-between text-xs text-accent">
+          <div className="px-3 py-1.5 bg-accent/10 border-t border-accent/20 flex items-center justify-between text-xs text-accent shrink-0">
             <div className="flex items-center gap-1.5 truncate">
-              <span>📌</span>
+              <Icon name="pin" size={13} className="text-accent shrink-0" />
               <span className="truncate">{selectedTaskMention.taskTitle}</span>
             </div>
             <button
               type="button"
               onClick={() => setSelectedTaskMention(null)}
               className="text-text-3 hover:text-red-500 cursor-pointer p-0.5"
+              aria-label={isAr ? 'إلغاء الإشارة' : 'Clear mention'}
             >
-              ×
+              <Icon name="x" size={13} />
             </button>
           </div>
         )}
 
         {/* Task Mention Picker Popover */}
         {showTaskPicker && tasks.length > 0 && (
-          <div className="p-3 bg-bg border-t border-line max-h-36 overflow-y-auto flex flex-col gap-1">
-            <span className="text-[11px] font-semibold text-text-2">
-              {isAr ? 'اختر مهمة للإشارة إليها:' : 'Select a task to mention:'}
-            </span>
-            {tasks.map((t) => (
+          <div className="p-3 bg-surface border-t border-line flex flex-col gap-2 shrink-0">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-text flex items-center gap-1.5">
+                <Icon name="pin" size={13} className="text-accent" />
+                <span>{isAr ? 'اختر مهمة للإشارة إليها:' : 'Select a task to mention:'}</span>
+              </span>
               <button
-                key={t.id}
                 type="button"
                 onClick={() => {
-                  setSelectedTaskMention(formatTaskMentionFromTask(t));
                   setShowTaskPicker(false);
+                  setTaskSearch('');
                 }}
-                className="text-start px-2 py-1 text-xs rounded hover:bg-surface flex items-center justify-between text-text truncate cursor-pointer"
+                className="text-text-3 hover:text-text p-1 cursor-pointer"
+                aria-label={isAr ? 'إغلاق' : 'Close'}
               >
-                <span className="truncate">{t.title}</span>
-                <span className="text-[10px] text-text-3 shrink-0 ms-2">{t.status}</span>
+                <Icon name="x" size={14} />
               </button>
-            ))}
+            </div>
+
+            {/* Quick search input */}
+            {tasks.length > 3 && (
+              <input
+                type="text"
+                value={taskSearch}
+                onChange={(e) => setTaskSearch(e.target.value)}
+                placeholder={isAr ? 'بحث سريع في المهام...' : 'Search tasks...'}
+                className="w-full text-xs px-2.5 py-1.5 rounded-md bg-bg border border-line text-text placeholder:text-text-3 focus:outline-none focus:border-accent"
+              />
+            )}
+
+            <div className="max-h-52 overflow-y-auto space-y-1.5 pe-1">
+              {filteredTasksForMention.length === 0 ? (
+                <p className="text-xs text-text-3 py-3 text-center">
+                  {isAr ? 'لا توجد مهام مطابقة للبحث' : 'No matching tasks'}
+                </p>
+              ) : (
+                filteredTasksForMention.map((t) => {
+                  const statusLabel =
+                    t.status === 'done'
+                      ? (isAr ? 'مكتملة' : 'Done')
+                      : t.status === 'in_progress'
+                      ? (isAr ? 'قيد التنفيذ' : 'In Progress')
+                      : (isAr ? 'قيد الانتظار' : 'To Do');
+
+                  const statusClass =
+                    t.status === 'done'
+                      ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30'
+                      : t.status === 'in_progress'
+                      ? 'bg-sky-500/15 text-sky-500 border-sky-500/30'
+                      : 'bg-amber-500/15 text-amber-500 border-amber-500/30';
+
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTaskMention(formatTaskMentionFromTask(t));
+                        setShowTaskPicker(false);
+                        setTaskSearch('');
+                      }}
+                      className="w-full text-start p-2.5 rounded-lg border border-line bg-bg hover:bg-surface hover:border-accent/50 transition-all flex flex-col gap-1.5 cursor-pointer group"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="font-sans font-medium text-xs text-text leading-snug break-words group-hover:text-accent transition-colors flex-1">
+                          {t.title}
+                        </span>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border shrink-0 ${statusClass}`}>
+                          {statusLabel}
+                        </span>
+                      </div>
+                      {t.priority && (
+                        <div className="flex items-center gap-1 text-[10px] text-text-3">
+                          <Icon name="bars" size={10} barsCount={t.priority === 'high' ? 3 : t.priority === 'medium' ? 2 : 1} />
+                          <span className="capitalize">{t.priority}</span>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })
+              )}
+            </div>
           </div>
         )}
 
@@ -418,7 +496,7 @@ export function ProjectChatDrawer({
               className={DRAWER_STYLES.actionPill}
               title={isAr ? 'الإشارة لمهمة' : 'Mention Task'}
             >
-              <span>#</span>
+              <Icon name="pin" size={12} className="text-accent" />
               <span>{isAr ? 'إشارة لمهمة' : 'Task'}</span>
             </button>
           </div>
@@ -437,8 +515,8 @@ export function ProjectChatDrawer({
               disabled={isSending || !inputText.trim()}
               className={DRAWER_STYLES.sendBtn}
             >
+              <Icon name="send" size={14} />
               <span>{isAr ? 'إرسال' : 'Send'}</span>
-              <Icon name="arrow" size={14} className="ltr:rotate-180" />
             </button>
           </div>
         </form>

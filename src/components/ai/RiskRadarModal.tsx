@@ -83,7 +83,7 @@ function RiskItemCard({ risk }: { risk: RiskItem }) {
       </div>
       <p className="text-xs text-text-2 m-0">{risk.description}</p>
       <div className="text-xs font-medium text-accent mt-1 flex items-center gap-1.5">
-        <span>💡 التوصية:</span>
+        <span className="inline-flex items-center gap-1.5"><Icon name="sparkles" size={14} className="text-accent" /><span>التوصية:</span></span>
         <span>{risk.recommendation}</span>
       </div>
     </div>
@@ -184,7 +184,7 @@ export function RiskRadarModal({
         <div className={RADAR_STYLES.header}>
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center font-bold">
-              📊
+              <Icon name="chart" size={16} />
             </div>
             <div>
               <h2 className={RADAR_STYLES.title}>
@@ -286,7 +286,7 @@ export function RiskRadarModal({
               onClick={handleCopySummary}
               className="px-5 py-2 rounded-lg bg-accent text-on-accent text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer"
             >
-              <span>📋</span>
+              <Icon name="clipboard" size={14} />
               <span>{copied ? 'تم نسخ التقرير' : 'نسخ التقرير التنفيذي'}</span>
             </button>
           )}

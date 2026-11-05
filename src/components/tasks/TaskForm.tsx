@@ -8,6 +8,7 @@ import { Project, Task, TaskPriority, TaskStatus, Recurrence, ChecklistItem } fr
 import { taskInputSchema, fieldErrors } from '@/lib/validation';
 import { canChangeStatus, canReassign } from '@/components/tasks/TaskCard';
 import { Field } from '@/components/ui/Field';
+import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
@@ -178,7 +179,7 @@ function MultiAssigneePicker({
               onClick={() => onModeChange('single')}
               disabled={disabled}
             >
-              👤 {singleLabel}
+              <Icon name="user" size={14} className="me-1" /> {singleLabel}
             </button>
             <button
               type="button"
@@ -188,7 +189,7 @@ function MultiAssigneePicker({
               onClick={() => onModeChange('shared')}
               disabled={disabled}
             >
-              👥 {sharedLabel}
+              <Icon name="users" size={14} className="me-1" /> {sharedLabel}
             </button>
             <button
               type="button"
@@ -198,7 +199,7 @@ function MultiAssigneePicker({
               onClick={() => onModeChange('individual')}
               disabled={disabled}
             >
-              📋 {individualLabel}
+              <Icon name="clipboard" size={14} className="me-1" /> {individualLabel}
             </button>
           </div>
         )}
