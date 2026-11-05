@@ -311,3 +311,132 @@ export async function updateProjectMemberRole(
     throw toAppError(err);
   }
 }
+
+export async function updateProjectMemberProfile(
+  db: Firestore,
+  projectId: string,
+  uid: string,
+  patch: {
+    displayName?: string;
+    email?: string;
+    jobTitle?: string;
+    jobTitles?: string[];
+  }
+): Promise<void> {
+  const projectRef = doc(db, 'projects', projectId);
+  try {
+    const snap = await getDoc(projectRef);
+    if (!snap.exists()) {
+      throw new AppError('not-found', 'Project not found');
+    }
+    const currentData = snap.data();
+    const existingProfiles: ProjectMemberProfile[] = Array.isArray(currentData.memberProfiles)
+      ? currentData.memberProfiles
+      : [];
+
+    const updatedProfiles = existingProfiles.map((p) => {
+      if (p.uid === uid) {
+        return {
+          ...p,
+          displayName: patch.displayName !== undefined ? patch.displayName.trim() : p.displayName,
+          email: patch.email !== undefined ? patch.email.trim() : p.email,
+          jobTitle: patch.jobTitle !== undefined ? patch.jobTitle.trim() : p.jobTitle,
+          jobTitles: patch.jobTitles !== undefined ? patch.jobTitles : p.jobTitles,
+        };
+      }
+      return p;
+    });
+
+    const currentMemberNames: Record<string, string> =
+      typeof currentData.memberNames === 'object' && currentData.memberNames !== null
+        ? { ...currentData.memberNames }
+        : {};
+
+    if (patch.displayName && patch.displayName.trim()) {
+      currentMemberNames[uid] = patch.displayName.trim();
+    }
+
+    await withWriteGuard(() =>
+      updateDoc(projectRef, {
+        memberProfiles: updatedProfiles,
+        memberNames: currentMemberNames,
+        updatedAt: serverTimestamp(),
+      })
+    );
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    throw toAppError(err);
+  }
+}
+
+export async function removeProjectMember(
+  db: Firestore,
+  projectId: string,
+  uid: string
+): Promise<void> {
+  const projectRef = doc(db, 'projects', projectId);
+  try {
+    const snap = await getDoc(projectRef);
+    if (!snap.exists()) {
+      throw new AppError('not-found', 'Project not found');
+    }
+    const currentData = snap.data();
+    if (currentData.ownerId === uid) {
+      throw new AppError('permission-denied', 'Cannot remove the project owner');
+    }
+
+    const currentMemberIds: string[] = Array.isArray(currentData.memberIds)
+      ? currentData.memberIds
+      : [];
+    const updatedMemberIds = currentMemberIds.filter((id) => id !== uid);
+
+    const currentMemberNames: Record<string, string> =
+      typeof currentData.memberNames === 'object' && currentData.memberNames !== null
+        ? { ...currentData.memberNames }
+        : {};
+    delete currentMemberNames[uid];
+
+    const existingProfiles: ProjectMemberProfile[] = Array.isArray(currentData.memberProfiles)
+      ? currentData.memberProfiles
+      : [];
+    const updatedProfiles = existingProfiles.filter((p) => p.uid !== uid);
+
+    await withWriteGuard(() =>
+      updateDoc(projectRef, {
+        memberIds: updatedMemberIds,
+        memberNames: currentMemberNames,
+        memberProfiles: updatedProfiles,
+        updatedAt: serverTimestamp(),
+      })
+    );
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    throw toAppError(err);
+  }
+}
+
+export async function updateMemberAcrossProjects(
+  db: Firestore,
+  projectIds: string[],
+  uid: string,
+  patch: {
+    displayName?: string;
+    email?: string;
+    jobTitle?: string;
+    jobTitles?: string[];
+  }
+): Promise<void> {
+  await Promise.all(
+    projectIds.map((pid) => updateProjectMemberProfile(db, pid, uid, patch))
+  );
+}
+
+export async function removeMemberAcrossProjects(
+  db: Firestore,
+  projectIds: string[],
+  uid: string
+): Promise<void> {
+  await Promise.all(
+    projectIds.map((pid) => removeProjectMember(db, pid, uid))
+  );
+}

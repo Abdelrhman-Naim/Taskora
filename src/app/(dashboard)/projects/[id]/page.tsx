@@ -245,10 +245,12 @@ export default function ProjectPage(): React.ReactElement | null {
 
   const {
     localStream,
+    screenStream,
     remoteStreams,
     isAudioEnabled,
     isVideoEnabled,
     isScreenSharing,
+    startMedia,
     toggleAudio,
     toggleVideo,
     toggleScreenShare,
@@ -394,6 +396,9 @@ export default function ProjectPage(): React.ReactElement | null {
     if (!project || !user) return;
     setIsHuddleOpen(true);
     try {
+      // Start microphone media immediately upon joining call
+      await startMedia({ audio: true, video: false });
+
       const db = getDb();
       const memberRole =
         project.memberProfiles?.find((p) => p.uid === user.uid)?.jobTitle ||
@@ -413,7 +418,7 @@ export default function ProjectPage(): React.ReactElement | null {
     } catch (err) {
       console.error('Failed to join huddle:', err);
     }
-  }, [project, user, actor.displayName, isOwner, isAudioEnabled, isVideoEnabled, isScreenSharing]);
+  }, [project, user, actor.displayName, isOwner, isAudioEnabled, isVideoEnabled, isScreenSharing, startMedia]);
 
   const handleLeaveHuddle = useCallback(async () => {
     if (!project || !user) return;
@@ -1113,6 +1118,7 @@ export default function ProjectPage(): React.ReactElement | null {
           isVideoEnabled={isVideoEnabled}
           isScreenSharing={isScreenSharing}
           localStream={localStream}
+          screenStream={screenStream}
           remoteStreams={remoteStreams}
           onToggleAudio={toggleAudio}
           onToggleVideo={toggleVideo}

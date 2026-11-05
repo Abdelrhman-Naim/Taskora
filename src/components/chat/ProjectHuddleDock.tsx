@@ -3,7 +3,7 @@
 // ============================================================================
 // 1. IMPORTS
 // ============================================================================
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useI18n } from '@/i18n/I18nProvider';
 import { HuddleParticipant } from '@/types/chat';
 import { Icon } from '@/components/ui/Icon';
@@ -42,6 +42,7 @@ export interface ProjectHuddleDockProps {
   isVideoEnabled: boolean;
   isScreenSharing: boolean;
   localStream?: MediaStream | null;
+  screenStream?: MediaStream | null;
   remoteStreams?: Record<string, MediaStream>;
   onToggleAudio: () => void;
   onToggleVideo: () => void;
@@ -90,6 +91,7 @@ export function ProjectHuddleDock({
   isVideoEnabled,
   isScreenSharing,
   localStream,
+  screenStream,
   remoteStreams = {},
   onToggleAudio,
   onToggleVideo,
@@ -104,9 +106,28 @@ export function ProjectHuddleDock({
 
   if (!isOpen) return null;
 
-  // Active screen share detector
   const screenSharingParticipant = participants.find((p) => p.screenSharing || p.isScreenSharing);
   const isAnyScreenSharing = Boolean(screenSharingParticipant) || isScreenSharing;
+
+  // Ensure current user is always included in the participants list
+  const effectiveParticipants = useMemo(() => {
+    if (participants.some((p) => p.uid === currentUserId)) {
+      return participants;
+    }
+    const selfParticipant: HuddleParticipant = {
+      uid: currentUserId,
+      displayName: isAr ? 'أنت' : 'You',
+      role: 'Participant',
+      audioEnabled: isAudioEnabled,
+      videoEnabled: isVideoEnabled,
+      screenSharing: isScreenSharing,
+      isAudioEnabled,
+      isVideoEnabled,
+      isScreenSharing,
+      joinedAt: new Date().toISOString(),
+    };
+    return [selfParticipant, ...participants];
+  }, [participants, currentUserId, isAudioEnabled, isVideoEnabled, isScreenSharing, isAr]);
 
   // Render PiP Bar
   if (isMinimized) {
@@ -125,7 +146,7 @@ export function ProjectHuddleDock({
           <div className="flex flex-col min-w-0">
             <span className="text-xs font-bold text-text truncate">{projectName}</span>
             <span className="text-[11px] text-text-2">
-              {participants.length} {isAr ? 'أعضاء في المكالمة' : 'members in call'}
+              {effectiveParticipants.length} {isAr ? 'أعضاء في المكالمة' : 'members in call'}
             </span>
           </div>
         </div>
@@ -191,7 +212,7 @@ export function ProjectHuddleDock({
                 </span>
               </div>
               <p className="text-xs text-text-2">
-                {participants.length} {isAr ? 'مشاركين حالياً' : 'participants active'}
+                {effectiveParticipants.length} {isAr ? 'مشاركين حالياً' : 'participants active'}
               </p>
             </div>
           </div>
@@ -215,8 +236,8 @@ export function ProjectHuddleDock({
           {/* Prominent Screen Share View if active */}
           {isAnyScreenSharing && (
             <div data-testid="huddle-screen-share-view" className={HUDDLE_STYLES.screenShareContainer}>
-              {isScreenSharing && localStream ? (
-                <VideoFeed stream={localStream} isMuted={true} />
+              {isScreenSharing && (screenStream || localStream) ? (
+                <VideoFeed stream={screenStream || localStream} isMuted={true} />
               ) : screenSharingParticipant && remoteStreams[screenSharingParticipant.uid] ? (
                 <VideoFeed stream={remoteStreams[screenSharingParticipant.uid]} isMuted={false} />
               ) : (
@@ -238,7 +259,7 @@ export function ProjectHuddleDock({
 
           {/* Participants Grid */}
           <div className={HUDDLE_STYLES.participantsGrid}>
-            {participants.map((participant) => {
+            {effectiveParticipants.map((participant) => {
               const isSelf = participant.uid === currentUserId;
               const hasVideo = isSelf ? isVideoEnabled : Boolean(participant.videoEnabled ?? participant.isVideoEnabled);
               const hasAudio = isSelf ? isAudioEnabled : Boolean(participant.audioEnabled ?? participant.isAudioEnabled);

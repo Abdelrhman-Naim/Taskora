@@ -82,6 +82,21 @@ describe('Magic Quick-Task NLP Parser', () => {
     expect(res2.priority).toBe('high');
     expect(res2.title).toBe('إعداد واجهة المستخدم');
 
+    // Variation 2b: "مهمه لممبر يوزر اولويه عاليه التسليم السبت الجاي" (User's exact command)
+    const exactRoster: MemberContext[] = [
+      { uid: 'u-user', displayName: 'User', jobTitle: 'Full Stack' },
+      { uid: 'u-mem', displayName: 'Member', jobTitle: 'Frontend' },
+      { uid: 'u-owner', displayName: 'Owner User', jobTitle: 'Project Manager' },
+      { uid: 'u-member-user', displayName: 'Member User', jobTitle: 'Team Member' },
+    ];
+    const resExact = parseQuickTaskFallback('تحليل مشروع مهمه لممبر يوزر اولويه عاليه التسليم السبت الجاي', exactRoster);
+    expect(resExact.assigneeId).toBe('u-member-user');
+    expect(resExact.priority).toBe('high');
+    expect(resExact.title).toBe('تحليل مشروع');
+    expect(resExact.dueDate).not.toBeNull();
+    const dSat = new Date(resExact.dueDate!);
+    expect(dSat.getDay()).toBe(6); // Saturday
+
     // Variation 3: "المكلف هو اونر يوزر"
     const res3 = parseQuickTaskFallback('مراجعة خطة الإطلاق المكلف هو اونر يوزر', mockMembers);
     expect(res3.assigneeId).toBe('u-pm');

@@ -167,6 +167,27 @@ service cloud.firestore {
       allow delete: if isOwner(projectData(pid));
     }
 
+    match /projects/{pid}/channels/{channelId}/messages/{mid} {
+      allow read: if isMember(projectData(pid));
+      allow create: if isMember(projectData(pid))
+        && request.resource.data.senderId == request.auth.uid;
+      allow update, delete: if isMember(projectData(pid))
+        && (resource.data.senderId == request.auth.uid || isOwner(projectData(pid)));
+    }
+
+    match /projects/{pid}/huddles/{hid} {
+      allow read, write: if isMember(projectData(pid));
+
+      match /signals/{sid} {
+        allow read, write: if isMember(projectData(pid));
+      }
+    }
+
+    match /projects/{pid}/presence/{uid} {
+      allow read: if isMember(projectData(pid));
+      allow write: if isMember(projectData(pid)) && request.auth.uid == uid;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

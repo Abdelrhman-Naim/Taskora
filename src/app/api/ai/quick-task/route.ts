@@ -12,7 +12,7 @@ const quickTaskRequestSchema = z.object({
       z.object({
         uid: z.string(),
         displayName: z.string(),
-        jobTitle: z.string(),
+        jobTitle: z.string().optional().default(''),
         jobTitles: z.array(z.string()).optional(),
       })
     )
@@ -46,37 +46,31 @@ export function getPhoneticArabicVariants(name: string): string[] {
     variants.add('ممبر');
     variants.add('ميمبر');
     variants.add('مبر');
+    variants.add('لمنبر');
+    variants.add('لممبر');
   }
   if (lower.includes('owner')) {
     variants.add('اونر');
     variants.add('أونر');
     variants.add('اونير');
+    variants.add('لاونر');
+    variants.add('لأونر');
   }
   if (lower.includes('user')) {
     variants.add('يوزر');
-    variants.add('يوزير');
-  }
-  if (lower.includes('admin')) {
-    variants.add('ادمن');
-    variants.add('أدمن');
-  }
-  if (lower.includes('manager')) {
-    variants.add('مانجر');
-    variants.add('منجر');
-  }
-  if (lower.includes('developer') || lower.includes('dev')) {
-    variants.add('ديفلوبر');
-    variants.add('دفلبر');
-    variants.add('مطور');
+    variants.add('ليوزر');
   }
   if (lower.includes('designer')) {
-    variants.add('ديزاينر');
     variants.add('مصمم');
+    variants.add('ديزاينر');
   }
-  if (lower.includes('tester') || lower.includes('qa')) {
-    variants.add('تيستر');
+  if (lower.includes('developer')) {
+    variants.add('مطور');
+    variants.add('ديفيلوبر');
+  }
+  if (lower.includes('qa') || lower.includes('tester')) {
     variants.add('تستر');
-    variants.add('كيو ايه');
+    variants.add('جودة');
     variants.add('فاحص');
   }
 
@@ -124,11 +118,16 @@ export function getPhoneticArabicVariants(name: string): string[] {
     variants.add('ممبر يوزر');
     variants.add('ميمبر يوزر');
     variants.add('مبر يوزر');
+    variants.add('لمنبر يوزر');
+    variants.add('لممبر يوزر');
+    variants.add('لميمبر يوزر');
   }
   if (lower === 'owner user') {
     variants.add('اونر يوزر');
     variants.add('أونر يوزر');
     variants.add('اونير يوزر');
+    variants.add('لاونر يوزر');
+    variants.add('لأونر يوزر');
   }
 
   return Array.from(variants);
@@ -136,14 +135,15 @@ export function getPhoneticArabicVariants(name: string): string[] {
 
 /**
  * Scores a member against a candidate target string.
- * Prevents generic collisions like "User" matching "Member User" when "Owner User" was meant.
+ * Prevents generic collisions like "User" matching "Member User" when "Member User" was meant.
  */
 export function scoreMemberMatch(
   member: MemberContext,
   rawTarget: string,
   normalizedTarget: string
 ): number {
-  const disp = member.displayName.toLowerCase().trim();
+  const disp = (member.displayName || '').toLowerCase().trim();
+  if (!disp) return 0;
   const variants = getPhoneticArabicVariants(member.displayName);
   const targetLower = rawTarget.toLowerCase().trim();
   const normLower = normalizedTarget.toLowerCase().trim();
@@ -151,32 +151,46 @@ export function scoreMemberMatch(
   // 1. Exact full display name or exact full variant match -> highest priority
   if (normLower === disp || targetLower === disp) return 100;
   for (const v of variants) {
-    if (targetLower === v || normLower === v) return 95;
+    if (targetLower === v || normLower === v) return 98;
   }
 
-  // 2. Starts with / Substring of full display name
-  if (normLower.includes(disp) || targetLower.includes(disp)) return 80;
-  for (const v of variants) {
-    if (targetLower.includes(v) || normLower.includes(v)) {
-      // Full two-word transliteration (e.g. "منبر يوزر" or "اونر يوزر")
-      if (v.includes(' ')) return 75;
-      // Single generic words like "user" get very low score
-      if (v === 'يوزر' || v === 'user') return 15;
-      return 60;
+  // 2. Multi-word match: e.g. "member user" in "تحليل مشروع مهمه member user ..."
+  const isMultiWord = disp.includes(' ');
+  if (isMultiWord) {
+    if (normLower.includes(disp) || targetLower.includes(disp)) {
+      return 95;
+    }
+    for (const v of variants) {
+      if (v.includes(' ') && (targetLower.includes(v) || normLower.includes(v))) {
+        return 90;
+      }
     }
   }
 
-  // 3. Significant Name Parts (e.g. "Ahmed", "Sarah", "Member", "Owner")
-  const parts = disp.split(/\s+/).filter((p) => p.length >= 3 && p !== 'user');
+  // 3. Single word display name: check boundary so "user" doesn't falsely take over "member user"
+  const hasWordBoundaryMatch = new RegExp(`(?:^|\\s|لـ|للـ|ل)${disp}(?:\\s|$)`, 'i').test(normLower);
+  if (hasWordBoundaryMatch) {
+    if (disp === 'user' || disp === 'يوزر') return 25;
+    return 60;
+  }
+
+  for (const v of variants) {
+    if (
+      new RegExp(`(?:^|\\s|لـ|للـ|ل)${v}(?:\\s|$)`, 'i').test(targetLower) ||
+      new RegExp(`(?:^|\\s|لـ|للـ|ل)${v}(?:\\s|$)`, 'i').test(normLower)
+    ) {
+      if (v.includes(' ')) return 75;
+      if (v === 'يوزر' || v === 'user' || v === 'ليوزر') return 20;
+      return 55;
+    }
+  }
+
+  // 4. Significant name part (>= 4 letters)
+  const parts = disp.split(/\s+/).filter((p) => p.length >= 4 && p !== 'user');
   for (const part of parts) {
     if (normLower.includes(part) || targetLower.includes(part)) {
       return 50;
     }
-  }
-
-  // 4. Fallback on any generic part (including "user")
-  if (disp.split(/\s+/).some((p) => normLower.includes(p) || targetLower.includes(p))) {
-    return 10;
   }
 
   return 0;
@@ -248,17 +262,27 @@ export function parseQuickTaskFallback(
 
   // Step A: Phonetic Transliterations & Speech-to-Text replacements
   const transliterations: Record<string, string> = {
+    'لمنبر يوزر': 'member user',
+    'لممبر يوزر': 'member user',
+    'لميمبر يوزر': 'member user',
+    'لمبر يوزر': 'member user',
     'منبر يوزر': 'member user',
     'ممبر يوزر': 'member user',
     'ميمبر يوزر': 'member user',
     'مبر يوزر': 'member user',
+    'لمنبر': 'member',
+    'لممبر': 'member',
     'منبر': 'member',
     'ممبر': 'member',
     'ميمبر': 'member',
     'مبر': 'member',
+    'لاونر يوزر': 'owner user',
+    'لأونر يوزر': 'owner user',
     'اونر يوزر': 'owner user',
     'أونر يوزر': 'owner user',
     'اونير يوزر': 'owner user',
+    'لاونر': 'owner',
+    'لأونر': 'owner',
     'اونر': 'owner',
     'أونر': 'owner',
     'اونير': 'owner',
@@ -270,14 +294,13 @@ export function parseQuickTaskFallback(
   }
 
   // Step A1: Explicit Assignee Extraction from phrasing:
-  // e.g. "المكلف به منبر يوزر", "المكلف هو اونر يوزر", "المسند إليه Member User", "assigned to John"
+  // e.g. "المكلف به منبر يوزر", "ال المكلف به منبر يوزر", "مهمه لممبر يوزر", "المسند إليه Member User", "assigned to John"
   const assigneePrefixRegex =
-    /(?:الـ|ال)?\s*(?:المكلف\s+به|المكلف\s+بها|المكلف\s+هو|المكلف|المسند\s+إليه|المسند\s+له|المسؤول\s+عنه|المسؤول\s+عنها|مسؤولية|إسناد\s+إلى|اسناد\s+الى|تكليف|بواسطة|assigned\s+to|assign\s+to|assignee\s*:?)\s*:?\s*([^,.\n]+)/i;
+    /(?:الـ|ال)?\s*(?:المكلف\s+به|المكلف\s+بها|المكلف\s+هو|المكلف|المسند\s+إليه|المسند\s+له|المسؤول\s+عنه|المسؤول\s+عنها|مسؤولية|إسناد\s+إلى|اسناد\s+الى|تكليف|بواسطة|مهمه\s+لـ?|مهمة\s+لـ?|مهمه\s+للـ?|مهمة\s+للـ?|لـ|للـ|assigned\s+to|assign\s+to|assignee\s*:?)\s*:?\s*([^,.\n]+)/i;
 
   const explicitMatch = lower.match(assigneePrefixRegex);
   if (explicitMatch) {
     const rawTarget = explicitMatch[1].trim();
-    // Strip trailing date or priority words that might have been captured after the name
     const stopWordsRegex =
       /\s*(?:(ب)?(?:اولويه|أولوية|أولويه|اولوية)|التسليم|موعد|تسليم|السبت|الأحد|الاحد|الاثنين|الإثنين|الثلاثاء|الأربعاء|الاربعاء|الخميس|الجمعة|الجمعه|غداً|غدا|بكرة|بعد\s*بكرة|بعد\s*يومين|high|medium|low|tomorrow|next).*/i;
     const target = rawTarget.replace(stopWordsRegex, '').trim();
@@ -324,7 +347,7 @@ export function parseQuickTaskFallback(
   // Step B: Semantic Role-Based Assignment when no explicit person is named
   if (!assigneeId && members.length > 0) {
     const roleChecks: Array<{ pattern: RegExp; roleRegex: RegExp }> = [
-      // 1. UI/UX & Visual Design (explicit design action, colors, wireframes)
+      // 1. UI/UX & Visual Design
       {
         pattern: /تصميم|ديزاين|فيجما|figma|ألوان|الوان|خطوط|wireframe|mockup|prototype|هوية\s*بصرية/i,
         roleRegex: /designer|ui|ux|مصمم|تنسيق|غرافيك/i,
@@ -334,7 +357,7 @@ export function parseQuickTaskFallback(
         pattern: /سكيورتي|أمان|امان|فحص|ثغرات|تست|تيست|اختبار|qa|test|testing|audit|pentest|جودة|bug|bugs/i,
         roleRegex: /qa|test|جودة|فاحص|اختبار|security|أمان/i,
       },
-      // 3. DevOps & Cloud & Infrastructure
+      // 3. DevOps & Infrastructure
       {
         pattern: /حاويات|نشر|استضافة|سيرفرات|docker|kubernetes|ci\/cd|aws|vercel|devops|سحابة|deploy|pipeline/i,
         roleRegex: /devops|cloud|sysadmin|سحابي|نشر/i,
@@ -364,7 +387,7 @@ export function parseQuickTaskFallback(
     for (const check of roleChecks) {
       if (check.pattern.test(lower)) {
         const candidate = members.find((m) => {
-          if (check.roleRegex.test(m.jobTitle)) return true;
+          if (check.roleRegex.test(m.jobTitle || '')) return true;
           if (m.jobTitles && m.jobTitles.some((t: string) => check.roleRegex.test(t))) return true;
           return false;
         });
@@ -374,32 +397,37 @@ export function parseQuickTaskFallback(
         }
       }
     }
-
-    if (!assigneeId && members[0]) {
-      assigneeId = members[0].uid;
-    }
   }
 
   // 4. Clean Task Title Extraction
   let cleanTitle = prompt;
 
   // A. Priority stripping
-  cleanTitle = cleanTitle.replace(/\s*(ب)?(اولويه|أولوية|أولويه|اولوية)\s*(عاليه|عالية|قصوى|متوسطة|متوسطه|منخفضة|منخفضه)/gi, '');
+  cleanTitle = cleanTitle.replace(
+    /\s*(ب)?(اولويه|أولوية|أولويه|اولوية)\s*(عاليه|عالية|قصوى|متوسطة|متوسطه|منخفضة|منخفضه)/gi,
+    ''
+  );
   cleanTitle = cleanTitle.replace(/\s*(high|medium|low)\s*priority/gi, '');
 
   // B. Due date stripping
-  cleanTitle = cleanTitle.replace(/\s*(التسليم|موعد|تسليم)?\s*(السبت|الأحد|الاحد|الاثنين|الإثنين|الثلاثاء|الأربعاء|الاربعاء|الخميس|الجمعة|الجمعه|غداً|غدا|بكرة)\s*(الجاي|القادم)?/gi, '');
-  cleanTitle = cleanTitle.replace(/\s*(بعد بكرة|بعد يومين|نهاية الأسبوع|نهاية الاسبوع|الأسبوع الجاي|الاسبوع الجاي|الاسبوع القادم|الأسبوع القادم)/gi, '');
+  cleanTitle = cleanTitle.replace(
+    /\s*(التسليم|موعد|تسليم)?\s*(السبت|الأحد|الاحد|الاثنين|الإثنين|الثلاثاء|الأربعاء|الاربعاء|الخميس|الجمعة|الجمعه|غداً|غدا|بكرة)\s*(الجاي|القادم)?/gi,
+    ''
+  );
+  cleanTitle = cleanTitle.replace(
+    /\s*(بعد بكرة|بعد يومين|نهاية الأسبوع|نهاية الاسبوع|الأسبوع الجاي|الاسبوع الجاي|الاسبوع القادم|الأسبوع القادم)/gi,
+    ''
+  );
   cleanTitle = cleanTitle.replace(/\s*بعد\s*[٠-٩\d]+\s*(أيام|ايام|يوم)/gi, '');
   cleanTitle = cleanTitle.replace(/\s*(tomorrow|next\s+week|after\s+tomorrow|weekend)/gi, '');
 
-  // C. Explicit Assignee phrases stripping (e.g. "المكلف به منبر يوزر", "الـ المكلف به منبر يوزر", etc.)
+  // C. Explicit Assignee phrases stripping
   cleanTitle = cleanTitle.replace(
-    /(?:الـ|ال)?\s*(?:المكلف\s+به|المكلف\s+بها|المكلف\s+هو|المكلف|المسند\s+إليه|المسند\s+له|المسؤول\s+عنه|المسؤول\s+عنها|مسؤولية|إسناد\s+إلى|اسناد\s+الى|تكليف|بواسطة|assigned\s+to|assign\s+to|assignee\s*:?)\s*:?\s*(?:منبر\s*يوزر|ممبر\s*يوزر|ميمبر\s*يوزر|مبر\s*يوزر|اونر\s*يوزر|أونر\s*يوزر|منبر|ممبر|ميمبر|مبر|اونر|أونر|\S+(?:\s+\S+)?)/gi,
+    /(?:الـ|ال)?\s*(?:المكلف\s+به|المكلف\s+بها|المكلف\s+هو|المكلف|المسند\s+إليه|المسند\s+له|المسؤول\s+عنه|المسؤول\s+عنها|مسؤولية|إسناد\s+إلى|اسناد\s+الى|تكليف|بواسطة|مهمه\s+لـ?|مهمة\s+لـ?|مهمه\s+للـ?|مهمة\s+للـ?|assigned\s+to|assign\s+to|assignee\s*:?)\s*:?\s*(?:لمنبر\s*يوزر|لممبر\s*يوزر|لميمبر\s*يوزر|لمبر\s*يوزر|منبر\s*يوزر|ممبر\s*يوزر|ميمبر\s*يوزر|مبر\s*يوزر|اونر\s*يوزر|أونر\s*يوزر|منبر|ممبر|ميمبر|مبر|اونر|أونر|\S+(?:\s+\S+)?)/gi,
     ''
   );
 
-  // Strip transliterated names & known role mentions
+  // Strip transliterated names & known role mentions with prefix
   cleanTitle = cleanTitle.replace(
     /\s*(لـ|للـ|ل)?(منبر\s*يوزر|ممبر\s*يوزر|ميمبر\s*يوزر|مبر\s*يوزر|اونر\s*يوزر|أونر\s*يوزر|منبر|ممبر|ميمبر|مبر|اونر|أونر|المصمم|المطور|الـ\s*qa|backend|frontend)/gi,
     ''
@@ -417,9 +445,11 @@ export function parseQuickTaskFallback(
   }
 
   // D. Command fillers & trailing punctuation
-  cleanTitle = cleanTitle.replace(/^\s*(بدي\s+اعمل|مهمه|مهمة|قم\s+بعمل|يرجى\s+عمل|اضافة\s+مهمة|إضافة\s+مهمة)\s*/gi, '');
+  cleanTitle = cleanTitle.replace(
+    /^\s*(بدي\s+اعمل|مهمه|مهمة|قم\s+بعمل|يرجى\s+عمل|اضافة\s+مهمة|إضافة\s+مهمة)\s*/gi,
+    ''
+  );
   cleanTitle = cleanTitle.replace(/\s*(مهمه|مهمة)\s*/gi, ' ');
-  // Clean dangling prefixes like "الـ" or "-" or ":" at the end
   cleanTitle = cleanTitle.replace(/[\s\-_:،,]+(الـ|ال)?$/gi, '');
   cleanTitle = cleanTitle.replace(/^[\s\-_:،,]+/gi, '');
   cleanTitle = cleanTitle.replace(/\s{2,}/g, ' ').trim();

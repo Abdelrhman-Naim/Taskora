@@ -32,6 +32,7 @@ export interface UseWebRTCOptions {
 
 export interface UseWebRTCResult {
   localStream: MediaStream | null;
+  screenStream: MediaStream | null;
   remoteStreams: Record<string, MediaStream>;
   isAudioEnabled: boolean;
   isVideoEnabled: boolean;
@@ -40,7 +41,7 @@ export interface UseWebRTCResult {
   startMedia: (options?: { audio?: boolean; video?: boolean }) => Promise<MediaStream | null>;
   stopMedia: () => void;
   endCall: () => void;
-  toggleAudio: () => void;
+  toggleAudio: () => Promise<void>;
   toggleVideo: () => Promise<void>;
   toggleScreenShare: () => Promise<void>;
 }
@@ -55,6 +56,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
     db,
   } = options;
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<Record<string, MediaStream>>({});
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(false);
@@ -81,7 +83,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
    * Starts local user media (Mic and optional Camera)
    */
   const startMedia = useCallback(
-    async (options: { audio?: boolean; video?: boolean } = { audio: true, video: false }) => {
+    async (opts: { audio?: boolean; video?: boolean } = { audio: true, video: false }) => {
       setMediaError(null);
       if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
         setMediaError('Audio/Video media is not supported in this browser.');
@@ -90,14 +92,14 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          audio: options.audio !== false,
-          video: Boolean(options.video),
+          audio: opts.audio !== false,
+          video: Boolean(opts.video),
         });
 
         localStreamRef.current = stream;
         setLocalStream(stream);
-        setIsAudioEnabled(options.audio !== false);
-        setIsVideoEnabled(Boolean(options.video));
+        setIsAudioEnabled(opts.audio !== false);
+        setIsVideoEnabled(Boolean(opts.video));
         return stream;
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'Permission denied to camera/microphone';
@@ -117,6 +119,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
     localStreamRef.current = null;
     screenStreamRef.current = null;
     setLocalStream(null);
+    setScreenStream(null);
     setIsScreenSharing(false);
     setIsVideoEnabled(false);
 
@@ -133,12 +136,32 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
   }, [stopTracks]);
 
   /**
-   * Toggles audio track enabled state
+   * Toggles audio track enabled state or requests audio if stream not yet active
    */
-  const toggleAudio = useCallback(() => {
-    if (!localStreamRef.current) return;
+  const toggleAudio = useCallback(async () => {
+    if (!localStreamRef.current) {
+      await startMedia({ audio: true, video: isVideoEnabled });
+      return;
+    }
     const tracks = localStreamRef.current.getAudioTracks();
-    if (tracks.length === 0) return;
+    if (tracks.length === 0) {
+      try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const newTrack = audioStream.getAudioTracks()[0];
+        localStreamRef.current.addTrack(newTrack);
+        const updated = new MediaStream(localStreamRef.current.getTracks());
+        localStreamRef.current = updated;
+        setLocalStream(updated);
+        setIsAudioEnabled(true);
+        if (db && projectId && myUid) {
+          updateMediaState(db, projectId, myUid, { audioEnabled: true }).catch(() => {});
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Cannot access microphone';
+        setMediaError(msg);
+      }
+      return;
+    }
 
     const nextState = !tracks[0].enabled;
     tracks.forEach((t) => {
@@ -149,10 +172,10 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
     if (db && projectId && myUid) {
       updateMediaState(db, projectId, myUid, { audioEnabled: nextState }).catch(() => {});
     }
-  }, [db, projectId, myUid]);
+  }, [db, projectId, myUid, isVideoEnabled, startMedia]);
 
   /**
-   * Toggles video track enabled state or requests video track
+   * Toggles video track enabled state or requests camera track with fresh MediaStream instance
    */
   const toggleVideo = useCallback(async () => {
     if (!localStreamRef.current) {
@@ -168,6 +191,10 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
       });
       setIsVideoEnabled(nextState);
 
+      const updated = new MediaStream(localStreamRef.current.getTracks());
+      localStreamRef.current = updated;
+      setLocalStream(updated);
+
       if (db && projectId && myUid) {
         updateMediaState(db, projectId, myUid, { videoEnabled: nextState }).catch(() => {});
       }
@@ -177,6 +204,11 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
         const streamWithVideo = await navigator.mediaDevices.getUserMedia({ video: true });
         const newTrack = streamWithVideo.getVideoTracks()[0];
         localStreamRef.current.addTrack(newTrack);
+
+        // Crucial: create a fresh MediaStream instance so React triggers re-render of <video> srcObject!
+        const updated = new MediaStream(localStreamRef.current.getTracks());
+        localStreamRef.current = updated;
+        setLocalStream(updated);
         setIsVideoEnabled(true);
 
         if (db && projectId && myUid) {
@@ -196,6 +228,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
     if (isScreenSharing) {
       stopTracks(screenStreamRef.current);
       screenStreamRef.current = null;
+      setScreenStream(null);
       setIsScreenSharing(false);
 
       if (db && projectId && myUid) {
@@ -210,14 +243,16 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
     }
 
     try {
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-      screenStreamRef.current = screenStream;
+      const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      screenStreamRef.current = displayStream;
+      setScreenStream(displayStream);
       setIsScreenSharing(true);
 
-      const screenTrack = screenStream.getVideoTracks()[0];
+      const screenTrack = displayStream.getVideoTracks()[0];
       if (screenTrack) {
         screenTrack.addEventListener('ended', () => {
           setIsScreenSharing(false);
+          setScreenStream(null);
           screenStreamRef.current = null;
           if (db && projectId && myUid) {
             updateMediaState(db, projectId, myUid, { screenSharing: false }).catch(() => {});
@@ -243,6 +278,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
 
   return {
     localStream,
+    screenStream,
     remoteStreams,
     isAudioEnabled,
     isVideoEnabled,

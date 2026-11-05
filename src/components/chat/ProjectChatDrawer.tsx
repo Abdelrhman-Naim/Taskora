@@ -112,6 +112,11 @@ export function ProjectChatDrawer({
       ? getDmChannelId(currentUserId, effectiveDmTargetUid)
       : 'general';
 
+  // Clear error on tab or DM target change
+  useEffect(() => {
+    setError(null);
+  }, [activeTab, effectiveDmTargetUid]);
+
   // Real-time subscription to messages
   useEffect(() => {
     if (!isOpen || !project.id || !channelId) return;
@@ -433,7 +438,7 @@ export function ProjectChatDrawer({
               className={DRAWER_STYLES.sendBtn}
             >
               <span>{isAr ? 'إرسال' : 'Send'}</span>
-              <Icon name="arrow" size={14} className="rtl:rotate-180" />
+              <Icon name="arrow" size={14} className="ltr:rotate-180" />
             </button>
           </div>
         </form>

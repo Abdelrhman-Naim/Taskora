@@ -184,12 +184,20 @@ export function fallbackProjectGenerator(
   const isAr = locale === 'ar';
   const pLower = prompt.toLowerCase();
 
-  // Find suitable team members by role keywords
-  const designer = members.find((m) => /design|ui|ux|مصمم|تنسيق/i.test(m.jobTitle));
-  const backend = members.find((m) => /backend|server|خلفي|بيانات|سيرفر|cloud|سحابي/i.test(m.jobTitle));
-  const frontend = members.find((m) => /front|web|واجهات|مطور واجهات|react/i.test(m.jobTitle));
-  const qa = members.find((m) => /qa|test|جودة|فاحص|اختبار|أمان|security/i.test(m.jobTitle));
-  const pm = members.find((m) => /manager|owner|مدير|رئيس/i.test(m.jobTitle));
+  // Find suitable team members by role keywords (inspecting both jobTitle and jobTitles)
+  const findMemberByRole = (regex: RegExp): MemberContext | undefined => {
+    return members.find((m) => {
+      if (regex.test(m.jobTitle || '')) return true;
+      if (m.jobTitles && m.jobTitles.some((t) => regex.test(t))) return true;
+      return false;
+    });
+  };
+
+  const designer = findMemberByRole(/design|ui|ux|مصمم|تنسيق/i);
+  const backend = findMemberByRole(/backend|server|خلفي|بيانات|سيرفر|cloud|سحابي/i);
+  const frontend = findMemberByRole(/front|web|واجهات|مطور واجهات|react/i);
+  const qa = findMemberByRole(/qa|test|جودة|فاحص|اختبار|أمان|security/i);
+  const pm = findMemberByRole(/manager|owner|مدير|رئيس/i);
 
   const tasks: GeneratedTask[] = [];
 
@@ -205,7 +213,7 @@ export function fallbackProjectGenerator(
     checklistAr: string[],
     checklistEn: string[]
   ) => {
-    const assigned = preferredMember || members[0] || null;
+    const assigned = preferredMember || null;
     tasks.push({
       title: isAr ? titleAr : titleEn,
       description: isAr ? descAr : descEn,
@@ -533,92 +541,147 @@ export function fallbackProjectGenerator(
       ['Record create/update/delete mutations', 'Searchable audit log interface', 'Alerts on sensitive operations']
     );
   } else {
-    // Dynamic Custom Domain: Extract keywords directly from the prompt!
-    const cleanPrompt = prompt.trim().slice(0, 45);
+    // Dynamic Custom Domain: Extract keywords and features directly from the prompt!
+    const cleanPrompt = prompt.trim().slice(0, 50);
     detectedProjectName = isAr ? `مشروع: ${cleanPrompt}` : `Project: ${cleanPrompt}`;
     detectedProjectDesc = isAr
-      ? `خطة عمل متكاملة وشاملة تم تفكيكها خصيصاً لتغطية كافة متطلبات (${cleanPrompt}) وتوزيعها على الفريق.`
-      : `Complete, specialized work breakdown structure tailored for ${cleanPrompt} distributed across team roles.`;
+      ? `خطة عمل متكاملة وشاملة تم تفكيكها وتوزيع مهامها على أعضاء الفريق وفق مسمياتهم الوظيفية لتغطية متطلبات (${cleanPrompt}).`
+      : `Complete work breakdown structure tailored for ${cleanPrompt} distributed across team roles.`;
 
+    // 1. Requirements & User Experience Architecture
     addTask(
-      `دراسة متطلبات وهيكلة النظام لـ (${cleanPrompt})`,
-      `System Requirements & Architecture for (${cleanPrompt})`,
-      'تحليل السيناريوهات الأساسية للنظام ورسم مخطط تدفق البيانات واعتماد وثيقة المواصفات',
-      'Analyze core user scenarios, map data flow, and approve technical specifications',
+      `دراسة المتطلبات وتجربة المستخدم لـ (${cleanPrompt})`,
+      `User Experience & Requirements Analysis for (${cleanPrompt})`,
+      'تحليل حالات الاستخدام الرئيسية، رسم مسارات التدفق، واعتماد وثيقة المواصفات الفنية',
+      'Analyze core user scenarios, map user journeys, and approve technical specifications',
       'high',
       3,
       designer || pm,
-      ['تحديد المتطلبات الوظيفية الرئيسية', 'رسم مخططات التدفق والنماذج السلكية', 'مراجعة واعتماد خطة العمل مع الفريق'],
-      ['Define core functional specs', 'Draft user journeys and wireframes', 'Team review and approval']
+      ['تحديد المتطلبات الوظيفية الرئيسية', 'رسم المخططات الهيكلية والنماذج السلكية', 'مراجعة واعتماد خطة العمل مع المعنيين'],
+      ['Define core functional specs', 'Draft user journeys and wireframes', 'Stakeholder review and sign-off']
     );
 
+    // 2. Data Modeling & Database Schema
     addTask(
-      'تصميم وبناء قواعد البيانات ونماذج الكيانات والعلاقات',
-      'Database Schema & Entity Relationship Architecture',
-      'إنشاء الجداول ونماذج الكيانات وقواعد أمان البيانات لضمان السرعة والاعتمادية',
-      'Construct relational models, write validation rules, and establish indexes',
+      'تصميم وبناء مخطط قاعدة البيانات ونماذج الكيانات',
+      'Database Architecture & Entity Schema Modeling',
+      'بناء نماذج البيانات، ضبط العلاقات والمؤشرات، وكتابة قواعد أمان البيانات والتحقق',
+      'Construct relational entity schemas, establish indexes, and configure validation rules',
       'high',
       6,
       backend,
-      ['إنشاء الجداول ونماذج البيانات الرئيسية', 'ضبط قواعد الأمان والصلاحيات', 'كتابة دوال التحقق Validation'],
-      ['Create database tables & models', 'Configure security and access rules', 'Implement validation schemas']
+      ['تصميم الجداول ونماذج البيانات الرئيسية', 'إعداد المؤشرات لسرعة الاستعلام', 'ضبط قواعد الأمان والصلاحيات'],
+      ['Create database tables & models', 'Configure indexes for query speed', 'Set up security and access rules']
     );
 
+    // 3. Core Business Logic & REST/GraphQL API
     addTask(
-      'برمجة مسارات الـ API وخدمات معالجة البيانات المركزية',
-      'Core Business Logic & Backend REST Services',
-      'برمجة الخدمات الخلفية ومعالجة الطلبات مع إدارة قوية للأخطاء والاستجابة',
-      'Develop backend endpoints with resilient error handling and fast query performance',
+      'برمجة مسارات الـ API والخدمات الخلفية الرئيسية',
+      'Core Business Logic & Backend API Endpoints',
+      'برمجة نقاط الاتصال الخلفية ومعالجة الطلبات مع إدارة قوية للأخطاء والاستجابة',
+      'Develop backend endpoints with resilient error handling and response validation',
       'high',
-      10,
+      9,
       backend,
-      ['برمجة نقاط الاتصال Endpoints الأساسية', 'معالجة حالات الخطأ وانقطاع الشبكة', 'توثيق واجهات الاستدعاء للمطورين'],
-      ['Build core API endpoints', 'Handle error states and network drops', 'Document endpoint contracts']
+      ['برمجة نقاط الاتصال Endpoints الأساسية', 'كتابة دوال التحقق Validation', 'معالجة حالات الخطأ والاستثناءات'],
+      ['Build core API endpoints', 'Implement validation schemas', 'Handle error states and network drops']
     );
 
+    // 4. Interactive Frontend Components & Screens
     addTask(
-      'تطوير واجهات المستخدم التفاعلية والتجاوبية للأجهزة المختلفة',
-      'Responsive Frontend Components & Interactive Screens',
+      'تطوير واجهات المستخدم التفاعلية والتجاوبية',
+      'Interactive Frontend Components & Responsive Views',
       'بناء الصفحات والمكونات التفاعلية وضمان عملها بسلاسة على شاشات الجوال والحاسوب',
       'Construct responsive views, handle state updates, and ensure smooth touch interactions',
       'high',
-      14,
+      12,
       frontend || designer,
       ['تطوير الصفحات والمكونات الرئيسية', 'دعم التجاوب مع شاشات الجوال والحاسوب', 'التحقق من سلاسة تفاعل المستخدم'],
       ['Build primary pages & components', 'Mobile & desktop responsive layouts', 'Ensure smooth user interactions']
     );
 
+    // Dynamic Feature Check 1: Real-Time / Notifications / Media / WebSockets / Chat / Calls
+    const hasRealtime = /إشعار|تنبيه|صوت|فيديو|محادث|شات|اتصال|لايف|لحظي|مكالم|notification|chat|call|audio|video|realtime|socket/i.test(pLower);
+    if (hasRealtime) {
+      addTask(
+        'نظام الاتصال المباشر والإشعارات اللحظية (Real-Time & WebSockets)',
+        'Real-Time Signaling & Live Notifications Engine',
+        'تفعيل تدفق البيانات الفوري، الإشعارات السريعة، والتنبيهات المباشرة للمستخدمين',
+        'Implement real-time signaling, live data updates, and instant client notifications',
+        'high',
+        15,
+        backend || frontend,
+        ['إعداد قنوات البث اللحظي للبيانات', 'تفعيل الإشعارات الفورية للمستخدمين', 'معالجة حالات انقطاع الاتصال وإعادة الربط'],
+        ['Configure real-time message channels', 'Trigger instant push notifications', 'Reconnect logic on network drops']
+      );
+    }
+
+    // Dynamic Feature Check 2: Auth & Role-Based Access Control
+    const hasAuth = /مستخدم|حساب|تسجيل|صلاحي|أدوار|أمان|auth|user|login|role|rbac/i.test(pLower);
+    if (hasAuth) {
+      addTask(
+        'نظام المصادقة وإدارة الحسابات والصلاحيات (Auth & RBAC)',
+        'Authentication & Role-Based Access Control',
+        'برمجة تسجيل الدخول، حماية الجلسات، وتطبيق الصلاحيات للأدوار المختلفة',
+        'Implement authentication flows, session security, and role-based route guards',
+        'high',
+        17,
+        backend,
+        ['برمجة تدفقات تسجيل الدخول والتحقق', 'تطبيق ضوابط الصلاحيات حسب الدور', 'حماية المسارات الحساسة للبيانات'],
+        ['Implement secure auth flows', 'Enforce role-based access controls', 'Protect sensitive API endpoints']
+      );
+    }
+
+    // Dynamic Feature Check 3: Analytics / Reports / Metrics / KPIs
+    const hasAnalytics = /تحليل|تقرير|تقارير|إحصائ|مؤشر|بيان|analytics|report|kpi|metric|dashboard/i.test(pLower);
+    if (hasAnalytics) {
+      addTask(
+        'لوحة التحليلات ومؤشرات الأداء وتصدير التقارير (Analytics & Reports)',
+        'Analytics Dashboard, Metrics Tracking & Data Export',
+        'عرض الرسوم البيانية لمؤشرات الأداء الرئيسية وتوليد تقارير قابلة للتصدير',
+        'Render interactive KPI charts and provide formatted report exports (PDF / Excel)',
+        'medium',
+        20,
+        frontend || backend,
+        ['بناء الرسوم البيانية التفاعلية', 'تصفية البيانات حسب النطاقات الزمنية', 'تصدير التقارير بصيغة موثقة'],
+        ['Build interactive metrics charts', 'Filter data by custom date ranges', 'Export downloadable reports']
+      );
+    }
+
+    // 5. External Integrations & Webhooks
     addTask(
-      'تكامل الخدمات الخارجية والإشعارات اللحظية',
-      'External Integrations & Real-Time Alerts',
+      'تكامل الخدمات الخارجية والإشعارات المباشرة',
+      'External Integrations & Webhook Services',
       'ربط الخدمات الخارجية وتفعيل الإشعارات والتنبيهات المباشرة للمستخدمين',
       'Connect third-party webhooks, telemetry, and real-time push alerts',
       'medium',
-      18,
+      22,
       backend || frontend,
       ['ربط واجهات الخدمات والـ Webhooks', 'تفعيل الإشعارات الفورية للمستخدمين', 'اختبار تكامل الخدمات في بيئة معزولة'],
       ['Configure third-party APIs/webhooks', 'Enable live user notifications', 'Integration testing in sandbox']
     );
 
+    // 6. Quality Assurance, Security Audit & Edge-Case Testing
     addTask(
       'فحص الجودة وضمان الأمان واختبار حالات الحافة (QA & Security)',
       'Quality Assurance, Edge-Case & Security Testing',
       'إجراء اختبارات شاملة لتغطية الأخطاء المحتملة واختبار الأمان والتوافق',
       'Conduct comprehensive tests across browsers, security boundaries, and edge cases',
       'medium',
-      22,
+      25,
       qa,
       ['اختبار رحلة المستخدم الشاملة من البداية للنهاية', 'فحص الأمان والتحقق من عدم تسريب البيانات', 'رصد وإصلاح الثغرات وحالات الحافة'],
       ['End-to-end user journey tests', 'Security boundary and data leak audit', 'Detect and fix edge cases']
     );
 
+    // 7. Production Deployment, Monitoring & Launch
     addTask(
-      'إعداد بيئة الإنتاج والنشر النهائي وتوثيق التسليم',
-      'Production Deployment, CI/CD Pipeline & Handover',
-      'نشر المشروع على السيرفر وربط النطاق وتفعيل المراقبة والتحليلات',
-      'Deploy to live infrastructure, configure custom domains, and enable monitoring',
+      'إعداد بيئة التشغيل السحابية ومراقبة الأداء والإطلاق',
+      'Production Deployment, Monitoring & Launch Readiness',
+      'إعداد بيئة الإنتاج السحابية، تفعيل شهادات الأمان، وأنظمة مراقبة الأداء والأخطاء',
+      'Configure production cloud infrastructure, SSL, telemetry, and error monitoring',
       'low',
-      26,
+      28,
       pm || backend,
       ['إعداد بيئة الاستضافة وشهادة SSL', 'تفعيل أنظمة مراقبة الأخطاء والأداء', 'اعتماد خطة الإطلاق والتسليم مع المالك'],
       ['Hosting & SSL setup', 'Telemetry & error monitoring', 'Final stakeholder sign-off']

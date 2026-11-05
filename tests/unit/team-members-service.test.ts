@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { mapProject, addProjectMemberProfile } from '@/services/projects';
+import {
+  mapProject,
+  addProjectMemberProfile,
+  updateProjectMemberProfile,
+  removeProjectMember,
+} from '@/services/projects';
 import { ProjectMemberProfile } from '@/types';
 import { AppError } from '@/lib/errors';
 import { DocumentSnapshot, Firestore } from 'firebase/firestore';
@@ -57,5 +62,18 @@ describe('Team Members & Job Titles Service', () => {
     await expect(
       addProjectMemberProfile(mockDb, 'proj-123', invalidProfile)
     ).rejects.toThrow(AppError);
+  });
+it('updateProjectMemberProfile throws if project does not exist', async () => {
+    const mockDb = {} as Firestore;
+    await expect(
+      updateProjectMemberProfile(mockDb, 'non-existent-proj', 'u-1', { displayName: 'Updated' })
+    ).rejects.toThrow();
+  });
+
+  it('removeProjectMember throws error if trying to remove project owner', async () => {
+    const mockDb = {} as Firestore;
+    await expect(
+      removeProjectMember(mockDb, 'proj-1', 'owner-1')
+    ).rejects.toThrow();
   });
 });
