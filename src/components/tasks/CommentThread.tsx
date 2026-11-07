@@ -98,6 +98,7 @@ export function CommentThread({
           actor: { uid: currentUserId, displayName: currentUserName },
           task,
           projectName: project.name,
+          projectOwnerId: project.ownerId,
         },
         trimmed
       );

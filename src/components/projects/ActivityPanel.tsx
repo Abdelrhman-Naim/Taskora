@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ActivityEntry, ActivityType } from '@/types';
 import { listActivity } from '@/services/activity';
 import { getDb } from '@/lib/firebase';
@@ -15,6 +15,9 @@ export interface ActivityPanelProps {
   projectId: string;
   isOpen?: boolean;
   onClose?: () => void;
+  currentUserId?: string;
+  currentUserName?: string;
+  isOwner?: boolean;
 }
 
 function renderEventIcon(type: ActivityType) {
@@ -115,8 +118,11 @@ export function ActivityPanel({
   projectId,
   isOpen = true,
   onClose,
+  currentUserId = '',
+  currentUserName = '',
+  isOwner = false,
 }: ActivityPanelProps): React.ReactElement | null {
-  const { t, tp } = useI18n();
+  const { t, tp, locale } = useI18n();
   const getErrorMessage = useErrorMessage();
   const [entries, setEntries] = useState<ActivityEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -164,6 +170,23 @@ export function ActivityPanel({
 
   if (!isOpen) return null;
 
+  // User Instruction:
+  // "سجل نشاط المشروع بيظهر للعضو نشاطو فقط اما الادمن بشوف كل الانشطة"
+  // Owner/Admin sees ALL activities. Member sees only their own activity!
+  const visibleEntries = useMemo(() => {
+    if (isOwner || !currentUserId) {
+      return entries;
+    }
+    const myName = (currentUserName || '').trim().toLowerCase();
+    return entries.filter((entry) => {
+      if (entry.actorId === currentUserId) return true;
+      if (myName && entry.detail && typeof entry.detail === 'string') {
+        if (entry.detail.toLowerCase().includes(myName)) return true;
+      }
+      return false;
+    });
+  }, [entries, isOwner, currentUserId, currentUserName]);
+
   const panelContent = (
     <div className={styles.container} data-testid="project-activity-panel">
       {loading ? (
@@ -184,13 +207,32 @@ export function ActivityPanel({
             {t('activity.retry')}
           </button>
         </div>
-      ) : entries.length === 0 ? (
-        <p className={styles.emptyState} data-testid="activity-empty-state">
-          {t('activity.empty')}
-        </p>
+      ) : visibleEntries.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-6 text-center">
+          <div className="flex items-center justify-between w-full pb-2 mb-2 border-b border-line/40 text-xs text-text-2">
+            <span className="font-medium text-text">
+              {isOwner
+                ? (locale === 'ar' ? 'عرض كافة أنشطة الفريق (إدارة المشروع)' : 'All Team Activities (Admin View)')
+                : (locale === 'ar' ? 'سجل نشاطك الخاص في المشروع' : 'Your Personal Activity Log')}
+            </span>
+          </div>
+          <p className={styles.emptyState} data-testid="activity-empty-state">
+            {isOwner ? t('activity.empty') : (locale === 'ar' ? 'لم تقم بأي أنشطة في هذا المشروع حتى الآن' : 'No personal activity recorded yet in this project')}
+          </p>
+        </div>
       ) : (
         <ul className={styles.list} data-testid="activity-list">
-          {entries.map((entry) => {
+          <div className="flex items-center justify-between px-2 py-1.5 mb-2 border-b border-line/40 text-xs text-text-2">
+            <span className="font-semibold text-text">
+              {isOwner
+                ? (locale === 'ar' ? 'عرض كافة أنشطة الفريق (إدارة المشروع)' : 'All Team Activities (Admin View)')
+                : (locale === 'ar' ? 'سجل نشاطك الخاص في المشروع' : 'Your Personal Activity Log')}
+            </span>
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-surface border border-line">
+              {visibleEntries.length} {locale === 'ar' ? 'سجل' : 'events'}
+            </span>
+          </div>
+          {visibleEntries.map((entry) => {
             const timeStr = formatDateTime(entry.createdAt);
 
             return (

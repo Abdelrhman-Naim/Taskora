@@ -120,7 +120,7 @@ function DashboardHeader({
             data-testid="open-ai-architect-btn"
             className="inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-accent/15 text-accent border border-accent/30 rounded-md text-sm font-semibold hover:bg-accent/25 transition-colors cursor-pointer"
           >
-            <span>✨</span>
+            <Icon name="sparkles" size={16} className="text-accent" />
             <span>مشروع ذكي بالـ AI</span>
           </button>
 

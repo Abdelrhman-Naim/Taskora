@@ -50,7 +50,7 @@ export async function addComment(
   db: Firestore,
   projectId: string,
   taskId: string,
-  ctx: { actor: Actor; task: Task; projectName: string },
+  ctx: { actor: Actor; task: Task; projectName: string; projectOwnerId?: string },
   text: string
 ): Promise<string> {
   const parsed = commentInputSchema.safeParse({ text });
@@ -81,11 +81,12 @@ export async function addComment(
       })
     );
 
-    // 3. Add notifications to recipients (creator and assignee, minus author)
+    // 3. Add notifications to recipients (creator and assignee, plus project owner if different)
     const recs = recipientsFor({
       type: 'comment_added',
       actorUid: ctx.actor.uid,
       task: ctx.task,
+      projectOwnerId: (ctx as any).projectOwnerId || (ctx as any).project?.ownerId,
     });
 
     for (const recipientUid of recs) {

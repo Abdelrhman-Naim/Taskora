@@ -128,6 +128,22 @@ export async function createTask(
         );
       }
 
+      // Notify project owner as well if created/assigned by someone else
+      const ownerId = (ctx as any).projectOwnerId;
+      if (ownerId && ownerId !== uid && ownerId !== assigneeId) {
+        const ownerNotifRef = newNotificationRef(db, ownerId);
+        batch.set(
+          ownerNotifRef,
+          notificationData(ctx.actor, {
+            type: 'task_assigned',
+            projectId,
+            projectName: ctx.projectName || 'Project',
+            taskId: taskRef.id,
+            taskTitle: title,
+          })
+        );
+      }
+
       // Notify checklist members for shared tasks
       if (checklist && checklist.length > 0) {
         for (const item of checklist) {
@@ -232,6 +248,22 @@ export async function updateTask(
         const notifRef = newNotificationRef(db, patch.assigneeId);
         batch.set(
           notifRef,
+          notificationData(ctx.actor, {
+            type: 'task_assigned',
+            projectId,
+            projectName: ctx.projectName || 'Project',
+            taskId,
+            taskTitle: patch.title ?? ctx.task.title,
+          })
+        );
+      }
+
+      // In-app notification for project owner if task was reassigned by a member
+      const ownerId = (ctx as any).projectOwnerId;
+      if (ownerId && ownerId !== ctx.actor.uid && ownerId !== patch.assigneeId) {
+        const ownerNotifRef = newNotificationRef(db, ownerId);
+        batch.set(
+          ownerNotifRef,
           notificationData(ctx.actor, {
             type: 'task_assigned',
             projectId,

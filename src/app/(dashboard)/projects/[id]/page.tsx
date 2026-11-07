@@ -67,6 +67,7 @@ import { HuddleParticipant } from '@/types/chat';
 import {
   joinHuddleSession,
   leaveHuddleSession,
+  endHuddleSession,
   subscribeToHuddle,
 } from '@/services/huddle';
 import { ProjectChatDrawer } from '@/components/chat/ProjectChatDrawer';
@@ -445,6 +446,19 @@ export default function ProjectPage(): React.ReactElement | null {
     }
   }, [project, user, endCall]);
 
+  const handleEndHuddle = useCallback(async () => {
+    if (!project) return;
+    setIsHuddleOpen(false);
+    endCall();
+    try {
+      const db = getDb();
+      await endHuddleSession(db, project.id);
+      setHuddleParticipants([]);
+    } catch (err) {
+      console.error('Failed to end huddle:', err);
+    }
+  }, [project, endCall]);
+
   // Keyboard Shortcuts
   useHotkeys({
     KeyN: () => {
@@ -499,7 +513,8 @@ export default function ProjectPage(): React.ReactElement | null {
           await createTask(db, project.id, currentUid, singleTaskInput, {
             actor,
             projectName: project.name,
-          });
+            projectOwnerId: project.ownerId,
+          } as any);
         }
       } else {
         // Case 2: Single task or shared checklist task
@@ -516,7 +531,8 @@ export default function ProjectPage(): React.ReactElement | null {
         await createTask(db, project.id, currentUid, taskInput, {
           actor,
           projectName: project.name,
-        });
+          projectOwnerId: project.ownerId,
+        } as any);
       }
 
       setShowCreateForm(false);
@@ -558,7 +574,8 @@ export default function ProjectPage(): React.ReactElement | null {
         task: editingTask,
         projectName: project.name,
         assigneeName: data.assigneeId ? project.memberNames[data.assigneeId] : null,
-      });
+        projectOwnerId: project.ownerId,
+      } as any);
       setEditingTask(null);
       await reloadTasks();
     } catch (err) {
@@ -603,7 +620,8 @@ export default function ProjectPage(): React.ReactElement | null {
           task: activeDetailTask,
           projectName: project.name,
           assigneeName: patch.assigneeId ? project.memberNames[patch.assigneeId] : null,
-        });
+          projectOwnerId: project.ownerId,
+        } as any);
       }
       await reloadTasks();
       setActiveDetailTask((prev) => (prev ? { ...prev, ...patch } : null));
@@ -820,7 +838,7 @@ export default function ProjectPage(): React.ReactElement | null {
                     <span className="font-medium text-xs">{m.displayName}</span>
                     {(m.jobTitles && m.jobTitles.length > 0
                       ? m.jobTitles
-                      : m.jobTitle.split(/[,،;\n]+/).map((t: string) => t.trim()).filter(Boolean)
+                      : (m.jobTitle || '').split(/[,،;\n]+/).map((t: string) => t.trim()).filter(Boolean)
                     ).map((role: string) => (
                         <span
                           key={role}
@@ -1084,6 +1102,9 @@ export default function ProjectPage(): React.ReactElement | null {
           projectId={projectId}
           isOpen={showActivity}
           onClose={() => setShowActivity(false)}
+          currentUserId={user?.uid || ''}
+          currentUserName={actor.displayName}
+          isOwner={isOwner}
         />
       )}
 
@@ -1121,6 +1142,7 @@ export default function ProjectPage(): React.ReactElement | null {
           isOwner={isOwner}
           tasks={tasks}
           onJoinHuddle={handleJoinHuddle}
+          onEndHuddle={handleEndHuddle}
           isHuddleActive={huddleParticipants.length > 0}
           huddleParticipantCount={huddleParticipants.length}
         />

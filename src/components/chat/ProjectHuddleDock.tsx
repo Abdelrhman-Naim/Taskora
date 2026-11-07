@@ -64,11 +64,17 @@ function VideoFeed({ stream, isMuted = false }: VideoFeedProps): React.ReactElem
 
   useEffect(() => {
     const video = videoRef.current;
-    if (video && stream) {
-      video.srcObject = stream;
-      video.play().catch(() => {
-        // Silently handled: browser autoplay policy
-      });
+    if (video && stream && typeof stream === 'object') {
+      try {
+        if ('getTracks' in stream) {
+          video.srcObject = stream;
+          video.play().catch(() => {
+            // Silently handled: browser autoplay policy
+          });
+        }
+      } catch (err) {
+        console.warn('VideoFeed play/srcObject error:', err);
+      }
     }
   }, [stream]);
 
@@ -274,7 +280,14 @@ export function ProjectHuddleDock({
               const hasAudio = isSelf ? isAudioEnabled : Boolean(participant.audioEnabled ?? participant.isAudioEnabled);
               const participantStream = isSelf ? localStream : remoteStreams[participant.uid];
               const isParticipantSharing = Boolean(participant.screenSharing || participant.isScreenSharing);
-              const displayName = participant.displayName || (isSelf ? (isAr ? 'أنت' : 'You') : (isAr ? 'مشارك' : 'Participant'));
+              const safeDisplayName = typeof participant.displayName === 'string' && participant.displayName.trim()
+                ? participant.displayName.trim()
+                : (isSelf ? (isAr ? 'أنت' : 'You') : (isAr ? 'مشارك' : 'Participant'));
+              const safeRole = typeof participant.role === 'string' && participant.role.trim()
+                ? participant.role.trim()
+                : Array.isArray(participant.role)
+                ? (participant.role as string[]).join(', ')
+                : '';
 
               return (
                 <div
@@ -291,24 +304,24 @@ export function ProjectHuddleDock({
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center">
                       <Avatar
-                        name={displayName}
+                        name={safeDisplayName}
                         size="md"
                         className="w-14 h-14 mb-3 border-2 border-accent/40 shadow-lg text-sm"
                       />
                       <span className="text-sm font-semibold text-text truncate max-w-[180px]">
-                        {displayName} {isSelf && (isAr ? '(أنت)' : '(You)')}
+                        {safeDisplayName} {isSelf && (isAr ? '(أنت)' : '(You)')}
                       </span>
-                      {participant.role && (
+                      {safeRole ? (
                         <span className="text-[11px] text-text-3 truncate max-w-[160px] mt-0.5">
-                          {participant.role}
+                          {safeRole}
                         </span>
-                      )}
+                      ) : null}
                     </div>
                   )}
 
                   {/* Status Overlay Badges */}
                   <div className="absolute bottom-2.5 inset-inline-start-2.5 flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[11px] text-white">
-                    <span className="truncate max-w-[120px] font-medium">{displayName}</span>
+                    <span className="truncate max-w-[120px] font-medium">{safeDisplayName}</span>
                     <Icon
                       name={hasAudio ? 'mic' : 'mic-off'}
                       size={13}

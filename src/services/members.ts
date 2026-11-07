@@ -99,6 +99,19 @@ export async function addMember(
         );
       }
 
+      // In-app notification for the project owner (Admin) if member was added by another admin
+      if (proj.ownerId && proj.ownerId !== ctx.actor.uid && proj.ownerId !== userRecord.uid) {
+        const ownerNotifRef = newNotificationRef(db, proj.ownerId);
+        batch.set(
+          ownerNotifRef,
+          notificationData(ctx.actor, {
+            type: 'member_added',
+            projectId,
+            projectName: typeof proj.name === 'string' ? proj.name : 'Project',
+          })
+        );
+      }
+
       await withWriteGuard(() => batch.commit());
     } else {
       await withWriteGuard(() =>

@@ -93,7 +93,7 @@ function PresetPills({
                 : 'text-text-2 hover:border-line-hover'
             }`}
           >
-            {isSelected ? <span>✓ </span> : null}
+            {isSelected ? <Icon name="check" size={12} className="inline me-1" /> : null}
             <span>{title}</span>
           </button>
         );
@@ -328,7 +328,7 @@ export function AddMemberModal({
                   if (isAlreadyJoined) {
                     return (
                       <option key={m.uid || m.email} value="" disabled>
-                        ✓ {m.displayName} {m.email ? `(${m.email})` : ''} — {isAr ? '[منضم بالفعل لهذا المشروع]' : '[Already in this project]'}
+                        {m.displayName} {m.email ? `(${m.email})` : ''} — {isAr ? '[منضم بالفعل لهذا المشروع]' : '[Already in this project]'}
                       </option>
                     );
                   }

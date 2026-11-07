@@ -69,7 +69,7 @@ export function KpiStrip({ metrics }: KpiStripProps): React.ReactElement {
         </div>
         {metrics.overdue > 0 && (
           <div className={styles.alertBadge}>
-            <span aria-hidden="true">⚠</span>
+            <Icon name="alert" size={12} />
             <span>{t('dashboard.kpi.attention')}</span>
           </div>
         )}

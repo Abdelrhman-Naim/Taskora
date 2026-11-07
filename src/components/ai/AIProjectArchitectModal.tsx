@@ -135,7 +135,7 @@ function TaskPreviewRow({
               key={i}
               className="text-[11px] text-text-3 bg-surface border border-line/60 px-2 py-0.5 rounded"
             >
-              ✓ {item}
+              {item}
             </span>
           ))}
         </div>
@@ -336,7 +336,7 @@ export function AIProjectArchitectModal({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line pb-3 sm:pb-4 gap-2.5 shrink-0">
           <div className="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
             <div className="w-8 h-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center font-bold shrink-0 mt-0.5 sm:mt-0">
-              ✨
+              <Icon name="sparkles" size={18} />
             </div>
             <div className="min-w-0 flex-1">
               <h2 className="text-base sm:text-lg font-bold text-text truncate m-0">

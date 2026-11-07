@@ -71,7 +71,7 @@ export function NeedsAttention({
                     </div>
                   </div>
                   <span className={`${styles.badge} ${badgeClass}`}>
-                    {item.kind === 'overdue' && <span aria-hidden="true">⚠ </span>}
+                    {item.kind === 'overdue' && <Icon name="alert" size={12} className="inline me-1 text-amber-500" />}
                     <span className="num">{labelText}</span>
                   </span>
                 </Link>

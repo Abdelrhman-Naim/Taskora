@@ -257,7 +257,8 @@ export function RiskRadarModal({
                     onClick={handleCopySummary}
                     className="text-xs text-accent hover:underline flex items-center gap-1 font-semibold cursor-pointer"
                   >
-                    <span>{copied ? '✓ تم النسخ للحافظة' : 'نسخ التقرير'}</span>
+                    <Icon name={copied ? 'check' : 'clipboard'} size={14} />
+                    <span>{copied ? (isAr ? 'تم النسخ للحافظة' : 'Copied') : (isAr ? 'نسخ التقرير' : 'Copy')}</span>
                   </button>
                 </div>
                 <div className={RADAR_STYLES.executiveCard}>{data.executiveSummary}</div>

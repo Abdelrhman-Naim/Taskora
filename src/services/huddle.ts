@@ -143,6 +143,35 @@ export async function leaveHuddleSession(
 }
 
 /**
+ * Force-ends or resets a huddle session for a project.
+ * Completely resets active to false and clears all participants.
+ */
+export async function endHuddleSession(
+  db: Firestore,
+  projectId: string,
+  injections: HuddleInjections = {}
+): Promise<void> {
+  const docFn = injections.docFn || doc;
+  const setDocFn = injections.setDocFn || setDoc;
+  const nowFn = injections.nowFn || (() => new Date());
+
+  const huddleRef = docFn(db, 'projects', projectId, 'huddles', HUDDLE_DOC_ID);
+  const now = nowFn().toISOString();
+
+  await setDocFn(
+    huddleRef,
+    {
+      id: HUDDLE_DOC_ID,
+      projectId,
+      active: false,
+      updatedAt: now,
+      participants: {},
+    },
+    { merge: false }
+  );
+}
+
+/**
  * Listens to active huddle session changes in Firestore.
  */
 export function subscribeToHuddle(
@@ -168,23 +197,39 @@ export function subscribeToHuddle(
         }
 
         const participantsMap: Record<string, HuddleParticipant> = {};
+        const nowMs = Date.now();
+        // Sessions older than 45 minutes without updates are considered stale
+        const STALE_PARTICIPANT_TIMEOUT_MS = 45 * 60 * 1000;
 
         // Parse nested participants map
         if (rawData.participants && typeof rawData.participants === 'object') {
           Object.entries(rawData.participants).forEach(([uid, p]) => {
             if (p && typeof p === 'object') {
-              participantsMap[uid] = {
-                uid,
-                displayName: (p as any).displayName || 'Participant',
-                role: (p as any).role || 'Team Member',
-                joinedAt: (p as any).joinedAt || new Date().toISOString(),
-                audioEnabled: Boolean((p as any).audioEnabled ?? (p as any).isAudioEnabled),
-                videoEnabled: Boolean((p as any).videoEnabled ?? (p as any).isVideoEnabled),
-                screenSharing: Boolean((p as any).screenSharing ?? (p as any).isScreenSharing),
-                isAudioEnabled: Boolean((p as any).audioEnabled ?? (p as any).isAudioEnabled),
-                isVideoEnabled: Boolean((p as any).videoEnabled ?? (p as any).isVideoEnabled),
-                isScreenSharing: Boolean((p as any).screenSharing ?? (p as any).isScreenSharing),
-              };
+              const joinedMs = (p as any).joinedAt ? new Date((p as any).joinedAt).getTime() : 0;
+              const isStale = joinedMs > 0 && (nowMs - joinedMs > STALE_PARTICIPANT_TIMEOUT_MS);
+              if (!isStale) {
+                const displayName = typeof (p as any).displayName === 'string' && (p as any).displayName.trim()
+                  ? (p as any).displayName.trim()
+                  : 'Participant';
+                const role = typeof (p as any).role === 'string' && (p as any).role.trim()
+                  ? (p as any).role.trim()
+                  : Array.isArray((p as any).role)
+                  ? (p as any).role.join(', ')
+                  : 'Team Member';
+
+                participantsMap[uid] = {
+                  uid,
+                  displayName,
+                  role,
+                  joinedAt: (p as any).joinedAt || new Date().toISOString(),
+                  audioEnabled: Boolean((p as any).audioEnabled ?? (p as any).isAudioEnabled),
+                  videoEnabled: Boolean((p as any).videoEnabled ?? (p as any).isVideoEnabled),
+                  screenSharing: Boolean((p as any).screenSharing ?? (p as any).isScreenSharing),
+                  isAudioEnabled: Boolean((p as any).audioEnabled ?? (p as any).isAudioEnabled),
+                  isVideoEnabled: Boolean((p as any).videoEnabled ?? (p as any).isVideoEnabled),
+                  isScreenSharing: Boolean((p as any).screenSharing ?? (p as any).isScreenSharing),
+                };
+              }
             }
           });
         }
@@ -193,11 +238,22 @@ export function subscribeToHuddle(
         Object.entries(rawData).forEach(([key, val]) => {
           if (key.startsWith('participants.') && val && typeof val === 'object') {
             const uid = key.replace('participants.', '');
-            if (!participantsMap[uid]) {
+            const joinedMs = (val as any).joinedAt ? new Date((val as any).joinedAt).getTime() : 0;
+            const isStale = joinedMs > 0 && (nowMs - joinedMs > STALE_PARTICIPANT_TIMEOUT_MS);
+            if (!participantsMap[uid] && !isStale) {
+              const displayName = typeof (val as any).displayName === 'string' && (val as any).displayName.trim()
+                ? (val as any).displayName.trim()
+                : 'Participant';
+              const role = typeof (val as any).role === 'string' && (val as any).role.trim()
+                ? (val as any).role.trim()
+                : Array.isArray((val as any).role)
+                ? (val as any).role.join(', ')
+                : 'Team Member';
+
               participantsMap[uid] = {
                 uid,
-                displayName: (val as any).displayName || 'Participant',
-                role: (val as any).role || 'Team Member',
+                displayName,
+                role,
                 joinedAt: (val as any).joinedAt || new Date().toISOString(),
                 audioEnabled: Boolean((val as any).audioEnabled ?? (val as any).isAudioEnabled),
                 videoEnabled: Boolean((val as any).videoEnabled ?? (val as any).isVideoEnabled),
@@ -210,10 +266,13 @@ export function subscribeToHuddle(
           }
         });
 
+        const participantCount = Object.keys(participantsMap).length;
+        const isSessionActive = Boolean(rawData.active) && participantCount > 0;
+
         const session: HuddleSession = {
           id: HUDDLE_DOC_ID,
           projectId,
-          active: Boolean(rawData.active),
+          active: isSessionActive,
           startedBy: rawData.startedBy || '',
           startedByName: rawData.startedByName || '',
           updatedAt: rawData.updatedAt || new Date().toISOString(),

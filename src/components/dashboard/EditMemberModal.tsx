@@ -253,7 +253,7 @@ export function EditMemberModal({
                         : 'text-text-2 hover:border-line-hover'
                     }`}
                   >
-                    {isSelected ? <span>✓ </span> : null}
+                    {isSelected ? <Icon name="check" size={12} className="inline me-1" /> : null}
                     <span>{title}</span>
                   </button>
                 );

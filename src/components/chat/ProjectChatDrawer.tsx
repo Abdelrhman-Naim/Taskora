@@ -52,6 +52,7 @@ export interface ProjectChatDrawerProps {
   currentUserRole?: 'owner' | 'member';
   isOwner: boolean;
   onJoinHuddle?: () => void;
+  onEndHuddle?: () => void;
   isHuddleActive?: boolean;
   huddleParticipantCount?: number;
   tasks?: Task[];
@@ -68,6 +69,7 @@ export function ProjectChatDrawer({
   currentUserName,
   currentUserRole = 'member',
   onJoinHuddle,
+  onEndHuddle,
   isHuddleActive = false,
   huddleParticipantCount = 0,
   tasks = [],
@@ -243,15 +245,30 @@ export function ProjectChatDrawer({
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={onJoinHuddle}
-            data-testid="drawer-join-huddle-btn"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent text-on-accent font-semibold text-xs hover:opacity-90 transition-opacity cursor-pointer min-h-[36px]"
-          >
-            <Icon name="phone" size={13} />
-            <span>{isHuddleActive ? (isAr ? 'انضم للمكالمة' : 'Join Call') : (isAr ? 'بدء مكالمة' : 'Start Call')}</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={onJoinHuddle}
+              data-testid="drawer-join-huddle-btn"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent text-on-accent font-semibold text-xs hover:opacity-90 transition-opacity cursor-pointer min-h-[36px]"
+            >
+              <Icon name="phone" size={13} />
+              <span>{isHuddleActive ? (isAr ? 'انضم للمكالمة' : 'Join Call') : (isAr ? 'بدء مكالمة' : 'Start Call')}</span>
+            </button>
+
+            {isHuddleActive && onEndHuddle && (
+              <button
+                type="button"
+                onClick={onEndHuddle}
+                data-testid="drawer-end-huddle-btn"
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-error/15 text-error border border-error/30 font-medium text-xs hover:bg-error hover:text-white transition-colors cursor-pointer min-h-[36px]"
+                title={isAr ? 'إنهاء المكالمة وتصفير الاتصال' : 'End and reset call for everyone'}
+              >
+                <Icon name="phone-off" size={13} />
+                <span>{isAr ? 'إنهاء' : 'End'}</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Channel / DM Tab bar */}

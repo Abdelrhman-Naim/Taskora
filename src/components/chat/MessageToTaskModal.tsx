@@ -124,7 +124,7 @@ export function MessageToTaskModal({
     <Dialog
       isOpen={isOpen}
       onClose={onClose}
-      title={isAr ? '⚡ تحويل الرسالة إلى مهمة' : '⚡ Convert Message to Task'}
+      title={isAr ? 'تحويل الرسالة إلى مهمة' : 'Convert Message to Task'}
       size="md"
     >
       <div data-testid="message-to-task-dialog">

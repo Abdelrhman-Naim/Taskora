@@ -50,6 +50,7 @@ export function recipientsFor(e: {
   task?: Pick<Task, 'createdBy' | 'assigneeId'>;
   newAssigneeId?: string | null;
   addedUid?: string;
+  projectOwnerId?: string;
 }): string[] {
   const result: string[] = [];
 
@@ -80,6 +81,11 @@ export function recipientsFor(e: {
         result.push(e.addedUid);
       }
       break;
+  }
+
+  // Admin / Project Owner receives notifications for all project updates
+  if (e.projectOwnerId && e.projectOwnerId !== e.actorUid && !result.includes(e.projectOwnerId)) {
+    result.push(e.projectOwnerId);
   }
 
   return result;
