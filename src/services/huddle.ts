@@ -370,12 +370,16 @@ export function subscribeToSignals(
       'signals'
     );
 
+    const sessionStartTime = Date.now() - 15000;
     return onSnapshot(signalsCol, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
           const data = change.doc.data() as WebRTCSignalData;
           if (data.toUid === myUid && data.fromUid !== myUid) {
-            onSignal(data);
+            const sigTime = data.timestamp ? new Date(data.timestamp).getTime() : 0;
+            if (!sigTime || isNaN(sigTime) || sigTime >= sessionStartTime) {
+              onSignal(data);
+            }
           }
         }
       });

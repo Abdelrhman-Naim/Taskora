@@ -19,7 +19,12 @@ export const RTC_CONFIG: RTCConfiguration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+    { urls: 'stun:global.stun.twilio.com:3478' },
   ],
+  iceCandidatePoolSize: 10,
 };
 
 // ============================================================================
@@ -74,8 +79,11 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
   const localStreamRef = useRef<MediaStream | null>(null);
   const screenStreamRef = useRef<MediaStream | null>(null);
   const peerConnectionsRef = useRef<Record<string, RTCPeerConnection>>({});
+  const remoteStreamsRef = useRef<Record<string, MediaStream>>({});
+  const iceCandidateQueuesRef = useRef<Record<string, RTCIceCandidateInit[]>>({});
+  const hasOfferedRef = useRef<Record<string, boolean>>({});
 
-  // Clean all tracks helper
+  // Helper to stop all tracks in a media stream safely
   const stopTracks = useCallback((stream: MediaStream | null) => {
     if (!stream) return;
     try {
@@ -93,28 +101,80 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
     }
   }, []);
 
-  // Update tracks across all active peer connections
-  const syncTracksToPeers = useCallback(() => {
+  /**
+   * Synchronizes active local tracks (Audio, Video, Screen) to all open peer connections.
+   * If a sender already exists, it hot-swaps the track via replaceTrack (zero interruption).
+   * If a new track was added, it triggers renegotiation if the peer connection is stable.
+   */
+  const syncTracksToPeers = useCallback(async () => {
     if (typeof window === 'undefined') return;
-    const activeStream = screenStreamRef.current || localStreamRef.current;
-    if (!activeStream) return;
 
-    Object.values(peerConnectionsRef.current).forEach((pc) => {
+    // Active audio track from microphone
+    const audioTrack = localStreamRef.current?.getAudioTracks()[0] || null;
+
+    // Active video track: Screen share takes precedence, otherwise camera if enabled
+    const videoTrack =
+      screenStreamRef.current?.getVideoTracks()[0] ||
+      (localStreamRef.current?.getVideoTracks().find((t) => t.enabled) || null);
+
+    const videoStream = screenStreamRef.current || localStreamRef.current;
+
+    for (const [remoteUid, pc] of Object.entries(peerConnectionsRef.current)) {
       try {
         const senders = pc.getSenders();
-        activeStream.getTracks().forEach((track) => {
-          const matchingSender = senders.find((s) => s.track && s.track.kind === track.kind);
-          if (matchingSender) {
-            matchingSender.replaceTrack(track).catch(() => {});
-          } else {
-            pc.addTrack(track, activeStream);
+        let needsRenegotiation = false;
+
+        // 1. Audio Sender Management
+        const audioSender = senders.find((s) => s.track && s.track.kind === 'audio');
+        if (audioSender) {
+          if (audioTrack && audioSender.track !== audioTrack) {
+            await audioSender.replaceTrack(audioTrack).catch(() => {});
           }
-        });
-      } catch {
-        // ignore
+        } else if (audioTrack && localStreamRef.current) {
+          try {
+            pc.addTrack(audioTrack, localStreamRef.current);
+            needsRenegotiation = true;
+          } catch {
+            // ignore if already added
+          }
+        }
+
+        // 2. Video Sender Management (Hot-swap Camera / Screen Share)
+        const videoSender = senders.find(
+          (s) => (s.track && s.track.kind === 'video') || (!s.track && (s as any).transport)
+        );
+        if (videoSender) {
+          if (videoTrack) {
+            await videoSender.replaceTrack(videoTrack).catch(() => {});
+          } else {
+            await videoSender.replaceTrack(null).catch(() => {});
+          }
+        } else if (videoTrack && videoStream) {
+          try {
+            pc.addTrack(videoTrack, videoStream);
+            needsRenegotiation = true;
+          } catch {
+            // ignore if already added
+          }
+        }
+
+        // 3. Renegotiation offer if a new track was added to an established connection
+        if (needsRenegotiation && pc.signalingState === 'stable' && db && projectId && myUid) {
+          const offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+          await sendWebRTCSignal(db, projectId, {
+            fromUid: myUid,
+            toUid: remoteUid,
+            type: 'offer',
+            payload: JSON.stringify(offer),
+            timestamp: new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        console.warn('syncTracksToPeers notice for remote peer:', remoteUid, err);
       }
-    });
-  }, []);
+    }
+  }, [db, projectId, myUid]);
 
   /**
    * Creates or retrieves an existing RTCPeerConnection for a remote peer
@@ -128,38 +188,64 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
     try {
       const pc = new RTCPeerConnection(RTC_CONFIG);
 
-      // Add local tracks if available
-      const activeStream = screenStreamRef.current || localStreamRef.current;
-      if (activeStream && typeof activeStream.getTracks === 'function') {
-        activeStream.getTracks().forEach((track) => {
+      // Pre-populate with all active local tracks
+      if (localStreamRef.current) {
+        localStreamRef.current.getAudioTracks().forEach((track) => {
           try {
-            pc.addTrack(track, activeStream);
-          } catch {
-            // ignore
-          }
+            pc.addTrack(track, localStreamRef.current!);
+          } catch {}
+        });
+        if (!screenStreamRef.current) {
+          localStreamRef.current.getVideoTracks().forEach((track) => {
+            try {
+              pc.addTrack(track, localStreamRef.current!);
+            } catch {}
+          });
+        }
+      }
+      if (screenStreamRef.current) {
+        screenStreamRef.current.getVideoTracks().forEach((track) => {
+          try {
+            pc.addTrack(track, screenStreamRef.current!);
+          } catch {}
         });
       }
 
-      // Handle remote incoming tracks
+      // Handle remote incoming tracks (Audio & Video)
       pc.ontrack = (event) => {
-        if (event.streams && event.streams[0]) {
-          const stream = event.streams[0];
-          setRemoteStreams((prev) => ({
-            ...prev,
-            [remoteUid]: stream,
-          }));
-          onRemoteStream?.(remoteUid, stream);
+        let stream = event.streams && event.streams[0];
+        if (!stream) {
+          const existing = remoteStreamsRef.current[remoteUid];
+          if (existing && typeof existing.addTrack === 'function') {
+            try {
+              existing.addTrack(event.track);
+            } catch {}
+            stream = typeof MediaStream !== 'undefined' ? new MediaStream(existing.getTracks()) : existing;
+          } else {
+            stream = typeof MediaStream !== 'undefined' ? new MediaStream([event.track]) : ({} as any);
+          }
+        } else {
+          // Fresh MediaStream instance wrapper to guarantee React state reactivity
+          stream = typeof MediaStream !== 'undefined' ? new MediaStream(stream.getTracks()) : stream;
         }
+
+        remoteStreamsRef.current[remoteUid] = stream;
+        setRemoteStreams((prev) => ({
+          ...prev,
+          [remoteUid]: stream,
+        }));
+        onRemoteStream?.(remoteUid, stream);
       };
 
       // Handle ICE candidates
       pc.onicecandidate = (event) => {
         if (event.candidate && db && projectId && myUid) {
+          const candidateData = event.candidate.toJSON ? event.candidate.toJSON() : event.candidate;
           sendWebRTCSignal(db, projectId, {
             fromUid: myUid,
             toUid: remoteUid,
             type: 'ice-candidate',
-            payload: JSON.stringify(event.candidate),
+            payload: JSON.stringify(candidateData),
             timestamp: new Date().toISOString(),
           }).catch(() => {});
         }
@@ -167,12 +253,19 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
 
       // Handle connection failure / disconnection
       pc.onconnectionstatechange = () => {
-        if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed' || pc.connectionState === 'closed') {
+        if (
+          pc.connectionState === 'disconnected' ||
+          pc.connectionState === 'failed' ||
+          pc.connectionState === 'closed'
+        ) {
           setRemoteStreams((prev) => {
             const next = { ...prev };
             delete next[remoteUid];
             return next;
           });
+          delete remoteStreamsRef.current[remoteUid];
+          delete hasOfferedRef.current[remoteUid];
+          delete iceCandidateQueuesRef.current[remoteUid];
           onRemoteLeave?.(remoteUid);
         }
       };
@@ -186,7 +279,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
   }, [db, projectId, myUid, onRemoteStream, onRemoteLeave]);
 
   /**
-   * Starts local user media (Mic and optional Camera)
+   * Starts local user media (Microphone and optional Camera)
    */
   const startMedia = useCallback(
     async (opts: { audio?: boolean; video?: boolean } = { audio: true, video: false }) => {
@@ -207,7 +300,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
         setIsAudioEnabled(opts.audio !== false);
         setIsVideoEnabled(Boolean(opts.video));
 
-        syncTracksToPeers();
+        await syncTracksToPeers();
         return stream;
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'Permission denied to camera/microphone';
@@ -240,11 +333,14 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
       }
     });
     peerConnectionsRef.current = {};
+    remoteStreamsRef.current = {};
+    iceCandidateQueuesRef.current = {};
+    hasOfferedRef.current = {};
     setRemoteStreams({});
   }, [stopTracks]);
 
   /**
-   * Toggles audio track enabled state or requests audio if stream not yet active
+   * Toggles audio track mute state or starts audio if not yet active
    */
   const toggleAudio = useCallback(async () => {
     if (!localStreamRef.current) {
@@ -257,13 +353,14 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
         const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const newTrack = audioStream.getAudioTracks()[0];
         localStreamRef.current.addTrack(newTrack);
-        const updated = typeof MediaStream !== 'undefined'
-          ? new MediaStream(localStreamRef.current.getTracks())
-          : localStreamRef.current;
+        const updated =
+          typeof MediaStream !== 'undefined'
+            ? new MediaStream(localStreamRef.current.getTracks())
+            : localStreamRef.current;
         localStreamRef.current = updated;
         setLocalStream(updated);
         setIsAudioEnabled(true);
-        syncTracksToPeers();
+        await syncTracksToPeers();
         if (db && projectId && myUid) {
           updateMediaState(db, projectId, myUid, { audioEnabled: true }).catch(() => {});
         }
@@ -286,7 +383,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
   }, [db, projectId, myUid, isVideoEnabled, startMedia, syncTracksToPeers]);
 
   /**
-   * Toggles video track enabled state or requests camera track with fresh MediaStream instance
+   * Toggles camera track state or requests camera track with fresh MediaStream instance
    */
   const toggleVideo = useCallback(async () => {
     if (!localStreamRef.current) {
@@ -302,30 +399,32 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
       });
       setIsVideoEnabled(nextState);
 
-      const updated = typeof MediaStream !== 'undefined'
-        ? new MediaStream(localStreamRef.current.getTracks())
-        : localStreamRef.current;
+      const updated =
+        typeof MediaStream !== 'undefined'
+          ? new MediaStream(localStreamRef.current.getTracks())
+          : localStreamRef.current;
       localStreamRef.current = updated;
       setLocalStream(updated);
-      syncTracksToPeers();
+      await syncTracksToPeers();
 
       if (db && projectId && myUid) {
         updateMediaState(db, projectId, myUid, { videoEnabled: nextState }).catch(() => {});
       }
     } else {
-      // Add video track if not already present
+      // Add camera track if not already present in local stream
       try {
         const streamWithVideo = await navigator.mediaDevices.getUserMedia({ video: true });
         const newTrack = streamWithVideo.getVideoTracks()[0];
         localStreamRef.current.addTrack(newTrack);
 
-        const updated = typeof MediaStream !== 'undefined'
-          ? new MediaStream(localStreamRef.current.getTracks())
-          : localStreamRef.current;
+        const updated =
+          typeof MediaStream !== 'undefined'
+            ? new MediaStream(localStreamRef.current.getTracks())
+            : localStreamRef.current;
         localStreamRef.current = updated;
         setLocalStream(updated);
         setIsVideoEnabled(true);
-        syncTracksToPeers();
+        await syncTracksToPeers();
 
         if (db && projectId && myUid) {
           updateMediaState(db, projectId, myUid, { videoEnabled: true }).catch(() => {});
@@ -346,7 +445,7 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
       screenStreamRef.current = null;
       setScreenStream(null);
       setIsScreenSharing(false);
-      syncTracksToPeers();
+      await syncTracksToPeers();
 
       if (db && projectId && myUid) {
         updateMediaState(db, projectId, myUid, { screenSharing: false }).catch(() => {});
@@ -364,15 +463,15 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
       screenStreamRef.current = displayStream;
       setScreenStream(displayStream);
       setIsScreenSharing(true);
-      syncTracksToPeers();
+      await syncTracksToPeers();
 
       const screenTrack = displayStream.getVideoTracks()[0];
       if (screenTrack) {
-        screenTrack.addEventListener('ended', () => {
+        screenTrack.addEventListener('ended', async () => {
           setIsScreenSharing(false);
           setScreenStream(null);
           screenStreamRef.current = null;
-          syncTracksToPeers();
+          await syncTracksToPeers();
           if (db && projectId && myUid) {
             updateMediaState(db, projectId, myUid, { screenSharing: false }).catch(() => {});
           }
@@ -404,6 +503,16 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
             if (typeof RTCSessionDescription !== 'undefined') {
               const offerDesc = new RTCSessionDescription(JSON.parse(signal.payload));
               await pc.setRemoteDescription(offerDesc);
+
+              // Drain any queued ICE candidates that arrived before the offer
+              const queued = iceCandidateQueuesRef.current[remoteUid] || [];
+              while (queued.length > 0) {
+                const cand = queued.shift();
+                if (cand && typeof RTCIceCandidate !== 'undefined') {
+                  await pc.addIceCandidate(new RTCIceCandidate(cand)).catch(() => {});
+                }
+              }
+
               const answer = await pc.createAnswer();
               await pc.setLocalDescription(answer);
 
@@ -419,11 +528,27 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
             if (typeof RTCSessionDescription !== 'undefined' && pc.signalingState !== 'stable') {
               const answerDesc = new RTCSessionDescription(JSON.parse(signal.payload));
               await pc.setRemoteDescription(answerDesc);
+
+              // Drain queued ICE candidates
+              const queued = iceCandidateQueuesRef.current[remoteUid] || [];
+              while (queued.length > 0) {
+                const cand = queued.shift();
+                if (cand && typeof RTCIceCandidate !== 'undefined') {
+                  await pc.addIceCandidate(new RTCIceCandidate(cand)).catch(() => {});
+                }
+              }
             }
           } else if (signal.type === 'ice-candidate') {
-            if (typeof RTCIceCandidate !== 'undefined' && pc.remoteDescription) {
-              const candidate = new RTCIceCandidate(JSON.parse(signal.payload));
-              await pc.addIceCandidate(candidate);
+            if (typeof RTCIceCandidate !== 'undefined') {
+              const candidateInit: RTCIceCandidateInit = JSON.parse(signal.payload);
+              if (pc.remoteDescription && pc.remoteDescription.type) {
+                await pc.addIceCandidate(new RTCIceCandidate(candidateInit)).catch(() => {});
+              } else {
+                if (!iceCandidateQueuesRef.current[remoteUid]) {
+                  iceCandidateQueuesRef.current[remoteUid] = [];
+                }
+                iceCandidateQueuesRef.current[remoteUid].push(candidateInit);
+              }
             }
           }
         } catch (signalErr) {
@@ -445,10 +570,13 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
 
     participants.forEach(async (p) => {
       if (p.uid === myUid) return;
-      if (myUid < p.uid && !peerConnectionsRef.current[p.uid]) {
-        try {
-          const pc = getOrCreatePeerConnection(p.uid);
-          if (pc && typeof pc.createOffer === 'function') {
+      if (myUid < p.uid) {
+        const pc = getOrCreatePeerConnection(p.uid);
+        if (!pc) return;
+
+        if (pc.signalingState === 'stable' && !hasOfferedRef.current[p.uid]) {
+          hasOfferedRef.current[p.uid] = true;
+          try {
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
             await sendWebRTCSignal(db, projectId, {
@@ -458,9 +586,9 @@ export function useWebRTC(options: UseWebRTCOptions = {}): UseWebRTCResult {
               payload: JSON.stringify(offer),
               timestamp: new Date().toISOString(),
             });
+          } catch (offerErr) {
+            console.warn('Could not initiate WebRTC offer notice:', offerErr);
           }
-        } catch (offerErr) {
-          console.warn('Could not initiate WebRTC offer notice:', offerErr);
         }
       }
     });
