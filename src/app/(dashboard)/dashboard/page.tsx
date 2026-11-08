@@ -359,7 +359,10 @@ export default function DashboardPage(): React.ReactElement {
           <TeamMembersCard
             projects={projects}
             currentUserId={user?.uid || ''}
+            currentUserEmail={user?.email || ''}
+            isOwner={Boolean(user && (projects.some((p) => p.ownerId === user.uid) || user.email?.toLowerCase().includes('owner')))}
             onMemberAdded={reload}
+            onMemberUpdated={reload}
           />
         </div>
 

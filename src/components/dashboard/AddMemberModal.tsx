@@ -178,7 +178,7 @@ export function AddMemberModal({
   }
 
   function handleSelectExistingMember(identifier: string) {
-    if (!identifier) return;
+    if (!identifier || identifier.startsWith('already_joined_')) return;
     const member = workspaceMembers.find(
       (m) => m.uid === identifier || m.email.toLowerCase().trim() === identifier.toLowerCase().trim()
     );
@@ -327,7 +327,7 @@ export function AddMemberModal({
 
                   if (isAlreadyJoined) {
                     return (
-                      <option key={m.uid || m.email} value="" disabled>
+                      <option key={`joined_${m.uid || m.email}`} value={`already_joined_${m.uid || m.email}`} disabled>
                         {m.displayName} {m.email ? `(${m.email})` : ''} — {isAr ? '[منضم بالفعل لهذا المشروع]' : '[Already in this project]'}
                       </option>
                     );
@@ -339,7 +339,7 @@ export function AddMemberModal({
                       : m.jobTitle;
 
                   return (
-                    <option key={m.uid || m.email} value={m.uid || m.email}>
+                    <option key={`available_${m.uid || m.email}`} value={m.uid || m.email}>
                       + {m.displayName} {m.email ? `(${m.email})` : ''} {rolesText ? `— ${rolesText}` : ''}
                     </option>
                   );

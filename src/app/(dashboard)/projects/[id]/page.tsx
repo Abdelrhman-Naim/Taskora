@@ -19,7 +19,7 @@ import {
   Recurrence,
   ChecklistItem,
 } from '@/types';
-import { getProject } from '@/services/projects';
+import { getProject, listUserProjects } from '@/services/projects';
 import {
   listTasks,
   createTask,
@@ -239,6 +239,9 @@ export default function ProjectPage(): React.ReactElement | null {
   const [actionError, setActionError] = useState<string | null>(null);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
 
+  // All user projects for member directory
+  const [allUserProjects, setAllUserProjects] = useState<Project[]>([]);
+
   // Chat & Huddle State
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isHuddleOpen, setIsHuddleOpen] = useState(false);
@@ -249,8 +252,9 @@ export default function ProjectPage(): React.ReactElement | null {
       projectId: project?.id,
       myUid: user?.uid,
       db: typeof window !== 'undefined' ? getDb() : null,
+      participants: huddleParticipants,
     }),
-    [project?.id, user?.uid]
+    [project?.id, user?.uid, huddleParticipants]
   );
 
   const {
@@ -316,12 +320,16 @@ export default function ProjectPage(): React.ReactElement | null {
       setError(null);
       try {
         const db = getDb();
-        const [proj, taskList] = await Promise.all([
+        const [proj, taskList, userProjects] = await Promise.all([
           getProject(db, projectId),
           listTasks(db, projectId),
+          user?.uid ? listUserProjects(db, user.uid).catch(() => []) : Promise.resolve([]),
         ]);
         setProject(proj);
         setTasks(taskList);
+        if (Array.isArray(userProjects) && userProjects.length > 0) {
+          setAllUserProjects(userProjects);
+        }
       } catch (err: unknown) {
         if (err instanceof AppError) {
           setError(err);
@@ -387,8 +395,9 @@ export default function ProjectPage(): React.ReactElement | null {
     if (!project?.id) return;
     try {
       const db = getDb();
+      if (!db || typeof db !== 'object') return;
       const unsubscribe = subscribeToHuddle(db, project.id, (session) => {
-        if (session && session.participants) {
+        if (session && session.active && session.participants && Object.keys(session.participants).length > 0) {
           setHuddleParticipants(Object.values(session.participants));
         } else {
           setHuddleParticipants([]);
@@ -398,7 +407,7 @@ export default function ProjectPage(): React.ReactElement | null {
         unsubscribe();
       };
     } catch (e) {
-      console.error('Error subscribing to huddle:', e);
+      console.warn('Notice subscribing to huddle:', e);
     }
   }, [project?.id]);
 
@@ -458,6 +467,33 @@ export default function ProjectPage(): React.ReactElement | null {
       console.error('Failed to end huddle:', err);
     }
   }, [project, endCall]);
+
+  // Periodic Heartbeat while inside call to keep connection active and auto-expire disconnected users
+  useEffect(() => {
+    if (!isHuddleOpen || !project?.id || !user?.uid) return;
+    const db = getDb();
+    if (!db || typeof db !== 'object') return;
+
+    const interval = setInterval(() => {
+      const memberRole =
+        project.memberProfiles?.find((p) => p.uid === user.uid)?.jobTitle ||
+        (isOwner ? 'Project Manager' : 'Team Member');
+      joinHuddleSession(db, project.id, {
+        uid: user.uid,
+        displayName: actor.displayName,
+        role: memberRole,
+        audioEnabled: isAudioEnabled,
+        videoEnabled: isVideoEnabled,
+        screenSharing: isScreenSharing,
+        isAudioEnabled,
+        isVideoEnabled,
+        isScreenSharing,
+        joinedAt: new Date().toISOString(),
+      }).catch(() => {});
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, [isHuddleOpen, project, user?.uid, actor.displayName, isOwner, isAudioEnabled, isVideoEnabled, isScreenSharing]);
 
   // Keyboard Shortcuts
   useHotkeys({
@@ -1124,7 +1160,7 @@ export default function ProjectPage(): React.ReactElement | null {
         <AddMemberModal
           isOpen={showAddMember}
           onClose={() => setShowAddMember(false)}
-          projects={[project]}
+          projects={allUserProjects.length > 0 ? allUserProjects : [project]}
           defaultProjectId={project.id}
           onMemberAdded={() => loadProjectAndTasks(false)}
         />

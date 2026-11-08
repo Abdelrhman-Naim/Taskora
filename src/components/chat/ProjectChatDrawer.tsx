@@ -314,8 +314,16 @@ export function ProjectChatDrawer({
 
         {/* Error Alert */}
         {error && (
-          <div className="p-2.5 mx-4 mt-2 rounded bg-red-500/10 border border-red-500/20 text-red-500 text-xs">
-            {error}
+          <div className="p-2.5 mx-4 mt-2 rounded bg-red-500/10 border border-red-500/20 text-red-500 text-xs flex items-center justify-between">
+            <span>{error}</span>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="text-red-500/70 hover:text-red-500 p-0.5 cursor-pointer"
+              aria-label={isAr ? 'إغلاق' : 'Close'}
+            >
+              <Icon name="x" size={13} />
+            </button>
           </div>
         )}
 

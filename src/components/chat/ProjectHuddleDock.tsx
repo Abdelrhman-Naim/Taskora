@@ -52,7 +52,61 @@ export interface ProjectHuddleDockProps {
 }
 
 // ============================================================================
-// 4. SUB-COMPONENTS
+// 4. ERROR BOUNDARY
+// ============================================================================
+export class HuddleErrorBoundary extends React.Component<
+  { children: React.ReactNode; onReset?: () => void; isAr?: boolean },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.warn('ProjectHuddleDock error caught by HuddleErrorBoundary:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      const isAr = this.props.isAr ?? true;
+      return (
+        <div
+          data-testid="huddle-error-fallback"
+          className="fixed bottom-5 inset-inline-end-5 z-50 bg-surface border border-accent/40 rounded-xl shadow-2xl p-4 flex flex-col gap-2 max-w-sm text-text animate-fade-in"
+        >
+          <div className="flex items-center gap-2 text-accent font-semibold text-xs">
+            <Icon name="alert" size={16} />
+            <span>{isAr ? 'تنبيه اتصال المكالمة' : 'Call Connection Notice'}</span>
+          </div>
+          <p className="text-xs text-text-2">
+            {isAr
+              ? 'حدث استثناء أثناء تهيئة وسائط المكالمة. يمكنك إغلاق النافذة والمحاولة ثانية.'
+              : 'An issue occurred initializing call media. You can close and retry.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              this.setState({ hasError: false, error: null });
+              this.props.onReset?.();
+            }}
+            className="self-end px-3 py-1 bg-accent text-on-accent text-xs font-semibold rounded hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            {isAr ? 'إغلاق المكالمة' : 'Close Call'}
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ============================================================================
+// 5. SUB-COMPONENTS
 // ============================================================================
 interface VideoFeedProps {
   stream?: MediaStream | null;
@@ -64,18 +118,36 @@ function VideoFeed({ stream, isMuted = false }: VideoFeedProps): React.ReactElem
 
   useEffect(() => {
     const video = videoRef.current;
-    if (video && stream && typeof stream === 'object') {
+    if (!video) return;
+
+    if (
+      stream &&
+      typeof window !== 'undefined' &&
+      typeof stream === 'object' &&
+      'getTracks' in stream &&
+      Array.isArray((stream as MediaStream).getTracks())
+    ) {
       try {
-        if ('getTracks' in stream) {
-          video.srcObject = stream;
-          video.play().catch(() => {
-            // Silently handled: browser autoplay policy
-          });
-        }
+        video.srcObject = stream;
+        video.play().catch(() => {
+          // Autoplay policy fallback
+        });
       } catch (err) {
-        console.warn('VideoFeed play/srcObject error:', err);
+        console.warn('VideoFeed srcObject assignment notice:', err);
       }
+    } else {
+      video.srcObject = null;
     }
+
+    return () => {
+      if (video) {
+        try {
+          video.srcObject = null;
+        } catch {
+          // ignore
+        }
+      }
+    };
   }, [stream]);
 
   return (
@@ -90,9 +162,9 @@ function VideoFeed({ stream, isMuted = false }: VideoFeedProps): React.ReactElem
 }
 
 // ============================================================================
-// 5. MAIN COMPONENT
+// 6. INTERNAL DOCK COMPONENT
 // ============================================================================
-export function ProjectHuddleDock({
+function ProjectHuddleDockContent({
   isOpen,
   projectName,
   currentUserId,
@@ -260,7 +332,9 @@ export function ProjectHuddleDock({
                   <Icon name="monitor" size={48} className="text-accent mb-2 animate-bounce" />
                   <p className="text-sm font-semibold">
                     {screenSharingParticipant
-                      ? (isAr ? `${screenSharingParticipant.displayName} يشارك الشاشة حالياً` : `${screenSharingParticipant.displayName} is sharing screen`)
+                      ? (isAr
+                          ? `${typeof screenSharingParticipant.displayName === 'string' && screenSharingParticipant.displayName.trim() ? screenSharingParticipant.displayName : 'مشارك'} يشارك الشاشة حالياً`
+                          : `${typeof screenSharingParticipant.displayName === 'string' && screenSharingParticipant.displayName.trim() ? screenSharingParticipant.displayName : 'Participant'} is sharing screen`)
                       : (isAr ? 'جاري بث مشاركة الشاشة...' : 'Streaming screen share...')}
                   </p>
                 </div>
@@ -413,5 +487,21 @@ export function ProjectHuddleDock({
         </div>
       </div>
     </div>
+  );
+}
+
+// ============================================================================
+// 7. MAIN EXPORTED COMPONENT (WRAPPED WITH ERROR BOUNDARY)
+// ============================================================================
+export function ProjectHuddleDock(props: ProjectHuddleDockProps): React.ReactElement | null {
+  const { locale } = useI18n();
+  const isAr = locale === 'ar';
+
+  if (!props.isOpen) return null;
+
+  return (
+    <HuddleErrorBoundary onReset={props.onLeave} isAr={isAr}>
+      <ProjectHuddleDockContent {...props} />
+    </HuddleErrorBoundary>
   );
 }

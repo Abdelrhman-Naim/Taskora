@@ -37,6 +37,7 @@ export interface TeamMembersCardProps {
   onMemberAdded?: () => void;
   onMemberUpdated?: () => void;
   currentUserId?: string;
+  currentUserEmail?: string;
   isOwner?: boolean;
 }
 
@@ -54,8 +55,9 @@ export interface TeamMemberAccount {
 // ZONE 4: HELPERS & DERIVED STATE (DEDUPLICATION ENGINE)
 // ============================================================================
 export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
-  const mapByUid = new Map<string, TeamMemberAccount>();
-  const mapByEmail = new Map<string, TeamMemberAccount>();
+  const accountsByEmail = new Map<string, TeamMemberAccount>();
+  const accountsByUid = new Map<string, TeamMemberAccount>();
+  const accountsByName = new Map<string, TeamMemberAccount>();
 
   for (const proj of projects) {
     const profiles = Array.isArray(proj.memberProfiles) ? proj.memberProfiles : [];
@@ -76,11 +78,12 @@ export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
         prof?.displayName?.trim() ||
         proj.memberNames?.[uid]?.trim() ||
         (isOwner ? 'Owner User' : 'Team Member');
+      const normName = rawName.toLowerCase().trim();
       const rawEmail =
         prof?.email?.trim().toLowerCase() ||
         (isOwner
           ? 'owner.user@taskora.io'
-          : `${rawName.toLowerCase().replace(/\s+/g, '.')}@taskora.io`);
+          : `${normName.replace(/\s+/g, '.')}@taskora.io`);
       const normEmail = rawEmail.toLowerCase().trim();
       const jobTitle = prof?.jobTitle || (isOwner ? 'Project Manager' : 'Team Member');
       const jobTitles =
@@ -90,7 +93,10 @@ export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
           ? prof.jobTitle.split(/[,،;\n]+/).map((t) => t.trim()).filter(Boolean)
           : [jobTitle];
 
-      let existing = mapByUid.get(uid) || mapByEmail.get(normEmail);
+      let existing =
+        (normEmail ? accountsByEmail.get(normEmail) : null) ||
+        (uid ? accountsByUid.get(uid) : null) ||
+        (normName ? accountsByName.get(normName) : null);
 
       if (existing) {
         if (!existing.projects.some((p) => p.id === proj.id)) {
@@ -106,8 +112,13 @@ export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
         if (isOwner || prof?.role === 'owner') {
           existing.role = 'owner';
         }
-        mapByUid.set(existing.uid, existing);
-        mapByEmail.set(existing.email.toLowerCase().trim(), existing);
+        if (rawEmail && !existing.email.includes('@taskora.io') && rawEmail.includes('@')) {
+          existing.email = rawEmail;
+        }
+        if (existing.email) accountsByEmail.set(existing.email.toLowerCase().trim(), existing);
+        if (existing.uid) accountsByUid.set(existing.uid, existing);
+        if (uid) accountsByUid.set(uid, existing);
+        if (normName) accountsByName.set(normName, existing);
       } else {
         const account: TeamMemberAccount = {
           uid,
@@ -118,13 +129,14 @@ export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
           role: isOwner || prof?.role === 'owner' ? 'owner' : 'member',
           projects: [{ id: proj.id, name: proj.name }],
         };
-        mapByUid.set(uid, account);
-        mapByEmail.set(normEmail, account);
+        if (normEmail) accountsByEmail.set(normEmail, account);
+        if (uid) accountsByUid.set(uid, account);
+        if (normName) accountsByName.set(normName, account);
       }
     }
   }
 
-  return Array.from(new Set(mapByUid.values()));
+  return Array.from(new Set(accountsByEmail.values()));
 }
 
 // ============================================================================
@@ -133,13 +145,15 @@ export function extractTeamMembers(projects: Project[]): TeamMemberAccount[] {
 function MemberItemRow({
   member,
   isAr,
-  canManage,
+  canEdit,
+  canDelete,
   onEdit,
   onDelete,
 }: {
   member: TeamMemberAccount;
   isAr: boolean;
-  canManage: boolean;
+  canEdit: boolean;
+  canDelete: boolean;
   onEdit: (m: TeamMemberAccount) => void;
   onDelete: (m: TeamMemberAccount) => void;
 }) {
@@ -196,28 +210,32 @@ function MemberItemRow({
           {projectSummary}
         </span>
 
-        {canManage && (
+        {(canEdit || canDelete) && (
           <div className="flex items-center gap-1 ms-1">
-            <button
-              type="button"
-              onClick={() => onEdit(member)}
-              className={CARD_STYLES.actionBtn}
-              title={isAr ? 'تعديل بيانات العضو' : 'Edit Member'}
-              aria-label={isAr ? 'تعديل' : 'Edit'}
-              data-testid={`edit-member-${member.uid}`}
-            >
-              <Icon name="edit" size={14} />
-            </button>
-            <button
-              type="button"
-              onClick={() => onDelete(member)}
-              className={`${CARD_STYLES.actionBtn} hover:text-red-500 hover:border-red-500/40`}
-              title={isAr ? 'حذف العضو من الفريق' : 'Remove Member'}
-              aria-label={isAr ? 'حذف' : 'Delete'}
-              data-testid={`delete-member-${member.uid}`}
-            >
-              <Icon name="trash" size={14} />
-            </button>
+            {canEdit && (
+              <button
+                type="button"
+                onClick={() => onEdit(member)}
+                className={CARD_STYLES.actionBtn}
+                title={isAr ? 'تعديل بيانات العضو' : 'Edit Member'}
+                aria-label={isAr ? 'تعديل' : 'Edit'}
+                data-testid={`edit-member-${member.uid}`}
+              >
+                <Icon name="edit" size={14} />
+              </button>
+            )}
+            {canDelete && (
+              <button
+                type="button"
+                onClick={() => onDelete(member)}
+                className={`${CARD_STYLES.actionBtn} hover:text-red-500 hover:border-red-500/40`}
+                title={isAr ? 'حذف العضو من الفريق' : 'Remove Member'}
+                aria-label={isAr ? 'حذف' : 'Delete'}
+                data-testid={`delete-member-${member.uid}`}
+              >
+                <Icon name="trash" size={14} />
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -233,6 +251,7 @@ export function TeamMembersCard({
   onMemberAdded,
   onMemberUpdated,
   currentUserId = '',
+  currentUserEmail = '',
   isOwner = true,
 }: TeamMembersCardProps): React.ReactElement {
   const { locale } = useI18n();
@@ -304,13 +323,19 @@ export function TeamMembersCard({
           </div>
         ) : (
           members.map((m) => {
-            const canManage = isOwner && m.uid !== currentUserId && m.role !== 'owner';
+            const isSelf = Boolean(
+              (currentUserId && m.uid === currentUserId) ||
+              (currentUserEmail && m.email && m.email.toLowerCase() === currentUserEmail.toLowerCase())
+            );
+            const canEdit = isOwner || isSelf;
+            const canDelete = isOwner && !isSelf;
             return (
               <MemberItemRow
                 key={m.email || m.uid}
                 member={m}
                 isAr={isAr}
-                canManage={canManage}
+                canEdit={canEdit}
+                canDelete={canDelete}
                 onEdit={(target) => setEditingMember(target)}
                 onDelete={(target) => setDeletingMember(target)}
               />

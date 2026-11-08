@@ -107,6 +107,11 @@ export function subscribeToMessages(
   onUpdate: (messages: ChatMessage[]) => void,
   onError?: (error: Error) => void
 ): Unsubscribe {
+  if (!db || typeof db !== 'object' || !projectId || !channelId) {
+    onUpdate([]);
+    return () => {};
+  }
+
   const messagesCol = collection(
     db,
     'projects',
@@ -116,19 +121,50 @@ export function subscribeToMessages(
     'messages'
   );
 
-  const q = query(messagesCol, orderBy('createdAt', 'asc'), limit(CHAT_LIMIT));
+  let fallbackUnsub: Unsubscribe | null = null;
 
-  return onSnapshot(
-    q,
-    (snapshot) => {
-      const messages: ChatMessage[] = [];
-      snapshot.forEach((d) => {
-        messages.push(d.data() as ChatMessage);
-      });
-      onUpdate(messages);
-    },
-    (err) => {
-      onError?.(err);
-    }
-  );
+  try {
+    const q = query(messagesCol, orderBy('createdAt', 'asc'), limit(CHAT_LIMIT));
+
+    const primaryUnsub = onSnapshot(
+      q,
+      (snapshot) => {
+        const messages: ChatMessage[] = [];
+        snapshot.forEach((d) => {
+          messages.push(d.data() as ChatMessage);
+        });
+        onUpdate(messages);
+      },
+      (err) => {
+        // Fallback: If index is missing or query fails, try unordered query and sort in memory
+        try {
+          const simpleQ = query(messagesCol, limit(CHAT_LIMIT));
+          fallbackUnsub = onSnapshot(
+            simpleQ,
+            (snap) => {
+              const msgs: ChatMessage[] = [];
+              snap.forEach((d) => {
+                msgs.push(d.data() as ChatMessage);
+              });
+              msgs.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+              onUpdate(msgs);
+            },
+            (fallbackErr) => {
+              onError?.(fallbackErr);
+            }
+          );
+        } catch {
+          onError?.(err);
+        }
+      }
+    );
+
+    return () => {
+      primaryUnsub();
+      if (fallbackUnsub) fallbackUnsub();
+    };
+  } catch (err: unknown) {
+    onError?.(err instanceof Error ? err : new Error(String(err)));
+    return () => {};
+  }
 }

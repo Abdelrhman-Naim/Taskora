@@ -180,6 +180,11 @@ export function subscribeToHuddle(
   onUpdate: (session: HuddleSession | null) => void,
   onError?: (error: Error) => void
 ): Unsubscribe {
+  if (!db || typeof db !== 'object' || !projectId) {
+    onUpdate(null);
+    return () => {};
+  }
+
   const huddleRef = doc(db, 'projects', projectId, 'huddles', HUDDLE_DOC_ID);
 
   return onSnapshot(
@@ -198,15 +203,15 @@ export function subscribeToHuddle(
 
         const participantsMap: Record<string, HuddleParticipant> = {};
         const nowMs = Date.now();
-        // Sessions older than 45 minutes without updates are considered stale
-        const STALE_PARTICIPANT_TIMEOUT_MS = 45 * 60 * 1000;
+        // Sessions older than 15 minutes without updates are considered stale
+        const STALE_PARTICIPANT_TIMEOUT_MS = 60 * 1000;
 
         // Parse nested participants map
         if (rawData.participants && typeof rawData.participants === 'object') {
           Object.entries(rawData.participants).forEach(([uid, p]) => {
             if (p && typeof p === 'object') {
               const joinedMs = (p as any).joinedAt ? new Date((p as any).joinedAt).getTime() : 0;
-              const isStale = joinedMs > 0 && (nowMs - joinedMs > STALE_PARTICIPANT_TIMEOUT_MS);
+              const isStale = !joinedMs || isNaN(joinedMs) || (nowMs - joinedMs > STALE_PARTICIPANT_TIMEOUT_MS);
               if (!isStale) {
                 const displayName = typeof (p as any).displayName === 'string' && (p as any).displayName.trim()
                   ? (p as any).displayName.trim()
@@ -239,7 +244,7 @@ export function subscribeToHuddle(
           if (key.startsWith('participants.') && val && typeof val === 'object') {
             const uid = key.replace('participants.', '');
             const joinedMs = (val as any).joinedAt ? new Date((val as any).joinedAt).getTime() : 0;
-            const isStale = joinedMs > 0 && (nowMs - joinedMs > STALE_PARTICIPANT_TIMEOUT_MS);
+            const isStale = !joinedMs || isNaN(joinedMs) || (nowMs - joinedMs > STALE_PARTICIPANT_TIMEOUT_MS);
             if (!participantsMap[uid] && !isStale) {
               const displayName = typeof (val as any).displayName === 'string' && (val as any).displayName.trim()
                 ? (val as any).displayName.trim()
@@ -276,7 +281,7 @@ export function subscribeToHuddle(
           startedBy: rawData.startedBy || '',
           startedByName: rawData.startedByName || '',
           updatedAt: rawData.updatedAt || new Date().toISOString(),
-          participants: participantsMap,
+          participants: isSessionActive ? participantsMap : {},
         };
 
         onUpdate(session);
@@ -329,16 +334,21 @@ export async function sendWebRTCSignal(
   projectId: string,
   signal: WebRTCSignalData
 ): Promise<void> {
-  const signalsCol = collection(
-    db,
-    'projects',
-    projectId,
-    'huddles',
-    HUDDLE_DOC_ID,
-    'signals'
-  );
-  const newRef = doc(signalsCol);
-  await setDoc(newRef, signal);
+  if (!db || typeof db !== 'object' || !projectId) return;
+  try {
+    const signalsCol = collection(
+      db,
+      'projects',
+      projectId,
+      'huddles',
+      HUDDLE_DOC_ID,
+      'signals'
+    );
+    const newRef = doc(signalsCol);
+    await setDoc(newRef, signal);
+  } catch (err) {
+    console.warn('sendWebRTCSignal notice:', err);
+  }
 }
 
 export function subscribeToSignals(
@@ -347,23 +357,31 @@ export function subscribeToSignals(
   myUid: string,
   onSignal: (signal: WebRTCSignalData) => void
 ): Unsubscribe {
-  const signalsCol = collection(
-    db,
-    'projects',
-    projectId,
-    'huddles',
-    HUDDLE_DOC_ID,
-    'signals'
-  );
+  if (!db || typeof db !== 'object' || !projectId || !myUid) {
+    return () => {};
+  }
+  try {
+    const signalsCol = collection(
+      db,
+      'projects',
+      projectId,
+      'huddles',
+      HUDDLE_DOC_ID,
+      'signals'
+    );
 
-  return onSnapshot(signalsCol, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === 'added') {
-        const data = change.doc.data() as WebRTCSignalData;
-        if (data.toUid === myUid && data.fromUid !== myUid) {
-          onSignal(data);
+    return onSnapshot(signalsCol, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          const data = change.doc.data() as WebRTCSignalData;
+          if (data.toUid === myUid && data.fromUid !== myUid) {
+            onSignal(data);
+          }
         }
-      }
+      });
     });
-  });
+  } catch (err) {
+    console.warn('subscribeToSignals notice:', err);
+    return () => {};
+  }
 }

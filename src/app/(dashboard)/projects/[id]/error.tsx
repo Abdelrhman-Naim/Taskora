@@ -41,6 +41,16 @@ export default function ProjectErrorBoundary({
           </Button>
         </Link>
       </div>
+
+      {error && (
+        <details className="mt-6 p-3 bg-bg border border-line rounded-lg text-xs text-text-3 max-w-md text-start font-mono">
+          <summary className="cursor-pointer font-sans text-xs text-text-2 mb-1">
+            تفاصيل الخطأ التقني
+          </summary>
+          <p className="mt-1 break-all text-error/80">{String(error)}</p>
+          {error.digest && <p className="text-[10px] text-text-3 mt-1">Digest: {error.digest}</p>}
+        </details>
+      )}
     </div>
   );
 }
