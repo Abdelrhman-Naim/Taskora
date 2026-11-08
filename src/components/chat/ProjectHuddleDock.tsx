@@ -139,7 +139,18 @@ function RemoteAudioPlayer({ stream }: { stream: MediaStream }): React.ReactElem
       console.warn('RemoteAudioPlayer srcObject attachment notice:', err);
     }
 
+    // Touch/click gesture unlock for mobile browsers (iOS Safari, Android Chrome)
+    const unlockAudio = () => {
+      if (audio && audio.paused && audio.srcObject) {
+        audio.play().catch(() => {});
+      }
+    };
+    window.addEventListener('click', unlockAudio, { passive: true });
+    window.addEventListener('touchstart', unlockAudio, { passive: true });
+
     return () => {
+      window.removeEventListener('click', unlockAudio);
+      window.removeEventListener('touchstart', unlockAudio);
       if (audio) {
         try {
           audio.srcObject = null;
@@ -154,14 +165,22 @@ function RemoteAudioPlayer({ stream }: { stream: MediaStream }): React.ReactElem
 interface VideoFeedProps {
   stream?: MediaStream | null;
   isMuted?: boolean;
+  objectFit?: 'cover' | 'contain';
 }
 
-function VideoFeed({ stream, isMuted = true }: VideoFeedProps): React.ReactElement {
+function VideoFeed({
+  stream,
+  isMuted = true,
+  objectFit = 'cover',
+}: VideoFeedProps): React.ReactElement {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    video.muted = isMuted;
+    video.defaultMuted = isMuted;
 
     if (
       stream &&
@@ -183,7 +202,17 @@ function VideoFeed({ stream, isMuted = true }: VideoFeedProps): React.ReactEleme
       video.srcObject = null;
     }
 
+    const unlockVideo = () => {
+      if (video && video.paused && video.srcObject) {
+        video.play().catch(() => {});
+      }
+    };
+    window.addEventListener('click', unlockVideo, { passive: true });
+    window.addEventListener('touchstart', unlockVideo, { passive: true });
+
     return () => {
+      window.removeEventListener('click', unlockVideo);
+      window.removeEventListener('touchstart', unlockVideo);
       if (video) {
         try {
           video.srcObject = null;
@@ -192,7 +221,7 @@ function VideoFeed({ stream, isMuted = true }: VideoFeedProps): React.ReactEleme
         }
       }
     };
-  }, [stream]);
+  }, [stream, isMuted]);
 
   return (
     <video
@@ -200,7 +229,9 @@ function VideoFeed({ stream, isMuted = true }: VideoFeedProps): React.ReactEleme
       autoPlay
       playsInline
       muted={isMuted}
-      className="w-full h-full object-cover"
+      className={`w-full h-full ${
+        objectFit === 'contain' ? 'object-contain bg-black' : 'object-cover'
+      }`}
     />
   );
 }
@@ -268,9 +299,20 @@ function ProjectHuddleDockContent({
     return [selfParticipant, ...safeParticipants];
   }, [safeParticipants, currentUserId, isAudioEnabled, isVideoEnabled, isScreenSharing, isAr]);
 
-  // Audio receivers container (rendered unconditionally to guarantee audio playback)
+  // Audio receivers container (rendered off-screen unconditionally to guarantee audio playback on all mobile/desktop browsers)
   const remoteAudioElements = (
-    <div className="hidden" aria-hidden="true">
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'fixed',
+        top: -9999,
+        left: -9999,
+        width: 1,
+        height: 1,
+        opacity: 0,
+        pointerEvents: 'none',
+      }}
+    >
       {Object.entries(remoteStreams).map(([peerUid, rStream]) => (
         <RemoteAudioPlayer key={peerUid} stream={rStream} />
       ))}
@@ -390,9 +432,9 @@ function ProjectHuddleDockContent({
             {isAnyScreenSharing && (
               <div data-testid="huddle-screen-share-view" className={HUDDLE_STYLES.screenShareContainer}>
                 {isScreenSharing && (screenStream || localStream) ? (
-                  <VideoFeed stream={screenStream || localStream} isMuted={true} />
+                  <VideoFeed stream={screenStream || localStream} isMuted={true} objectFit="contain" />
                 ) : hasRemoteScreenVideo && remoteScreenStream ? (
-                  <VideoFeed stream={remoteScreenStream} isMuted={true} />
+                  <VideoFeed stream={remoteScreenStream} isMuted={true} objectFit="contain" />
                 ) : (
                   <div className="flex flex-col items-center justify-center text-center p-6 text-white/80">
                     <Icon name="monitor" size={48} className="text-accent mb-2 animate-bounce" />

@@ -7,6 +7,7 @@ import {
   setDoc,
   updateDoc,
   deleteField,
+  deleteDoc,
   collection,
   onSnapshot,
   Unsubscribe,
@@ -361,6 +362,7 @@ export function subscribeToSignals(
     return () => {};
   }
   try {
+    const processedDocIds = new Set<string>();
     const signalsCol = collection(
       db,
       'projects',
@@ -370,16 +372,16 @@ export function subscribeToSignals(
       'signals'
     );
 
-    const sessionStartTime = Date.now() - 15000;
     return onSnapshot(signalsCol, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === 'added') {
+          if (processedDocIds.has(change.doc.id)) return;
+          processedDocIds.add(change.doc.id);
+
           const data = change.doc.data() as WebRTCSignalData;
           if (data.toUid === myUid && data.fromUid !== myUid) {
-            const sigTime = data.timestamp ? new Date(data.timestamp).getTime() : 0;
-            if (!sigTime || isNaN(sigTime) || sigTime >= sessionStartTime) {
-              onSignal(data);
-            }
+            onSignal(data);
+            deleteDoc(change.doc.ref).catch(() => {});
           }
         }
       });
